@@ -1,0 +1,9 @@
+*.exe
+*.dll
+*.so
+
+.idea
+*.iml
+*.ipr
+*.iws
+.classpath
