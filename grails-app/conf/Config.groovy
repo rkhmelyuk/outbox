@@ -81,3 +81,8 @@ log4j = {
 
     warn   'org.mortbay.log'
 }
+
+// Added by the Spring Security Core plugin:
+grails.plugins.springsecurity.userLookup.userDomainClassName = 'outbox.member.Member'
+grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'outbox.member.MemberRole'
+grails.plugins.springsecurity.authority.className = 'outbox.member.Role'

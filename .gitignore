@@ -7,3 +7,7 @@
 *.ipr
 *.iws
 .classpath
+
+target
+bin
+out
