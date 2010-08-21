@@ -1,14 +1,9 @@
+import grails.plugins.springsecurity.SecurityConfigType
+
 // locations to search for config files that get merged into the main config
 // config files can either be Java properties files or ConfigSlurper scripts
 
-// grails.config.locations = [ "classpath:${appName}-config.properties",
-//                             "classpath:${appName}-config.groovy",
-//                             "file:${userHome}/.grails/${appName}-config.properties",
-//                             "file:${userHome}/.grails/${appName}-config.groovy"]
-
-// if(System.properties["${appName}.config.location"]) {
-//    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
-// }
+ grails.config.locations = [ "classpath:AppConfig.groovy" ]
 
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
@@ -82,7 +77,35 @@ log4j = {
     warn   'org.mortbay.log'
 }
 
-// Added by the Spring Security Core plugin:
-grails.plugins.springsecurity.userLookup.userDomainClassName = 'outbox.member.Member'
-grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'outbox.member.MemberRole'
-grails.plugins.springsecurity.authority.className = 'outbox.member.Role'
+grails {
+    plugins {
+        springsecurity {
+            useSecurityEventListener = true
+
+            userLookup.userDomainClassName = 'outbox.member.Member'
+            userLookup.authorityJoinClassName = 'outbox.member.MemberRole'
+            authority.className = 'outbox.member.Role'
+            securityConfigType = SecurityConfigType.Annotation
+
+            password.algorithm = 'SHA-256'
+            password.encodeHashAsBase64 = true
+
+            errors {
+                login.disabled = "Your account is disabled"
+                login.expired = "Your account has expired"
+                login.passwordExpired = "Your password has expired"
+                login.locked = "Your account is locked"
+                login.fail = "Incorrect login, please try again"
+            }
+
+            rememberMe {
+                cookieName = 'outbox_remember_me'
+                alwaysRemember = false
+                tokenValiditySeconds = 1209600 //14 days
+                parameter = '_outbox_remember_me'
+                key = 'outbox'
+                persistent = false
+            }
+        }
+    }
+}
