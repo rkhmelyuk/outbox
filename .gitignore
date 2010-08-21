@@ -7,6 +7,7 @@
 *.ipr
 *.iws
 .classpath
+.reverts
 
 target
 bin
