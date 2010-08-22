@@ -11,13 +11,14 @@ hibernate {
 environments {
     development {
         dataSource {
-            url = 'jdbc:postgresql://localhost:5432/outbox'
+            url = 'jdbc:postgresql://127.0.0.1:5432/outbox'
             driverClassName = 'org.postgresql.Driver'
             username = 'outbox'
-            password = 'outbox'
+            password = 'outbox123'
         }
         hibernate {
             show_sql = true
+            dialect = 'org.hibernate.dialect.PostgreSQLDialect'
         }
     }
     test {
