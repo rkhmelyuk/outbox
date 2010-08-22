@@ -1,7 +1,7 @@
 
 create table Country
 (
-    CountryId int not null,
+    CountryId serial,
     CountryCode char(2) not null,
     CountryName varchar(100) not null,
 

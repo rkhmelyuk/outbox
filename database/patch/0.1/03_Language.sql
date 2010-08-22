@@ -1,6 +1,6 @@
 create table Language
 (
-    LanguageId int not null,
+    LanguageId serial,
     LanguageCode char(2) not null,
     LanguageName varchar(50) not null,
 
