@@ -3,7 +3,7 @@ import grails.plugins.springsecurity.SecurityConfigType
 // locations to search for config files that get merged into the main config
 // config files can either be Java properties files or ConfigSlurper scripts
 
- grails.config.locations = [ "classpath:AppConfig.groovy" ]
+grails.config.locations = [ "classpath:AppConfig.groovy" ]
 
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format

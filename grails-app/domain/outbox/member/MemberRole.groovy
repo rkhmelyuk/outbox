@@ -46,7 +46,12 @@ class MemberRole implements Serializable {
 	}
 
 	static mapping = {
+        table 'MemberRole'
 		id composite: ['role', 'member']
+        columns {
+            role column: 'RoleId'
+            member column: 'MemberId'
+        }
 		version false
 	}
 }
