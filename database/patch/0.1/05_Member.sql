@@ -31,7 +31,7 @@ create table Member
 
 
 insert into Member(MemberId, FirstName, LastName, Username, Password, Email, TimeZoneId, LanguageId, Enabled, AccountExpired, AccountLocked, PasswordExpired)
-values (1, 'System', 'Administrator', 'sysadmin', 'a3bdd2b3f49c01e3a32bf6fbd13475afc545f55ad4d276e11a630d38b80a34f5', 'sysadmin@localhost', null, null, true, false, false, false);
+values (1, 'System', 'Administrator', 'sysadmin', 'o73Ss/ScAeOjK/b70TR1r8VF9VrU0nbhGmMNOLgKNPU=', 'sysadmin@localhost', 15, 25, true, false, false, false);
 
 insert into Member(MemberId, FirstName, LastName, Username, Password, Email, TimeZoneId, LanguageId, Enabled, AccountExpired, AccountLocked, PasswordExpired)
-values (2, 'John', 'Smith', 'john', 'b4b597c714a8f49103da4dab0266af0ee0ae4f8575250a84855c3d76941cd422', 'jsmith@localhost', null, null, true, false, false, false);
+values (2, 'John', 'Smith', 'john', 'a2+HOqaR4USoUn0g41+yxd4OphGDjaI+MygoCvNa8C4=', 'jsmith@localhost', 17, 127, true, false, false, false);

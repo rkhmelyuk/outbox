@@ -1,6 +1,7 @@
 package outbox.member
 
 import outbox.dictionary.Language
+import outbox.dictionary.Timezone
 
 /**
  * The member out application.
@@ -16,7 +17,7 @@ class Member {
 	String username
 	String password
 
-    TimeZone timezone
+    Timezone timezone
     Language language
 
 	boolean enabled
@@ -25,11 +26,11 @@ class Member {
 	boolean passwordExpired
 
 	static constraints = {
-        firstName maxSize: 100, blank: true, nullable: true
-        lastName maxSize: 100, blank: true, nullable: true
+        firstName maxSize: 100, blank: false, nullable: false
+        lastName maxSize: 100, blank: false, nullable: false
 		username maxSize: 250, blank: false, unique: true
-		password maxSize: 250, blank: false
-        email maxSize: 512, nullable: false, blank: false, unique: true
+		password maxSize: 250, blank: false, nullable: false
+        email maxSize: 512, nullable: false, blank: false, unique: true, email: true
         timezone nullable: true
         language nullable: true
 	}

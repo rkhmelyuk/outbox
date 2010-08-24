@@ -7,5 +7,6 @@ create table Role (
     primary key (RoleId)
 );
 
-insert into Role (RoleId, Authority, RoleName) values (1, 'ROLE_SYSADMIN', 'System Administrator');
-insert into Role (RoleId, Authority, RoleName) values (2, 'ROLE_USER', 'User');
+insert into Role (RoleId, Authority, RoleName) values (1, 'ROLE_USER', 'User');
+insert into Role (RoleId, Authority, RoleName) values (2, 'ROLE_SYSADMIN', 'System Administrator');
+insert into Role (RoleId, Authority, RoleName) values (3, 'ROLE_CLIENT', 'Client');

@@ -9,4 +9,6 @@ create table MemberRole (
 );
 
 insert into MemberRole (MemberId, RoleId) values (1, 1);
-insert into MemberRole (MemberId, RoleId) values (2, 2);
+insert into MemberRole (MemberId, RoleId) values (1, 2);
+insert into MemberRole (MemberId, RoleId) values (2, 1);
+insert into MemberRole (MemberId, RoleId) values (2, 3);
