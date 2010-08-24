@@ -1,4 +1,4 @@
-package outbox
+package outbox.security
 
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 

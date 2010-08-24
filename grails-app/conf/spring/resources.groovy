@@ -1,3 +1,7 @@
-// Place your Spring DSL code here
 beans = {
+
+    userDetailsService(outbox.security.OutboxUserDetailsService) {
+        sessionFactory = ref('sessionFactory')
+        transactionManager = ref('transactionManager')
+    }
 }

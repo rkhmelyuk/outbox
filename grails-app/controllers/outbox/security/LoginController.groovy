@@ -1,4 +1,4 @@
-package outbox
+package outbox.security
 
 import grails.converters.JSON
 
