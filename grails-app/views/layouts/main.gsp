@@ -1,8 +1,13 @@
+<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
 <html>
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
         <title>Outbox: <g:layoutTitle default="Your Own Mail World" /></title>
         <link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
         <link rel="shortcut icon" href="${resource(dir:'images',file:'favicon.ico')}" type="image/x-icon" />
+
+        <script type="text/javascript" src="${request.contextPath}/messages.js"></script>
 
         <g:javascript library="jquery" />
         <g:javascript library="application" />

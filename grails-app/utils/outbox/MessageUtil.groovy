@@ -15,14 +15,12 @@ import java.text.MessageFormat
 class MessageUtil {
 
     static void addErrors(HttpServletRequest req, Map model, def binding) {
-        Locale locale = RequestContextUtils.getLocale(req)
-
         def errors = [:]
         binding.allErrors.each { FieldError error ->
             String message = null;
             for (String each : error.codes) {
                 try {
-                    message = getMessage(each, error.arguments, locale)
+                    message = getMessage(each, error.arguments, req)
                     break;
                 }
                 catch (NoSuchMessageException e) {
@@ -37,7 +35,8 @@ class MessageUtil {
         model << [errors: errors]
     }
 
-    private static String getMessage(String messageCode, Object[] params, Locale locale) {
+    public static String getMessage(String messageCode, Object[] params, HttpServletRequest request) {
+        Locale locale = RequestContextUtils.getLocale(request)
         MessageSource messageSource = (MessageSource) ApplicationHolder.application.mainContext.getBean("messageSource");
         return messageSource.getMessage(messageCode, params, locale)
     }

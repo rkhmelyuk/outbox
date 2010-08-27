@@ -4,63 +4,38 @@
         <title>My Profile</title>
         <meta name='layout' content='main'/>
         <g:javascript library="jquery.form" />
+        <g:javascript library="jquery.validate" />
+
         <script type="text/javascript">
-            $(document).ready(function() {
-                $('#saveProfile').click(function() {
-                    $('#profileForm').ajaxSubmit({
-                        dataType: 'json',
-                        success: function(response, status, xhr) {
-                            if (response && status == 'success') {
-                                if (response.success) {
-                                    $('.status').show().text('Profile saved successfully.');
-                                }
-                                else {
-                                    var errors = '';
-                                    for (var i in response.errors) {
-                                        errors += response.errors[i] + '<br/>';
-                                    }
-                                    $('.status').show().html(errors);
-                                }
-                            }
-                        },
-                        complete: function(xhr, status) {
-                            if (status == 'error') {
-                                $('.status').show().text('Error happened.');
-                            }
-                        }
-                    })
-                });
-            });
+            $(document).ready(function() { App.editProfile() })
         </script>
     </head>
     <body>
-        <div class="status" style="display: none;">
-            
-        </div>
+        <div class="status" style="display: none;"> </div>
         <g:form name="profileForm" controller="profile" action="saveProfile">
             <table>
                 <tr>
-                    <td>Username</td>
+                    <td><g:message code="username"/></td>
                     <td>${member.username}</td>
                 </tr>
                 <tr>
-                    <td>Password</td>
-                    <td>******** <g:link action="newPassword">Change Password</g:link></td>
+                    <td><g:message code="password"/></td>
+                    <td>******** <g:link action="newPassword"><g:message code="change.password"/></g:link></td>
                 </tr>
                 <tr>
-                    <td>First Name</td>
+                    <td><g:message code="firstName"/></td>
                     <td><g:textField name="firstName" maxlength="100" value="${member.firstName}"/></td>
                 </tr>
                 <tr>
-                    <td>Last Name</td>
+                    <td><g:message code="lastName"/></td>
                     <td><g:textField name="lastName" maxlength="100" value="${member.lastName}"/></td>
                 </tr>
                 <tr>
-                    <td>Email</td>
+                    <td><g:message code="email"/></td>
                     <td><g:textField name="email" maxlength="512" value="${member.email}"/></td>
                 </tr>
                 <tr>
-                    <td>Language</td>
+                    <td><g:message code="language"/></td>
                     <td>
                         <g:select name="language" from="${Language.list()}"
                                 value="${member.language?.id}"
@@ -68,7 +43,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Time Zone</td>
+                    <td><g:message code="timezone"/></td>
                     <td>
                         <g:select name="timezone" from="${Timezone.list()}" 
                                 value="${member.timezone?.id}"
@@ -76,9 +51,9 @@
                     </td>
                 </tr>
             </table>
-            <a href="javascript:void(0);" id="saveProfile">Save Changes</a>
+            <a href="javascript:void(0);" id="saveProfile"><g:message code="save.profile"/></a>
             &nbsp;&nbsp;
-            <g:link controller="dashboard">Cancel</g:link>
+            <g:link controller="dashboard"><g:message code="cancel"/></g:link>
         </g:form>
     </body>
 </html>

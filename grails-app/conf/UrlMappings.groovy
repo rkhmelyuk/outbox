@@ -7,7 +7,8 @@ class UrlMappings {
 			}
 		}
 
-		"/"(controller:'dashboard')
-		"500"(view:'/error')
+		'/'(controller:'dashboard')
+		'500'(view:'/error')
+        '/messages'(uri:'/messages.gsp')
 	}
 }
