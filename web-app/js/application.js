@@ -72,6 +72,10 @@ App = {
                 });
             }
         });
+    },
+
+    membersList: function() {
+        
     }
 };
 
