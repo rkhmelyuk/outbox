@@ -1,7 +1,7 @@
 <%@ page import="outbox.dictionary.Timezone; outbox.dictionary.Language" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
-        <title>My Profile</title>
+        <title>Change Password</title>
         <meta name='layout' content='main'/>
         
         <g:javascript library="jquery.form" />
