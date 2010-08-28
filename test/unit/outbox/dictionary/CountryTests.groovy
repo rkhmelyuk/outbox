@@ -3,15 +3,27 @@ package outbox.dictionary
 import grails.test.*
 
 class CountryTests extends GrailsUnitTestCase {
-    protected void setUp() {
-        super.setUp()
+
+    void testFields() {
+        Country country = new Country(
+                id: 1,
+                code: 'UA',
+                name: 'Ukraine')
+
+        assertEquals 1, country.id
+        assertEquals 'UA', country.code
+        assertEquals 'Ukraine', country.name
     }
 
-    protected void tearDown() {
-        super.tearDown()
-    }
+    void testFields2() {
+        Country country = new Country()
 
-    void testSomething() {
+        country.code = 'UKR'
+        country.name = 'Ukraine'
+        country.id = 10
 
+        assertEquals 10, country.id
+        assertEquals 'UKR', country.code
+        assertEquals 'Ukraine', country.name
     }
 }

@@ -11,7 +11,7 @@ class DashboardControllerTests extends ControllerUnitTestCase {
         super.tearDown()
     }
 
-    void testSomething() {
+    void testIndexPage() {
 
     }
 }
