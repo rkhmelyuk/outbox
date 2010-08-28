@@ -42,11 +42,9 @@ class ProfileController {
             member.language = Language.get(params.int('language'))
             member.timezone = Timezone.get(params.int('timezone'))
 
-            if (member.validate()) {
-                if (member.save()) {
-                    SpringSecurityUtils.reauthenticate(member.username, member.password)
-                    model << [success: true]
-                }
+            if (member.save()) {
+                SpringSecurityUtils.reauthenticate(member.username, member.password)
+                model << [success: true]
             }
 
             if (!model.success) {
