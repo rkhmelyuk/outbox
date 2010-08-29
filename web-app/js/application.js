@@ -8,14 +8,18 @@ App = {
     editProfile: function () {
         var validator = $('#profileForm').validate({
             rules: {
-                /*oldPassword: { required: true },
-                newPassword: { required: true, minlength: 3 },
-                passwordConfirmation: { required: true, equalTo: '#newPassword' }*/
+                firstName: { required: true },
+                lastName: { required: true },
+                email: { required: true, email: true },
+                language: { required: true },
+                timezone: { required: true }
             },
             messages: {
-                /*oldPassword: { required: Message['old.password.required'] },
-                newPassword: { required: Message['new.password.required'], minlength: Message['password.minlength']},
-                passwordConfirmation: { required: Message['password.confirmation.required'], equalTo: Message['wrong.password.confirmation'] }*/
+                firstName: { required: Message['member.firstName.blank'] },
+                lastName: { required: Message['member.lastName.blank'] },
+                email: { required: Message['member.email.blank'], email: Message['member.email.email.invalid'] },
+                language: { required: Message['member.language.nullable'] },
+                timezone: { required: Message['member.timezone.nullable'] }
             }
         });
 

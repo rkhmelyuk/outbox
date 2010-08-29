@@ -1,6 +1,5 @@
-package outbox.user
+package outbox.member
 
-import outbox.member.Member
 import grails.plugins.springsecurity.Secured
 import outbox.MessageUtil
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
@@ -13,6 +12,7 @@ import outbox.dictionary.Language
 class MemberController {
 
     static defaultAction = 'list'
+    static allowedMethods = [save: 'POST', update: 'POST']
 
     /**
      * Gets members list.

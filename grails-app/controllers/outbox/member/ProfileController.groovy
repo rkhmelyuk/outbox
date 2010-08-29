@@ -1,4 +1,4 @@
-package outbox.user
+package outbox.member
 
 import grails.plugins.springsecurity.Secured
 import grails.plugins.springsecurity.SpringSecurityService
@@ -6,7 +6,6 @@ import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import outbox.MessageUtil
 import outbox.dictionary.Language
 import outbox.dictionary.Timezone
-import outbox.member.Member
 
 /**
  * View/edit own profile.
@@ -17,6 +16,7 @@ import outbox.member.Member
 class ProfileController {
 
     static defaultAction = 'edit'
+    static allowedMethods = [saveProfile: 'POST', saveNewPassword: 'POST']
 
     SpringSecurityService springSecurityService
 
@@ -74,7 +74,7 @@ class ProfileController {
         Member member = Member.get(principal.id)
         if (member) {
             if (!newPassword) {
-                errors << ['newPassword': MessageUtil.getMessage('new.password.required', null, request) ]
+                errors << ['newPassword': "${message(code:'new.password.required')}" ]
             }
             else {
                 String currentPasswordHash = springSecurityService.encodePassword(params.oldPassword)
@@ -85,11 +85,11 @@ class ProfileController {
                         model << [success: true]
                     }
                     else {
-                        errors << ['newPassword': MessageUtil.getMessage('change.password.error', null, request)]
+                        errors << ['newPassword': "${message(code:'change.password.error')}"]
                     }
                 }
                 else {
-                    errors << ['oldPassword': MessageUtil.getMessage('wrong.old.password', null, request)]
+                    errors << ['oldPassword': "${message(code:'wrong.old.password')}"]
                 }
             }
         }
