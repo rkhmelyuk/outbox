@@ -94,9 +94,12 @@ App = {
     },
 
     membersList: function() {
-        $("#itemsPerPage").live("change", function() {
+        $("#itemsPerPage").change(function() {
             $('#filterForm').submit();
-        });        
+        });
+        $(".page_callback").click(function() {
+            $('#filterForm').submit();
+        });
     },
 
     memberEdit: function() {

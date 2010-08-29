@@ -18,11 +18,12 @@ class MemberController {
      * Gets members list.
      */
     @Secured('ROLE_SYSADMIN')
-    def list = {
-        MemberSearchCondition condition = new MemberSearchCondition()
-        bindData(condition, params)
-
+    def list = { MemberSearchCondition condition ->
+        
         def criteriaCondition = { builder ->
+            if (condition.username) {
+                builder.ilike 'username', "%${condition.username}%"
+            }
             if (condition.fullName) {
                 builder.or {
                     condition.fullName.split(' ').each { part ->
@@ -48,9 +49,9 @@ class MemberController {
             }
         }
 
-        def countCriteria = Member.createCriteria()
-        def count = countCriteria.count {
-            criteriaCondition(countCriteria)
+        def totalCriteria = Member.createCriteria()
+        def total = totalCriteria.count {
+            criteriaCondition(totalCriteria)
         }
 
         def listCriteria = Member.createCriteria()
@@ -64,7 +65,7 @@ class MemberController {
             firstResult condition.itemsPerPage * (condition.page - 1)
         }
 
-        [total: count, members: members, condition: condition]
+        [total: total, members: members, condition: condition]
     }
 
     /**
@@ -120,18 +121,19 @@ class MemberController {
     def save = {
 
     }
-}
 
-/**
- * Search conditions
- */
-class MemberSearchCondition {
-    int page = 1
-    int itemsPerPage = 10
+    /**
+     * Search conditions
+     */
+    class MemberSearchCondition {
+        int page = 1
+        int itemsPerPage = 10
 
-    String fullName
-    boolean statusEnabled
-    boolean statusAccountLocked
-    boolean statusPasswordExpired
-    boolean statusAccountExpired
+        String fullName
+        String username
+        boolean statusEnabled
+        boolean statusAccountLocked
+        boolean statusPasswordExpired
+        boolean statusAccountExpired
+    }
 }

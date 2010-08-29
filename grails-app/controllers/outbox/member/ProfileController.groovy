@@ -74,7 +74,7 @@ class ProfileController {
         Member member = Member.get(principal.id)
         if (member) {
             if (!newPassword) {
-                errors << ['newPassword': "${message(code:'new.password.required')}" ]
+                errors << ['newPassword': message(code:'new.password.required') ]
             }
             else {
                 String currentPasswordHash = springSecurityService.encodePassword(params.oldPassword)
@@ -85,11 +85,11 @@ class ProfileController {
                         model << [success: true]
                     }
                     else {
-                        errors << ['newPassword': "${message(code:'change.password.error')}"]
+                        errors << ['newPassword': message(code:'change.password.error')]
                     }
                 }
                 else {
-                    errors << ['oldPassword': "${message(code:'wrong.old.password')}"]
+                    errors << ['oldPassword': message(code:'wrong.old.password')]
                 }
             }
         }

@@ -13,6 +13,10 @@
             <table>
                 <tr>
                     <td>
+                        <g:message code="username"/><br/>
+                        <g:textField name="username" value="${condition.username}"/>
+                    </td>
+                    <td>
                         <g:message code="name"/><br/>
                         <g:textField name="fullName" value="${condition.fullName}"/>
                     </td>
@@ -22,28 +26,32 @@
                 </tr>
             </table>
             <g:select name="itemsPerPage" from="[5, 10, 25, 50]" value="${condition.itemsPerPage}"/>
-        </g:form>
         
-        Total found ${total}
-        <table id="results">
-            <thead>
-                <tr>
-                    <td><g:message code="full.name"/></td>
-                    <td><g:message code="email"/></td>
-                    <td>Status</td>
-                    <td><g:message code="edit"/></td>
-                </tr>
-            </thead>
-            <tbody>
-                <g:each var="member" in="${members}">
+            <table id="results">
+                <thead>
                     <tr>
-                        <td>${member.firstName} ${member.lastName}</td>
-                        <td>${member.email}</td>
-                        <td></td>
-                        <td><g:link controller="member" action="edit" id="${member.id}">Edit</g:link></td>
+                        <td><g:message code="username"/></td>
+                        <td><g:message code="full.name"/></td>
+                        <td><g:message code="email"/></td>
+                        <td>Status</td>
+                        <td><g:message code="edit"/></td>
                     </tr>
-                </g:each>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <g:each var="member" in="${members}">
+                        <tr>
+                            <td>${member.username}</td>
+                            <td>${member.firstName} ${member.lastName}</td>
+                            <td>${member.email}</td>
+                            <td></td>
+                            <td><g:link controller="member" action="edit" id="${member.id}">Edit</g:link></td>
+                        </tr>
+                    </g:each>
+                </tbody>
+            </table>
+            <g:formPagination name="page" total="${total}" max="${condition.itemsPerPage}"
+                    page="${condition.page}" maxsteps="10"
+                    callbackClass="page_callback" currentClass="current"/>
+        </g:form>
     </body>
 </html>
