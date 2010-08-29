@@ -14,6 +14,8 @@ class MemberController {
     static defaultAction = 'list'
     static allowedMethods = [save: 'POST', update: 'POST']
 
+    def springSecurityService
+
     /**
      * Gets members list.
      */
@@ -91,11 +93,18 @@ class MemberController {
             member.language = Language.get(params.int('language'))
             member.timezone = Timezone.get(params.int('timezone'))
 
-            if (member.save()) {
-                SpringSecurityUtils.reauthenticate(member.username, member.password)
-                model << [success: true]
+            if (params.password || params.passwordConfirmation) {
+                if (params.password.equals(params.passwordConfirmation)) {
+                    member.password = springSecurityService.encodePassword(params.password)
+                }
+                else {
+                    member.errors.rejectValue('passwordConfirmation', 'wrong.password.confirmation')
+                }
             }
 
+            if (member.save()) {
+                model << [success: true]
+            }
             if (!model.success) {
                 MessageUtil.addErrors(request, model, member.errors);
             }

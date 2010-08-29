@@ -103,29 +103,53 @@ App = {
     },
 
     memberEdit: function() {
+        $('#password').password_strength({container: '.password-strength'});
+        var validator = $('#memberForm').validate({
+            rules: {
+                firstName: { required: true },
+                lastName: { required: true },
+                email: { required: true, email: true },
+                language: { required: true },
+                timezone: { required: true },
+                password: { minlength: 3 },
+                passwordConfirmation: { equalTo: '#password' }
+            },
+            messages: {
+                firstName: { required: Message['member.firstName.blank'] },
+                lastName: { required: Message['member.lastName.blank'] },
+                email: { required: Message['member.email.blank'], email: Message['member.email.email.invalid'] },
+                language: { required: Message['member.language.nullable'] },
+                timezone: { required: Message['member.timezone.nullable'] },
+                password: { minlength: Message['password.minlength']},
+                passwordConfirmation: { equalTo: Message['wrong.password.confirmation'] }
+            }
+        });
+
         $('#saveMember').click(function() {
-            $('#memberForm').ajaxSubmit({
-                dataType: 'json',
-                success: function(response, status) {
-                    if (response && status == 'success') {
-                        if (response.success) {
-                            $('.status').show().text(Message['member.changed.successfully']);
-                        }
-                        else {
-                            var errors = '';
-                            for (var i in response.errors) {
-                                errors += response.errors[i] + '<br/>';
+            if (validator.form()) {
+                $('#memberForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (response.success) {
+                                $('.status').show().text(Message['member.changed.successfully']);
                             }
-                            $('.status').show().html(errors);
+                            else {
+                                var errors = '';
+                                for (var i in response.errors) {
+                                    errors += response.errors[i] + '<br/>';
+                                }
+                                $('.status').show().html(errors);
+                            }
+                        }
+                    },
+                    complete: function(xhr, status) {
+                        if (status == 'error') {
+                            $('.status').show().text('Error happened.');
                         }
                     }
-                },
-                complete: function(xhr, status) {
-                    if (status == 'error') {
-                        $('.status').show().text('Error happened.');
-                    }
-                }
-            })
+                });
+            }
         });
     }
 };

@@ -5,6 +5,7 @@
         <meta name='layout' content='main'/>
         <g:javascript library="jquery.form" />
         <g:javascript library="jquery.validate" />
+        <g:javascript library="jquery.password_strength" />
 
         <script type="text/javascript">
             $(document).ready(function() { App.memberEdit() })
@@ -50,16 +51,19 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            Enter both password and confirmation to change member password.
+                            Enter both password and confirmation to change member password:
                         </td>
                     </tr>
                     <tr>
                         <td><g:message code="password"/></td>
-                        <td></td>
+                        <td>
+                            <g:passwordField name="password" maxlength="100" value=""/>
+                            <div class="password-strength"> </div>
+                        </td>
                     </tr>
                     <tr>
                         <td><g:message code="password.confirmation"/></td>
-                        <td></td>
+                        <td><g:passwordField name="passwordConfirmation" maxlength="100" value=""/></td>
                     </tr>
                 </table>
                 <a href="javascript:void(0);" id="saveMember"><g:message code="save.changes"/></a>
