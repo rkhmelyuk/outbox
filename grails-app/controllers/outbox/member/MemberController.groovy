@@ -87,8 +87,8 @@ class MemberController {
             member.firstName = params.firstName
             member.lastName = params.lastName
             member.email = params.email
-            member.language = Language.get(params.int('language'))
-            member.timezone = Timezone.get(params.int('timezone'))
+            member.language = Language.load(params.int('language'))
+            member.timezone = Timezone.load(params.int('timezone'))
 
             if (params.password || params.passwordConfirmation) {
                 if (params.password.equals(params.passwordConfirmation)) {
@@ -100,6 +100,10 @@ class MemberController {
             }
 
             if (member.save()) {
+                def roleId = params.int('role')
+                if (roleId) {
+                    MemberRole.change(member, Role.load(roleId), true)
+                }
                 model << [success: true]
             }
             if (!model.success) {
@@ -119,8 +123,8 @@ class MemberController {
      */
     def create = {
         [member: new Member(
-                language: Language.get(Language.DEFAULT_ID),
-                timezone: Timezone.get(Timezone.DEFAULT_ID))]
+                language: Language.load(Language.DEFAULT_ID),
+                timezone: Timezone.load(Timezone.DEFAULT_ID))]
     }
 
     /**
@@ -134,8 +138,8 @@ class MemberController {
         member.firstName = params.firstName
         member.lastName = params.lastName
         member.email = params.email
-        member.language = Language.get(params.int('language'))
-        member.timezone = Timezone.get(params.int('timezone'))
+        member.language = Language.load(params.int('language'))
+        member.timezone = Timezone.load(params.int('timezone'))
         member.enabled = true
         member.accountExpired = false
         member.accountLocked = false
@@ -150,7 +154,11 @@ class MemberController {
         }
 
         if (member.save()) {
-            MemberRole.create(member, Role.userRole(), true)
+            MemberRole.create(member, Role.userRole(), false)
+            def roleId = params.int('role')
+            if (roleId) {
+                MemberRole.create(member, Role.load(roleId), true)
+            }
             model << [success: true]
         }
         else {

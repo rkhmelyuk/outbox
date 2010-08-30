@@ -23,13 +23,33 @@ class MemberRole implements Serializable {
 		builder.toHashCode()
 	}
 
-	static MemberRole get(long memberId, long roleId) {
-		find 'from MemberRole where member.id=:memberId and role.id=:roleId',
-			[memberId: memberId, roleId: roleId]
+	static MemberRole get(Member member, Role role) {
+		MemberRole.findByMemberAndRole(member, role)
 	}
 
 	static MemberRole create(Member member, Role role, boolean flush = false) {
 		new MemberRole(member: member, role: role).save(flush: flush, insert: true)
+	}
+
+    static MemberRole change(Member member, Role role, boolean flush = false) {
+        Set<Role> roles = member.authorities
+        Set<Role> toRemove = []
+        for (Role each : roles) {
+            if (role.id.equals(each.id)) {
+                return get(member, role)
+            }
+            else if (!each.user) {
+                toRemove << each
+            }
+        }
+        
+        MemberRole result = null;
+        MemberRole.withTransaction {
+            toRemove.each { remove(member, it, flush) }
+            result = new MemberRole(member: member, role: role).save(flush: flush, insert: true)
+        }
+
+        return result
 	}
 
 	static boolean remove(Member member, Role role, boolean flush = false) {

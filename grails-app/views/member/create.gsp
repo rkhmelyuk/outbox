@@ -1,4 +1,4 @@
-<%@ page import="outbox.dictionary.Timezone; outbox.dictionary.Language" contentType="text/html;charset=UTF-8" %>
+<%@ page import="outbox.member.Role; outbox.dictionary.Timezone; outbox.dictionary.Language" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <title><g:message code="member.create.title"/></title>
@@ -57,6 +57,10 @@
                 <tr>
                     <td><g:message code="password.confirmation"/></td>
                     <td><g:passwordField name="passwordConfirmation" maxlength="100" value=""/></td>
+                </tr>
+                <tr>
+                    <td><g:message code="role"/></td>
+                    <td><g:select name="role" from="${Role.assignableRoles()}" optionKey="id" optionValue="name"/></td>
                 </tr>
             </table>
             <a href="javascript:void(0);" id="createMember"><g:message code="create.member"/></a>

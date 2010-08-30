@@ -17,7 +17,7 @@ class Role {
             name column: 'RoleName'
         }
         version false
-		cache true
+		cache usage: 'read-only', include: 'non-lazy'
 	}
 
 	static constraints = {
@@ -25,13 +25,22 @@ class Role {
         name maxSize: 50, blank: false, unique: true
 	}
 
+    static transients = [ 'user' ]
+
     /**
      * Gets role for ROLE_USER authority.
      * This role is required for member to be a user of this application.
-     * @return the role.
+     * @return the found role.
      */
     static Role userRole() {
         return Role.findByAuthority('ROLE_USER')
     }
 
+    static List<Role> assignableRoles() {
+        return Role.findAllByAuthorityNotEqual('ROLE_USER')
+    }
+
+    public boolean isUser() {
+        return 'ROLE_USER'.equals(authority)
+    }
 }
