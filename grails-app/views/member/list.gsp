@@ -26,6 +26,8 @@
                 </tr>
             </table>
             <g:select name="itemsPerPage" from="[5, 10, 25, 50]" value="${condition.itemsPerPage}"/>
+
+            <g:link controller="member" action="create"><g:message code="create.member"/></g:link>
         
             <table id="results">
                 <thead>

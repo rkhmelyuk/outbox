@@ -30,8 +30,8 @@ create table Member
 );
 
 
-insert into Member(MemberId, FirstName, LastName, Username, Password, Email, TimeZoneId, LanguageId, Enabled, AccountExpired, AccountLocked, PasswordExpired)
-values (1, 'System', 'Administrator', 'sysadmin', 'o73Ss/ScAeOjK/b70TR1r8VF9VrU0nbhGmMNOLgKNPU=', 'sysadmin@localhost', 15, 25, true, false, false, false);
+insert into Member(FirstName, LastName, Username, Password, Email, TimeZoneId, LanguageId, Enabled, AccountExpired, AccountLocked, PasswordExpired)
+values ('System', 'Administrator', 'sysadmin', 'o73Ss/ScAeOjK/b70TR1r8VF9VrU0nbhGmMNOLgKNPU=', 'sysadmin@localhost', 15, 25, true, false, false, false);
 
-insert into Member(MemberId, FirstName, LastName, Username, Password, Email, TimeZoneId, LanguageId, Enabled, AccountExpired, AccountLocked, PasswordExpired)
-values (2, 'John', 'Smith', 'john', 'a2+HOqaR4USoUn0g41+yxd4OphGDjaI+MygoCvNa8C4=', 'jsmith@localhost', 17, 127, true, false, false, false);
+insert into Member(FirstName, LastName, Username, Password, Email, TimeZoneId, LanguageId, Enabled, AccountExpired, AccountLocked, PasswordExpired)
+values ('John', 'Smith', 'john', 'a2+HOqaR4USoUn0g41+yxd4OphGDjaI+MygoCvNa8C4=', 'jsmith@localhost', 17, 127, true, false, false, false);

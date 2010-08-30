@@ -120,15 +120,45 @@ class MemberController {
     /**
      * Create new member.
      */
-    def create = {
-        
+    def create = { 
+        [member: new Member(
+                language: new Language(id: Language.DEFAULT_ID), 
+                timezone: new Timezone(id: Timezone.DEFAULT_ID))]
     }
 
     /**
      * Save new member to storage.
      */
     def save = {
+        def model = [:]
+        Member member = new Member()
 
+        member.username = params.username
+        member.firstName = params.firstName
+        member.lastName = params.lastName
+        member.email = params.email
+        member.language = Language.get(params.int('language'))
+        member.timezone = Timezone.get(params.int('timezone'))
+
+        def password = params.password
+        if (password && password.equals(params.passwordConfirmation)) {
+            member.password = springSecurityService.encodePassword(password)
+        }
+        else {
+            member.errors.rejectValue('passwordConfirmation', 'wrong.password.confirmation')
+        }
+
+        if (member.save()) {
+            model << [success: true]
+        }
+        else {
+            MessageUtil.addErrors(request, model, member.errors);
+        }
+        if (!model.success) {
+            model << [error: true]
+        }
+
+        render(model.encodeAsJSON())
     }
 
     /**

@@ -7,6 +7,8 @@ package outbox.dictionary
  */
 class Timezone {
 
+    static int DEFAULT_ID = 15
+
     Integer id
     String name
     float timeOffset

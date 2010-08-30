@@ -7,6 +7,8 @@ package outbox.dictionary
  */
 class Language {
 
+    static int DEFAULT_ID = 25
+
     Integer id
     String code
     String name

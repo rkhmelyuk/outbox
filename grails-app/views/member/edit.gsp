@@ -72,7 +72,7 @@
             </g:form>
         </g:if>
         <g:else>
-            Member is not found.    
+            Member is not found.
         </g:else>
     </body>
 </html>
