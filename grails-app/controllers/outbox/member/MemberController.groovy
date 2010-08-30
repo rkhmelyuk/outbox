@@ -2,13 +2,13 @@ package outbox.member
 
 import grails.plugins.springsecurity.Secured
 import outbox.MessageUtil
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import outbox.dictionary.Timezone
 import outbox.dictionary.Language
+import outbox.dictionary.Timezone
 
 /**
  * @author Ruslan Khmelyuk
  */
+@Secured(['ROLE_SYSADMIN'])
 class MemberController {
 
     static defaultAction = 'list'
@@ -19,7 +19,6 @@ class MemberController {
     /**
      * Gets members list.
      */
-    @Secured('ROLE_SYSADMIN')
     def list = { MemberSearchCondition condition ->
         
         def criteriaCondition = { builder ->
@@ -73,7 +72,6 @@ class MemberController {
     /**
      * Edit specified member.
      */
-    @Secured('ROLE_SYSADMIN')
     def edit = {
         def id = params.long('id')
         [member: Member.get(id)]
@@ -82,7 +80,6 @@ class MemberController {
     /**
      * Update member information.
      */
-    @Secured('ROLE_SYSADMIN')
     def update = {
         def model = [:]
         Member member = Member.get(params.long('id'))
@@ -120,10 +117,10 @@ class MemberController {
     /**
      * Create new member.
      */
-    def create = { 
+    def create = {
         [member: new Member(
-                language: new Language(id: Language.DEFAULT_ID), 
-                timezone: new Timezone(id: Timezone.DEFAULT_ID))]
+                language: Language.get(Language.DEFAULT_ID),
+                timezone: Timezone.get(Timezone.DEFAULT_ID))]
     }
 
     /**
@@ -139,6 +136,10 @@ class MemberController {
         member.email = params.email
         member.language = Language.get(params.int('language'))
         member.timezone = Timezone.get(params.int('timezone'))
+        member.enabled = true
+        member.accountExpired = false
+        member.accountLocked = false
+        member.passwordExpired = false
 
         def password = params.password
         if (password && password.equals(params.passwordConfirmation)) {
@@ -149,6 +150,7 @@ class MemberController {
         }
 
         if (member.save()) {
+            MemberRole.create(member, Role.userRole(), true)
             model << [success: true]
         }
         else {

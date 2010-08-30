@@ -24,4 +24,14 @@ class Role {
 		authority maxSize: 50, blank: false, unique: true
         name maxSize: 50, blank: false, unique: true
 	}
+
+    /**
+     * Gets role for ROLE_USER authority.
+     * This role is required for member to be a user of this application.
+     * @return the role.
+     */
+    static Role userRole() {
+        return Role.findByAuthority('ROLE_USER')
+    }
+
 }

@@ -155,6 +155,7 @@ App = {
     },
 
     memberCreate: function() {
+        $('#username').focus();
         $('#password').password_strength({container: '.password-strength'});
         
         var validator = $('#memberForm').validate({

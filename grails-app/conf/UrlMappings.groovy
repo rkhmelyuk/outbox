@@ -9,6 +9,7 @@ class UrlMappings {
 
 		'/'(controller:'dashboard')
 		'500'(view:'/error')
+	    "404"(view:'/error404')
         '/messages'(uri:'/messages.gsp')
 	}
 }

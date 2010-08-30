@@ -1,8 +1,8 @@
-package outbox.user
+package outbox.member
 
 import grails.test.*
 
-class MemberControllerTests extends ControllerUnitTestCase {
+class ProfileControllerTests extends ControllerUnitTestCase {
     protected void setUp() {
         super.setUp()
     }
@@ -11,7 +11,7 @@ class MemberControllerTests extends ControllerUnitTestCase {
         super.tearDown()
     }
 
-    void testSomething() {
+    void testEdit() {
 
     }
 }

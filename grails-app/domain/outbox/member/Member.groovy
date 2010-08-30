@@ -37,7 +37,7 @@ class Member {
 
 	static mapping = {
         table 'Member'
-        id column: 'MemberId', generator:'identity'
+        id column: 'MemberId'
         columns {
             firstName column: 'FirstName'
             lastName column: 'LastName'

@@ -78,6 +78,11 @@ log4j = {
 }
 
 grails {
+    gorm.default.mapping = {
+        id generator:'identity'
+        version false
+    }
+    
     plugins {
         springsecurity {
             useSecurityEventListener = true
