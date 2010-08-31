@@ -25,17 +25,10 @@ class Member {
 	boolean accountLocked
 	boolean passwordExpired
 
-	static constraints = {
-        firstName maxSize: 100, blank: false, nullable: false
-        lastName maxSize: 100, blank: false, nullable: false
-		username maxSize: 250, blank: false, unique: true
-		password maxSize: 250, blank: false, nullable: false
-        email maxSize: 512, nullable: false, blank: false, unique: true, email: true
-        timezone nullable: true
-        language nullable: true
-	}
+    Date dateCreated
+    Date lastUpdated
 
-	static mapping = {
+    static mapping = {
         table 'Member'
         id column: 'MemberId'
         columns {
@@ -50,9 +43,23 @@ class Member {
             accountExpired column: 'AccountExpired'
             accountLocked column: 'AccountLocked'
             passwordExpired column: 'PasswordExpired'
+            dateCreated column: 'CreateDate'
+            lastUpdated column: 'ModifyDate'
         }
         version false
         cache true
+	}
+
+    static constraints = {
+        firstName maxSize: 100, blank: false, nullable: false
+        lastName maxSize: 100, blank: false, nullable: false
+		username maxSize: 250, blank: false, unique: true
+		password maxSize: 250, blank: false, nullable: false
+        email maxSize: 512, nullable: false, blank: false, unique: true, email: true
+        timezone nullable: true
+        language nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
 	}
 
 	Set<Role> getAuthorities() {
