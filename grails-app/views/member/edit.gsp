@@ -67,7 +67,9 @@
                     </tr>
                     <tr>
                         <td><g:message code="role"/></td>
-                        <td><g:select name="role" from="${Role.assignableRoles()}" optionKey="id" optionValue="name"/></td>
+                        <td><g:select name="role" from="${Role.assignableRoles()}"
+                                value="${member.assignableAuthority?.id}" 
+                                optionKey="id" optionValue="name"/></td>
                     </tr>
                 </table>
                 <a href="javascript:void(0);" id="saveMember"><g:message code="save.changes"/></a>

@@ -62,7 +62,13 @@ class Member {
         lastUpdated nullable: true
 	}
 
+	static transients = ['assignableAuthority']
+
 	Set<Role> getAuthorities() {
 		MemberRole.findAllByMember(this).collect { it.role } as Set
 	}
+
+    Role getAssignableAuthority() {
+        (Role) authorities.find { Role role -> !role.user }
+    }
 }
