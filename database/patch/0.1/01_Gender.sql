@@ -1,7 +1,7 @@
 
 create table Gender
 (
-    GenderId int not null,
+    GenderId smallint not null,
     GenderName varchar(10) not null,
 
     primary key(GenderId)
