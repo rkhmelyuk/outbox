@@ -32,6 +32,9 @@ create table Member
         references Language(LanguageId)
 );
 
+create index IX_Member_Username on Member(Username);
+create index IX_Member_Email on Member(Email);
+
 
 insert into Member(FirstName, LastName, Username, Password, Email, TimeZoneId, LanguageId, Enabled, AccountExpired, AccountLocked, PasswordExpired, CreateDate)
 values ('System', 'Administrator', 'sysadmin', 'o73Ss/ScAeOjK/b70TR1r8VF9VrU0nbhGmMNOLgKNPU=', 'sysadmin@localhost', 15, 25, true, false, false, false, '2010-09-01');
