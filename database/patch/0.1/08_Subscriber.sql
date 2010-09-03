@@ -1,16 +1,17 @@
 
 create table Subscriber
 (
-    SubscriberId char(20) not null,
+    SubscriberId char(40) not null,
 
     FirstName varchar(100) null,
     LastName varchar(100) null,
     Email varchar(512) not null,
+    Enabled boolean not null,
 
+    MemberId integer not null,
     GenderId smallint null,
     LanguageId smallint null,
     TimezoneId smallint null,
-    MemberId integer not null,
 
     CreateDate timestamp not null,
 
