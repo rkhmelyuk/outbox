@@ -74,6 +74,28 @@ class SubscriberServiceTests extends GroovyTestCase {
         assertFalse subscriber.enabled
     }
 
+    void testEnableEnabledSubscriber() {
+        Subscriber subscriber = createTestSubscriber()
+
+        assertTrue subscriberService.addSubscriber(subscriber)
+        assertTrue subscriberService.enableSubscriber(subscriber)
+
+        Subscriber found = subscriberService.getSubscriber(subscriber.id)
+        assertNotNull found
+        assertTrue subscriber.enabled
+    }
+
+    void testDisableDisabledSubscriber() {
+        Subscriber subscriber = createTestSubscriber()
+        subscriber.enabled = false
+        assertTrue subscriberService.addSubscriber(subscriber)
+        assertTrue subscriberService.disableSubscriber(subscriber)
+
+        Subscriber found = subscriberService.getSubscriber(subscriber.id)
+        assertNotNull found
+        assertFalse subscriber.enabled
+    }
+
     void testSaveDuplicateSubscriber() {
         Subscriber subscriber1 = createTestSubscriber()
         Subscriber subscriber2 = createTestSubscriber()
