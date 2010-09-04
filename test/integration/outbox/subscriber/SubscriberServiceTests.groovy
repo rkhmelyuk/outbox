@@ -44,12 +44,48 @@ class SubscriberServiceTests extends GroovyTestCase {
         assertNotNull 'Subscriber id is not generated.', subscriber.id
     }
 
-    void testEnableSubscriber() {
+    void testGetSubscriber() {
+        Subscriber subscriber = createTestSubscriber()
 
+        assertTrue 'Subscriber is not added.', subscriberService.addSubscriber(subscriber)
+        assertNotNull 'Subscriber is not found.', subscriberService.getSubscriber(subscriber.id)
+    }
+
+    void testEnableSubscriber() {
+        Subscriber subscriber = createTestSubscriber()
+        subscriber.enabled = false
+        
+        assertTrue subscriberService.addSubscriber(subscriber)
+        assertTrue subscriberService.enableSubscriber(subscriber)
+
+        Subscriber found = subscriberService.getSubscriber(subscriber.id)
+        assertNotNull found
+        assertTrue subscriber.enabled
     }
 
     void testDisableSubscriber() {
+        Subscriber subscriber = createTestSubscriber()
 
+        assertTrue subscriberService.addSubscriber(subscriber)
+        assertTrue subscriberService.disableSubscriber(subscriber)
+
+        Subscriber found = subscriberService.getSubscriber(subscriber.id)
+        assertNotNull found
+        assertFalse subscriber.enabled
+    }
+
+    void testSaveDuplicateSubscriber() {
+        Subscriber subscriber1 = createTestSubscriber()
+        Subscriber subscriber2 = createTestSubscriber()
+
+        assertTrue subscriberService.addSubscriber(subscriber1)
+        try {
+            subscriberService.addSubscriber(subscriber2)
+            fail 'Added subscriber with duplicated id - that\'s wrong'
+        }
+        catch (Exception e) {
+            // that's ok
+        }
     }
 
     Subscriber createTestSubscriber() {

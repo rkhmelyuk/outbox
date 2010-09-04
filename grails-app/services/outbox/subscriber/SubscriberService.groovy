@@ -19,11 +19,20 @@ class SubscriberService {
             return false
         }
 
-        boolean saved = (item.save() != null)
+        boolean saved = (item.save(flush: true) != null)
         if (!saved) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()
         }
         return saved
+    }
+
+    /**
+     * Gets the subscriber by it's id.
+     * @param id subscriber id.
+     * @return the found subscriber.
+     */
+    Subscriber getSubscriber(String id) {
+        Subscriber.get(id)
     }
 
     /**

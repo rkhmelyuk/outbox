@@ -61,13 +61,33 @@ class Subscriber {
         createDate nullable: true
     }
 
+    static transients = ['fullName']
+
     def beforeInsert() {
         if (!id) {
             generateId()
         }
     }
+
+    /**
+     * Gets subscriber full name.
+     * @return the subscriber full name.
+     */
+    String getFullName() {
+        if (firstName && lastName) {
+            return "$firstName $lastName"
+        }
+        else if (firstName) {
+            return firstName
+        }
+        else if (lastName) {
+            return lastName
+        }
+        return ''
+    }
     
-    def generateId() { 
-        id = SHA1Codec.encode("${email}-${member?.id}-${AppConstant.SUBSCRIBER_ID_SALT}".toString().bytes)
+    def generateId() {
+        String string = email + '-' + member?.id + '-' + AppConstant.SUBSCRIBER_ID_SALT
+        id = SHA1Codec.encode(string.bytes)
     }
 }
