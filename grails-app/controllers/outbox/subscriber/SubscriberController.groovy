@@ -8,6 +8,7 @@ import outbox.dictionary.Gender
 import outbox.dictionary.Language
 import outbox.dictionary.Timezone
 import outbox.member.Member
+import outbox.dictionary.NamePrefix
 
 /**
  * @author Ruslan Khmelyuk
@@ -54,6 +55,7 @@ class SubscriberController {
             subscriber.gender = Gender.load(params.int('gender'))
             subscriber.language = Language.load(params.int('language'))
             subscriber.timezone = Timezone.load(params.int('timezone'))
+            subscriber.namePrefix = NamePrefix.load(params.int('namePrefix'))
 
             if (subscriberService.saveSubscriber(subscriber)) {
                 model << [success: true]
@@ -84,6 +86,7 @@ class SubscriberController {
         subscriber.language = Language.load(params.int('language'))
         subscriber.timezone = Timezone.load(params.int('timezone'))
         subscriber.member = Member.load(springSecurityService.getPrincipal().id)
+        subscriber.namePrefix = NamePrefix.load(params.int('namePrefix'))
 
         def model = [:]
         if (subscriberService.saveSubscriber(subscriber)) {

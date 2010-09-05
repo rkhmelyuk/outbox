@@ -252,7 +252,7 @@ var App = {
     },
 
     subscriberEdit: function() {
-        $('#firstName').focus();
+        $('#nameTitle').focus();
         var validator = $('#subscriberForm').validate({
             rules: {
                 email: { required: true, email: true }

@@ -1,4 +1,4 @@
-<%@ page import="outbox.dictionary.Gender; outbox.dictionary.Timezone; outbox.dictionary.Language" contentType="text/html;charset=UTF-8" %>
+<%@ page import="outbox.dictionary.NamePrefix; outbox.dictionary.Gender; outbox.dictionary.Timezone; outbox.dictionary.Language" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
         <title><g:message code="create.subscriber.title"/></title>
@@ -14,6 +14,14 @@
         <div class="status" style="display: none;"> </div>
         <g:form name="subscriberForm" controller="subscriber" action="add">
             <table>
+                <tr>
+                    <td><g:message code="title"/></td>
+                    <td>
+                        <g:select name="namePrefix" from="${NamePrefix.list()}"
+                            optionKey="id" optionValue="name" noSelection="['':'']"
+                            value="${subscriber.namePrefix?.id}"/>
+                    </td>
+                </tr>
                 <tr>
                     <td><g:message code="firstName"/></td>
                     <td><g:textField name="firstName" maxlength="100" value="${subscriber.firstName}"/></td>
