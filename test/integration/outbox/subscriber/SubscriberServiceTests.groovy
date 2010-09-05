@@ -39,6 +39,21 @@ class SubscriberServiceTests extends GroovyTestCase {
         assertEquals subscriber, subscriberService.getSubscriber(subscriber.id)
     }
 
+    void testWrongEmailSubscriber() {
+        Subscriber subscriber = new Subscriber(email: 'test@mailsight', member: member)
+        assertFalse subscriberService.addSubscriber(subscriber)
+    }
+
+    void testEmailRequiredOnlySubscriber() {
+        Subscriber subscriber = new Subscriber(email: null, member: member)
+        assertFalse subscriberService.addSubscriber(subscriber)
+    }
+
+    void testRequiredEmailSubscriber() {
+        Subscriber subscriber = new Subscriber(email: 'test@mailsight.com', member: member)
+        assertTrue subscriberService.addSubscriber(subscriber)
+    }
+
     void testSaveSubscriber() {
         Subscriber subscriber = createTestSubscriber()
         assertTrue 'Subscriber is not added.', subscriberService.addSubscriber(subscriber)
