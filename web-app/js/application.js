@@ -249,6 +249,44 @@ var App = {
                 });
             }
         });
+    },
+
+    subscriberEdit: function() {
+        $('#firstName').focus();
+        var validator = $('#subscriberForm').validate({
+            rules: {
+                email: { required: true, email: true }
+            },
+            messages: {
+                email: { required: Message['subscriber.email.blank'], email: Message['subscriber.email.email.invalid'] }
+            }
+        });
+        $('#editSubscriber').click(function() {
+            if (validator.form()) {
+                $('#subscriberForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (response.success) {
+                                $('.status').show().text(Message['subscriber.changed.successfully']);
+                            }
+                            else {
+                                var errors = '';
+                                for (var i in response.errors) {
+                                    errors += response.errors[i] + '<br/>';
+                                }
+                                $('.status').show().html(errors);
+                            }
+                        }
+                    },
+                    complete: function(xhr, status) {
+                        if (status == 'error') {
+                            $('.status').show().text('Error happened.');
+                        }
+                    }
+                });
+            }
+        });
     }
 };
 

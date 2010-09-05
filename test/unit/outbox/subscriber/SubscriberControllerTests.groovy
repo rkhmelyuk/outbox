@@ -145,4 +145,110 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertNull 'Success is unexpected.', result.success
         assertNotNull result.errors
     }
+
+    void testEdit() {
+        Subscriber subscriber = new Subscriber(id: '0000000')
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        controller.params.id = '0000000'
+
+        def result = controller.edit()
+
+        assertNotNull result
+        assertEquals 'Subscriber is not found.', subscriber, result.subscriber
+    }
+
+    void testEditAbsent() {
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscriber { id -> null}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        controller.params.id = '0000000'
+
+        def result = controller.edit()
+
+        assertNull result
+        assertEquals 404, mockResponse.status
+    }
+
+    void testUpdate_Success() {
+        def member = new Member(id: 1)
+        def subscriber = new Subscriber(email: 'test@mailsight.com', member: member)
+
+        mockDomain(Subscriber, [subscriber])
+
+        Language.class.metaClass.static.load = { id -> return null}
+        Gender.class.metaClass.static.load = { id -> return null}
+        Timezone.class.metaClass.static.load = { id -> return null}
+        Member.class.metaClass.static.load = { id -> return member}
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
+        subscriberServiceControl.demand.saveSubscriber { subscr -> return true}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        controller.params.email = 'test@mailsight.com'
+
+        controller.update()
+        assertNotNull mockResponse.contentAsString
+
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue 'Success is expected.', result.success
+        assertNull 'Error is unexpected.', result.error
+    }
+
+    void testUpdate_Fail() {
+        def member = new Member(id: 1)
+        def subscriber = new Subscriber(email: 'test@mailsight.com', member: member)
+
+        mockDomain(Subscriber, [subscriber])
+
+        Language.class.metaClass.static.load = { id -> return null}
+        Gender.class.metaClass.static.load = { id -> return null}
+        Timezone.class.metaClass.static.load = { id -> return null}
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
+        subscriberServiceControl.demand.saveSubscriber { subscr -> return false}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        controller.params.email = ''
+
+        controller.update()
+        assertNotNull mockResponse.contentAsString
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Error is expected.', result.error
+        assertNull 'Success is unexpected.', result.success
+        assertNotNull result.errors
+    }
+
+    void testUpdate_NotFound() {
+        
+        mockDomain(Subscriber)
+
+        Language.class.metaClass.static.load = { id -> return null}
+        Gender.class.metaClass.static.load = { id -> return null}
+        Timezone.class.metaClass.static.load = { id -> return null}
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscriber { id -> return null}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        controller.params.email = 'test@mailsight.com'
+
+        controller.update()
+        assertNotNull mockResponse.contentAsString
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Error is expected.', result.error
+        assertNull 'Success is unexpected.', result.success
+        assertNull result.errors
+    }
+
 }

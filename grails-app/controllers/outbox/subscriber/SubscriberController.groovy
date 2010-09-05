@@ -35,11 +35,39 @@ class SubscriberController {
     }
 
     def edit = {
-
+        def subscriber = subscriberService.getSubscriber(params.id)
+        if (!subscriber) {
+            response.sendError 404
+            return
+        }
+        [subscriber: subscriber]
     }
 
     def update = {
+        def model = [:]
+        final Subscriber subscriber = subscriberService.getSubscriber(params.id)
+        if (subscriber) {
+            subscriber.firstName = params.firstName
+            subscriber.lastName = params.lastName
+            subscriber.email = params.email
+            subscriber.enabled = params.boolean('enabled')
+            subscriber.gender = Gender.load(params.int('gender'))
+            subscriber.language = Language.load(params.int('language'))
+            subscriber.timezone = Timezone.load(params.int('timezone'))
 
+            if (subscriberService.saveSubscriber(subscriber)) {
+                model << [success: true]
+            }
+            else {
+                MessageUtil.addErrors(request, model, subscriber.errors);
+            }
+        }
+
+        if (!model.success) {
+            model << [error: true]
+        }
+
+        render(model as JSON)
     }
 
     def create = {
@@ -51,6 +79,7 @@ class SubscriberController {
         subscriber.firstName = params.firstName
         subscriber.lastName = params.lastName
         subscriber.email = params.email
+        subscriber.enabled = params.boolean('enabled')
         subscriber.gender = Gender.load(params.int('gender'))
         subscriber.language = Language.load(params.int('language'))
         subscriber.timezone = Timezone.load(params.int('timezone'))

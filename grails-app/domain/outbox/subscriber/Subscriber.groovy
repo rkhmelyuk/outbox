@@ -101,7 +101,7 @@ class Subscriber {
      *
      * @param subscriber the subscriber, that should have this email.
      * @param email the new email for subscriber.
-     * @return {@code true} if email is duplicate, otherwise true.
+     * @return {@code true} if email is duplicate, otherwise false.
      */
     static boolean duplicateEmail(Subscriber subscriber, String email) {
         def found = Subscriber.findByEmailAndMember(email, subscriber.member)
