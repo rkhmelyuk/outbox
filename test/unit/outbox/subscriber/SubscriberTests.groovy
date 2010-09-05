@@ -4,6 +4,7 @@ import grails.test.*
 import outbox.dictionary.Gender
 import outbox.dictionary.Language
 import outbox.dictionary.Timezone
+import outbox.member.Member
 
 class SubscriberTests extends GrailsUnitTestCase {
 
@@ -42,5 +43,22 @@ class SubscriberTests extends GrailsUnitTestCase {
 
         subscriber.firstName = 'Test'
         assertEquals 'Test', subscriber.fullName
+    }
+
+    void testDuplicateEmail_False() {
+        Subscriber subscriber = new Subscriber(id: '000000', email: 'test@mailsight.com', member: new Member(id: 1))
+        mockDomain(Subscriber, [subscriber])
+
+        assertFalse Subscriber.duplicateEmail(subscriber, subscriber.email)
+    }
+
+    void testDuplicateEmail_True() {
+        Member member = new Member(id: 1)
+        Subscriber subscriber1 = new Subscriber(id: '0000000', email: 'test@mailsight.com', member: member)
+        Subscriber subscriber2 = new Subscriber(id: '1111111', email: 'test@mailsight.com', member: member)
+
+        mockDomain(Subscriber, [subscriber1])
+
+        assertTrue Subscriber.duplicateEmail(subscriber2, subscriber2.email)
     }
 }
