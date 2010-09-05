@@ -2,7 +2,6 @@ package outbox.subscriber
 
 import grails.plugins.springsecurity.Secured
 import grails.plugins.springsecurity.SpringSecurityService
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 /**
  * @author Ruslan Khmelyuk
@@ -16,8 +15,7 @@ class SubscriberController {
     SpringSecurityService springSecurityService
 
     def show = {
-        def id = params.long('id')
-        Subscriber subscriber = subscriberService.getSubscriber(id)
+        Subscriber subscriber = subscriberService.getSubscriber(params.id)
         if (!subscriber) {
             response.sendError 404
             return

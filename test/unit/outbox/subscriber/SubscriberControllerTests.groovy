@@ -1,8 +1,8 @@
 package outbox.subscriber
 
-import grails.test.*
-import outbox.member.Member
 import grails.plugins.springsecurity.SpringSecurityService
+import grails.test.ControllerUnitTestCase
+import outbox.member.Member
 import outbox.security.OutboxUser
 
 /**
