@@ -36,25 +36,39 @@ class SubscriberServiceTests extends GroovyTestCase {
         Subscriber subscriber = createTestSubscriber() 
         assertTrue 'Subscriber is not added.', subscriberService.addSubscriber(subscriber)
         assertNotNull 'Subscriber id is not generated.', subscriber.id
+        assertEquals subscriber, subscriberService.getSubscriber(subscriber.id)
     }
 
     void testSaveSubscriber() {
         Subscriber subscriber = createTestSubscriber()
         assertTrue 'Subscriber is not added.', subscriberService.addSubscriber(subscriber)
         assertNotNull 'Subscriber id is not generated.', subscriber.id
+
+        subscriber.firstName = 'First'
+        subscriber.lastName = 'Last'
+        subscriber.email = 'email@mail.com'
+
+        assertTrue 'Subscriber is not changed.', subscriberService.saveSubscriber(subscriber)
+
+        Subscriber found = subscriberService.getSubscriber(subscriber.id)
+        assertNotNull 'Subscriber is not found.', found
+        assertEquals subscriber, found
     }
 
     void testGetSubscriber() {
         Subscriber subscriber = createTestSubscriber()
 
         assertTrue 'Subscriber is not added.', subscriberService.addSubscriber(subscriber)
-        assertNotNull 'Subscriber is not found.', subscriberService.getSubscriber(subscriber.id)
+        
+        Subscriber found = subscriberService.getSubscriber(subscriber.id)
+        assertNotNull 'Subscriber is not found.', found
+        assertEquals subscriber, found
     }
 
     void testEnableSubscriber() {
         Subscriber subscriber = createTestSubscriber()
         subscriber.enabled = false
-        
+
         assertTrue subscriberService.addSubscriber(subscriber)
         assertTrue subscriberService.enableSubscriber(subscriber)
 
@@ -108,6 +122,19 @@ class SubscriberServiceTests extends GroovyTestCase {
         catch (Exception e) {
             // that's ok
         }
+    }
+
+    void assertEquals(Subscriber subscriber, Subscriber found) {
+        assertEquals subscriber.id, found.id
+        assertEquals subscriber.firstName, found.firstName
+        assertEquals subscriber.lastName, found.lastName
+        assertEquals subscriber.email, found.email
+        assertEquals subscriber.createDate, found.createDate
+        assertEquals subscriber.enabled, found.enabled
+        assertEquals subscriber.gender, found.gender
+        assertEquals subscriber.timezone, found.timezone
+        assertEquals subscriber.language, found.language
+        assertEquals subscriber.member?.id, found.member?.id
     }
 
     Subscriber createTestSubscriber() {
