@@ -50,7 +50,7 @@ class SubscriberController {
             subscriber.firstName = params.firstName
             subscriber.lastName = params.lastName
             subscriber.email = params.email
-            subscriber.enabled = params.boolean('enabled')
+            subscriber.enabled = params.enabled ? true : false
             subscriber.gender = Gender.load(params.int('gender'))
             subscriber.language = Language.load(params.int('language'))
             subscriber.timezone = Timezone.load(params.int('timezone'))
@@ -79,7 +79,7 @@ class SubscriberController {
         subscriber.firstName = params.firstName
         subscriber.lastName = params.lastName
         subscriber.email = params.email
-        subscriber.enabled = params.boolean('enabled')
+        subscriber.enabled = params.enabled ? true : false
         subscriber.gender = Gender.load(params.int('gender'))
         subscriber.language = Language.load(params.int('language'))
         subscriber.timezone = Timezone.load(params.int('timezone'))

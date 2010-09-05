@@ -181,9 +181,45 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         mockDomain(Subscriber, [subscriber])
 
         Language.class.metaClass.static.load = { id -> return null}
-        Gender.class.metaClass.static.load = { id -> return null}
+        Gender.class.metaClass.static.load = { id -> return new Gender(id: 2)}
         Timezone.class.metaClass.static.load = { id -> return null}
         Member.class.metaClass.static.load = { id -> return member}
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
+        subscriberServiceControl.demand.saveSubscriber { subscr -> return true}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        controller.params.email = 'test2@mailsight.com'
+        controller.params.firstName = 'First'
+        controller.params.lastName = 'Last'
+        controller.params.enabled = 'true'
+        controller.params.gender = 2
+
+        controller.update()
+        assertNotNull mockResponse.contentAsString
+
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue 'Success is expected.', result.success
+        assertNull 'Error is unexpected.', result.error
+
+        assertEquals 'test2@mailsight.com', subscriber.email
+        assertEquals 'First', subscriber.firstName
+        assertEquals 'Last', subscriber.lastName
+        assertEquals 2, subscriber.gender.id
+        assertTrue subscriber.enabled
+    }
+
+    void testUpdate_Success2() {
+        def member = new Member(id: 1)
+        def subscriber = new Subscriber(email: 'test@mailsight.com', member: member, enabled: true)
+
+        mockDomain(Subscriber, [subscriber])
+
+        Language.class.metaClass.static.load = { id -> return null }
+        Gender.class.metaClass.static.load = { id -> return null }
+        Timezone.class.metaClass.static.load = { id -> return null }
+        Member.class.metaClass.static.load = { id -> return member }
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
@@ -198,6 +234,8 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
         assertTrue 'Success is expected.', result.success
         assertNull 'Error is unexpected.', result.error
+
+        assertFalse subscriber.enabled
     }
 
     void testUpdate_Fail() {
