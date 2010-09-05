@@ -1,12 +1,12 @@
 package outbox
 
+import java.text.MessageFormat
 import javax.servlet.http.HttpServletRequest
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.springframework.context.MessageSource
+import org.springframework.context.NoSuchMessageException
 import org.springframework.validation.FieldError
 import org.springframework.web.servlet.support.RequestContextUtils
-import org.springframework.context.NoSuchMessageException
-import java.text.MessageFormat
 
 /**
  * @author Ruslan Khmelyuk
@@ -15,7 +15,7 @@ import java.text.MessageFormat
 class MessageUtil {
 
     static void addErrors(HttpServletRequest req, Map model, def binding) {
-        def errors = [:]
+        def errors = model.errors ? model.errors : [:]
         binding.allErrors.each { FieldError error ->
             String message = null;
             for (String each : error.codes) {

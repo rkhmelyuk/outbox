@@ -19,5 +19,6 @@ Message = {
     'member.email.email.invalid': '<g:message code="member.email.email.invalid"/>',
     'member.language.nullable': '<g:message code="member.language.nullable"/>',
     'member.timezone.nullable': '<g:message code="member.timezone.nullable"/>',
-    'subscriber.email.blank': '<g:message code="subscriber.email.blank"/>'
+    'subscriber.email.blank': '<g:message code="subscriber.email.blank"/>',
+    'member.role.nullable': '<g:message code="member.role.nullable"/>'
 }

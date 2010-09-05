@@ -116,7 +116,8 @@ var App = {
                 language: { required: true },
                 timezone: { required: true },
                 password: { minlength: 3 },
-                passwordConfirmation: { equalTo: '#password' }
+                passwordConfirmation: { equalTo: '#password' },
+                role: { required: true }
             },
             messages: {
                 firstName: { required: Message['member.firstName.blank'] },
@@ -125,7 +126,8 @@ var App = {
                 language: { required: Message['member.language.nullable'] },
                 timezone: { required: Message['member.timezone.nullable'] },
                 password: { minlength: Message['password.minlength']},
-                passwordConfirmation: { equalTo: Message['wrong.password.confirmation'] }
+                passwordConfirmation: { equalTo: Message['wrong.password.confirmation'] },
+                role: { required: Message['member.role.nullable'] }
             }
         });
 
@@ -214,7 +216,7 @@ var App = {
     },
 
     subscriberCreate: function() {
-        $('#firstName').focus();
+        $('#namePrefix').focus();
         var validator = $('#subscriberForm').validate({
             rules: {
                 email: { required: true, email: true }

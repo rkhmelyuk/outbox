@@ -82,33 +82,36 @@ class MemberController {
      */
     def update = {
         def model = [:]
-        Member member = Member.get(params.long('id'))
-        if (member) {
-            member.firstName = params.firstName
-            member.lastName = params.lastName
-            member.email = params.email
-            member.language = Language.load(params.int('language'))
-            member.timezone = Timezone.load(params.int('timezone'))
+        if (params.role) {
+            Member member = Member.get(params.long('id'))
+            if (member) {
+                member.firstName = params.firstName
+                member.lastName = params.lastName
+                member.email = params.email
+                member.language = Language.load(params.int('language'))
+                member.timezone = Timezone.load(params.int('timezone'))
 
-            if (params.password || params.passwordConfirmation) {
-                if (params.password.equals(params.passwordConfirmation)) {
-                    member.password = springSecurityService.encodePassword(params.password)
+                if (params.password || params.passwordConfirmation) {
+                    if (params.password.equals(params.passwordConfirmation)) {
+                        member.password = springSecurityService.encodePassword(params.password)
+                    }
+                    else {
+                        member.errors.rejectValue('passwordConfirmation', 'wrong.password.confirmation')
+                    }
                 }
-                else {
-                    member.errors.rejectValue('passwordConfirmation', 'wrong.password.confirmation')
-                }
-            }
 
-            if (member.save()) {
-                def roleId = params.int('role')
-                if (roleId) {
+                if (member.save()) {
+                    def roleId = params.int('role')
                     MemberRole.change(member, Role.load(roleId), true)
+                    model << [success: true]
                 }
-                model << [success: true]
+                if (!model.success) {
+                    MessageUtil.addErrors(request, model, member.errors);
+                }
             }
-            if (!model.success) {
-                MessageUtil.addErrors(request, model, member.errors);
-            }
+        }
+        else {
+            model << [errors: ['role': message(code: 'member.role.nullable')]]
         }
 
         if (!model.success) {
@@ -132,38 +135,44 @@ class MemberController {
      */
     def save = {
         def model = [:]
-        Member member = new Member()
+        if (params.role) {
+            Member member = new Member()
 
-        member.username = params.username
-        member.firstName = params.firstName
-        member.lastName = params.lastName
-        member.email = params.email
-        member.language = Language.load(params.int('language'))
-        member.timezone = Timezone.load(params.int('timezone'))
-        member.enabled = true
-        member.accountExpired = false
-        member.accountLocked = false
-        member.passwordExpired = false
+            member.username = params.username
+            member.firstName = params.firstName
+            member.lastName = params.lastName
+            member.email = params.email
+            member.language = Language.load(params.int('language'))
+            member.timezone = Timezone.load(params.int('timezone'))
+            member.enabled = true
+            member.accountExpired = false
+            member.accountLocked = false
+            member.passwordExpired = false
 
-        def password = params.password
-        if (password && password.equals(params.passwordConfirmation)) {
-            member.password = springSecurityService.encodePassword(password)
-        }
-        else {
-            member.errors.rejectValue('passwordConfirmation', 'wrong.password.confirmation')
-        }
-
-        if (member.save()) {
-            MemberRole.create(member, Role.userRole(), false)
-            def roleId = params.int('role')
-            if (roleId) {
-                MemberRole.create(member, Role.load(roleId), true)
+            def password = params.password
+            if (password && password.equals(params.passwordConfirmation)) {
+                member.password = springSecurityService.encodePassword(password)
             }
-            model << [success: true]
+            else {
+                member.errors.rejectValue('passwordConfirmation', 'wrong.password.confirmation')
+            }
+
+            if (member.save()) {
+                MemberRole.create(member, Role.userRole(), false)
+                def roleId = params.int('role')
+                if (roleId) {
+                    MemberRole.create(member, Role.load(roleId), true)
+                }
+                model << [success: true]
+            }
+            else {
+                MessageUtil.addErrors(request, model, member.errors);
+            }
         }
         else {
-            MessageUtil.addErrors(request, model, member.errors);
+            model << [errors: ['role': message(code: 'member.role.nullable')]] 
         }
+        
         if (!model.success) {
             model << [error: true]
         }
