@@ -1,11 +1,15 @@
 package outbox.subscriber
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 import outbox.dictionary.Gender
 import outbox.dictionary.Language
+import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
 
+/**
+ * @author Ruslan Khmelyuk
+ */
 class SubscriberTests extends GrailsUnitTestCase {
 
     void testFields() {
@@ -17,6 +21,7 @@ class SubscriberTests extends GrailsUnitTestCase {
         subscriber.gender = new Gender(id: 1)
         subscriber.language = new Language(id: 2)
         subscriber.timezone = new Timezone(id: 3)
+        subscriber.namePrefix = new NamePrefix(id: 4)
 
         assertEquals 'Test', subscriber.firstName
         assertEquals 'User', subscriber.lastName
@@ -29,6 +34,7 @@ class SubscriberTests extends GrailsUnitTestCase {
         assertEquals 1, subscriber.gender.id
         assertEquals 2, subscriber.language.id
         assertEquals 3, subscriber.timezone.id
+        assertEquals 4, subscriber.namePrefix.id
     }
 
     void testFullName() {
@@ -45,14 +51,14 @@ class SubscriberTests extends GrailsUnitTestCase {
         assertEquals 'Test', subscriber.fullName
     }
 
-    void testDuplicateEmail_False() {
+    void testDuplicateEmail() {
         Subscriber subscriber = new Subscriber(id: '000000', email: 'test@mailsight.com', member: new Member(id: 1))
         mockDomain(Subscriber, [subscriber])
 
         assertFalse Subscriber.duplicateEmail(subscriber, subscriber.email)
     }
 
-    void testDuplicateEmail_True() {
+    void testNotDuplicateEmail() {
         Member member = new Member(id: 1)
         Subscriber subscriber1 = new Subscriber(id: '0000000', email: 'test@mailsight.com', member: member)
         Subscriber subscriber2 = new Subscriber(id: '1111111', email: 'test@mailsight.com', member: member)

@@ -4,6 +4,7 @@ import org.codehaus.groovy.grails.plugins.codecs.SHA1Codec
 import outbox.AppConstant
 import outbox.dictionary.Gender
 import outbox.dictionary.Language
+import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
 
@@ -22,6 +23,7 @@ class Subscriber {
 
     boolean enabled
 
+    NamePrefix namePrefix
     Gender gender
     Language language
     Timezone timezone
@@ -44,6 +46,7 @@ class Subscriber {
             dateCreated column: 'CreateDate'
             member column: 'MemberId', lazy: true
             enabled column: 'Enabled'
+            namePrefix column: 'NamePrefixId'
         }
         version false
         cache true
@@ -63,6 +66,7 @@ class Subscriber {
         timezone nullable: true
         language nullable: true
         dateCreated nullable: true
+        namePrefix nullable: true
     }
 
     static transients = ['fullName']

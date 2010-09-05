@@ -5,6 +5,7 @@ import grails.plugins.springsecurity.SpringSecurityService
 import grails.test.ControllerUnitTestCase
 import outbox.dictionary.Gender
 import outbox.dictionary.Language
+import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
 import outbox.security.OutboxUser
@@ -85,13 +86,15 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
     void testAdd_Success() {
         def member = new Member(id: 1)
         
-        Language.class.metaClass.static.load = { id -> return null}
-        Gender.class.metaClass.static.load = { id -> return null}
-        Timezone.class.metaClass.static.load = { id -> return null}
+        Gender.class.metaClass.static.load = { id -> return new Gender(id: id) }
+        Language.class.metaClass.static.load = { id -> return new Language(id: id) }
+        Timezone.class.metaClass.static.load = { id -> return new Timezone(id: id) }
+        NamePrefix.class.metaClass.static.load = { id -> return new NamePrefix(id: id) }
         Member.class.metaClass.static.load = { id -> return member}
 
         def subscriberServiceControl = mockFor(SubscriberService)
-        subscriberServiceControl.demand.saveSubscriber { subscriber -> return true}
+        def Subscriber subscriber = null
+        subscriberServiceControl.demand.saveSubscriber { subscr -> subscriber = subscr; return true}
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -103,6 +106,10 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.params.firstName = 'Test'
         controller.params.lastName = 'Subscriber'
         controller.params.email = 'test@mailsight.com'
+        controller.params.gender = '2'
+        controller.params.timezone = '3'
+        controller.params.language = '4'
+        controller.params.namePrefix = '5'
 
         controller.add()
         assertNotNull mockResponse.contentAsString
@@ -110,6 +117,15 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
         assertTrue 'Success is expected.', result.success
         assertNull 'Error is unexpected.', result.error
+
+        assertNotNull subscriber
+        assertEquals 'Test', subscriber.firstName
+        assertEquals 'Subscriber', subscriber.lastName
+        assertEquals 'test@mailsight.com', subscriber.email
+        assertEquals 2, subscriber.gender.id
+        assertEquals 3, subscriber.timezone.id
+        assertEquals 4, subscriber.language.id
+        assertEquals 5, subscriber.namePrefix.id
     }
 
     void testAdd_Fail() {
@@ -117,10 +133,11 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         mockDomain(Subscriber)
 
-        Language.class.metaClass.static.load = { id -> return null}
-        Gender.class.metaClass.static.load = { id -> return null}
-        Timezone.class.metaClass.static.load = { id -> return null}
-        Member.class.metaClass.static.load = { id -> return member}
+        Language.class.metaClass.static.load = { id -> return null }
+        Gender.class.metaClass.static.load = { id -> return null }
+        Timezone.class.metaClass.static.load = { id -> return null }
+        NamePrefix.class.metaClass.static.load = { id -> return null }
+        Member.class.metaClass.static.load = { id -> return member }
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.saveSubscriber { subscriber -> return false}
@@ -180,9 +197,10 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         mockDomain(Subscriber, [subscriber])
 
-        Language.class.metaClass.static.load = { id -> return null}
-        Gender.class.metaClass.static.load = { id -> return new Gender(id: 2)}
-        Timezone.class.metaClass.static.load = { id -> return null}
+        Gender.class.metaClass.static.load = { id -> return new Gender(id: id) }
+        Language.class.metaClass.static.load = { id -> return new Language(id: id) }
+        Timezone.class.metaClass.static.load = { id -> return new Timezone(id: id) }
+        NamePrefix.class.metaClass.static.load = { id -> return new NamePrefix(id: id) }
         Member.class.metaClass.static.load = { id -> return member}
 
         def subscriberServiceControl = mockFor(SubscriberService)
@@ -193,8 +211,10 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.params.email = 'test2@mailsight.com'
         controller.params.firstName = 'First'
         controller.params.lastName = 'Last'
-        controller.params.enabled = 'true'
-        controller.params.gender = 2
+        controller.params.gender = '2'
+        controller.params.timezone = '3'
+        controller.params.language = '4'
+        controller.params.namePrefix = '5'
 
         controller.update()
         assertNotNull mockResponse.contentAsString
@@ -207,10 +227,42 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertEquals 'First', subscriber.firstName
         assertEquals 'Last', subscriber.lastName
         assertEquals 2, subscriber.gender.id
+        assertEquals 3, subscriber.timezone.id
+        assertEquals 4, subscriber.language.id
+        assertEquals 5, subscriber.namePrefix.id
+        assertEquals member.id, subscriber.member.id
+    }
+
+    void testUpdate_EnabledOn() {
+        def member = new Member(id: 1)
+        def subscriber = new Subscriber(email: 'test@mailsight.com', member: member)
+
+        mockDomain(Subscriber, [subscriber])
+
+        Language.class.metaClass.static.load = { id -> return null}
+        Gender.class.metaClass.static.load = { id -> return new Gender(id: 2)}
+        Timezone.class.metaClass.static.load = { id -> return null}
+        NamePrefix.class.metaClass.static.load = { id -> return null }
+        Member.class.metaClass.static.load = { id -> return member}
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
+        subscriberServiceControl.demand.saveSubscriber { subscr -> return true}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        controller.params.email = 'test@mailsight.com'
+        controller.params.enabled = 'true'
+
+        controller.update()
+        assertNotNull mockResponse.contentAsString
+
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue 'Success is expected.', result.success
+        assertNull 'Error is unexpected.', result.error
         assertTrue subscriber.enabled
     }
 
-    void testUpdate_Success2() {
+    void testUpdate_EnabledOff() {
         def member = new Member(id: 1)
         def subscriber = new Subscriber(email: 'test@mailsight.com', member: member, enabled: true)
 
@@ -219,6 +271,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         Language.class.metaClass.static.load = { id -> return null }
         Gender.class.metaClass.static.load = { id -> return null }
         Timezone.class.metaClass.static.load = { id -> return null }
+        NamePrefix.class.metaClass.static.load = { id -> return null }
         Member.class.metaClass.static.load = { id -> return member }
 
         def subscriberServiceControl = mockFor(SubscriberService)
@@ -247,6 +300,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         Language.class.metaClass.static.load = { id -> return null}
         Gender.class.metaClass.static.load = { id -> return null}
         Timezone.class.metaClass.static.load = { id -> return null}
+        NamePrefix.class.metaClass.static.load = { id -> return null }
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
@@ -272,6 +326,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         Language.class.metaClass.static.load = { id -> return null}
         Gender.class.metaClass.static.load = { id -> return null}
         Timezone.class.metaClass.static.load = { id -> return null}
+        NamePrefix.class.metaClass.static.load = { id -> return null }
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return null}

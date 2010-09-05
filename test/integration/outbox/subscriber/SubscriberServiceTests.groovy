@@ -130,13 +130,7 @@ class SubscriberServiceTests extends GroovyTestCase {
         Subscriber subscriber2 = createTestSubscriber()
 
         assertTrue subscriberService.saveSubscriber(subscriber1)
-        try {
-            subscriberService.addSubscriber(subscriber2)
-            fail 'Added subscriber with duplicated id - that\'s wrong'
-        }
-        catch (Exception e) {
-            // that's ok
-        }
+        assertFalse subscriberService.saveSubscriber(subscriber2)
     }
 
     void assertEquals(Subscriber subscriber, Subscriber found) {
@@ -150,6 +144,7 @@ class SubscriberServiceTests extends GroovyTestCase {
         assertEquals subscriber.timezone, found.timezone
         assertEquals subscriber.language, found.language
         assertEquals subscriber.member?.id, found.member?.id
+        assertEquals subscriber.namePrefix?.id, found.namePrefix?.id
     }
 
     Subscriber createTestSubscriber() {
@@ -160,6 +155,7 @@ class SubscriberServiceTests extends GroovyTestCase {
         subscriber.gender = null
         subscriber.timezone = null
         subscriber.language = null
+        subscriber.namePrefix = null
         subscriber.enabled = true
         subscriber.member = member
         return subscriber

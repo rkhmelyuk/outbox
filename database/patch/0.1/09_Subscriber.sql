@@ -3,6 +3,7 @@ create table Subscriber
 (
     SubscriberId char(40) not null,
 
+    NamePrefixId smallint null,
     FirstName varchar(100) null,
     LastName varchar(100) null,
     Email varchar(512) not null,
@@ -25,7 +26,10 @@ create table Subscriber
         references Language(LanguageId),
     constraint FK_Subscriber_2_Timezone
         foreign key(TimezoneId)
-        references Timezone(TimezoneId)
+        references Timezone(TimezoneId),
+    constraint FK_Subscriber_2_NamePrefix
+        foreign key(NamePrefixId)
+        references NamePrefix(NamePrefixId)
 );
 
 create index IX_Subscriber_Email on Subscriber(Email);
