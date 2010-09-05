@@ -12,6 +12,9 @@ class DashboardController {
 
     def springSecurityService
 
+    /**
+     * Application Home page.
+     */
     def index = {
         
     }
