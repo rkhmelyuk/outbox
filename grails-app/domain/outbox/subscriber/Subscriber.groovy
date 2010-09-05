@@ -95,6 +95,14 @@ class Subscriber {
         id = SHA1Codec.encode(string.bytes)
     }
 
+    /**
+     * Check whether email is duplicate. We use member information from subscriber parameter
+     * and check email specified by second parameter.
+     *
+     * @param subscriber the subscriber, that should have this email.
+     * @param email the new email for subscriber.
+     * @return {@code true} if email is duplicate, otherwise true.
+     */
     static boolean duplicateEmail(Subscriber subscriber, String email) {
         def found = Subscriber.findByEmailAndMember(email, subscriber.member)
         return (found && !found.id.equals(subscriber.id))
