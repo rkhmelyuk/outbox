@@ -1,11 +1,11 @@
 package outbox.subscriber
 
 import org.codehaus.groovy.grails.plugins.codecs.SHA1Codec
+import outbox.AppConstant
 import outbox.dictionary.Gender
 import outbox.dictionary.Language
 import outbox.dictionary.Timezone
 import outbox.member.Member
-import outbox.AppConstant
 
 /**
  * The subscriber for newsletter or used as recipient for emails.
@@ -29,7 +29,7 @@ class Subscriber {
     Member member
 
     // TODO - move to the SubscriberDetails entity
-    Date createDate
+    Date dateCreated
 
     static mapping = {
         table 'Subscriber'
@@ -41,7 +41,7 @@ class Subscriber {
             gender column: 'GenderId'
             language column: 'LanguageId'
             timezone column: 'TimezoneId'
-            createDate column: 'CreateDate'
+            dateCreated column: 'CreateDate'
             member column: 'MemberId', lazy: true
             enabled column: 'Enabled'
         }
@@ -53,12 +53,16 @@ class Subscriber {
         id maxSize: 40
         firstName nullable: true, blank: true, maxSize: 100
         lastName nullable: true, blank: true, maxSize: 100
-        email nullable: false, blank: false, maxSize: 512, email: true
+        email nullable: false, blank: false, maxSize: 512, email: true, validator : { val, obj ->
+            if (Subscriber.duplicateEmail(obj, val)) {
+                return 'subscriber.email.unique'
+            }
+        }
         member nullable: false
         gender nullable: true
         timezone nullable: true
         language nullable: true
-        createDate nullable: true
+        dateCreated nullable: true
     }
 
     static transients = ['fullName']
@@ -89,5 +93,10 @@ class Subscriber {
     def generateId() {
         String string = email + '-' + member?.id + '-' + AppConstant.SUBSCRIBER_ID_SALT
         id = SHA1Codec.encode(string.bytes)
+    }
+
+    static boolean duplicateEmail(Subscriber subscriber, String email) {
+        def found = Subscriber.findByEmailAndMember(email, subscriber.member)
+        return (found && !found.id.equals(subscriber.id))
     }
 }

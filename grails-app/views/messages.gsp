@@ -5,6 +5,7 @@ Message = {
     'profile.changed.successfully': '<g:message code="profile.changed.successfully"/>',
     'member.changed.successfully': '<g:message code="member.changed.successfully"/>',
     'password.changed.successfully': '<g:message code="password.changed.successfully"/>',
+    'subscriber.changed.successfully': '<g:message code="subscriber.changed.successfully"/>',
     'old.password.required': '<g:message code="old.password.required"/>',
     'new.password.required': '<g:message code="new.password.required"/>',
     'password.required': '<g:message code="password.required"/>',
@@ -17,5 +18,6 @@ Message = {
     'member.email.blank': '<g:message code="member.email.blank"/>',
     'member.email.email.invalid': '<g:message code="member.email.email.invalid"/>',
     'member.language.nullable': '<g:message code="member.language.nullable"/>',
-    'member.timezone.nullable': '<g:message code="member.timezone.nullable"/>'
+    'member.timezone.nullable': '<g:message code="member.timezone.nullable"/>',
+    'subscriber.email.blank': '<g:message code="subscriber.email.blank"/>'
 }

@@ -1,16 +1,9 @@
 package outbox.member
 
-import grails.test.*
+import grails.test.ControllerUnitTestCase
 
 class MemberControllerTests extends ControllerUnitTestCase {
-    protected void setUp() {
-        super.setUp()
-    }
-
-    protected void tearDown() {
-        super.tearDown()
-    }
-
+    
     void testSomething() {
 
     }

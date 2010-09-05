@@ -1,7 +1,13 @@
 package outbox.subscriber
 
+import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import grails.plugins.springsecurity.SpringSecurityService
+import outbox.MessageUtil
+import outbox.dictionary.Gender
+import outbox.dictionary.Language
+import outbox.dictionary.Timezone
+import outbox.member.Member
 
 /**
  * @author Ruslan Khmelyuk
@@ -37,10 +43,29 @@ class SubscriberController {
     }
 
     def create = {
-
+        [subscriber: new Subscriber(enabled: true)]
     }
 
-    def save = {
-        
+    def add = {
+        final Subscriber subscriber = new Subscriber()
+        subscriber.firstName = params.firstName
+        subscriber.lastName = params.lastName
+        subscriber.email = params.email
+        subscriber.gender = Gender.load(params.int('gender'))
+        subscriber.language = Language.load(params.int('language'))
+        subscriber.timezone = Timezone.load(params.int('timezone'))
+        subscriber.member = Member.load(springSecurityService.getPrincipal().id)
+
+        def model = [:]
+        if (subscriberService.saveSubscriber(subscriber)) {
+            model << [success: true]
+        }
+
+        if (!model.success) {
+            model << [error: true]
+            MessageUtil.addErrors(request, model, subscriber.errors);
+        }
+
+        render(model as JSON)
     }
 }

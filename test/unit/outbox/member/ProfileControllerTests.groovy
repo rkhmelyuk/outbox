@@ -1,15 +1,11 @@
 package outbox.member
 
-import grails.test.*
+import grails.test.ControllerUnitTestCase
 
+/**
+ * @author Ruslan Khmelyuk
+ */
 class ProfileControllerTests extends ControllerUnitTestCase {
-    protected void setUp() {
-        super.setUp()
-    }
-
-    protected void tearDown() {
-        super.tearDown()
-    }
 
     void testEdit() {
 

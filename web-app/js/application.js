@@ -1,12 +1,13 @@
 var Message;
 var Config;
 
-App = {
+var App = {
     initialize: function() {
 
     },
 
     editProfile: function () {
+        $('#firstName').focus();
         var validator = $('#profileForm').validate({
             rules: {
                 firstName: { required: true },
@@ -53,6 +54,7 @@ App = {
     },
 
     newPassword: function() {
+        $('#oldPassword').focus();
         $('#newPassword').password_strength({container: '.password-strength'});
         var validator = $('#newPasswordForm').validate({
             rules: {
@@ -104,6 +106,7 @@ App = {
     },
 
     memberEdit: function() {
+        $('#firstName').focus();
         $('#password').password_strength({container: '.password-strength'});
         var validator = $('#memberForm').validate({
             rules: {
@@ -190,6 +193,44 @@ App = {
                         if (response && status == 'success') {
                             if (response.success) {
                                 document.location = Config['contextPath'] + "/member/list";
+                            }
+                            else {
+                                var errors = '';
+                                for (var i in response.errors) {
+                                    errors += response.errors[i] + '<br/>';
+                                }
+                                $('.status').show().html(errors);
+                            }
+                        }
+                    },
+                    complete: function(xhr, status) {
+                        if (status == 'error') {
+                            $('.status').show().text('Error happened.');
+                        }
+                    }
+                });
+            }
+        });
+    },
+
+    subscriberCreate: function() {
+        $('#firstName').focus();
+        var validator = $('#subscriberForm').validate({
+            rules: {
+                email: { required: true, email: true }
+            },
+            messages: {
+                email: { required: Message['subscriber.email.blank'], email: Message['subscriber.email.email.invalid'] }
+            }
+        });
+        $('#addSubscriber').click(function() {
+            if (validator.form()) {
+                $('#subscriberForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (response.success) {
+                                document.location = Config['contextPath'] + "/subscriber";
                             }
                             else {
                                 var errors = '';

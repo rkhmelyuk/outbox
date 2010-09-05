@@ -1,7 +1,11 @@
 package outbox.subscriber
 
+import grails.converters.JSON
 import grails.plugins.springsecurity.SpringSecurityService
 import grails.test.ControllerUnitTestCase
+import outbox.dictionary.Gender
+import outbox.dictionary.Language
+import outbox.dictionary.Timezone
 import outbox.member.Member
 import outbox.security.OutboxUser
 
@@ -32,7 +36,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertEquals subscriber, result.subscriber
     }
 
-    void testNotFound() {
+    void testShow_NotFound() {
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return null }
         controller.subscriberService = subscriberServiceControl.createMock()
@@ -45,7 +49,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertEquals 404, mockResponse.status
     }
 
-    void testDeniedSubscriber() {
+    void testShow_Denied() {
         OutboxUser principal = new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 2))
         Subscriber subscriber = new Subscriber(id: 'test123', member: new Member(id: 1))
 
@@ -64,5 +68,81 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         assertNull result
         assertEquals 403, mockResponse.status
+    }
+
+    void testCreate() {
+        def result = controller.create()
+
+        assertNotNull result
+        assertNotNull result.subscriber
+        assertNull result.subscriber.id
+        assertNull result.subscriber.gender
+        assertNull result.subscriber.language
+        assertNull result.subscriber.timezone
+        assertTrue 'Subscriber must be active', result.subscriber.enabled
+    }
+
+    void testAdd_Success() {
+        def member = new Member(id: 1)
+        
+        Language.class.metaClass.static.load = { id -> return null}
+        Gender.class.metaClass.static.load = { id -> return null}
+        Timezone.class.metaClass.static.load = { id -> return null}
+        Member.class.metaClass.static.load = { id -> return member}
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.saveSubscriber { subscriber -> return true}
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+
+        controller.subscriberService = subscriberServiceControl.createMock()
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.firstName = 'Test'
+        controller.params.lastName = 'Subscriber'
+        controller.params.email = 'test@mailsight.com'
+
+        controller.add()
+        assertNotNull mockResponse.contentAsString
+
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue 'Success is expected.', result.success
+        assertNull 'Error is unexpected.', result.error
+    }
+
+    void testAdd_Fail() {
+        def member = new Member(id: 1)
+
+        mockDomain(Subscriber)
+
+        Language.class.metaClass.static.load = { id -> return null}
+        Gender.class.metaClass.static.load = { id -> return null}
+        Timezone.class.metaClass.static.load = { id -> return null}
+        Member.class.metaClass.static.load = { id -> return member}
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.saveSubscriber { subscriber -> return false}
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+
+        controller.subscriberService = subscriberServiceControl.createMock()
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.firstName = 'Test'
+        controller.params.lastName = 'Subscriber'
+        controller.params.email = ''
+
+        controller.add()
+        assertNotNull mockResponse.contentAsString
+
+        def result = JSON.parse(mockResponse.contentAsString)
+        
+        assertTrue 'Error is expected.', result.error
+        assertNull 'Success is unexpected.', result.success
+        assertNotNull result.errors
     }
 }

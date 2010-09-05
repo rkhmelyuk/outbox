@@ -36,17 +36,7 @@ class SubscriberService {
     }
 
     /**
-     * Add new subscriber to database.
-     * @param subscriber the new subscriber.
-     * @return true if added successfully, otherwise returns false.
-     */
-    @Transactional(readOnly = false)
-    boolean addSubscriber(Subscriber subscriber) {
-        return saveOrRollback(subscriber)
-    }
-
-    /**
-     * Save subscriber changes to database.
+     * Save subscriber to database.
      * @param subscriber the subscriber to be saved.
      * @return true if saved successfully, otherwise returns false.
      */

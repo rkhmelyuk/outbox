@@ -34,29 +34,29 @@ class SubscriberServiceTests extends GroovyTestCase {
 
     void testAddSubscriber() {
         Subscriber subscriber = createTestSubscriber() 
-        assertTrue 'Subscriber is not added.', subscriberService.addSubscriber(subscriber)
+        assertTrue 'Subscriber is not added.', subscriberService.saveSubscriber(subscriber)
         assertNotNull 'Subscriber id is not generated.', subscriber.id
         assertEquals subscriber, subscriberService.getSubscriber(subscriber.id)
     }
 
     void testWrongEmailSubscriber() {
         Subscriber subscriber = new Subscriber(email: 'test@mailsight', member: member)
-        assertFalse subscriberService.addSubscriber(subscriber)
+        assertFalse subscriberService.saveSubscriber(subscriber)
     }
 
     void testEmailRequiredOnlySubscriber() {
         Subscriber subscriber = new Subscriber(email: null, member: member)
-        assertFalse subscriberService.addSubscriber(subscriber)
+        assertFalse subscriberService.saveSubscriber(subscriber)
     }
 
     void testRequiredEmailSubscriber() {
         Subscriber subscriber = new Subscriber(email: 'test@mailsight.com', member: member)
-        assertTrue subscriberService.addSubscriber(subscriber)
+        assertTrue subscriberService.saveSubscriber(subscriber)
     }
 
     void testSaveSubscriber() {
         Subscriber subscriber = createTestSubscriber()
-        assertTrue 'Subscriber is not added.', subscriberService.addSubscriber(subscriber)
+        assertTrue 'Subscriber is not added.', subscriberService.saveSubscriber(subscriber)
         assertNotNull 'Subscriber id is not generated.', subscriber.id
 
         subscriber.firstName = 'First'
@@ -73,7 +73,7 @@ class SubscriberServiceTests extends GroovyTestCase {
     void testGetSubscriber() {
         Subscriber subscriber = createTestSubscriber()
 
-        assertTrue 'Subscriber is not added.', subscriberService.addSubscriber(subscriber)
+        assertTrue 'Subscriber is not added.', subscriberService.saveSubscriber(subscriber)
         
         Subscriber found = subscriberService.getSubscriber(subscriber.id)
         assertNotNull 'Subscriber is not found.', found
@@ -84,7 +84,7 @@ class SubscriberServiceTests extends GroovyTestCase {
         Subscriber subscriber = createTestSubscriber()
         subscriber.enabled = false
 
-        assertTrue subscriberService.addSubscriber(subscriber)
+        assertTrue subscriberService.saveSubscriber(subscriber)
         assertTrue subscriberService.enableSubscriber(subscriber)
 
         Subscriber found = subscriberService.getSubscriber(subscriber.id)
@@ -95,7 +95,7 @@ class SubscriberServiceTests extends GroovyTestCase {
     void testDisableSubscriber() {
         Subscriber subscriber = createTestSubscriber()
 
-        assertTrue subscriberService.addSubscriber(subscriber)
+        assertTrue subscriberService.saveSubscriber(subscriber)
         assertTrue subscriberService.disableSubscriber(subscriber)
 
         Subscriber found = subscriberService.getSubscriber(subscriber.id)
@@ -106,7 +106,7 @@ class SubscriberServiceTests extends GroovyTestCase {
     void testEnableEnabledSubscriber() {
         Subscriber subscriber = createTestSubscriber()
 
-        assertTrue subscriberService.addSubscriber(subscriber)
+        assertTrue subscriberService.saveSubscriber(subscriber)
         assertTrue subscriberService.enableSubscriber(subscriber)
 
         Subscriber found = subscriberService.getSubscriber(subscriber.id)
@@ -117,7 +117,7 @@ class SubscriberServiceTests extends GroovyTestCase {
     void testDisableDisabledSubscriber() {
         Subscriber subscriber = createTestSubscriber()
         subscriber.enabled = false
-        assertTrue subscriberService.addSubscriber(subscriber)
+        assertTrue subscriberService.saveSubscriber(subscriber)
         assertTrue subscriberService.disableSubscriber(subscriber)
 
         Subscriber found = subscriberService.getSubscriber(subscriber.id)
@@ -129,7 +129,7 @@ class SubscriberServiceTests extends GroovyTestCase {
         Subscriber subscriber1 = createTestSubscriber()
         Subscriber subscriber2 = createTestSubscriber()
 
-        assertTrue subscriberService.addSubscriber(subscriber1)
+        assertTrue subscriberService.saveSubscriber(subscriber1)
         try {
             subscriberService.addSubscriber(subscriber2)
             fail 'Added subscriber with duplicated id - that\'s wrong'
@@ -144,7 +144,7 @@ class SubscriberServiceTests extends GroovyTestCase {
         assertEquals subscriber.firstName, found.firstName
         assertEquals subscriber.lastName, found.lastName
         assertEquals subscriber.email, found.email
-        assertEquals subscriber.createDate, found.createDate
+        assertEquals subscriber.dateCreated, found.dateCreated
         assertEquals subscriber.enabled, found.enabled
         assertEquals subscriber.gender, found.gender
         assertEquals subscriber.timezone, found.timezone
@@ -162,7 +162,6 @@ class SubscriberServiceTests extends GroovyTestCase {
         subscriber.language = null
         subscriber.enabled = true
         subscriber.member = member
-        subscriber.createDate = new Date()
         return subscriber
     }
 }
