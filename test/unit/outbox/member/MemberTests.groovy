@@ -8,18 +8,18 @@ import grails.test.GrailsUnitTestCase
  */
 class MemberTests extends GrailsUnitTestCase {
 
-    void testValidateBlankFields() {
-        mockForConstraintsTests(Member)
+    void testFields() {
+
 
         def member = new Member()
-        member.firstName = ''
-        member.lastName = ''
-        member.username = ''
+        member.firstName = 'First'
+        member.lastName = 'Last'
+        member.username = 'username'
+        member.password = '123'
 
-        assertFalse member.validate()
-        
-        assertEquals 'blank', member.errors['firstName']
-        assertEquals 'blank', member.errors['lastName']
-        assertEquals 'blank', member.errors['username']
+        assertEquals 'First', member.firstName
+        assertEquals 'Last', member.lastName
+        assertEquals 'username', member.username
+        assertEquals '123', member.password
     }
 }
