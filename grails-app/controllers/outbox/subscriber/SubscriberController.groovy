@@ -27,7 +27,7 @@ class SubscriberController {
             response.sendError 404
             return
         }
-        else if (subscriber.member?.id != springSecurityService.getPrincipal().id) {
+        else if (subscriber.member?.id != springSecurityService.principal.id) {
             response.sendError 403
             return
         }
@@ -41,7 +41,11 @@ class SubscriberController {
             response.sendError 404
             return
         }
-        [subscriber: subscriber]
+
+        def memberId = springSecurityService.principal.id
+        def subscriberTypes = subscriberService.getSubscriberTypes(Member.load(memberId))
+
+        [subscriber: subscriber, subscriberTypes: subscriberTypes]
     }
 
     def update = {
@@ -73,7 +77,10 @@ class SubscriberController {
     }
 
     def create = {
-        [subscriber: new Subscriber(enabled: true)]
+        def memberId = springSecurityService.principal.id
+        def subscriberTypes = subscriberService.getSubscriberTypes(Member.load(memberId))
+
+        [subscriber: new Subscriber(enabled: true), subscriberTypes: subscriberTypes]
     }
 
     def add = {
@@ -103,7 +110,7 @@ class SubscriberController {
 
     def types = {
         def id = springSecurityService.principal.id
-        def types = subscriberService.getMemberSubscriberTypes(Member.load(id))
+        def types = subscriberService.getSubscriberTypes(Member.load(id))
         
         [subscriberTypes: types]
     }

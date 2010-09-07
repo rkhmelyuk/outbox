@@ -72,6 +72,20 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
     }
 
     void testCreate() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> return member}
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        def Subscriber subscriber = null
+        subscriberServiceControl.demand.getSubscriberTypes { m -> [new SubscriberType(id: 1, member: m)]}
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+
+        controller.subscriberService = subscriberServiceControl.createMock()
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
         def result = controller.create()
 
         assertNotNull result
@@ -81,6 +95,10 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertNull result.subscriber.language
         assertNull result.subscriber.timezone
         assertTrue 'Subscriber must be active', result.subscriber.enabled
+        assertNotNull result.subscriberTypes
+        assertEquals 1, result.subscriberTypes.size()
+        assertEquals 1, result.subscriberTypes[0].id
+        assertEquals member, result.subscriberTypes[0].member
     }
 
     void testAdd_Success() {
@@ -95,6 +113,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         def subscriberServiceControl = mockFor(SubscriberService)
         def Subscriber subscriber = null
         subscriberServiceControl.demand.saveSubscriber { subscr -> subscriber = subscr; return true}
+        subscriberServiceControl.demand.getSubscriberTypes { m -> [new SubscriberType(id: 1, member: m)]}
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -164,11 +183,20 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
     }
 
     void testEdit() {
-        Subscriber subscriber = new Subscriber(id: '0000000')
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> return member }
+        
+        def subscriber = new Subscriber(id: '0000000', member: member)
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
+        subscriberServiceControl.demand.getSubscriberTypes { m -> [new SubscriberType(id: 1, member: m)]}
         controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
 
         controller.params.id = '0000000'
 
@@ -176,6 +204,10 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         assertNotNull result
         assertEquals 'Subscriber is not found.', subscriber, result.subscriber
+        assertNotNull result.subscriberTypes
+        assertEquals 1, result.subscriberTypes.size()
+        assertEquals 1, result.subscriberTypes[0].id
+        assertEquals member, result.subscriberTypes[0].member
     }
 
     void testEditAbsent() {
@@ -355,7 +387,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
                 new SubscriberType(id: 2, name: 'Test2')]
 
         def subscriberServiceControl = mockFor(SubscriberService)
-        subscriberServiceControl.demand.getMemberSubscriberTypes { m -> m.id == member.id ? subscriberTypes : null }
+        subscriberServiceControl.demand.getSubscriberTypes { m -> m.id == member.id ? subscriberTypes : null }
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)

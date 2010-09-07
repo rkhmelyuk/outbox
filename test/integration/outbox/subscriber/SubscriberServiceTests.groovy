@@ -145,7 +145,7 @@ class SubscriberServiceTests extends GroovyTestCase {
             assertTrue 'Not added subscriber type.', subscriberService.addSubscriberType(it)
         }
 
-        def foundTypes = subscriberService.getMemberSubscriberTypes(member)
+        def foundTypes = subscriberService.getSubscriberTypes(member)
 
         assertNotNull foundTypes
         assertEquals 5, foundTypes.size()

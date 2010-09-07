@@ -73,7 +73,7 @@ class SubscriberService {
      * @param member member subscriber types.
      * @return the list with found subscriber types.
      */
-    List<SubscriberType> getMemberSubscriberTypes(Member member) {
+    List<SubscriberType> getSubscriberTypes(Member member) {
         SubscriberType.findAllByMember(member)
     }
 
