@@ -344,4 +344,31 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertNull result.errors
     }
 
+    void testTypes() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> return member }
+
+        mockDomain(SubscriberType)
+
+        def subscriberTypes = [
+                new SubscriberType(id: 1, name: 'Test1'),
+                new SubscriberType(id: 2, name: 'Test2')]
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getMemberSubscriberTypes { m -> m.id == member.id ? subscriberTypes : null }
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+                springSecurityServiceControl.demand.getPrincipal { ->
+                    return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def result = controller.types()
+
+        assertNotNull result
+        assertNotNull result.subscriberTypes
+        assertEquals 2, result.subscriberTypes.size()
+    }
+
 }

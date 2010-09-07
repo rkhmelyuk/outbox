@@ -6,9 +6,9 @@ import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
 import outbox.dictionary.Gender
 import outbox.dictionary.Language
+import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
-import outbox.dictionary.NamePrefix
 
 /**
  * @author Ruslan Khmelyuk
@@ -99,5 +99,12 @@ class SubscriberController {
         }
 
         render(model as JSON)
+    }
+
+    def types = {
+        def id = springSecurityService.principal.id
+        def types = subscriberService.getMemberSubscriberTypes(Member.load(id))
+        
+        [subscriberTypes: types]
     }
 }

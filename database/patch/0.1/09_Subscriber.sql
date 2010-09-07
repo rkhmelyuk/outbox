@@ -9,7 +9,7 @@ create table Subscriber
     Email varchar(512) not null,
     Enabled boolean not null,
 
-    MemberId integer not null,
+    MemberId bigint not null,
     GenderId smallint null,
     LanguageId smallint null,
     TimezoneId smallint null,

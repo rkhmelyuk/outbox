@@ -2,6 +2,7 @@ package outbox.subscriber
 
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.interceptor.TransactionAspectSupport
+import outbox.member.Member
 
 /**
  * This service used to manipulation with subscriber and it's details.
@@ -42,7 +43,7 @@ class SubscriberService {
      */
     @Transactional(readOnly = false)
     boolean saveSubscriber(Subscriber subscriber) {
-        return saveOrRollback(subscriber)
+        saveOrRollback subscriber
     }
 
     /**
@@ -53,7 +54,7 @@ class SubscriberService {
     @Transactional(readOnly = false)
     boolean enableSubscriber(Subscriber subscriber) {
         subscriber.enabled = true
-        return saveSubscriber(subscriber)
+        saveSubscriber subscriber
     }
 
     /**
@@ -64,7 +65,35 @@ class SubscriberService {
     @Transactional(readOnly = false)
     boolean disableSubscriber(Subscriber subscriber) {
         subscriber.enabled = false
-        return saveSubscriber(subscriber)
+        saveSubscriber subscriber
     }
 
+    /**
+     * Gets member subscriber types.
+     * @param member member subscriber types.
+     * @return the list with found subscriber types.
+     */
+    List<SubscriberType> getMemberSubscriberTypes(Member member) {
+        SubscriberType.findAllByMember(member)
+    }
+
+    /**
+     * Adds subscriber type.
+     *
+     * @param subscriberType subscriber type.
+     * @return true if added subscriber type.
+     */
+    boolean addSubscriberType(SubscriberType subscriberType) {
+        saveOrRollback subscriberType
+    }
+
+    /**
+     * Saves subscriber type.
+     *
+     * @param subscriberType subscriber type.
+     * @return true if saved subscriber type.
+     */
+    boolean saveSubscriberType(SubscriberType subscriberType) {
+        saveOrRollback subscriberType
+    }
 }

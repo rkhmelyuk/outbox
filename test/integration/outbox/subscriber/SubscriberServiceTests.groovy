@@ -133,6 +133,46 @@ class SubscriberServiceTests extends GroovyTestCase {
         assertFalse subscriberService.saveSubscriber(subscriber2)
     }
 
+    void testGetMemberSubscriberTypes() {
+        def types = [
+                new SubscriberType(name: 'Type1', member: member),
+                new SubscriberType(name: 'Type2', member: member),
+                new SubscriberType(name: 'Type3', member: member),
+                new SubscriberType(name: 'Type4', member: member),
+                new SubscriberType(name: 'Type5', member: member)]
+
+        types.each { it ->
+            assertTrue 'Not added subscriber type.', subscriberService.addSubscriberType(it)
+        }
+
+        def foundTypes = subscriberService.getMemberSubscriberTypes(member)
+
+        assertNotNull foundTypes
+        assertEquals 5, foundTypes.size()
+    }
+
+    void testAddSubscriberType() {
+        def subscriberType = new SubscriberType(name: 'Type', member: member)
+        subscriberService.addSubscriberType subscriberType
+        subscriberType = SubscriberType.get(subscriberType.id)
+
+        assertEquals 'Type', subscriberType.name
+        assertEquals member.id, subscriberType.member.id
+    }
+
+    void testSaveSubscriberType() {
+        def subscriberType = new SubscriberType(name: 'Type', member: member)
+        subscriberService.addSubscriberType subscriberType
+        subscriberType = SubscriberType.get(subscriberType.id)
+
+        subscriberType.name = 'Type2'
+        subscriberService.saveSubscriberType subscriberType
+        subscriberType = SubscriberType.get(subscriberType.id)
+
+        assertEquals 'Type2', subscriberType.name
+        assertEquals member.id, subscriberType.member.id
+    }
+
     void assertEquals(Subscriber subscriber, Subscriber found) {
         assertEquals subscriber.id, found.id
         assertEquals subscriber.firstName, found.firstName
