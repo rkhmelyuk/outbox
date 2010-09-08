@@ -21,6 +21,8 @@
                 <a href="javascript:void(0);" id="addSubscriberType"><g:message code="add"/></a>
             </g:form>
         </div>
+        <h3><g:message code="subscriber.types"/></h3>
+        <g:message code="subscriber.types.click.to.change.name"/>
         <div id="types">
             <g:if test="${subscriberTypes}">
                 <g:each var="subscriberType" in="${subscriberTypes}">
@@ -34,6 +36,10 @@
 
         <g:form name="deleteSubscriberTypeForm" controller="subscriber" action="deleteSubscriberType">
             <g:hiddenField name="id"/>
+        </g:form>
+        <g:form name="updateSubscriberTypeForm" controller="subscriber" action="updateSubscriberType">
+            <g:hiddenField name="id" id="updateSubscriberTypeId"/>
+            <g:hiddenField name="name" id="updateSubscriberTypeName"/>
         </g:form>
     </body>
 </html>

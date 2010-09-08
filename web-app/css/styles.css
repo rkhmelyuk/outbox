@@ -31,17 +31,21 @@ label {
 }
 
 #pageWrapper.subscriberTypes .addSubscriberType, .subscriberType #types {
-    width: 300px;
+    width: 400px;
 }
 
 #pageWrapper.subscriberTypes #types .type {
     height: 40px;
-    width: 300px
+    width: 400px
 }
 
 #pageWrapper.subscriberTypes #types .type .remove {
     float: right;
     width: 40px;
+}
+
+#pageWrapper.subscriberTypes #types .type .editType {
+    display: none
 }
 
 #pageWrapper.subscriberTypes .addSubscriberType label {

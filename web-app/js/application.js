@@ -293,10 +293,10 @@ var App = {
                             }
                             else {
                                 var prototype = $('#typePrototype').html();
-                                prototype = prototype.replace('{{id}}', response.subscriberType.id)
-                                prototype = prototype.replace('{{name}}', response.subscriberType.name)
+                                prototype = prototype.replace(/{{id}}/g, response.subscriberType.id);
+                                prototype = prototype.replace(/{{name}}/g, response.subscriberType.name);
                                 $('#name').val('');
-                                $('#types').append(prototype)
+                                $('#types').append(prototype);
                             }
                         }
                     }
@@ -304,7 +304,7 @@ var App = {
             }
         });
         $('.removeSubscriberType').live('click', function() {
-            var id = $(this).parent().parent().children('input[type=hidden]').val();
+            var id = $(this).parent().parent().children('input[name=id]').val();
             if (id && confirm(Message['subscriberType.remove.confirm'])) {
                 $('#id').val(id);
                 $('#deleteSubscriberTypeForm').ajaxSubmit({
@@ -321,6 +321,37 @@ var App = {
                     }
                 });
             }
+        });
+        $('.name').live('click', function() {
+            $(this).hide();
+            $(this).parent().children('.editType').show();
+        });
+        $('.cancelEditSubscriberType').live('click', function() {
+            var parent = $(this).parent();
+            parent.hide();
+            parent.parent().children('.name').show();
+        });
+        $('.updateSubscriberType').live('click', function() {
+            var parent = $(this).parent();
+            parent.hide();
+            parent.parent().children('.name').show();
+            var id = parent.parent().children('input[name=id]').val()
+            var name = parent.children('input[name=name]').val()
+            $('#updateSubscriberTypeId').val(id);
+            $('#updateSubscriberTypeName').val(name);
+            $('#updateSubscriberTypeForm').ajaxSubmit({
+                dataType: 'json',
+                success: function(response, status) {
+                    if (response && status == 'success') {
+                        if (!response.success) {
+                            $('.status').show().text(Message['subscriberType.delete.failed']);
+                        }
+                        else {
+                            parent.parent().children('.name').text(name);
+                        }
+                    }
+                }
+            });
         });
     }
 };
