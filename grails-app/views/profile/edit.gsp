@@ -12,7 +12,7 @@
     </head>
     <body>
         <div class="status" style="display: none;"> </div>
-        <g:form name="profileForm" controller="profile" action="saveProfile">
+        <g:form name="profileForm" controller="profile" action="saveProfile" onsubmit="return false;">
             <table>
                 <tr>
                     <td><g:message code="username"/></td>

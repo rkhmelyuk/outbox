@@ -3,7 +3,15 @@ var Config;
 
 var App = {
     initialize: function() {
-
+        $('.ajaxError').ajaxSend(function() {
+            $(this).hide().text('');
+        });
+        $('.ajaxError').ajaxSuccess(function() {
+            $(this).hide().text('');
+        });
+        $('.ajaxError').ajaxError(function() {
+            $(this).text('Server Error').show();
+        });
     },
 
     editProfile: function () {
@@ -42,11 +50,6 @@ var App = {
                                 $('.status').show().html(errors);
                             }
                         }
-                    },
-                    complete: function(xhr, status) {
-                        if (status == 'error') {
-                            $('.status').show().text('Error happened.');
-                        }
                     }
                 });
             }
@@ -84,11 +87,6 @@ var App = {
                                 }
                                 $('.status').show().html(errors);
                             }
-                        }
-                    },
-                    complete: function(xhr, status) {
-                        if (status == 'error') {
-                            $('.status').show().text('Error happened.');
                         }
                     }
                 });
@@ -148,11 +146,6 @@ var App = {
                                 $('.status').show().html(errors);
                             }
                         }
-                    },
-                    complete: function(xhr, status) {
-                        if (status == 'error') {
-                            $('.status').show().text('Error happened.');
-                        }
                     }
                 });
             }
@@ -204,11 +197,6 @@ var App = {
                                 $('.status').show().html(errors);
                             }
                         }
-                    },
-                    complete: function(xhr, status) {
-                        if (status == 'error') {
-                            $('.status').show().text('Error happened.');
-                        }
                     }
                 });
             }
@@ -241,11 +229,6 @@ var App = {
                                 }
                                 $('.status').show().html(errors);
                             }
-                        }
-                    },
-                    complete: function(xhr, status) {
-                        if (status == 'error') {
-                            $('.status').show().text('Error happened.');
                         }
                     }
                 });
@@ -280,10 +263,60 @@ var App = {
                                 $('.status').show().html(errors);
                             }
                         }
-                    },
-                    complete: function(xhr, status) {
-                        if (status == 'error') {
-                            $('.status').show().text('Error happened.');
+                    }
+                });
+            }
+        });
+    },
+
+    subscriberTypes: function() {
+        var validator = $('#addSubscriberTypeForm').validate({
+            rules: {
+                name: { required: true}
+            },
+            messages: {
+                name: { required: Message['subscriberType.name.required'] }
+            }
+        });
+        $('#addSubscriberType').click(function() {
+            if (validator.form()) {
+                $('#addSubscriberTypeForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (!response.success) {
+                                var errors = '';
+                                for (var i in response.errors) {
+                                    errors += response.errors[i] + '<br/>';
+                                }
+                                $('.status').show().html(errors);
+                            }
+                            else {
+                                var prototype = $('#typePrototype').html();
+                                prototype = prototype.replace('{{id}}', response.subscriberType.id)
+                                prototype = prototype.replace('{{name}}', response.subscriberType.name)
+                                $('#name').val('');
+                                $('#types').append(prototype)
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        $('.removeSubscriberType').live('click', function() {
+            var id = $(this).parent().parent().children('input[type=hidden]').val();
+            if (id && confirm(Message['subscriberType.remove.confirm'])) {
+                $('#id').val(id);
+                $('#deleteSubscriberTypeForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (!response.success) {
+                                $('.status').show().text(Message['subscriberType.delete.failed']);
+                            }
+                            else {
+                                $('.type input[type=hidden][value='+id+']').parent().remove();
+                            }
                         }
                     }
                 });

@@ -1,0 +1,60 @@
+
+html * {
+    margin: 0;
+}
+
+body {
+    background: #ffffff;
+    color: #333333;
+    font: 12px Arial;
+}
+
+input[type=text] {
+    font-size: 12px;
+}
+
+label {
+    font-size: 12px;
+    color: #003366;
+}
+
+.ajaxError {
+    background-color: #cc2222;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 2px 5px;
+    display: none;
+    z-index: 9999;
+    position: absolute;
+    float: right;
+}
+
+#pageWrapper.subscriberTypes .addSubscriberType, .subscriberType #types {
+    width: 300px;
+}
+
+#pageWrapper.subscriberTypes #types .type {
+    height: 40px;
+    width: 300px
+}
+
+#pageWrapper.subscriberTypes #types .type .remove {
+    float: right;
+    width: 40px;
+}
+
+#pageWrapper.subscriberTypes .addSubscriberType label {
+    padding: 4px;
+    font-size: 14px;
+}
+
+#pageWrapper.subscriberTypes .addSubscriberType input {
+    width: 260px;
+    font-size: 16px;
+    margin: 4px;
+}
+
+#pageWrapper.subscriberTypes .addSubscriberType .add {
+    float: left;
+}

@@ -17,6 +17,8 @@ import outbox.member.Member
 class SubscriberController {
 
     static defaultAction = 'show'
+    static allowedMethods = [updateSubscriberType: 'POST', addSubscriberType: 'POST',
+            deleteSubscriberType: 'POST', update: 'POST', add: 'POST']
 
     SubscriberService subscriberService
     SpringSecurityService springSecurityService
@@ -113,5 +115,60 @@ class SubscriberController {
         def types = subscriberService.getSubscriberTypes(Member.load(id))
         
         [subscriberTypes: types]
+    }
+
+    def addSubscriberType = {
+        def memberId = springSecurityService.principal.id
+        def subscriberType = new SubscriberType(
+                name: params.name,
+                member: Member.load(memberId))
+
+        def model = [:]
+        if (subscriberService.addSubscriberType(subscriberType)) {
+            model << [success: true, subscriberType: [id: subscriberType.id, name: subscriberType.name]]
+        }
+        else {
+            model << [error: true]
+            MessageUtil.addErrors(request, model, subscriberType.errors)
+        }
+
+        render model as JSON
+    }
+
+    def updateSubscriberType = {
+        def model = [:]
+        def memberId = springSecurityService.principal.id
+        def subscriberType = subscriberService.getMemberSubscriberType(memberId, params.long('id'))
+        if (subscriberType) {
+            subscriberType.name = params.name
+
+            if (subscriberService.saveSubscriberType(subscriberType)) {
+                model << [success: true, subscriberType: [id: subscriberType.id, name: subscriberType.name]]
+            }
+            else {
+                model << [error: true]
+                MessageUtil.addErrors(request, model, subscriberType.errors)
+            }
+        }
+        else {
+            model << [error: true]
+        }
+
+        render model as JSON
+    }
+
+    def deleteSubscriberType = {
+        def model = [:]
+        def memberId = springSecurityService.principal.id
+        def subscriberType = subscriberService.getMemberSubscriberType(memberId, params.long('id'))
+        if (subscriberType) {
+            subscriberService.deleteSubscriberType(subscriberType)
+            model.success = true
+        }
+        else {
+            model.error = true
+        }
+        
+        render model as JSON
     }
 }

@@ -14,7 +14,7 @@
     <body>
         <div class="status" style="display: none;"> </div>
         <g:if test="${member}">
-            <g:form name="memberForm" controller="member" action="update">
+            <g:form name="memberForm" controller="member" action="update" onsubmit="return false;">
                 <g:hiddenField name="id" value="${member.id}"/>
                 <table>
                     <tr>

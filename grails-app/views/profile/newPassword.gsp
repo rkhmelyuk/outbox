@@ -14,7 +14,7 @@
     </head>
     <body>
         <div class="status" style="display: none;"> </div>
-        <g:form name="newPasswordForm" controller="profile" action="saveNewPassword">
+        <g:form name="newPasswordForm" controller="profile" action="saveNewPassword" onsubmit="return false;">
             <table>
                 <tr>
                     <td><g:message code="current.password"/></td>

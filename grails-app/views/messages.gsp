@@ -20,5 +20,8 @@ Message = {
     'member.language.nullable': '<g:message code="member.language.nullable"/>',
     'member.timezone.nullable': '<g:message code="member.timezone.nullable"/>',
     'subscriber.email.blank': '<g:message code="subscriber.email.blank"/>',
-    'member.role.nullable': '<g:message code="member.role.nullable"/>'
+    'member.role.nullable': '<g:message code="member.role.nullable"/>',
+    'subscriberType.name.required': '<g:message code="subscriberType.name.required"/>',
+    'subscriberType.remove.confirm': '<g:message code="subscriberType.remove.confirm"/>',
+    'subscriberType.delete.failed': '<g:message code="subscriberType.delete.failed"/>'
 }

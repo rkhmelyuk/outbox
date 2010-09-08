@@ -173,6 +173,14 @@ class SubscriberServiceTests extends GroovyTestCase {
         assertEquals member.id, subscriberType.member.id
     }
 
+    void testRemoveSubscriberType() {
+        def subscriberType = new SubscriberType(name: 'Type', member: member)
+        subscriberService.addSubscriberType subscriberType
+        subscriberService.deleteSubscriberType subscriberType
+
+        assertNull subscriberService.getMemberSubscriberType(member.id, subscriberType.id)
+    }
+
     void assertEquals(Subscriber subscriber, Subscriber found) {
         assertEquals subscriber.id, found.id
         assertEquals subscriber.firstName, found.firstName

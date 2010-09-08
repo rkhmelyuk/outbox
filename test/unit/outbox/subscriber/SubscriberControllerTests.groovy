@@ -391,8 +391,8 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-                springSecurityServiceControl.demand.getPrincipal { ->
-                    return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
 
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
@@ -403,4 +403,163 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertEquals 2, result.subscriberTypes.size()
     }
 
+    void testAddSubscriberType() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> return member }
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.addSubscriberType { type -> type.id = 12; return true}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.name = 'Software Developer'
+        controller.addSubscriberType()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue result.success
+        assertEquals 'Software Developer', result.subscriberType.name
+        assertEquals 12, result.subscriberType.id
+    }
+
+    void testAddSubscriberType_Fail() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> return member }
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.addSubscriberType { type -> return false}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        mockDomain(SubscriberType)
+
+        controller.params.name = 'Software Developer'
+        controller.addSubscriberType()
+
+        println mockResponse.contentAsString
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue result.error
+    }
+
+    void testUpdateSubscriberType() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> return member }
+
+        mockDomain(SubscriberType)
+
+        def subscriberType = new SubscriberType(id: 2, name: 'Tester', member: member)
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getMemberSubscriberType { memberId, subscriberTypeId ->
+            assertEquals subscriberType.id, subscriberTypeId;
+            assertEquals member.id, memberId;
+            return subscriberType
+        }
+        subscriberServiceControl.demand.saveSubscriberType { type -> return true}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 2
+        controller.params.name = 'Software Developer'
+        controller.updateSubscriberType()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue result.success
+        assertEquals 'Software Developer', result.subscriberType.name
+        assertEquals 2, result.subscriberType.id
+    }
+
+    void testUpdateSubscriberType_Fail() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> return member }
+
+        mockDomain(SubscriberType)
+
+        def subscriberType = new SubscriberType(id: 2, name: 'Tester', member: member)
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getMemberSubscriberType { memberId, subscriberTypeId ->
+            assertEquals subscriberType.id, subscriberTypeId;
+            assertEquals member.id, memberId;
+            return subscriberType
+        }
+        subscriberServiceControl.demand.saveSubscriberType { type -> return false}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 2
+        controller.params.name = 'Software Developer'
+        controller.updateSubscriberType()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue result.error
+    }
+
+
+    void testDeleteSubscriberType() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> return member }
+
+        def subscriberType = new SubscriberType(id: 2, name: 'Tester', member: member)
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getMemberSubscriberType { memberId, subscriberTypeId ->
+            assertEquals subscriberType.id, subscriberTypeId;
+            assertEquals member.id, memberId;
+            return subscriberType
+        }
+        subscriberServiceControl.demand.deleteSubscriberType { type -> return true}
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 2
+        controller.deleteSubscriberType()
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue result.success
+    }
+
+    void testDeleteSubscriberType_Fail() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> return member }
+
+        def subscriberType = new SubscriberType(id: 2, name: 'Tester', member: member)
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getMemberSubscriberType { memberId, subscriberTypeId ->
+            assertEquals subscriberType.id, subscriberTypeId;
+            assertEquals member.id, memberId;
+            return null
+        }
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 2
+        controller.deleteSubscriberType()
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue result.error
+    }
 }

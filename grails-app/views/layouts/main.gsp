@@ -5,6 +5,7 @@
 
         <title>Outbox: <g:layoutTitle default="Your Own Mail World" /></title>
         <link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
+        <link rel="stylesheet" href="${resource(dir:'css',file:'styles.css')}" />
         <link rel="shortcut icon" href="${resource(dir:'images',file:'favicon.ico')}" type="image/x-icon" />
 
         <script type="text/javascript" src="${request.contextPath}/messages.js"></script>
@@ -15,6 +16,7 @@
         <g:layoutHead />
     </head>
     <body>
+        <div class="ajaxError"> Server Error </div>
         <div id="spinner" class="spinner" style="display:none;">
             <img src="${resource(dir:'images',file:'spinner.gif')}" alt="${message(code:'spinner.alt',default:'Loading...')}" />
         </div>
@@ -29,6 +31,8 @@
             <g:link controller="login">Login</g:link>
         </sec:ifNotLoggedIn>
         <br/>
-        <g:layoutBody />
+        <div id="pageWrapper" class="${pageProperty(name: "body.class")}">
+            <g:layoutBody />
+        </div>
     </body>
 </html>

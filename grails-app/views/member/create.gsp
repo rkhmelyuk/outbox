@@ -13,7 +13,7 @@
     </head>
     <body>
         <div class="status" style="display: none;"> </div>
-        <g:form name="memberForm" controller="member" action="save">
+        <g:form name="memberForm" controller="member" action="save" onsubmit="return false;">
             <table>
                 <tr>
                     <td><g:message code="username"/></td>

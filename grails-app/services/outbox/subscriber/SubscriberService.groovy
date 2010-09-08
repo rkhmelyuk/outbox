@@ -96,4 +96,33 @@ class SubscriberService {
     boolean saveSubscriberType(SubscriberType subscriberType) {
         saveOrRollback subscriberType
     }
+
+    /**
+     * Deletes subscriber type.
+     * @param subscriberType the subscriber type to delete.
+     */
+    void deleteSubscriberType(SubscriberType subscriberType) {
+        if (subscriberType) {
+            // 1. remove type from subscribers
+            cleanupSubscriberTypes(subscriberType)
+            // 2. remove subscriber type
+            subscriberType.delete()
+        }
+    }
+
+    void cleanupSubscriberTypes(SubscriberType subscriberType) {
+        //Subscriber.executeUpdate(
+        //        'update Subscriber s set s.subscriberType = null where s.subscriberType.id = :subscriberTypeId',
+        //        [subscriberTypeId: subscriberType.id])
+    }
+
+    /**
+     * Gets member's subscriber type id.
+     * @param memberId the member id.
+     * @param subscriberTypeId the subscriber type id.
+     * @return the found subscriber type for member.
+     */
+    SubscriberType getMemberSubscriberType(Long memberId, Long subscriberTypeId) {
+        SubscriberType.findByIdAndMember(subscriberTypeId, Member.load(memberId))
+    }
 }

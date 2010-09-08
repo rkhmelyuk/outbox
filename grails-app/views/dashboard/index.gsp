@@ -57,6 +57,7 @@
                 <h1>Application Status</h1>
                 <ul>
                     <li><g:link controller="member" action="list">Members</g:link></li>
+                    <li><g:link controller="subscriber" action="types">Subscriber Types</g:link></li>
                 </ul>
             </div>
             <div class="panelBtm"></div>
