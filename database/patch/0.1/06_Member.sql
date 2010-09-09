@@ -23,11 +23,11 @@ create table Member
     constraint UQ_Member_Username unique(Username),
     constraint UQ_Member_Email unique(Email),
 
-    constraint FK_Member_2_TimeZone
+    constraint FK_Member_TimeZone
         foreign key(TimeZoneId)
         references TimeZone(TimeZoneId),
 
-    constraint FK_Member_2_Language
+    constraint FK_Member_Language
         foreign key(LanguageId)
         references Language(LanguageId)
 );
@@ -37,4 +37,6 @@ create index IX_Member_Email on Member(Email);
 
 
 insert into Member(FirstName, LastName, Username, Password, Email, TimeZoneId, LanguageId, Enabled, AccountExpired, AccountLocked, PasswordExpired, CreateDate)
-values ('System', 'Administrator', 'sysadmin', 'o73Ss/ScAeOjK/b70TR1r8VF9VrU0nbhGmMNOLgKNPU=', 'sysadmin@localhost', 15, 25, true, false, false, false, '2010-09-01');
+values ('System', 'Administrator', 'sysadmin', 'o73Ss/ScAeOjK/b70TR1r8VF9VrU0nbhGmMNOLgKNPU=', 'app@mailsight.com', 15, 25, true, false, false, false, '2010-09-01');
+insert into Member(FirstName, LastName, Username, Password, Email, TimeZoneId, LanguageId, Enabled, AccountExpired, AccountLocked, PasswordExpired, CreateDate)
+values ('Mail', 'Sight', 'mailsight', 'o73Ss/ScAeOjK/b70TR1r8VF9VrU0nbhGmMNOLgKNPU=', 'info@mailsight.com', 15, 25, true, false, false, false, '2010-09-01');
