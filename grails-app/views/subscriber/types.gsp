@@ -1,7 +1,7 @@
 <%@ page import="outbox.dictionary.NamePrefix; outbox.dictionary.Gender; outbox.dictionary.Timezone; outbox.dictionary.Language" contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
-        <title><g:message code="subscriber.types.title"/></title>
+        <title><g:message code="subscriberTypes.title"/></title>
         <meta name='layout' content='main'/>
         <g:javascript library="jquery.form" />
         <g:javascript library="jquery.validate" />
@@ -21,8 +21,8 @@
                 <a href="javascript:void(0);" id="addSubscriberType"><g:message code="add"/></a>
             </g:form>
         </div>
-        <h3><g:message code="subscriber.types"/></h3>
-        <g:message code="subscriber.types.click.to.change.name"/>
+        <h3><g:message code="subscriberTypes"/></h3>
+        <g:message code="subscriberType.click.to.change.name"/>
         <div id="types">
             <g:if test="${subscriberTypes}">
                 <g:each var="subscriberType" in="${subscriberTypes}">
