@@ -10,6 +10,7 @@ create table Subscriber
     Enabled boolean not null,
 
     MemberId bigint not null,
+    SubscriberTypeId bigint null,
     GenderId smallint null,
     LanguageId smallint null,
     TimezoneId smallint null,
@@ -18,19 +19,26 @@ create table Subscriber
 
     primary key(SubscriberId),
 
-    constraint FK_Subscriber_2_Gender
+    constraint FK_Subscriber_Member
+        foreign key(MemberId)
+        references Member(MemberId),
+    constraint FK_Subscriber_SubscriberType
+        foreign key(SubscriberTypeId)
+        references SubscriberType(SubscriberTypeId),
+    constraint FK_Subscriber_Gender
         foreign key(GenderId)
         references Gender(GenderId),
-    constraint FK_Subscriber_2_Language
+    constraint FK_Subscriber_Language
         foreign key(LanguageId)
         references Language(LanguageId),
-    constraint FK_Subscriber_2_Timezone
+    constraint FK_Subscriber_Timezone
         foreign key(TimezoneId)
         references Timezone(TimezoneId),
-    constraint FK_Subscriber_2_NamePrefix
+    constraint FK_Subscriber_NamePrefix
         foreign key(NamePrefixId)
         references NamePrefix(NamePrefixId)
 );
 
-create index IX_Subscriber_Email on Subscriber(Email);
 create index IX_Subscriber_MemberId on Subscriber(MemberId);
+create index IX_Subscriber_MemberIdEmail on Subscriber(MemberId, Email);
+create index IX_Subscriber_MemberIdSubscriberTypeId on Subscriber(MemberId, SubscriberTypeId);
