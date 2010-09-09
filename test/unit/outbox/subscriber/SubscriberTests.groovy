@@ -22,6 +22,7 @@ class SubscriberTests extends GrailsUnitTestCase {
         subscriber.language = new Language(id: 2)
         subscriber.timezone = new Timezone(id: 3)
         subscriber.namePrefix = new NamePrefix(id: 4)
+        subscriber.subscriberType = new SubscriberType(id: 5)
 
         assertEquals 'Test', subscriber.firstName
         assertEquals 'User', subscriber.lastName
@@ -35,6 +36,7 @@ class SubscriberTests extends GrailsUnitTestCase {
         assertEquals 2, subscriber.language.id
         assertEquals 3, subscriber.timezone.id
         assertEquals 4, subscriber.namePrefix.id
+        assertEquals 5, subscriber.subscriberType.id
     }
 
     void testFullName() {

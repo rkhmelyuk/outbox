@@ -73,6 +73,7 @@ class SubscriberService {
      * @param member member subscriber types.
      * @return the list with found subscriber types.
      */
+    @Transactional(readOnly = true)
     List<SubscriberType> getSubscriberTypes(Member member) {
         SubscriberType.findAllByMember(member)
     }
@@ -83,6 +84,7 @@ class SubscriberService {
      * @param subscriberType subscriber type.
      * @return true if added subscriber type.
      */
+    @Transactional(readOnly = false)
     boolean addSubscriberType(SubscriberType subscriberType) {
         saveOrRollback subscriberType
     }
@@ -93,6 +95,7 @@ class SubscriberService {
      * @param subscriberType subscriber type.
      * @return true if saved subscriber type.
      */
+    @Transactional(readOnly = false)
     boolean saveSubscriberType(SubscriberType subscriberType) {
         saveOrRollback subscriberType
     }
@@ -101,19 +104,25 @@ class SubscriberService {
      * Deletes subscriber type.
      * @param subscriberType the subscriber type to delete.
      */
+    @Transactional(readOnly = false)
     void deleteSubscriberType(SubscriberType subscriberType) {
         if (subscriberType) {
             // 1. remove type from subscribers
             cleanupSubscriberTypes(subscriberType)
             // 2. remove subscriber type
-            subscriberType.delete()
+            subscriberType.delete(flush: true)
         }
     }
 
-    void cleanupSubscriberTypes(SubscriberType subscriberType) {
-        //Subscriber.executeUpdate(
-        //        'update Subscriber s set s.subscriberType = null where s.subscriberType.id = :subscriberTypeId',
-        //        [subscriberTypeId: subscriberType.id])
+    /**
+     * Update subscribers to not used specified subscriber type.
+     * @param subscriberType the subscriber type to not be used by subscribers.
+     */
+    @Transactional(readOnly = false)
+    private void cleanupSubscriberTypes(SubscriberType subscriberType) {
+        Subscriber.executeUpdate(
+                'update Subscriber s set s.subscriberType = null where s.subscriberType.id = :subscriberTypeId',
+                [subscriberTypeId: subscriberType.id])
     }
 
     /**

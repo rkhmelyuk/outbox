@@ -1,5 +1,6 @@
 package outbox.subscriber
 
+import org.hibernate.Session
 import outbox.member.Member
 
 /**
@@ -175,12 +176,21 @@ class SubscriberServiceTests extends GroovyTestCase {
 
     void testDeleteSubscriberType() {
         def subscriberType = new SubscriberType(name: 'Type', member: member)
-        subscriberService.addSubscriberType subscriberType
+        assertTrue 'Not added subscriber type.', subscriberService.addSubscriberType(subscriberType)
+
+        def subscriber = createTestSubscriber()
+        subscriber.subscriberType = subscriberType
+        assertTrue 'Not added subscriber.', subscriberService.saveSubscriber(subscriber)
+
         subscriberService.deleteSubscriberType subscriberType
 
-        // TODO - add tests for removing from Subscribers
-
         assertNull subscriberService.getMemberSubscriberType(member.id, subscriberType.id)
+
+        Subscriber.withSession {Session session -> session.clear() }
+
+        subscriber = subscriberService.getSubscriber(subscriber.id)
+        assertNotNull subscriber
+        assertNull subscriber.subscriberType
     }
 
     void assertEquals(Subscriber subscriber, Subscriber found) {

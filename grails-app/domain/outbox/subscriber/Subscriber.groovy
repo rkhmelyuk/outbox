@@ -27,6 +27,7 @@ class Subscriber {
     Gender gender
     Language language
     Timezone timezone
+    SubscriberType subscriberType
 
     Member member
 
@@ -47,6 +48,7 @@ class Subscriber {
             member column: 'MemberId', lazy: true
             enabled column: 'Enabled'
             namePrefix column: 'NamePrefixId'
+            subscriberType column: 'SubscriberTypeId'
         }
         version false
         cache true
@@ -67,6 +69,7 @@ class Subscriber {
         language nullable: true
         dateCreated nullable: true
         namePrefix nullable: true
+        subscriberType nullable: true
     }
 
     static transients = ['fullName']
@@ -108,7 +111,7 @@ class Subscriber {
      * @return {@code true} if email is duplicate, otherwise false.
      */
     static boolean duplicateEmail(Subscriber subscriber, String email) {
-        def found = Subscriber.findByEmailAndMember(email, subscriber.member)
+        def found = Subscriber.findByMemberAndEmail(subscriber.member, email)
         return (found && !found.id.equals(subscriber.id))
     }
 }

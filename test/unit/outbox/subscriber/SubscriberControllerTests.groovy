@@ -108,12 +108,12 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         Language.class.metaClass.static.load = { id -> return new Language(id: id) }
         Timezone.class.metaClass.static.load = { id -> return new Timezone(id: id) }
         NamePrefix.class.metaClass.static.load = { id -> return new NamePrefix(id: id) }
+        SubscriberType.class.metaClass.static.load = { id -> return new SubscriberType(id: id) }
         Member.class.metaClass.static.load = { id -> return member}
 
         def subscriberServiceControl = mockFor(SubscriberService)
         def Subscriber subscriber = null
         subscriberServiceControl.demand.saveSubscriber { subscr -> subscriber = subscr; return true}
-        subscriberServiceControl.demand.getSubscriberTypes { m -> [new SubscriberType(id: 1, member: m)]}
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -129,6 +129,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.params.timezone = '3'
         controller.params.language = '4'
         controller.params.namePrefix = '5'
+        controller.params.subscriberType = '6'
 
         controller.add()
         assertNotNull mockResponse.contentAsString
@@ -145,6 +146,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertEquals 3, subscriber.timezone.id
         assertEquals 4, subscriber.language.id
         assertEquals 5, subscriber.namePrefix.id
+        assertEquals 6, subscriber.subscriberType.id
     }
 
     void testAdd_Fail() {
@@ -233,6 +235,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         Language.class.metaClass.static.load = { id -> return new Language(id: id) }
         Timezone.class.metaClass.static.load = { id -> return new Timezone(id: id) }
         NamePrefix.class.metaClass.static.load = { id -> return new NamePrefix(id: id) }
+        SubscriberType.class.metaClass.static.load = { id -> return new SubscriberType(id: id) }
         Member.class.metaClass.static.load = { id -> return member}
 
         def subscriberServiceControl = mockFor(SubscriberService)
@@ -247,6 +250,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.params.timezone = '3'
         controller.params.language = '4'
         controller.params.namePrefix = '5'
+        controller.params.subscriberType = '6'
 
         controller.update()
         assertNotNull mockResponse.contentAsString
@@ -262,6 +266,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertEquals 3, subscriber.timezone.id
         assertEquals 4, subscriber.language.id
         assertEquals 5, subscriber.namePrefix.id
+        assertEquals 6, subscriber.subscriberType.id
         assertEquals member.id, subscriber.member.id
     }
 

@@ -34,6 +34,16 @@
                     <td><g:message code="email"/></td>
                     <td><g:textField name="email" maxlength="512" value="${subscriber.email}"/></td>
                 </tr>
+                <g:if test="${subscriberTypes}">
+                <tr>
+                    <td><g:message code="subscriberType"/></td>
+                    <td>
+                        <g:select name="subscriberType" from="${subscriberTypes}"
+                                value="${subscriber.subscriberType?.id}"
+                                optionKey="id" optionValue="name" noSelection="['':'']"/>
+                    </td>
+                </tr>
+                </g:if>
                 <tr>
                     <td><g:message code="gender"/></td>
                     <td>

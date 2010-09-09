@@ -62,6 +62,7 @@ class SubscriberController {
             subscriber.language = Language.load(params.int('language'))
             subscriber.timezone = Timezone.load(params.int('timezone'))
             subscriber.namePrefix = NamePrefix.load(params.int('namePrefix'))
+            subscriber.subscriberType = SubscriberType.load(params.long('subscriberType'))
 
             if (subscriberService.saveSubscriber(subscriber)) {
                 model << [success: true]
@@ -96,6 +97,7 @@ class SubscriberController {
         subscriber.timezone = Timezone.load(params.int('timezone'))
         subscriber.member = Member.load(springSecurityService.getPrincipal().id)
         subscriber.namePrefix = NamePrefix.load(params.int('namePrefix'))
+        subscriber.subscriberType = SubscriberType.load(params.long('subscriberType'))
 
         def model = [:]
         if (subscriberService.saveSubscriber(subscriber)) {
