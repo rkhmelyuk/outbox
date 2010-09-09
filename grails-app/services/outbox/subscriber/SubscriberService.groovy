@@ -33,7 +33,7 @@ class SubscriberService {
      * @return the found subscriber.
      */
     Subscriber getSubscriber(String id) {
-        Subscriber.get(id)
+        Subscriber.get id
     }
 
     /**

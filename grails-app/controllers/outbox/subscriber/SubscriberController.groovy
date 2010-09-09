@@ -76,7 +76,7 @@ class SubscriberController {
             model << [error: true]
         }
 
-        render(model as JSON)
+        render model as JSON
     }
 
     def create = {
@@ -109,14 +109,14 @@ class SubscriberController {
             MessageUtil.addErrors(request, model, subscriber.errors);
         }
 
-        render(model as JSON)
+        render model as JSON
     }
 
     def types = {
         def id = springSecurityService.principal.id
-        def types = subscriberService.getSubscriberTypes(Member.load(id))
+        def subscriberTypes = subscriberService.getSubscriberTypes(Member.load(id))
         
-        [subscriberTypes: types]
+        [subscriberTypes: subscriberTypes]
     }
 
     def addSubscriberType = {

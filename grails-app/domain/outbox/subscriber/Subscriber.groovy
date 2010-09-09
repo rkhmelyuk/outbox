@@ -31,7 +31,6 @@ class Subscriber {
 
     Member member
 
-    // TODO - move to the SubscriberDetails entity
     Date dateCreated
 
     static mapping = {
