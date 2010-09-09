@@ -1,7 +1,7 @@
 <div class="type">
     <input type="hidden" name="id" value="${it.id}"/>
     <span class="editType">
-        <input type="text" name="name" value="${it.name}" maxlength="200"/>
+        <input type="text" name="name" value="${it.name}" maxlength="200" class="editNameInput"/>
         <a href="javascript:void(0);" class="updateSubscriberType"><g:message code="save"/></a>
         <a href="javascript:void(0);" class="cancelEditSubscriberType"><g:message code="cancel"/></a>
     </span>

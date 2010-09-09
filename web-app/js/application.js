@@ -278,7 +278,45 @@ var App = {
                 name: { required: Message['subscriberType.name.required'] }
             }
         });
-        $('#addSubscriberType').click(function() {
+        $('#name').keyup(function(e) { if (e.keyCode == 13) addSubscriberType() });
+        $('#addSubscriberType').click(function() { addSubscriberType() });
+        $('.removeSubscriberType').live('click', function() {
+            var id = $(this).parent().parent().children('input[name=id]').val();
+            if (id && confirm(Message['subscriberType.remove.confirm'])) {
+                $('#id').val(id);
+                $('#deleteSubscriberTypeForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (!response.success) {
+                                $('.status').show().text(Message['subscriberType.delete.failed']);
+                            }
+                            else {
+                                $('.type input[type=hidden][value='+id+']').parent().remove();
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        $('.name').live('click', function() {
+            $(this) // {
+                    .hide().parent()
+                    .children('.editType').show()
+                    .children('.editNameInput').focus();
+            // }
+        });
+        $('.editNameInput').keyup(function(e) {
+            if (e.keyCode == 13) saveSubscriberType(this);
+            if (e.keyCode == 27) cancelEditSubscriberType(this);
+        });
+        $('.cancelEditSubscriberType').live('click', function() {
+            cancelEditSubscriberType(this)
+        });
+        $('.updateSubscriberType').live('click', function() {
+            saveSubscriberType(this)
+        });
+        function addSubscriberType() {
             if (validator.form()) {
                 $('#addSubscriberTypeForm').ajaxSubmit({
                     dataType: 'json',
@@ -302,37 +340,14 @@ var App = {
                     }
                 });
             }
-        });
-        $('.removeSubscriberType').live('click', function() {
-            var id = $(this).parent().parent().children('input[name=id]').val();
-            if (id && confirm(Message['subscriberType.remove.confirm'])) {
-                $('#id').val(id);
-                $('#deleteSubscriberTypeForm').ajaxSubmit({
-                    dataType: 'json',
-                    success: function(response, status) {
-                        if (response && status == 'success') {
-                            if (!response.success) {
-                                $('.status').show().text(Message['subscriberType.delete.failed']);
-                            }
-                            else {
-                                $('.type input[type=hidden][value='+id+']').parent().remove();
-                            }
-                        }
-                    }
-                });
-            }
-        });
-        $('.name').live('click', function() {
-            $(this).hide();
-            $(this).parent().children('.editType').show();
-        });
-        $('.cancelEditSubscriberType').live('click', function() {
-            var parent = $(this).parent();
+        }
+        function cancelEditSubscriberType(elem) {
+            var parent = $(elem).parent();
             parent.hide();
             parent.parent().children('.name').show();
-        });
-        $('.updateSubscriberType').live('click', function() {
-            var parent = $(this).parent();
+        }
+        function saveSubscriberType(elem) {
+            var parent = $(elem).parent();
             parent.hide();
             parent.parent().children('.name').show();
             var id = parent.parent().children('input[name=id]').val()
@@ -352,7 +367,7 @@ var App = {
                     }
                 }
             });
-        });
+        }
     }
 };
 
