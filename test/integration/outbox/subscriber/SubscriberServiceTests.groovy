@@ -20,7 +20,7 @@ class SubscriberServiceTests extends GroovyTestCase {
         member = new Member(
                 firstName: 'Test',
                 lastName: 'Member',
-                email: 'test.member@nowhere.com',
+                email: 'test+member@mailsight.com',
                 username: 'username',
                 password: 'password')
 

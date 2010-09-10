@@ -2,6 +2,7 @@ package outbox.subscriber
 
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.interceptor.TransactionAspectSupport
+import outbox.member.Member
 
 /**
  * @author Ruslan Khmelyuk
@@ -34,12 +35,24 @@ class SubscribersListService {
     }
 
     /**
+     * Gets subscribers list by it's id.
+     * 
      * @param id the subscribers list id.
      * @return the found subscribers list.
      */
     @Transactional(readOnly = true)
     SubscribersList getSubscribersList(Long id) {
         SubscribersList.get id
+    }
+
+    /**
+     * Gets members subscribers lists.
+     * @param member the member to get owned subscribers lists.
+     * @return the found subscribers lists.
+     */
+    @Transactional(readOnly = true)
+    List<SubscribersList> getMemberSubscribersList(Member member) {
+        SubscribersList.findAllByOwner member
     }
 
     /**
@@ -50,7 +63,7 @@ class SubscribersListService {
     @Transactional(readOnly = false)
     void deleteSubscribersList(SubscribersList subscribersList) {
         if (subscribersList) {
-            // 1. cleanup subscribers list relationship
+            // TODO - 1. cleanup subscribers list relationship
             // 2. delete subscribers list
             subscribersList.delete()
         }

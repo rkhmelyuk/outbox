@@ -13,7 +13,7 @@ import outbox.member.Member
 /**
  * @author Ruslan Khmelyuk
  */
-@Secured(['ROLE_SYSADMIN', 'ROLE_CLIENT'])
+@Secured(['ROLE_CLIENT'])
 class SubscriberController {
 
     static defaultAction = 'show'
