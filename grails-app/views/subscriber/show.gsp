@@ -13,27 +13,31 @@
             <table>
                 <tr>
                     <td><g:message code="firstName"/></td>
-                    <td><g:fieldValue bean="subscriber" field="firstName"/></td>
+                    <td>${subscriber.firstName}</td>
                 </tr>
                 <tr>
                     <td><g:message code="lastName"/></td>
-                    <td><g:fieldValue bean="subscriber" field="lastName"/></td>
+                    <td>${subscriber.lastName}</td>
                 </tr>
                 <tr>
                     <td><g:message code="email"/></td>
-                    <td><g:fieldValue bean="subscriber" field="email"/></td>
+                    <td>${subscriber.email}</td>
                 </tr>
                 <tr>
                     <td><g:message code="gender"/></td>
-                    <td><g:fieldValue bean="subscriber" field="gender?.name"/></td>
+                    <td>${subscriber.gender?.name}</td>
                 </tr>
                 <tr>
                     <td><g:message code="language"/></td>
-                    <td><g:fieldValue bean="subscriber" field="language?.name"/></td>
+                    <td>${subscriber.language?.name}</td>
                 </tr>
                 <tr>
                     <td><g:message code="timezone"/></td>
-                    <td><g:fieldValue bean="subscriber" field="timezone?.name"/></td>
+                    <td>${subscriber.timezone?.name}</td>
+                </tr>
+                <tr>
+                    <td><g:message code="enabled"/></td>
+                    <td>${subscriber.enabled ? 'true' : 'false'}</td>
                 </tr>
             </table>
         </g:if>
