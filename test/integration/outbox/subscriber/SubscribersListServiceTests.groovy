@@ -41,9 +41,19 @@ class SubscribersListServiceTests extends GroovyTestCase {
         assertEquals subscribersList, found
     }
 
+    void testSaveDuplicatedSubscribersList() {
+        def subscribersList1 = createTestSubscribersList()
+        def subscribersList2 = createTestSubscribersList()
+        assertTrue subscribersListService.saveSubscribersList(subscribersList1)
+        assertFalse subscribersListService.saveSubscribersList(subscribersList2)
+        
+        assertNull subscribersList2.id
+    }
+
     void testGetSubscribersList() {
         def subscribersList1 = createTestSubscribersList()
         def subscribersList2 = createTestSubscribersList()
+        subscribersList2.name = 'Other name'
 
         assertTrue subscribersListService.saveSubscribersList(subscribersList1)
         assertTrue subscribersListService.saveSubscribersList(subscribersList2)

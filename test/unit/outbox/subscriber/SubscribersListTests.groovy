@@ -25,4 +25,21 @@ class SubscribersListTests extends GrailsUnitTestCase {
         assertEquals 2, list.owner.id
         assertEquals date, list.dateCreated
     }
+
+    void testNonDuplicateName() {
+        SubscribersList list = new SubscribersList(id: 1, name: 'name', owner: new Member(id: 1))
+        mockDomain(SubscribersList, [list])
+
+        assertFalse SubscribersList.duplicateName(list, list.name)
+    }
+
+    void testDuplicateEmail() {
+        Member member = new Member(id: 1)
+        SubscribersList list1 = new SubscribersList(id: 1, name: 'name', owner: member)
+        SubscribersList list2 = new SubscribersList(id: 2, name: 'name', owner: member)
+
+        mockDomain(SubscribersList, [list1, list2])
+
+        assertTrue SubscribersList.duplicateName(list2, list2.name)
+    }
 }

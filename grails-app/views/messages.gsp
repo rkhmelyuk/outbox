@@ -23,5 +23,9 @@ Message = {
     'member.role.nullable': '<g:message code="member.role.nullable"/>',
     'subscriberType.name.required': '<g:message code="subscriberType.name.required"/>',
     'subscriberType.remove.confirm': '<g:message code="subscriberType.remove.confirm"/>',
-    'subscriberType.delete.failed': '<g:message code="subscriberType.delete.failed"/>'
+    'subscriberType.delete.failed': '<g:message code="subscriberType.delete.failed"/>',
+    'subscribersList.name.blank': '<g:message code="subscribersList.name.blank"/>',
+    'subscribersList.name.maxSize.exceeded': '<g:message code="subscribersList.name.maxSize.exceeded" args="[0,0,0,200]"/>',
+    'subscribersList.description.maxSize.exceeded': '<g:message code="subscribersList.description.maxSize.exceeded" args="[0,0,0,1000]"/>',
+    'subscribersList.changed.successfully': '<g:message code="subscribersList.changed.successfully"/>'
 }

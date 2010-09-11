@@ -103,7 +103,7 @@ class Subscriber {
 
     /**
      * Check whether email is duplicate. We use member information from subscriber parameter
-     * and check email specified by second parameter.
+     * and check email specified as second parameter.
      *
      * @param subscriber the subscriber, that should have this email.
      * @param email the new email for subscriber.

@@ -368,6 +368,76 @@ var App = {
                 }
             });
         }
+    },
+
+    subscribersListCreate: function() {
+        $('#name').focus();
+        var validator = $('#subscribersListForm').validate({
+            rules: {
+                name: { required: true, maxlength: 200 },
+                description: { maxlength: 1000 }
+            },
+            messages: {
+                name: { required: Message['subscribersList.name.blank'], maxlength: Message['subscribersList.name.maxSize.exceeded'] },
+                description: { maxlength: Message['subscribersList.description.maxSize.exceeded'] }
+            }
+        });
+        $('#addSubscribersList').click(function() {
+            if (validator.form()) {
+                $('#subscribersListForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (response.success) {
+                                document.location = Config['contextPath'] + "/subscribersList";
+                            }
+                            else {
+                                var errors = '';
+                                for (var i in response.errors) {
+                                    errors += response.errors[i] + '<br/>';
+                                }
+                                $('.status').show().html(errors);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    },
+
+    subscribersListEdit: function() {
+        $('#name').focus();
+        var validator = $('#subscribersListForm').validate({
+            rules: {
+                name: { required: true, maxlength: 200 },
+                description: { maxlength: 1000 }
+            },
+            messages: {
+                name: { required: Message['subscribersList.name.blank'], maxlength: Message['subscribersList.name.maxSize.exceeded'] },
+                description: { maxlength: Message['subscribersList.description.maxSize.exceeded'] }
+            }
+        });
+        $('#editSubscribersList').click(function() {
+            if (validator.form()) {
+                $('#subscribersListForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (response.success) {
+                                $('.status').show().text(Message['subscribersList.changed.successfully']);
+                            }
+                            else {
+                                var errors = '';
+                                for (var i in response.errors) {
+                                    errors += response.errors[i] + '<br/>';
+                                }
+                                $('.status').show().html(errors);
+                            }
+                        }
+                    }
+                });
+            }
+        });
     }
 };
 

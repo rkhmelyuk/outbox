@@ -53,14 +53,14 @@ class SubscriberTests extends GrailsUnitTestCase {
         assertEquals 'Test', subscriber.fullName
     }
 
-    void testDuplicateEmail() {
+    void testNonDuplicateEmail() {
         Subscriber subscriber = new Subscriber(id: '000000', email: 'test@mailsight.com', member: new Member(id: 1))
         mockDomain(Subscriber, [subscriber])
 
         assertFalse Subscriber.duplicateEmail(subscriber, subscriber.email)
     }
 
-    void testNotDuplicateEmail() {
+    void testDuplicateEmail() {
         Member member = new Member(id: 1)
         Subscriber subscriber1 = new Subscriber(id: '0000000', email: 'test@mailsight.com', member: member)
         Subscriber subscriber2 = new Subscriber(id: '1111111', email: 'test@mailsight.com', member: member)
