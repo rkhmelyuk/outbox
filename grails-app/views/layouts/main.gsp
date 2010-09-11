@@ -24,7 +24,7 @@
 
         <sec:ifLoggedIn>
             Hello <sec:loggedInUserInfo field="firstName"/> <sec:loggedInUserInfo field="lastName"/>
-            | <g:link controller="profile" action="edit"> MyProfile</g:link> 
+            | <g:link controller="profile"> MyProfile</g:link>
             | <g:link controller="logout">Logout</g:link>
         </sec:ifLoggedIn>
         <sec:ifNotLoggedIn>

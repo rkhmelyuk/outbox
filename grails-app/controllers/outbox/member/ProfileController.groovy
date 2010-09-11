@@ -15,7 +15,6 @@ import outbox.dictionary.Timezone
 @Secured('ROLE_USER')
 class ProfileController {
 
-    static defaultAction = 'edit'
     static allowedMethods = [saveProfile: 'POST', saveNewPassword: 'POST']
 
     SpringSecurityService springSecurityService

@@ -101,11 +101,10 @@ class SubscriberController {
 
         def model = [:]
         if (subscriberService.saveSubscriber(subscriber)) {
-            model << [success: true]
+            model.success = true
         }
-
-        if (!model.success) {
-            model << [error: true]
+        else {
+            model.error = true
             MessageUtil.addErrors(request, model, subscriber.errors);
         }
 
