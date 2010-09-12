@@ -39,6 +39,5 @@ create table Subscriber
         references NamePrefix(NamePrefixId)
 );
 
-create index IX_Subscriber_MemberId on Subscriber(MemberId);
-create index IX_Subscriber_MemberIdEmail on Subscriber(MemberId, Email);
-create index IX_Subscriber_MemberIdSubscriberTypeId on Subscriber(MemberId, SubscriberTypeId);
+create index IX_Subscriber_MemberId_Email on Subscriber(MemberId, Email);
+create index IX_Subscriber_MemberId_SubscriberTypeId on Subscriber(MemberId, SubscriberTypeId);

@@ -42,6 +42,7 @@ class SubscriptionList {
         description nullable: true, blank: true, maxSize: 1000
         subscribersNumber nullable: true
         owner nullable: false
+        dateCreated nullable: true
     }
 
     /**

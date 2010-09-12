@@ -10,7 +10,7 @@ import outbox.member.Member
 
 /**
  * The subscriber for newsletter or used as recipient for emails.
- * 
+ *
  * @author Ruslan Khmelyuk
  */
 class Subscriber {
@@ -74,9 +74,18 @@ class Subscriber {
     static transients = ['fullName']
 
     def beforeInsert() {
-        if (!id) {
-            generateId()
-        }
+        id = generateId()
+    }
+
+    /**
+     * Generated id for this object.
+     * Before generating id, both email and member must be set.
+     * 
+     * @return the generated id.
+     */
+    String generateId() {
+        String string = email + '-' + member?.id + '-' + AppConstant.SUBSCRIBER_ID_SALT
+        SHA1Codec.encode(string.bytes)
     }
 
     /**
@@ -94,11 +103,6 @@ class Subscriber {
             return lastName
         }
         return ''
-    }
-    
-    def generateId() {
-        String string = email + '-' + member?.id + '-' + AppConstant.SUBSCRIBER_ID_SALT
-        id = SHA1Codec.encode(string.bytes)
     }
 
     /**
