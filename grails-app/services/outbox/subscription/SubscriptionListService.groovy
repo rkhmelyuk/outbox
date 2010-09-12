@@ -27,7 +27,7 @@ class SubscriptionListService {
     /**
      * Saves subscriptions list to our storage.
      * @param subscriptionList the list to be saved.
-     * @return {@code true} if was saved successfully, otherwise  {@code false} .
+     * @return {@code true} if was saved successfully, otherwise {@code false}  .
      */
     @Transactional(readOnly = false)
     boolean saveSubscriptionList(SubscriptionList subscriptionList) {
@@ -36,7 +36,7 @@ class SubscriptionListService {
 
     /**
      * Gets subscription list by it's id.
-     * 
+     *
      * @param id the subscriptions list id.
      * @return the found subscriptions list.
      */
