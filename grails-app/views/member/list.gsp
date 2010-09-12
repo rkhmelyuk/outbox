@@ -43,7 +43,7 @@
                     <g:each var="member" in="${members}">
                         <tr>
                             <td>${member.username}</td>
-                            <td>${member.firstName} ${member.lastName}</td>
+                            <td>${member.fullName}</td>
                             <td>${member.email}</td>
                             <td></td>
                             <td><g:link controller="member" action="edit" id="${member.id}">Edit</g:link></td>

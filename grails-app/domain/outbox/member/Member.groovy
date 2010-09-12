@@ -62,7 +62,7 @@ class Member {
         lastUpdated nullable: true
 	}
 
-	static transients = ['assignableAuthority']
+	static transients = ['assignableAuthority', 'fullName']
 
 	Set<Role> getAuthorities() {
 		MemberRole.findAllByMember(this).collect { it.role } as Set
@@ -70,5 +70,23 @@ class Member {
 
     Role getAssignableAuthority() {
         (Role) authorities.find { Role role -> !role.user }
+    }
+
+    String getFullName() {
+        def result
+        if (firstName && lastName) {
+            result = "$firstName $lastName"
+        }
+        else if (firstName) {
+            result = firstName
+        }
+        else if (lastName) {
+            result = lastName
+        }
+        else {
+            result = ''
+        }
+        return result
+
     }
 }
