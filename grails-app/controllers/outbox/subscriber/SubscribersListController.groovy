@@ -24,6 +24,19 @@ class SubscribersListController {
         [subscribersLists: subscribersLists]
     }
 
+    def show = {
+        def subscribersList = subscribersListService.getSubscribersList(params.long('id'))
+        if (!subscribersList) {
+            response.sendError 404
+            return
+        }
+        if (!subscribersList.ownedBy(springSecurityService.principal.id)) {
+            response.sendError 403
+            return
+        }
+        [subscribersList: subscribersList]
+    }
+
     def create = {
         [subscribersList: new SubscribersList()]
     }
@@ -80,5 +93,13 @@ class SubscribersListController {
         }
 
         render model as JSON
+    }
+
+    def delete = {
+        final SubscribersList subscribersList = subscribersListService.getSubscribersList(params.long('id'))
+        if (subscribersList && subscribersList.ownedBy(springSecurityService.principal.id)) {
+            subscribersListService.deleteSubscribersList subscribersList
+        }
+        redirect controller: 'subscribersList'
     }
 }

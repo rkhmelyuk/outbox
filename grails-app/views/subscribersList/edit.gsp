@@ -26,7 +26,7 @@
             </table>
             <a href="javascript:void(0);" id="editSubscribersList"><g:message code="save.subscribersList"/></a>
             &nbsp;&nbsp;
-            <g:link controller="subscribersList"><g:message code="cancel"/></g:link>
+            <g:link controller="subscribersList" action="show" id="${subscribersList.id}"><g:message code="back"/></g:link>
         </g:form>
     </body>
 </html>

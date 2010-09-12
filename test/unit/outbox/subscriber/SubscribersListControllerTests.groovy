@@ -283,4 +283,77 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         assertNull result.errors
     }
 
+    void testShow() {
+        def member = new Member(id: 1)
+
+        def subscribersListServiceControl = mockFor(SubscribersListService)
+        subscribersListServiceControl.demand.getSubscribersList { id -> new SubscribersList(id: id, owner: member) }
+        controller.subscribersListService = subscribersListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = '10'
+        def result = controller.show()
+
+        assertNotNull result.subscribersList
+        assertEquals 10, result.subscribersList.id
+    }
+
+    void testShow_Denied() {
+        def subscribersListServiceControl = mockFor(SubscribersListService)
+        subscribersListServiceControl.demand.getSubscribersList { id ->
+            new SubscribersList(id: id, owner: new Member(id: 1))
+        }
+        controller.subscribersListService = subscribersListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 2))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = '10'
+        def result = controller.show()
+
+        assertNull result
+        assertEquals 403, mockResponse.status
+    }
+
+    void testShow_NotFound() {
+        def subscribersListServiceControl = mockFor(SubscribersListService)
+        subscribersListServiceControl.demand.getSubscribersList { id -> null }
+        controller.subscribersListService = subscribersListServiceControl.createMock()
+
+        controller.params.id = '10'
+        def result = controller.show()
+
+        assertNull result
+        assertEquals 404, mockResponse.status
+    }
+
+    void testDelete() {
+        def member = new Member(id: 1)
+
+        def subscribersListServiceControl = mockFor(SubscribersListService)
+        subscribersListServiceControl.demand.getSubscribersList { id -> new SubscribersList(id: id, owner: member) }
+        subscribersListServiceControl.demand.deleteSubscribersList { }
+        controller.subscribersListService = subscribersListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.delete()
+
+        assertEquals 'subscribersList', controller.redirectArgs.controller
+        assertEquals null, controller.redirectArgs.action
+    }
+
 }

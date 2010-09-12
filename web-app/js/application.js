@@ -438,6 +438,15 @@ var App = {
                 });
             }
         });
+    },
+
+    subscribersListShow: function() {
+        $('#deleteSubscribersList').click(function() {
+            $('#removeNotion').slideDown();
+        });
+        $('#discardDeleteSubscribersList').click(function() {
+            $('#removeNotion').slideUp();
+        });
     }
 };
 
