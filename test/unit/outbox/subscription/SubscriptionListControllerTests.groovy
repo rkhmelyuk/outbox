@@ -5,6 +5,8 @@ import grails.plugins.springsecurity.SpringSecurityService
 import grails.test.ControllerUnitTestCase
 import outbox.member.Member
 import outbox.security.OutboxUser
+import outbox.subscriber.Subscriber
+import outbox.subscriber.SubscriberService
 
 /**
  * {@link SubscriptionListController} tests.
@@ -19,8 +21,15 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
         Member.class.metaClass.static.load = { id -> member }
 
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscribersWithoutSubscriptionCount {
+            assertEquals member.id, it.id    
+            return 5
+        }
+        controller.subscriberService = subscriberServiceControl.createMock()
+
         def subscriptionListServiceControl = mockFor(SubscriptionListService)
-        subscriptionListServiceControl.demand.getMemberSubscriptionList { it ->
+        subscriptionListServiceControl.demand.getMemberSubscriptionList {
             assertEquals member.id, it.id;
             return subscriptionLists
         }
@@ -36,6 +45,33 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         
         assertNotNull result
         assertEquals subscriptionLists, result.subscriptionLists
+        assertEquals 5, result.freeSubscribersCount
+    }
+
+    void testFreeSubscribers() {
+        def member = new Member(id: 10)
+        def subscribersList = [ new Subscriber(id: "00000"), new Subscriber(id: "11111")]
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscribersWithoutSubscription {
+            assertEquals member.id, it.id
+            subscribersList
+        }
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def result = controller.freeSubscribers()
+
+        assertNotNull result
+        assertEquals subscribersList, result.subscribers
     }
 
     void testCreate() {

@@ -1,5 +1,6 @@
 package outbox.subscriber
 
+import org.hibernate.Session
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.interceptor.TransactionAspectSupport
 import outbox.member.Member
@@ -131,7 +132,40 @@ class SubscriberService {
      * @param subscriberTypeId the subscriber type id.
      * @return the found subscriber type for member.
      */
+    @Transactional(readOnly = true)
     SubscriberType getMemberSubscriberType(Long memberId, Long subscriberTypeId) {
         SubscriberType.findByIdAndMember(subscriberTypeId, Member.load(memberId))
+    }
+
+    /**
+     * Gets the list of subscribers that are not in any subscription list.
+     * @param member the member to get subscribers for.
+     * @return the list of found free subscribers.
+     */
+    @Transactional(readOnly = false)
+    List<Subscriber> getSubscribersWithoutSubscription(Member member) {
+        Subscriber.executeQuery(
+                'from Subscriber s where s.member.id = :memberId '
+                        + 'and not exists (select 1 from Subscription ss where ss.subscriber.id = s.id)',
+                [memberId: member.id]
+        )
+    }
+
+    /**
+     * Gets the number of the subscribers that are not in any subscription list.
+     * @param member the member to get subscribers for.
+     * @return the number of found free subscribers.
+     */
+    @Transactional(readOnly = false)
+    int getSubscribersWithoutSubscriptionCount(final Member member) {
+        def firstResult = 0
+        Subscriber.withSession { Session session ->
+            firstResult =  session.createQuery(
+                    'select count(s) from Subscriber s where s.member.id = :memberId '
+                        + 'and not exists (select 1 from Subscription ss where ss.subscriber.id = s.id)')
+            .setLong('memberId', member.id).uniqueResult()
+        }
+
+        return firstResult
     }
 }

@@ -36,6 +36,7 @@
                     <td>${subscriber.enabled ? 'true' : 'false'}</td>
                 </tr>
             </table>
+            <g:link controller="subscriber" action="edit" id="${subscriber.id}"><g:message code="edit.details"/></g:link> 
         </g:if>
         <g:else>
             Subscriber is not found.

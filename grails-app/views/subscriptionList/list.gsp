@@ -8,6 +8,14 @@
         <div class="status" style="display: none;"> </div>
 
         <g:link controller="subscriptionList" action="create"><g:message code="create.subscriptionList"/></g:link>
+        |
+        <g:link controller="subscriber" action="create"><g:message code="create.subscriber"/></g:link>
+        |
+        <g:if test="${freeSubscribersCount}">
+            <g:link controller="subscriptionList" action="freeSubscribers">
+                <g:message code="subscribers.without.subscription" args="[freeSubscribersCount]"/>
+            </g:link>
+        </g:if>
         <table id="results" style="width: 800px;">
             <thead>
                 <tr>
@@ -27,7 +35,7 @@
                         </td>
                         <td><g:formatDate date="${subscriptionList.dateCreated}" format="d MMM yyyy, HH:mm"/></td>
                         <td></td>
-                        <td><g:link controller="subscriptionList" action="show" id="${subscriptionList.id}">View</g:link></td>
+                        <td><g:link controller="subscriptionList" action="show" id="${subscriptionList.id}"><g:message code="view"/></g:link></td>
                     </tr>
                 </g:each>
             </tbody>

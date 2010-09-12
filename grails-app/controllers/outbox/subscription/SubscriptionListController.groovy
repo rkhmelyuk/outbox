@@ -5,6 +5,7 @@ import grails.plugins.springsecurity.Secured
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
 import outbox.member.Member
+import outbox.subscriber.SubscriberService
 
 /**
  * @author Ruslan Khmelyuk
@@ -14,16 +15,34 @@ class SubscriptionListController {
 
     static allowedMethods = [add: 'POST', update: 'POST']
 
+    SubscriberService subscriberService
     SubscriptionListService subscriptionListService
     SpringSecurityService springSecurityService
 
+    /**
+     * Shows the list of Subscription Lists.
+     */
     def list = {
-        def memberId = springSecurityService.principal.id
-        def subscriptionLists = subscriptionListService.getMemberSubscriptionList(Member.load(memberId))
+        def member = Member.load(springSecurityService.principal.id)
+        def subscriptionLists = subscriptionListService.getMemberSubscriptionList(member)
+        int freeSubscribersCount = subscriberService.getSubscribersWithoutSubscriptionCount(member)
 
-        [subscriptionLists: subscriptionLists]
+        [subscriptionLists: subscriptionLists, freeSubscribersCount: freeSubscribersCount]
     }
 
+    /**
+     * Shows the list of subscribers without subscription if not specified other option).
+     */
+    def freeSubscribers = {
+        def member = Member.load(springSecurityService.principal.id)
+        def subscribersList = subscriberService.getSubscribersWithoutSubscription(member)
+        
+        [subscribers: subscribersList]
+    }
+
+    /**
+     * Shows specified Subscription list or 404 if not found or 403 if not permitted.
+     */
     def show = {
         def subscriptionList = subscriptionListService.getSubscriptionList(params.long('id'))
         if (!subscriptionList) {
@@ -70,7 +89,7 @@ class SubscriptionListController {
             return
         }
 
-        [subscriptionList : subscriptionList]
+        [subscriptionList: subscriptionList]
     }
 
     def update = {

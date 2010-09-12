@@ -2,6 +2,10 @@ package outbox.subscriber
 
 import org.hibernate.Session
 import outbox.member.Member
+import outbox.subscription.Subscription
+import outbox.subscription.SubscriptionList
+import outbox.subscription.SubscriptionListService
+import outbox.subscription.SubscriptionStatus
 
 /**
  * {@link SubscriberService} tests.
@@ -11,6 +15,7 @@ import outbox.member.Member
 class SubscriberServiceTests extends GroovyTestCase {
 
     SubscriberService subscriberService
+    SubscriptionListService subscriptionListService
 
     Member member
 
@@ -191,6 +196,37 @@ class SubscriberServiceTests extends GroovyTestCase {
         subscriber = subscriberService.getSubscriber(subscriber.id)
         assertNotNull subscriber
         assertNull subscriber.subscriberType
+    }
+
+    void testGetSubscribersWithoutSubscriptionCount() {
+        def subscriptionStatus = new SubscriptionStatus(id: 1, name: 'test').save()
+
+        def subscriber1 = createTestSubscriber()
+        def subscriber2 = createTestSubscriber()
+        def subscriber3 = createTestSubscriber()
+
+        subscriber2.email = 'subscriber2@mailsight.com'
+        subscriber3.email = 'subscriber3@mailsight.com'
+
+        assertTrue subscriberService.saveSubscriber(subscriber1)
+        assertTrue subscriberService.saveSubscriber(subscriber2)
+        assertTrue subscriberService.saveSubscriber(subscriber3)
+
+        def list = new SubscriptionList(name: 'Test list', owner: member)
+        assertTrue subscriptionListService.saveSubscriptionList(list)
+
+        def subscription1 = new Subscription(subscriber: subscriber1, subscriptionList: list, status: subscriptionStatus)
+        def subscription2 = new Subscription(subscriber: subscriber2, subscriptionList: list, status: subscriptionStatus)
+
+        assertNotNull subscription1.save()
+        assertNotNull subscription2.save()
+
+        assertEquals 1, subscriberService.getSubscribersWithoutSubscriptionCount(member)
+
+        def subscription3 = new Subscription(subscriber: subscriber3, subscriptionList: list, status: subscriptionStatus)
+        assertNotNull subscription3.save()
+
+        assertEquals 0, subscriberService.getSubscribersWithoutSubscriptionCount(member)
     }
 
     void assertEquals(Subscriber subscriber, Subscriber found) {

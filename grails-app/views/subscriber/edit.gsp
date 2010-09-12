@@ -79,7 +79,7 @@
             </table>
             <a href="javascript:void(0);" id="editSubscriber"><g:message code="save.subscriber"/></a>
             &nbsp;&nbsp;
-            <g:link controller="subscriber"><g:message code="cancel"/></g:link>
+            <g:link controller="subscriber" action="show" id="${subscriber.id}"><g:message code="cancel"/></g:link>
         </g:form>
     </body>
 </html>
