@@ -370,26 +370,26 @@ var App = {
         }
     },
 
-    subscribersListCreate: function() {
+    subscriptionListCreate: function() {
         $('#name').focus();
-        var validator = $('#subscribersListForm').validate({
+        var validator = $('#subscriptionListForm').validate({
             rules: {
                 name: { required: true, maxlength: 200 },
                 description: { maxlength: 1000 }
             },
             messages: {
-                name: { required: Message['subscribersList.name.blank'], maxlength: Message['subscribersList.name.maxSize.exceeded'] },
-                description: { maxlength: Message['subscribersList.description.maxSize.exceeded'] }
+                name: { required: Message['subscriptionList.name.blank'], maxlength: Message['subscriptionList.name.maxSize.exceeded'] },
+                description: { maxlength: Message['subscriptionList.description.maxSize.exceeded'] }
             }
         });
-        $('#addSubscribersList').click(function() {
+        $('#addSubscriptionList').click(function() {
             if (validator.form()) {
-                $('#subscribersListForm').ajaxSubmit({
+                $('#subscriptionListForm').ajaxSubmit({
                     dataType: 'json',
                     success: function(response, status) {
                         if (response && status == 'success') {
                             if (response.success) {
-                                document.location = Config['contextPath'] + "/subscribersList";
+                                document.location = Config['contextPath'] + "/list";
                             }
                             else {
                                 var errors = '';
@@ -405,26 +405,26 @@ var App = {
         });
     },
 
-    subscribersListEdit: function() {
+    subscriptionListEdit: function() {
         $('#name').focus();
-        var validator = $('#subscribersListForm').validate({
+        var validator = $('#subscriptionListForm').validate({
             rules: {
                 name: { required: true, maxlength: 200 },
                 description: { maxlength: 1000 }
             },
             messages: {
-                name: { required: Message['subscribersList.name.blank'], maxlength: Message['subscribersList.name.maxSize.exceeded'] },
-                description: { maxlength: Message['subscribersList.description.maxSize.exceeded'] }
+                name: { required: Message['subscriptionList.name.blank'], maxlength: Message['subscriptionList.name.maxSize.exceeded'] },
+                description: { maxlength: Message['subscriptionList.description.maxSize.exceeded'] }
             }
         });
-        $('#editSubscribersList').click(function() {
+        $('#editSubscriptionList').click(function() {
             if (validator.form()) {
-                $('#subscribersListForm').ajaxSubmit({
+                $('#subscriptionListForm').ajaxSubmit({
                     dataType: 'json',
                     success: function(response, status) {
                         if (response && status == 'success') {
                             if (response.success) {
-                                $('.status').show().text(Message['subscribersList.changed.successfully']);
+                                $('.status').show().text(Message['subscriptionList.changed.successfully']);
                             }
                             else {
                                 var errors = '';
@@ -440,11 +440,11 @@ var App = {
         });
     },
 
-    subscribersListShow: function() {
-        $('#deleteSubscribersList').click(function() {
+    subscriptionListShow: function() {
+        $('#deleteSubscriptionList').click(function() {
             $('#removeNotion').slideDown();
         });
-        $('#discardDeleteSubscribersList').click(function() {
+        $('#discardDeleteSubscriptionList').click(function() {
             $('#removeNotion').slideUp();
         });
     }

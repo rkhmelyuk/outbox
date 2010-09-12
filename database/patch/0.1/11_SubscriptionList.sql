@@ -1,7 +1,7 @@
 
-create table SubscribersList (
+create table SubscriptionList (
 
-    SubscribersListId bigserial,
+    SubscriptionListId bigserial,
     Name varchar(200) not null,
     Description varchar(1000) null,
     SubscribersNumber int null,
@@ -10,5 +10,5 @@ create table SubscribersList (
     
     CreateDate timestamp not null,
 
-    primary key(SubscribersListId)
+    primary key(SubscriptionListId)
 );

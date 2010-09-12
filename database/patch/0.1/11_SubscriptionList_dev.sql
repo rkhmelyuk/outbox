@@ -1,5 +1,5 @@
 
-insert into SubscribersList(MemberId, Name, Description, SubscribersNumber, CreateDate) values
+insert into SubscriptionList(MemberId, Name, Description, SubscribersNumber, CreateDate) values
 (3, 'Clients', 'Direct application clients', null, '2010-09-11 21:11'),
 (3, 'Valued Clients', 'Our best clients', null, '2010-09-11 21:11'),
 (3, 'Demo Clients', 'Clients that tried demo', null, '2010-09-11 21:11'),

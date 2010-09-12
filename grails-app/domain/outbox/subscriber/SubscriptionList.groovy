@@ -3,13 +3,13 @@ package outbox.subscriber
 import outbox.member.Member
 
 /**
- * Represents the list of subscribers.
+ * Represents the list of subscriptions.
  * This can be just a list of random subscribers,
  * the list of subscribers by type or by other criteria.
  *
  * @author Ruslan Khmelyuk
  */
-class SubscribersList {
+class SubscriptionList {
 
     Long id
     String name
@@ -20,8 +20,8 @@ class SubscribersList {
     Member owner
 
     static mapping = {
-        table 'SubscribersList'
-        id column: 'SubscribersListId'
+        table 'SubscriptionList'
+        id column: 'SubscriptionListId'
         columns {
             name column: 'Name'
             description column: 'Description'
@@ -35,7 +35,7 @@ class SubscribersList {
 
     static constraints = {
         name nullable: false, blank: false, maxSize: 200, validator: { val, obj ->
-            if (SubscribersList.duplicateName(obj, val)) {
+            if (SubscriptionList.duplicateName(obj, val)) {
                 return 'subscribersList.name.unique'
             }
         }
@@ -45,15 +45,15 @@ class SubscribersList {
     }
 
     /**
-     * Check whether name is duplicate. We use member information from subscribers list parameter
+     * Check whether name is duplicate. We use member information from subscription list parameter
      * and check name specified as second parameter.
      *
-     * @param list the subscribers list, that should have this name.
-     * @param name the new name for the subscribers list.
+     * @param list the subscriptions list, that should have this name.
+     * @param name the new name for the subscriptions list.
      * @return {@code true} if name is duplicate for this member, otherwise returns {@code false}.
      */
-    static boolean duplicateName(SubscribersList list, String name) {
-        def found = SubscribersList.findByOwnerAndName(list.owner, name)
+    static boolean duplicateName(SubscriptionList list, String name) {
+        def found = SubscriptionList.findByOwnerAndName(list.owner, name)
         return (found && !found.id.equals(list.id))
     }
 

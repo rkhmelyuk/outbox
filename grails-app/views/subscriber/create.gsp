@@ -12,7 +12,7 @@
     </head>
     <body>
         <div class="status" style="display: none;"> </div>
-        <g:form name="subscriberForm" controller="subscriber" action="add">
+        <g:form name="subscriberForm" controller="subscriber" action="add" onsubmit="return false;">
             <table>
                 <tr>
                     <td><g:message code="title"/></td>

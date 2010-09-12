@@ -12,7 +12,7 @@
     </head>
     <body>
         <div class="status" style="display: none;"> </div>
-        <g:form name="subscriberForm" controller="subscriber" action="update">
+        <g:form name="subscriberForm" controller="subscriber" action="update" onsubmit="return false;">
             <g:hiddenField name="id" value="${subscriber.id}"/>
             <table>
                 <tr>

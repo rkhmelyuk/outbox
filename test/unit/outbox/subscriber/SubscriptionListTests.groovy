@@ -6,11 +6,11 @@ import outbox.member.Member
 /**
  * @author Ruslan Khmelyuk
  */
-class SubscribersListTests extends GrailsUnitTestCase {
+class SubscriptionListTests extends GrailsUnitTestCase {
 
     void testFields() {
         def date = new Date()
-        def list = new SubscribersList()
+        def list = new SubscriptionList()
         list.id = 1
         list.name = 'SL Name'
         list.description = 'SL Description'
@@ -27,19 +27,19 @@ class SubscribersListTests extends GrailsUnitTestCase {
     }
 
     void testNonDuplicateName() {
-        SubscribersList list = new SubscribersList(id: 1, name: 'name', owner: new Member(id: 1))
-        mockDomain(SubscribersList, [list])
+        SubscriptionList list = new SubscriptionList(id: 1, name: 'name', owner: new Member(id: 1))
+        mockDomain(SubscriptionList, [list])
 
-        assertFalse SubscribersList.duplicateName(list, list.name)
+        assertFalse SubscriptionList.duplicateName(list, list.name)
     }
 
     void testDuplicateEmail() {
         Member member = new Member(id: 1)
-        SubscribersList list1 = new SubscribersList(id: 1, name: 'name', owner: member)
-        SubscribersList list2 = new SubscribersList(id: 2, name: 'name', owner: member)
+        SubscriptionList list1 = new SubscriptionList(id: 1, name: 'name', owner: member)
+        SubscriptionList list2 = new SubscriptionList(id: 2, name: 'name', owner: member)
 
-        mockDomain(SubscribersList, [list1, list2])
+        mockDomain(SubscriptionList, [list1, list2])
 
-        assertTrue SubscribersList.duplicateName(list2, list2.name)
+        assertTrue SubscriptionList.duplicateName(list2, list2.name)
     }
 }

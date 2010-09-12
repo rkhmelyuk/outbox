@@ -58,7 +58,7 @@
                 <ul>
                     <li><g:link controller="member" action="list">Members</g:link></li>
                     <li><g:link controller="subscriber" action="types">Subscriber Types</g:link></li>
-                    <li><g:link controller="subscribersList">Subscribers</g:link></li>
+                    <li><g:link controller="subscriptionList">Subscribers</g:link></li>
                 </ul>
             </div>
             <div class="panelBtm"></div>

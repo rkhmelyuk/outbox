@@ -7,7 +7,7 @@ import outbox.member.Member
 /**
  * @author Ruslan Khmelyuk
  */
-class SubscribersListService {
+class SubscriptionListService {
 
     static transactional = true
 
@@ -25,43 +25,43 @@ class SubscribersListService {
     }
 
     /**
-     * Saves subscribers list to our storage.
-     * @param subscribersList the list to be saved.
-     * @return {@code true}  if was saved successfully, otherwise  {@code false} .
+     * Saves subscriptions list to our storage.
+     * @param subscriptionList the list to be saved.
+     * @return {@code true} if was saved successfully, otherwise  {@code false} .
      */
     @Transactional(readOnly = false)
-    boolean saveSubscribersList(SubscribersList subscribersList) {
-        saveOrRollback subscribersList
+    boolean saveSubscriptionList(SubscriptionList subscriptionList) {
+        saveOrRollback subscriptionList
     }
 
     /**
-     * Gets subscribers list by it's id.
+     * Gets subscription list by it's id.
      * 
-     * @param id the subscribers list id.
-     * @return the found subscribers list.
+     * @param id the subscriptions list id.
+     * @return the found subscriptions list.
      */
     @Transactional(readOnly = true)
-    SubscribersList getSubscribersList(Long id) {
-        SubscribersList.get id
+    SubscriptionList getSubscriptionList(Long id) {
+        SubscriptionList.get id
     }
 
     /**
-     * Gets members subscribers lists.
-     * @param member the member to get owned subscribers lists.
-     * @return the found subscribers lists.
+     * Gets members subscriptions lists.
+     * @param member the member to get owned subscriptions lists.
+     * @return the found subscriptions lists.
      */
     @Transactional(readOnly = true)
-    List<SubscribersList> getMemberSubscribersList(Member member) {
-        SubscribersList.findAllByOwner member
+    List<SubscriptionList> getMemberSubscriptionList(Member member) {
+        SubscriptionList.findAllByOwner member
     }
 
     /**
-     * Delete subscribers list. In this case any relationship with subscribers are removed,
+     * Delete subscriptions list. In this case any relationship with subscribers are removed,
      * but subscribers are not removed.
-     * @param subscribersList the subscribers list to remove.
+     * @param subscribersList the subscriptions list to remove.
      */
     @Transactional(readOnly = false)
-    void deleteSubscribersList(SubscribersList subscribersList) {
+    void deleteSubscriptionList(SubscriptionList subscribersList) {
         if (subscribersList) {
             // TODO - 1. cleanup subscribers list relationship
             // 2. delete subscribers list

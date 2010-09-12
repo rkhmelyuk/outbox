@@ -7,24 +7,24 @@ import outbox.member.Member
 import outbox.security.OutboxUser
 
 /**
- * {@link SubscribersListController} tests.
+ * {@link SubscriptionListController} tests.
  * 
  * @author Ruslan Khmelyuk
  */
-class SubscribersListControllerTests extends ControllerUnitTestCase {
+class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
     void testList() {
         def member = new Member(id: 10)
-        def subscribersLists = null
+        def subscriptionLists = null
 
         Member.class.metaClass.static.load = { id -> member }
 
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getMemberSubscribersList { it ->
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getMemberSubscriptionList { it ->
             assertEquals member.id, it.id;
-            return subscribersLists
+            return subscriptionLists
         }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -35,26 +35,26 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         def result = controller.list()
         
         assertNotNull result
-        assertEquals subscribersLists, result.subscribersLists
+        assertEquals subscriptionLists, result.subscriptionLists
     }
 
     void testCreate() {
         def result = controller.create()
         assertNotNull result
-        assertNotNull result.subscribersList
-        assertNull result.subscribersList.id
+        assertNotNull result.subscriptionList
+        assertNull result.subscriptionList.id
     }
 
     void testAdd_Success() {
         Member.class.metaClass.static.load = { id -> new Member(id: 1)}
 
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.saveSubscribersList {
-            assertEquals 'Subscribers List Name', it.name
-            assertEquals 'Subscribers List Description', it.description
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.saveSubscriptionList {
+            assertEquals 'Subscription List Name', it.name
+            assertEquals 'Subscription List Description', it.description
             return true 
         }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -62,8 +62,8 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
-        controller.params.name = 'Subscribers List Name'
-        controller.params.description = 'Subscribers List Description'
+        controller.params.name = 'Subscription List Name'
+        controller.params.description = 'Subscription List Description'
 
         controller.add()
 
@@ -76,15 +76,15 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
     void testAdd_Fail() {
         Member.class.metaClass.static.load = { id -> new Member(id: 1)}
 
-        mockDomain(SubscribersList)
+        mockDomain(SubscriptionList)
 
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.saveSubscribersList {
-            assertEquals 'Subscribers List Name', it.name
-            assertEquals 'Subscribers List Description', it.description
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.saveSubscriptionList {
+            assertEquals 'Subscription List Name', it.name
+            assertEquals 'Subscription List Description', it.description
             return false
         }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -92,8 +92,8 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
-        controller.params.name = 'Subscribers List Name'
-        controller.params.description = 'Subscribers List Description'
+        controller.params.name = 'Subscription List Name'
+        controller.params.description = 'Subscription List Description'
 
         controller.add()
 
@@ -107,9 +107,9 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
     void testEdit() {
         def member = new Member(id: 1)
         
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id -> new SubscribersList(id: id, owner: member) }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member) }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -120,16 +120,16 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         controller.params.id = '10'
         def result = controller.edit()
 
-        assertNotNull result.subscribersList
-        assertEquals 10, result.subscribersList.id
+        assertNotNull result.subscriptionList
+        assertEquals 10, result.subscriptionList.id
     }
 
     void testEdit_Denied() {
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id ->
-            new SubscribersList(id: id, owner: new Member(id: 1))
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            new SubscriptionList(id: id, owner: new Member(id: 1))
         }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -145,9 +145,9 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
     }
 
     void testEdit_NotFound() {
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id -> null }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> null }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         controller.params.id = '10'
         def result = controller.edit()
@@ -160,15 +160,15 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         def member = new Member(id: 1)
         Member.class.metaClass.static.load = { id -> member}
 
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id -> new SubscribersList(id: id, owner: member)}
-        subscribersListServiceControl.demand.saveSubscribersList {
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member)}
+        subscriptionListServiceControl.demand.saveSubscriptionList {
             assertEquals 10, it.id
-            assertEquals 'Subscribers List Name', it.name
-            assertEquals 'Subscribers List Description', it.description
+            assertEquals 'Subscription List Name', it.name
+            assertEquals 'Subscription List Description', it.description
             return true
         }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -177,8 +177,8 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         controller.params.id = 10
-        controller.params.name = 'Subscribers List Name'
-        controller.params.description = 'Subscribers List Description'
+        controller.params.name = 'Subscription List Name'
+        controller.params.description = 'Subscription List Description'
 
         controller.update()
 
@@ -192,17 +192,17 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         def member = new Member(id: 1)
         Member.class.metaClass.static.load = { id -> member}
 
-        mockDomain(SubscribersList)
+        mockDomain(SubscriptionList)
 
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id -> new SubscribersList(id: id, owner: member)}
-        subscribersListServiceControl.demand.saveSubscribersList {
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member)}
+        subscriptionListServiceControl.demand.saveSubscriptionList {
             assertEquals 10, it.id
-            assertEquals 'Subscribers List Name', it.name
-            assertEquals 'Subscribers List Description', it.description
+            assertEquals 'Subscription List Name', it.name
+            assertEquals 'Subscription List Description', it.description
             return false
         }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -211,8 +211,8 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         controller.params.id = 10
-        controller.params.name = 'Subscribers List Name'
-        controller.params.description = 'Subscribers List Description'
+        controller.params.name = 'Subscription List Name'
+        controller.params.description = 'Subscription List Description'
 
         controller.update()
 
@@ -227,15 +227,15 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         def member = new Member(id: 1)
         Member.class.metaClass.static.load = { id -> member}
 
-        mockDomain(SubscribersList)
+        mockDomain(SubscriptionList)
 
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id -> null}
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> null}
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         controller.params.id = 10
-        controller.params.name = 'Subscribers List Name'
-        controller.params.description = 'Subscribers List Description'
+        controller.params.name = 'Subscription List Name'
+        controller.params.description = 'Subscription List Description'
 
         controller.update()
 
@@ -250,19 +250,19 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         def member = new Member(id: 1)
         Member.class.metaClass.static.load = { id -> member}
 
-        mockDomain(SubscribersList)
+        mockDomain(SubscriptionList)
 
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id ->
-            new SubscribersList(id: id, owner: new Member(id: 2))}
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            new SubscriptionList(id: id, owner: new Member(id: 2))}
 
-        subscribersListServiceControl.demand.saveSubscribersList {
+        subscriptionListServiceControl.demand.saveSubscriptionList {
             assertEquals 10, it.id
-            assertEquals 'Subscribers List Name', it.name
-            assertEquals 'Subscribers List Description', it.description
+            assertEquals 'Subscription List Name', it.name
+            assertEquals 'Subscription List Description', it.description
             return false
         }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -271,8 +271,8 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         controller.params.id = 10
-        controller.params.name = 'Subscribers List Name'
-        controller.params.description = 'Subscribers List Description'
+        controller.params.name = 'Subscription List Name'
+        controller.params.description = 'Subscription List Description'
 
         controller.update()
 
@@ -286,9 +286,9 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
     void testShow() {
         def member = new Member(id: 1)
 
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id -> new SubscribersList(id: id, owner: member) }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member) }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -299,16 +299,16 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         controller.params.id = '10'
         def result = controller.show()
 
-        assertNotNull result.subscribersList
-        assertEquals 10, result.subscribersList.id
+        assertNotNull result.subscriptionList
+        assertEquals 10, result.subscriptionList.id
     }
 
     void testShow_Denied() {
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id ->
-            new SubscribersList(id: id, owner: new Member(id: 1))
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            new SubscriptionList(id: id, owner: new Member(id: 1))
         }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -324,9 +324,9 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
     }
 
     void testShow_NotFound() {
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id -> null }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> null }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         controller.params.id = '10'
         def result = controller.show()
@@ -338,10 +338,10 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
     void testDelete() {
         def member = new Member(id: 1)
 
-        def subscribersListServiceControl = mockFor(SubscribersListService)
-        subscribersListServiceControl.demand.getSubscribersList { id -> new SubscribersList(id: id, owner: member) }
-        subscribersListServiceControl.demand.deleteSubscribersList { }
-        controller.subscribersListService = subscribersListServiceControl.createMock()
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member) }
+        subscriptionListServiceControl.demand.deleteSubscriptionList { }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -352,7 +352,7 @@ class SubscribersListControllerTests extends ControllerUnitTestCase {
         controller.params.id = 1
         controller.delete()
 
-        assertEquals 'subscribersList', controller.redirectArgs.controller
+        assertEquals 'subscriptionList', controller.redirectArgs.controller
         assertEquals null, controller.redirectArgs.action
     }
 

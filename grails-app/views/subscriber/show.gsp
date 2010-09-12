@@ -3,10 +3,6 @@
     <head>
         <title><g:message code="show.subscriber.title"/></title>
         <meta name='layout' content='main'/>
-        
-        %{--<script type="text/javascript">
-            $(document).ready(function() { App.memberEdit() })
-        </script>--}%
     </head>
     <body>
         <g:if test="${subscriber}">
