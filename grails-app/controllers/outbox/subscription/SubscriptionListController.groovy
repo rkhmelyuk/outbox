@@ -1,4 +1,4 @@
-package outbox.subscriber
+package outbox.subscription
 
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured

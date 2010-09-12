@@ -1,4 +1,4 @@
-package outbox.subscriber
+package outbox.subscription
 
 import grails.converters.JSON
 import grails.plugins.springsecurity.SpringSecurityService
@@ -353,7 +353,7 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         controller.delete()
 
         assertEquals 'subscriptionList', controller.redirectArgs.controller
-        assertEquals null, controller.redirectArgs.action
+        assertEquals '', controller.redirectArgs.action
     }
 
 }

@@ -1,4 +1,4 @@
-package outbox.subscriber
+package outbox.subscription
 
 import outbox.member.Member
 
