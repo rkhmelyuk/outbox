@@ -31,7 +31,8 @@
 
         <div class="subscribers">
             List of subscribers goes here.
-            / need to think to be fine both for dynamic and static lists and allow show more and edit list / 
+            / need to think to be fine both for dynamic and static lists and allow show more and edit list /
+            <g:link controller="subscriber" action="create" params="[list:subscriptionList.id]"><g:message code="create.subscriber"/></g:link>
         </div>
         <div class="campaigns">
             List of campaigns that used this list. 

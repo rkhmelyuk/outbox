@@ -187,7 +187,7 @@ var App = {
                     success: function(response, status) {
                         if (response && status == 'success') {
                             if (response.success) {
-                                document.location = Config['contextPath'] + "/member/list";
+                                document.location = response.redirectTo;
                             }
                             else {
                                 var errors = '';
@@ -220,7 +220,7 @@ var App = {
                     success: function(response, status) {
                         if (response && status == 'success') {
                             if (response.success) {
-                                document.location = Config['contextPath'] + "/subscriber";
+                                document.location = response.redirectTo;
                             }
                             else {
                                 var errors = '';
@@ -389,7 +389,7 @@ var App = {
                     success: function(response, status) {
                         if (response && status == 'success') {
                             if (response.success) {
-                                document.location = Config['contextPath'] + "/list";
+                                document.location = response.redirectTo;
                             }
                             else {
                                 var errors = '';

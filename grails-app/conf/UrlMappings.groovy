@@ -7,6 +7,7 @@ class UrlMappings {
             }
         }
 
+        "/subscribers"(controller: 'subscriptionList', action: 'freeSubscribers')
         "/list/$id?"(controller: 'subscriptionList', action: 'show') {
             constraints {
                 id matches: /\d+/

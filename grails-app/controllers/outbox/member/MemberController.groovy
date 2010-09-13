@@ -163,18 +163,19 @@ class MemberController {
                 if (roleId) {
                     MemberRole.create(member, Role.load(roleId), true)
                 }
-                model << [success: true]
+                model.success = true
+                model.redirectTo = g.createLink(controller: 'member', action: 'list')
             }
             else {
                 MessageUtil.addErrors(request, model, member.errors);
             }
         }
         else {
-            model << [errors: ['role': message(code: 'member.role.nullable')]] 
+            model.errors = ['role': message(code: 'member.role.nullable')] 
         }
         
         if (!model.success) {
-            model << [error: true]
+            model.error = true
         }
 
         render(model.encodeAsJSON())

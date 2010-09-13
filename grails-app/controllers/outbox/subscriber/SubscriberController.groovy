@@ -9,6 +9,10 @@ import outbox.dictionary.Language
 import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
+import outbox.subscription.Subscription
+import outbox.subscription.SubscriptionList
+import outbox.subscription.SubscriptionListService
+import outbox.subscription.SubscriptionStatus
 
 /**
  * @author Ruslan Khmelyuk
@@ -21,6 +25,7 @@ class SubscriberController {
             deleteSubscriberType: 'POST', update: 'POST', add: 'POST']
 
     SubscriberService subscriberService
+    SubscriptionListService subscriptionListService
     SpringSecurityService springSecurityService
 
     def show = {
@@ -33,7 +38,7 @@ class SubscriberController {
             response.sendError 403
             return
         }
-        
+
         [subscriber: subscriber]
     }
 
@@ -82,8 +87,8 @@ class SubscriberController {
     def create = {
         def memberId = springSecurityService.principal.id
         def subscriberTypes = subscriberService.getSubscriberTypes(Member.load(memberId))
-
-        [subscriber: new Subscriber(enabled: true), subscriberTypes: subscriberTypes]
+                                                                                            
+        [subscriber: new Subscriber(enabled: true), subscriberTypes: subscriberTypes, listId: params.list]
     }
 
     def add = {
@@ -101,7 +106,15 @@ class SubscriberController {
 
         def model = [:]
         if (subscriberService.saveSubscriber(subscriber)) {
+            def listId = params.long('listId')
             model.success = true
+            if (listId) {
+                subscribe(subscriber, listId)
+                model.redirectTo = g.createLink(controller: 'subscriptionList', action: 'show', id: listId)
+            }
+            else {
+                model.redirectTo = g.createLink(controller: 'subscriptionList', action: 'freeSubscribers')
+            }
         }
         else {
             model.error = true
@@ -111,10 +124,26 @@ class SubscriberController {
         render model as JSON
     }
 
+    private void subscribe(Subscriber subscriber, Long listId) {
+        if (!listId) {
+            return
+        }
+
+        SubscriptionList list = subscriptionListService.getSubscriptionList(listId)
+        if (list && list.ownedBy(subscriber.member.id)) {
+            Subscription subscription = new Subscription()
+            subscription.subscriber = subscriber
+            subscription.subscriptionList = list
+            subscription.status = SubscriptionStatus.subscribed()
+
+            subscriptionListService.addSubscription subscription
+        }
+    }
+
     def types = {
         def id = springSecurityService.principal.id
         def subscriberTypes = subscriberService.getSubscriberTypes(Member.load(id))
-        
+
         [subscriberTypes: subscriberTypes]
     }
 
@@ -169,7 +198,7 @@ class SubscriberController {
         else {
             model.error = true
         }
-        
+
         render model as JSON
     }
 }

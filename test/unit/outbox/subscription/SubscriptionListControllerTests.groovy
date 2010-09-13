@@ -15,6 +15,11 @@ import outbox.subscriber.SubscriberService
  */
 class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
+    protected void setUp() {
+        super.setUp();
+        controller.class.metaClass.createLink = { null }
+    }
+
     void testList() {
         def member = new Member(id: 10)
         def subscriptionLists = null

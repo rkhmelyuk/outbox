@@ -68,4 +68,15 @@ class SubscriptionListService {
             subscribersList.delete()
         }
     }
+
+    /**
+     * Adds subscription.
+     * 
+     * @param subscription the subscription to be added.
+     * @return {@code true} if added, otherwise {@code false}.
+     */
+    @Transactional(readOnly = false)
+    boolean addSubscription(Subscription subscription) {
+        saveOrRollback subscription
+    }
 }

@@ -13,6 +13,7 @@
     <body>
         <div class="status" style="display: none;"> </div>
         <g:form name="subscriberForm" controller="subscriber" action="add" onsubmit="return false;">
+            <g:hiddenField name="listId" value="${listId}"/>
             <table>
                 <tr>
                     <td><g:message code="title"/></td>

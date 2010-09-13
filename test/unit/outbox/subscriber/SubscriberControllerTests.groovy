@@ -9,11 +9,19 @@ import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
 import outbox.security.OutboxUser
+import outbox.subscription.SubscriptionList
+import outbox.subscription.SubscriptionListService
+import outbox.subscription.SubscriptionStatus
 
 /**
  * @author Ruslan Khmelyuk
  */
 class SubscriberControllerTests extends ControllerUnitTestCase {
+
+    protected void setUp() {
+        super.setUp();
+        controller.class.metaClass.createLink = { null }
+    }
 
     void testShow() {
         Member member = new Member(id: 1)
@@ -101,6 +109,28 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertEquals member, result.subscriberTypes[0].member
     }
 
+    void testCreate_WithSubscription() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> return member}
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        def Subscriber subscriber = null
+        subscriberServiceControl.demand.getSubscriberTypes { m -> [new SubscriberType(id: 1, member: m)]}
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+
+        controller.subscriberService = subscriberServiceControl.createMock()
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.list = '10'
+        def result = controller.create()
+
+        assertNotNull result
+        assertEquals '10', result.listId
+    }
+
     void testAdd_Success() {
         def member = new Member(id: 1)
         
@@ -147,6 +177,111 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertEquals 4, subscriber.language.id
         assertEquals 5, subscriber.namePrefix.id
         assertEquals 6, subscriber.subscriberType.id
+    }
+
+    void testAdd_WithSubscription() {
+        def member = new Member(id: 1)
+
+        Gender.class.metaClass.static.load = { id -> return new Gender(id: id) }
+        Language.class.metaClass.static.load = { id -> return new Language(id: id) }
+        Timezone.class.metaClass.static.load = { id -> return new Timezone(id: id) }
+        NamePrefix.class.metaClass.static.load = { id -> return new NamePrefix(id: id) }
+        SubscriberType.class.metaClass.static.load = { id -> return new SubscriberType(id: id) }
+        Member.class.metaClass.static.load = { id -> return member}
+        SubscriptionStatus.class.metaClass.static.get = { id -> return new SubscriptionStatus(id: id)}
+
+        def Subscriber subscriber = null
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.saveSubscriber { subscr ->
+            subscriber = subscr;
+            subscriber.id = '123';
+            return true
+        }
+
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            assertEquals 22, id
+            return new SubscriptionList(id: id, owner: member)
+        }
+        subscriptionListServiceControl.demand.addSubscription { subscription ->
+            assertEquals '123', subscription.subscriber.id
+            assertEquals 22, subscription.subscriptionList.id
+            return true
+        }
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+
+        controller.subscriberService = subscriberServiceControl.createMock()
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.email = 'test@mailsight.com'
+        controller.params.listId = 22
+
+        controller.class.metaClass.createLink = { '/outbox/list/22' }
+
+        controller.add()
+        assertNotNull mockResponse.contentAsString
+
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue 'Success is expected.', result.success
+        assertEquals '/outbox/list/22', result.redirectTo
+        assertNull 'Error is unexpected.', result.error
+
+        assertNotNull subscriber
+
+        subscriberServiceControl.verify()
+        subscriptionListServiceControl.verify()
+    }
+
+    void testAdd_WithFailedSubscription() {
+        def member = new Member(id: 1)
+
+        Gender.class.metaClass.static.load = { id -> return new Gender(id: id) }
+        Language.class.metaClass.static.load = { id -> return new Language(id: id) }
+        Timezone.class.metaClass.static.load = { id -> return new Timezone(id: id) }
+        NamePrefix.class.metaClass.static.load = { id -> return new NamePrefix(id: id) }
+        SubscriberType.class.metaClass.static.load = { id -> return new SubscriberType(id: id) }
+        Member.class.metaClass.static.load = { id -> return member}
+
+        def Subscriber subscriber = null
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.saveSubscriber { subscr ->
+            subscriber = subscr;
+            subscriber.id = 123;
+            return true
+        }
+
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            assertEquals 22, id
+            return new SubscriptionList(id: id)
+        }
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+
+        controller.subscriberService = subscriberServiceControl.createMock()
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.email = 'test@mailsight.com'
+        controller.params.listId = 22
+        
+        controller.add()
+        assertNotNull mockResponse.contentAsString
+
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue 'Success is expected.', result.success
+        assertNull 'Error is unexpected.', result.error
+
+        assertNotNull subscriber
+
+        subscriberServiceControl.verify()
+        subscriptionListServiceControl.verify()
     }
 
     void testAdd_Fail() {
@@ -517,7 +652,6 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         assertTrue result.error
     }
-
 
     void testDeleteSubscriberType() {
         def member = new Member(id: 1)

@@ -69,6 +69,7 @@ class SubscriptionListController {
         def model = [:]
         if (subscriptionListService.saveSubscriptionList(subscriptionList)) {
             model.success = true
+            model.redirectTo = g.createLink(controller: 'subscriptionList')
         }
         else {
             model.error = true
