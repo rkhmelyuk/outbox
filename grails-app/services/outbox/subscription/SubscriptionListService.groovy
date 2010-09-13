@@ -77,7 +77,13 @@ class SubscriptionListService {
      */
     @Transactional(readOnly = false)
     boolean addSubscription(Subscription subscription) {
-        saveOrRollback subscription
+        if (saveOrRollback(subscription)) {
+            def subscriptionList = subscription.subscriptionList
+            subscriptionList.subscribersNumber = Subscription.countBySubscriptionList(subscriptionList)
+            saveSubscriptionList(subscriptionList)
+            return true
+        }
+        return false
     }
 
     /**

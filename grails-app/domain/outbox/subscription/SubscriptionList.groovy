@@ -31,6 +31,7 @@ class SubscriptionList {
         }
         version false
         cache true
+        sort 'name'
     }
 
     static constraints = {
