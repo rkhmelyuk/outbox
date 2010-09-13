@@ -53,7 +53,10 @@ class SubscriptionListController {
             response.sendError 403
             return
         }
-        [subscriptionList: subscriptionList]
+
+        def subscriptions = subscriptionListService.getSubscriptionsForList(subscriptionList)
+
+        [subscriptionList: subscriptionList, subscriptions: subscriptions]
     }
 
     def create = {

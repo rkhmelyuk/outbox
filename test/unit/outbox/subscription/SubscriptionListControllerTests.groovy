@@ -326,9 +326,11 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
     void testShow() {
         def member = new Member(id: 1)
+        def subscriptions = [new Subscription(id: 1), new Subscription(id: 2)]
 
         def subscriptionListServiceControl = mockFor(SubscriptionListService)
         subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member) }
+        subscriptionListServiceControl.demand.getSubscriptionsForList { list -> return subscriptions }
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
@@ -342,6 +344,8 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
         assertNotNull result.subscriptionList
         assertEquals 10, result.subscriptionList.id
+        assertNotNull result.subscriptions
+        assertEquals 2, result.subscriptions.size()
     }
 
     void testShow_Denied() {

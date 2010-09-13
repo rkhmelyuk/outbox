@@ -79,4 +79,15 @@ class SubscriptionListService {
     boolean addSubscription(Subscription subscription) {
         saveOrRollback subscription
     }
+
+    /**
+     * Gets the list of subscriptions for specified subscription list.
+     *
+     * @param subscriptionList the subscription list.
+     * @return the list of found subscriptions.
+     */
+    @Transactional(readOnly = true)
+    List<Subscription> getSubscriptionsForList(SubscriptionList subscriptionList) {
+        Subscription.findAllBySubscriptionList subscriptionList
+    }
 }

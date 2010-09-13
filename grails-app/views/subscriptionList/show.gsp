@@ -30,9 +30,27 @@
         </div>
 
         <div class="subscribers">
-            List of subscribers goes here.
-            / need to think to be fine both for dynamic and static lists and allow show more and edit list /
+            <h3><g:message code="subscribers"/></h3>
             <g:link controller="subscriber" action="create" params="[list:subscriptionList.id]"><g:message code="create.subscriber"/></g:link>
+            <g:if test="${subscriptions}">
+                <table>
+                    <tr>
+                        <td><g:message code="email"/></td>
+                        <td><g:message code="name"/></td>
+                        <td><g:message code="create.date"/></td>
+                        <td><g:message code="status"/></td>
+                    </tr>
+                    <g:each var="subscription" in="${subscriptions}">
+                    <tr>
+                        <td><g:link controller="subscriber" action="show" id="${subscription.subscriber?.id}">
+                            ${subscription.subscriber?.email}</g:link></td>
+                        <td>${subscription.subscriber?.fullName}</td>
+                        <td><g:formatDate date="${subscription.subscriber?.dateCreated}" format="d MMMMM yyyy"/></td>
+                        <td>${subscription.status?.name}</td>
+                    </tr>
+                    </g:each>
+                </table>
+            </g:if>
         </div>
         <div class="campaigns">
             List of campaigns that used this list. 

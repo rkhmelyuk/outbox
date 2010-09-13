@@ -139,6 +139,7 @@ class SubscriberService {
 
     /**
      * Gets the list of subscribers that are not in any subscription list.
+     *
      * @param member the member to get subscribers for.
      * @return the list of found free subscribers.
      */
@@ -153,6 +154,7 @@ class SubscriberService {
 
     /**
      * Gets the number of the subscribers that are not in any subscription list.
+     * 
      * @param member the member to get subscribers for.
      * @return the number of found free subscribers.
      */
@@ -168,4 +170,5 @@ class SubscriberService {
 
         return firstResult
     }
+
 }
