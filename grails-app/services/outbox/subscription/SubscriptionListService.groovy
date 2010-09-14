@@ -11,7 +11,7 @@ class SubscriptionListService {
 
     static transactional = true
 
-    @Transactional(readOnly = false)
+    @Transactional
     private boolean saveOrRollback(Object item) {
         if (!item) {
             return false
@@ -29,7 +29,7 @@ class SubscriptionListService {
      * @param subscriptionList the list to be saved.
      * @return {@code true} if was saved successfully, otherwise {@code false}  .
      */
-    @Transactional(readOnly = false)
+    @Transactional
     boolean saveSubscriptionList(SubscriptionList subscriptionList) {
         saveOrRollback subscriptionList
     }
@@ -60,7 +60,7 @@ class SubscriptionListService {
      * but subscribers are not removed.
      * @param subscribersList the subscriptions list to remove.
      */
-    @Transactional(readOnly = false)
+    @Transactional
     void deleteSubscriptionList(SubscriptionList subscribersList) {
         if (subscribersList) {
             // TODO - 1. cleanup subscribers list relationship
@@ -75,7 +75,7 @@ class SubscriptionListService {
      * @param subscription the subscription to be added.
      * @return {@code true} if added, otherwise {@code false}.
      */
-    @Transactional(readOnly = false)
+    @Transactional
     boolean addSubscription(Subscription subscription) {
         if (saveOrRollback(subscription)) {
             def subscriptionList = subscription.subscriptionList

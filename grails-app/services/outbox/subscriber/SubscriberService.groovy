@@ -15,7 +15,7 @@ class SubscriberService {
 
     static transactional = true
 
-    @Transactional(readOnly = false)
+    @Transactional
     private boolean saveOrRollback(Object item) {
         if (!item) {
             return false
@@ -33,6 +33,7 @@ class SubscriberService {
      * @param id subscriber id.
      * @return the found subscriber.
      */
+    @Transactional(readOnly = true)
     Subscriber getSubscriber(String id) {
         Subscriber.get id
     }
@@ -42,7 +43,7 @@ class SubscriberService {
      * @param subscriber the subscriber to be saved.
      * @return true if saved successfully, otherwise returns false.
      */
-    @Transactional(readOnly = false)
+    @Transactional
     boolean saveSubscriber(Subscriber subscriber) {
         saveOrRollback subscriber
     }
@@ -52,7 +53,7 @@ class SubscriberService {
      * @param subscriber the subscriber to enabled.
      * @return true if enabled successfully, otherwise returns false.
      */
-    @Transactional(readOnly = false)
+    @Transactional
     boolean enableSubscriber(Subscriber subscriber) {
         subscriber.enabled = true
         saveSubscriber subscriber
@@ -63,7 +64,7 @@ class SubscriberService {
      * @param subscriber the subscriber to disable.
      * @return true if disabled successfully, otherwise returns false. 
      */
-    @Transactional(readOnly = false)
+    @Transactional
     boolean disableSubscriber(Subscriber subscriber) {
         subscriber.enabled = false
         saveSubscriber subscriber
@@ -85,7 +86,7 @@ class SubscriberService {
      * @param subscriberType subscriber type.
      * @return true if added subscriber type.
      */
-    @Transactional(readOnly = false)
+    @Transactional
     boolean addSubscriberType(SubscriberType subscriberType) {
         saveOrRollback subscriberType
     }
@@ -96,7 +97,7 @@ class SubscriberService {
      * @param subscriberType subscriber type.
      * @return true if saved subscriber type.
      */
-    @Transactional(readOnly = false)
+    @Transactional
     boolean saveSubscriberType(SubscriberType subscriberType) {
         saveOrRollback subscriberType
     }
@@ -105,7 +106,7 @@ class SubscriberService {
      * Deletes subscriber type.
      * @param subscriberType the subscriber type to delete.
      */
-    @Transactional(readOnly = false)
+    @Transactional
     void deleteSubscriberType(SubscriberType subscriberType) {
         if (subscriberType) {
             // 1. remove type from subscribers
@@ -119,7 +120,7 @@ class SubscriberService {
      * Update subscribers to not used specified subscriber type.
      * @param subscriberType the subscriber type to not be used by subscribers.
      */
-    @Transactional(readOnly = false)
+    @Transactional
     private void cleanupSubscriberTypes(SubscriberType subscriberType) {
         Subscriber.executeUpdate(
                 'update Subscriber s set s.subscriberType = null where s.subscriberType.id = :subscriberTypeId',
@@ -143,7 +144,7 @@ class SubscriberService {
      * @param member the member to get subscribers for.
      * @return the list of found free subscribers.
      */
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = true)
     List<Subscriber> getSubscribersWithoutSubscription(Member member) {
         Subscriber.executeQuery(
                 'from Subscriber s where s.member.id = :memberId '
@@ -158,7 +159,7 @@ class SubscriberService {
      * @param member the member to get subscribers for.
      * @return the number of found free subscribers.
      */
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = true)
     int getSubscribersWithoutSubscriptionCount(final Member member) {
         def firstResult = 0
         Subscriber.withSession { Session session ->
