@@ -31,7 +31,15 @@ class TemplateController {
      * Gets the page of templates.
      */
     def templatesPage = {
-        
+        def page = params.int('page')
+        if (page == null || page <= 0) {
+            page = 1
+        }
+
+        def member = Member.load(springSecurityService.principal.id)
+        def templates = templateService.getMemberTemplates(member, page, 10)
+
+        [templates: templates]
     }
 
     def show = {

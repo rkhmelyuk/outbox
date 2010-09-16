@@ -48,6 +48,40 @@ class TemplateControllerTests extends ControllerUnitTestCase {
         springSecurityServiceControl.verify()
     }
 
+    void testTemplatesPage() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> member }
+
+        mockDomain(Template)
+
+        def templates = [new Template(id: 1), new Template(id: 2)]
+
+        def templateServiceControl = mockFor(TemplateService)
+        templateServiceControl.demand.getMemberTemplates {m, page, max ->
+            assertEquals member, m
+            assertEquals 2, page
+            assertEquals 10, max
+            return templates
+        }
+        controller.templateService = templateServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.page = 2
+
+        def result = controller.templatesPage()
+
+        assertNotNull result.templates
+        assertEquals 2, result.templates.size()
+
+        templateServiceControl.verify()
+        springSecurityServiceControl.verify()
+    }
+
     void testCreate() {
         def result = controller.create()
         assertNotNull result.template
