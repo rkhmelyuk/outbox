@@ -447,6 +447,43 @@ var App = {
         $('#discardDeleteSubscriptionList').click(function() {
             $('#removeNotion').slideUp();
         });
+    },
+
+    templateCreate: function() {
+        $('#name').focus();
+        var validator = $('#templateForm').validate({
+            rules: {
+                name: { required: true, maxlength: 200 },
+                description: { maxlength: 1000 },
+                templateBody: { required: true }
+            },
+            messages: {
+                name: { required: Message['template.name.blank'], maxlength: Message['template.name.maxSize.exceeded'] },
+                description: { maxlength: Message['template.description.maxSize.exceeded'] },
+                templateBody: { required: Message['template.templateBody.blank'] }
+            }
+        });
+        $('#addTemplate').click(function() {
+            if (validator.form()) {
+                $('#templateForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (response.success) {
+                                document.location = response.redirectTo;
+                            }
+                            else {
+                                var errors = '';
+                                for (var i in response.errors) {
+                                    errors += response.errors[i] + '<br/>';
+                                }
+                                $('.status').show().html(errors);
+                            }
+                        }
+                    }
+                });
+            }
+        });
     }
 };
 

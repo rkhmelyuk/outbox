@@ -76,8 +76,8 @@ class TemplateService {
      * @return the list of found templates.
      */
     @Transactional(readOnly = true)
-    List<Template> getMemberTemplates(Member member) {
-        Template.findAllByOwner member 
+    List<Template> getMemberTemplates(Member member, int page, int max) {
+        Template.findAllByOwner member, [max: max, offset: (page - 1) * max] 
     }
 
 }

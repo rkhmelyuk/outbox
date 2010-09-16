@@ -49,6 +49,18 @@ class TemplateTests extends GrailsUnitTestCase {
         template2.dateCreated = date + 2
         assertEquals(-1, template1.compareTo(template2))
         assertEquals(1, template2.compareTo(template1))
+    }
 
+    void testOwnedBy() {
+
+        def template = new Template(owner: null)
+
+        assertFalse template.ownedBy(1)
+        assertFalse template.ownedBy(null)
+
+        template.owner = new Member(id: 2)
+        assertFalse template.ownedBy(1)
+        assertFalse template.ownedBy(null)
+        assertTrue template.ownedBy(2)
     }
 }

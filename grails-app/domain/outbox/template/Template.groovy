@@ -39,6 +39,13 @@ class Template implements Comparable<Template> {
         owner nullable: false
     }
 
+    boolean ownedBy(Long memberId) {
+        if (memberId) {
+            return (owner != null && owner.id == memberId)
+        }
+        return false
+    }
+
     int compareTo(Template other) {
         if (!other) {
             return 1

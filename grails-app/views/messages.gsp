@@ -27,5 +27,9 @@ Message = {
     'subscriptionList.name.blank': '<g:message code="subscriptionList.name.blank"/>',
     'subscriptionList.name.maxSize.exceeded': '<g:message code="subscriptionList.name.maxSize.exceeded" args="[0,0,0,200]"/>',
     'subscriptionList.description.maxSize.exceeded': '<g:message code="subscriptionList.description.maxSize.exceeded" args="[0,0,0,1000]"/>',
-    'subscriptionList.changed.successfully': '<g:message code="subscriptionList.changed.successfully"/>'
+    'subscriptionList.changed.successfully': '<g:message code="subscriptionList.changed.successfully"/>',
+    'template.templateBody.blank': '<g:message code="template.templateBody.blank"/>',
+    'template.description.maxSize.exceeded': '<g:message code="template.description.maxSize.exceeded"/>',
+    'template.name.maxSize.exceeded': '<g:message code="template.name.maxSize.exceeded"/>',
+    'template.name.blank': '<g:message code="template.name.blank"/>'
 }

@@ -14,7 +14,13 @@ class UrlMappings {
             }
         }
         "/list/$action?/$id?"(controller: 'subscriptionList')
-        "/list"(controller: 'subscriptionList', action: 'list')
+        '/list'(controller: 'subscriptionList', action: 'list')
+        '/template'(controller: 'template', action: 'list')
+        "/template/$id?"(controller: 'template', action: 'show') {
+            constraints {
+                id matches: /\d+/
+            }
+        }
 
         '/profile'(controller: 'profile', action: 'edit')
         "/$controller"(action: 'index')
