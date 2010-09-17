@@ -95,6 +95,25 @@ class TemplateController {
     }
 
     def update = {
+        def model = [:]
+        def template = templateService.getTemplate(params.long('id'))
+        if (template && template.ownedBy(springSecurityService.principal.id)) {
+            template.name = params.name
+            template.description = params.description
+            template.templateBody = params.templateBody
 
+            if (templateService.saveTemplate(template)) {
+                model.success = true
+            }
+            else {
+                MessageUtil.addErrors(request, model, template.errors);
+            }
+        }
+        
+        if (!model.success) {
+            model.error = true
+        }
+
+        render model as JSON
     }
 }

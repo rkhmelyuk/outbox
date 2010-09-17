@@ -270,4 +270,66 @@ class TemplateControllerTests extends ControllerUnitTestCase {
         assertNull result.success
         assertNotNull result.errors
     }
+
+    void testUpdate_Success() {
+        Member.class.metaClass.static.load = { id -> new Member(id: 1)}
+
+        def templateServiceControl = mockFor(TemplateService)
+        templateServiceControl.demand.getTemplate { id -> return new Template(id: id) }
+        templateServiceControl.demand.saveTemplate {
+            assertEquals 1, it.id
+            assertEquals 'Template Name', it.name
+            assertEquals 'Template Description', it.description
+            assertEquals 'Template Body', it.templateBody
+            return true
+        }
+        controller.templateService = templateServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = '1'
+        controller.params.name = 'Template Name'
+        controller.params.description = 'Template Description'
+        controller.params.templateBody = 'Template Body'
+
+        controller.update()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be successful.', result.success
+        assertNull result.error
+    }
+
+    void testUpdate_Fail() {
+        Member.class.metaClass.static.load = { id -> new Member(id: 1)}
+
+        mockDomain(Template)
+
+        def templateServiceControl = mockFor(TemplateService)
+        templateServiceControl.demand.getTemplate { id -> return null }
+        controller.templateService = templateServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.params.name = 'Template Name'
+        controller.params.description = 'Template Description'
+        controller.params.templateBody = 'Template Body'
+
+        controller.update()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be error.', result.error
+        assertNull result.success
+        assertNull result.errors
+    }
 }

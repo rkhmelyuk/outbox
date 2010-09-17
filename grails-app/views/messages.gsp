@@ -31,5 +31,6 @@ Message = {
     'template.templateBody.blank': '<g:message code="template.templateBody.blank"/>',
     'template.description.maxSize.exceeded': '<g:message code="template.description.maxSize.exceeded"/>',
     'template.name.maxSize.exceeded': '<g:message code="template.name.maxSize.exceeded"/>',
-    'template.name.blank': '<g:message code="template.name.blank"/>'
+    'template.name.blank': '<g:message code="template.name.blank"/>',
+    'template.changed.successfully': '<g:message code="template.changed.successfully"/>'
 }
