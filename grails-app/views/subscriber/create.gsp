@@ -79,7 +79,12 @@
             </table>
             <a href="javascript:void(0);" id="addSubscriber"><g:message code="create.subscriber"/></a>
             &nbsp;&nbsp;
-            <g:link controller="subscriber"><g:message code="cancel"/></g:link>
+            <g:if test="${listId}">
+                <g:link controller="subscriptionList" action="show" id="${listId}"><g:message code="cancel"/></g:link>
+            </g:if>
+            <g:else>
+                <g:link controller="subscriptionList" action="freeSubscribers"><g:message code="cancel"/></g:link>
+            </g:else> 
         </g:form>
     </body>
 </html>
