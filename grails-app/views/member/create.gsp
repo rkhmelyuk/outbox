@@ -17,7 +17,7 @@
             <table>
                 <tr>
                     <td><g:message code="username"/></td>
-                    <td><g:textField name="username" maxlength="250" value="${member.username}"/></td>
+                    <td><g:textField name="username" maxlength="250" value="${fieldValue(bean: member, field: 'username')}"/></td>
                 </tr>
                 <tr>
                     <td><g:message code="firstName"/></td>

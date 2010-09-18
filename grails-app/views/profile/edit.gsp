@@ -16,7 +16,7 @@
             <table>
                 <tr>
                     <td><g:message code="username"/></td>
-                    <td>${member.username}</td>
+                    <td><g:fieldValue bean="${member}" field="username"/></td>
                 </tr>
                 <tr>
                     <td><g:message code="password"/></td>

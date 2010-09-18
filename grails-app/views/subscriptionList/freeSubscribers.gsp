@@ -20,8 +20,9 @@
             <tbody>
                 <g:each var="subscriber" in="${subscribers}">
                     <tr>
-                        <td><g:link controller="subscriber" action="show" id="${subscriber.id}">${subscriber.email}</g:link></td>
-                        <td>${subscriber.fullName}</td>
+                        <td><g:link controller="subscriber" action="show" id="${subscriber.id}">
+                            <g:fieldValue bean="${subscriber}" field="email"/></g:link></td>
+                        <td><g:fieldValue bean="${subscriber}" field="fullName"/></td>
                         <td><g:formatDate date="${subscriber.dateCreated}" format="d MMM yyyy, HH:mm"/></td>
                         <td><g:link controller="subscriber" action="show" id="${subscriber.id}"><g:message code="view"/></g:link></td>
                     </tr>

@@ -12,10 +12,10 @@
         <div class="status" style="display: none;"> </div>
         <g:link controller="subscriptionList"><g:message code="subscriptionLists.other"/></g:link>
 
-        <h2>${subscriptionList.name}</h2>
+        <h2><g:fieldValue bean="${subscriptionList}" field="name" /></h2>
         <g:if test="${subscriptionList.description}">
             <div class="description">
-                ${subscriptionList.description}
+                <g:fieldValue bean="${subscriptionList}" field="description" />
             </div>
         </g:if>
         <g:link controller="subscriptionList" action="edit" id="${subscriptionList.id}"><g:message code="edit.details"/></g:link>
@@ -43,10 +43,10 @@
                     <g:each var="subscription" in="${subscriptions}">
                     <tr>
                         <td><g:link controller="subscriber" action="show" id="${subscription.subscriber?.id}">
-                            ${subscription.subscriber?.email}</g:link></td>
-                        <td>${subscription.subscriber?.fullName}</td>
+                            <g:fieldValue bean="${subscription}" field="subscriber.email" /></g:link></td>
+                        <td><g:fieldValue bean="${subscription}" field="subscriber.fullName"/></td>
                         <td><g:formatDate date="${subscription.subscriber?.dateCreated}" format="d MMMMM yyyy"/></td>
-                        <td>${subscription.status?.name}</td>
+                        <td><g:fieldValue bean="${subscription}" field="status.name"/></td>
                     </tr>
                     </g:each>
                 </table>

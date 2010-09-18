@@ -35,18 +35,18 @@
                         <td><g:message code="username"/></td>
                         <td><g:message code="full.name"/></td>
                         <td><g:message code="email"/></td>
-                        <td>Status</td>
+                        <td><g:message code="status"/></td>
                         <td><g:message code="edit"/></td>
                     </tr>
                 </thead>
                 <tbody>
                     <g:each var="member" in="${members}">
                         <tr>
-                            <td>${member.username}</td>
-                            <td>${member.fullName}</td>
-                            <td>${member.email}</td>
+                            <td><g:fieldValue bean="${member}" field="username"/></td>
+                            <td><g:fieldValue bean="${member}" field="fullName"/></td>
+                            <td><g:fieldValue bean="${member}" field="email"/></td>
                             <td></td>
-                            <td><g:link controller="member" action="edit" id="${member.id}">Edit</g:link></td>
+                            <td><g:link controller="member" action="edit" id="${member.id}"><g:message code="edit"/></g:link></td>
                         </tr>
                     </g:each>
                 </tbody>

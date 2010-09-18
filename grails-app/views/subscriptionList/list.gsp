@@ -27,8 +27,9 @@
             </thead>
             <tbody>
                 <g:each var="subscriptionList" in="${subscriptionLists}">
-                    <tr title="${subscriptionList.description}">
-                        <td><g:link controller="subscriptionList" action="show" id="${subscriptionList.id}">${subscriptionList.name}</g:link></td>
+                    <tr title="<g:fieldValue bean="${subscriptionList}" field="description"/>">
+                        <td><g:link controller="subscriptionList" action="show" id="${subscriptionList.id}">
+                            <g:fieldValue bean="${subscriptionList}" field="name" /></g:link></td>
                         <td>
                             <g:if test="${subscriptionList.subscribersNumber}">${subscriptionList.subscribersNumber}</g:if>
                             <g:else>-</g:else>

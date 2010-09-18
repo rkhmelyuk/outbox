@@ -9,27 +9,33 @@
             <table>
                 <tr>
                     <td><g:message code="firstName"/></td>
-                    <td>${subscriber.firstName}</td>
+                    <td><g:fieldValue bean="${subscriber}" field="firstName"/></td>
                 </tr>
                 <tr>
                     <td><g:message code="lastName"/></td>
-                    <td>${subscriber.lastName}</td>
+                    <td><g:fieldValue bean="${subscriber}" field="lastName"/></td>
                 </tr>
                 <tr>
                     <td><g:message code="email"/></td>
-                    <td>${subscriber.email}</td>
+                    <td><g:fieldValue bean="${subscriber}" field="email"/></td>
                 </tr>
+                <g:if test="${subscriber.subscriberType}">
+                <tr>
+                    <td><g:message code="subscriberType"/></td>
+                    <td><g:fieldValue bean="${subscriber}" field="subscriberType.name"/></td>
+                </tr>
+                </g:if>
                 <tr>
                     <td><g:message code="gender"/></td>
-                    <td>${subscriber.gender?.name}</td>
+                    <td><g:fieldValue bean="${subscriber}" field="gender.name"/></td>
                 </tr>
                 <tr>
                     <td><g:message code="language"/></td>
-                    <td>${subscriber.language?.name}</td>
+                    <td><g:fieldValue bean="${subscriber}" field="language.name"/></td>
                 </tr>
                 <tr>
                     <td><g:message code="timezone"/></td>
-                    <td>${subscriber.timezone?.name}</td>
+                    <td><g:fieldValue bean="${subscriber}" field="timezone.name"/></td>
                 </tr>
                 <tr>
                     <td><g:message code="enabled"/></td>

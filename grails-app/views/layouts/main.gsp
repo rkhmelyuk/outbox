@@ -17,19 +17,13 @@
     </head>
     <body>
         <div class="ajaxError"> Server Error </div>
-        <div id="spinner" class="spinner" style="display:none;">
-            <img src="${resource(dir:'images',file:'spinner.gif')}" alt="${message(code:'spinner.alt',default:'Loading...')}" />
-        </div>
         <div id="grailsLogo"><g:link controller="dashboard"><img src="${resource(dir:'images',file:'grails_logo.png')}" alt="Grails" border="0" /></g:link></div>
 
         <sec:ifLoggedIn>
             Hello <sec:loggedInUserInfo field="firstName"/> <sec:loggedInUserInfo field="lastName"/>
-            | <g:link controller="profile"> MyProfile</g:link>
-            | <g:link controller="logout">Logout</g:link>
+            | <g:link controller="profile"> <g:message code="my.profile"/></g:link>
+            | <g:link controller="logout"><g:message code="logout"/></g:link>
         </sec:ifLoggedIn>
-        <sec:ifNotLoggedIn>
-            <g:link controller="login">Login</g:link>
-        </sec:ifNotLoggedIn>
         <br/>
         <div id="pageWrapper" class="${pageProperty(name: "body.class")}">
             <g:layoutBody />
