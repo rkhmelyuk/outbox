@@ -60,8 +60,8 @@
                 </tr>
                 <tr>
                     <td><g:message code="role"/></td>
-                    <td><g:select name="role" from="${Role.assignableRoles()}"
-                            noSelection="['':'']" optionKey="id" optionValue="name"/></td>
+                    <td><g:select name="role" from="${Role.assignableRoles()}" noSelection="['':'']"
+                            optionKey="id" optionValue="name"/></td>
                 </tr>
             </table>
             <a href="javascript:void(0);" id="createMember"><g:message code="create.member"/></a>

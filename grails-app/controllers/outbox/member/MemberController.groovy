@@ -135,7 +135,8 @@ class MemberController {
      */
     def save = {
         def model = [:]
-        if (params.role) {
+        def roleId = params.int('role')
+        if (roleId) {
             Member member = new Member()
 
             member.username = params.username
@@ -159,10 +160,9 @@ class MemberController {
 
             if (member.save()) {
                 MemberRole.create(member, Role.userRole(), false)
-                def roleId = params.int('role')
                 if (roleId) {
                     MemberRole.create(member, Role.load(roleId), true)
-                }
+                }   
                 model.success = true
                 model.redirectTo = g.createLink(controller: 'member', action: 'list')
             }
