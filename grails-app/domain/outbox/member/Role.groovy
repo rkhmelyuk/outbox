@@ -36,6 +36,10 @@ class Role {
         return Role.findByAuthority('ROLE_USER')
     }
 
+    /**
+     * Gets the list of roles that can be assigned to user.
+     * @return the list of assignable roles.
+     */
     static List<Role> assignableRoles() {
         return Role.findAllByAuthorityNotEqual('ROLE_USER')
     }
