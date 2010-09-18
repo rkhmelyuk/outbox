@@ -31,7 +31,11 @@ class Template implements Comparable<Template> {
     }
 
     static constraints = {
-        name nullable: false, blank: false, maxSize: 200
+        name nullable: false, blank: false, maxSize: 200, validator: { val, obj ->
+            if (duplicateName(obj, val)) {
+                return 'template.name.unique'
+            }
+        }
         description nullable: true, blank: true, maxSize: 4000
         templateBody nullable: false, blank: false, maxSize: 10 * 1024 * 1024
         dateCreated nullable: true
@@ -39,12 +43,32 @@ class Template implements Comparable<Template> {
         owner nullable: false
     }
 
+    /**
+     * Checks whether this Template belongs to the user with specified id.
+     *
+     * @param memberId the member id
+     * @return {@code true} if belongs, otherwise {@code false}.
+     */
     boolean ownedBy(Long memberId) {
         if (memberId) {
             return (owner != null && owner.id == memberId)
         }
         return false
     }
+
+/**
+     * Check whether name is duplicate. We use member information from template parameter
+     * and check name specified as second parameter.
+     *
+     * @param template the template, that should have this name.
+     * @param name the new name for the template.
+     * @return {@code true} if name is duplicate for this member, otherwise returns {@code false}.
+     */
+    static boolean duplicateName(Template template, String name) {
+        def found = Template.findByOwnerAndName(template.owner, name)
+        return (found && !found.id.equals(template.id))
+    }
+
 
     int compareTo(Template other) {
         if (!other) {
@@ -69,6 +93,5 @@ class Template implements Comparable<Template> {
         }
         return id ? 1 : -1
     }
-
 
 }

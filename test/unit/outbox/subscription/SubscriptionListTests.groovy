@@ -42,4 +42,17 @@ class SubscriptionListTests extends GrailsUnitTestCase {
 
         assertTrue SubscriptionList.duplicateName(list2, list2.name)
     }
+
+    void testOwnedBy() {
+
+        def list = new SubscriptionList(owner: null)
+
+        assertFalse list.ownedBy(1)
+        assertFalse list.ownedBy(null)
+
+        list.owner = new Member(id: 2)
+        assertFalse list.ownedBy(1)
+        assertFalse list.ownedBy(null)
+        assertTrue list.ownedBy(2)
+    }
 }

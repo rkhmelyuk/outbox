@@ -63,4 +63,21 @@ class TemplateTests extends GrailsUnitTestCase {
         assertFalse template.ownedBy(null)
         assertTrue template.ownedBy(2)
     }
+
+    void testNonDuplicateName() {
+        Template template = new Template(id: 1, name: 'name', owner: new Member(id: 1))
+        mockDomain(Template, [template])
+
+        assertFalse Template.duplicateName(template, template.name)
+    }
+
+    void testDuplicateEmail() {
+        Member member = new Member(id: 1)
+        Template template1 = new Template(id: 1, name: 'name', owner: member)
+        Template template2 = new Template(id: 2, name: 'name', owner: member)
+
+        mockDomain(Template, [template1, template2])
+
+        assertTrue Template.duplicateName(template2, template2.name)
+    }
 }

@@ -10,7 +10,7 @@ import outbox.member.Member
  */
 class TemplateController {
 
-    private static final int ITEMS_PER_PAGE = 6
+    private static final int ITEMS_PER_PAGE = 9
 
     def defaultAction = ''
     def allowedMethods = [add: 'POST', update: 'POST', templatesPage: 'GET']
