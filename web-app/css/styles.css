@@ -3,20 +3,14 @@ html * {
     margin: 0;
 }
 
-body {
-    background: #ffffff;
-    color: #333333;
-    font: 12px Arial;
+body { background: #ffffff; color: #333333; font: 12px Arial; }
+
+input[type=text] { font-size: 12px; }
+
+label { font-size: 12px; color: #003366;
 }
 
-input[type=text] {
-    font-size: 12px;
-}
-
-label {
-    font-size: 12px;
-    color: #003366;
-}
+.c { clear: both }
 
 .ajaxError {
     background-color: #cc2222;
@@ -30,28 +24,11 @@ label {
     float: right;
 }
 
-#pageWrapper.subscriberTypes .addSubscriberType, .subscriberType #types {
-    width: 400px;
-}
-
-#pageWrapper.subscriberTypes #types .type {
-    height: 40px;
-    width: 400px
-}
-
-#pageWrapper.subscriberTypes #types .type .remove {
-    float: right;
-    width: 40px;
-}
-
-#pageWrapper.subscriberTypes #types .type .editType {
-    display: none
-}
-
-#pageWrapper.subscriberTypes .addSubscriberType label {
-    padding: 4px;
-    font-size: 14px;
-}
+#pageWrapper.subscriberTypes .addSubscriberType, .subscriberType #types { width: 400px; }
+#pageWrapper.subscriberTypes #types .type { height: 40px; width: 400px }
+#pageWrapper.subscriberTypes #types .type .remove { float: right; width: 40px; }
+#pageWrapper.subscriberTypes #types .type .editType { display: none }
+#pageWrapper.subscriberTypes .addSubscriberType label { padding: 4px; font-size: 14px; }
 
 #pageWrapper.subscriberTypes .addSubscriberType input {
     width: 260px;
@@ -59,13 +36,8 @@ label {
     margin: 4px;
 }
 
-#pageWrapper.subscriberTypes .addSubscriberType .add {
-    float: left;
-}
-
-#pageWrapper.subscriptionList {
-    padding: 10px;
-}
+#pageWrapper.subscriberTypes .addSubscriberType .add { float: left; }
+#pageWrapper.subscriptionList { padding: 10px; }
 
 #pageWrapper.subscriptionList .description {
     font-size: 12px;
@@ -83,7 +55,21 @@ label {
     background-color: #ffffcc;
 }
 
-#pageWrapper.subscriptionList #removeNotion h3 {
-    font-size: 16px;
-    font-weight: bold;
+#pageWrapper.subscriptionList #removeNotion h3 { font-size: 16px; font-weight: bold;
 }
+
+#pageWrapper.templatesList #templates { width: 800px; }
+
+#pageWrapper.templatesList #templates .template {
+    height: 100px;
+    width: 180px;
+    margin: 10px;
+    padding: 5px;
+    border: 1px solid #eeeeee;
+    float: left;
+    cursor: pointer;
+}
+
+#pageWrapper.templatesList #templates div.template:hover { background-color: #ffffea; border: 1px solid #afafaf; }
+#pageWrapper.templatesList #templates .template .name { font-weight: bold; float: left; width: 100px; }
+#pageWrapper.templatesList #templates .template .created { font-size: 9px; font-style: italic; color: #999999; float: right; }

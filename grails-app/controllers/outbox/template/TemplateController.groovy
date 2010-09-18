@@ -10,6 +10,8 @@ import outbox.member.Member
  */
 class TemplateController {
 
+    private static final int ITEMS_PER_PAGE = 6
+
     def defaultAction = ''
     def allowedMethods = [add: 'POST', update: 'POST', templatesPage: 'GET']
 
@@ -22,9 +24,9 @@ class TemplateController {
      */
     def list = {
         def member = Member.load(springSecurityService.principal.id)
-        def templates = templateService.getMemberTemplates(member, 1, 10)
+        def templates = templateService.getMemberTemplates(member, 1, ITEMS_PER_PAGE)
         
-        [templates: templates]
+        [templates: templates, nextPage: (templates.size() == ITEMS_PER_PAGE ? 2 : null)]
     }
 
     /**
@@ -37,9 +39,16 @@ class TemplateController {
         }
 
         def member = Member.load(springSecurityService.principal.id)
-        def templates = templateService.getMemberTemplates(member, page, 10)
+        def templates = templateService.getMemberTemplates(member, page, ITEMS_PER_PAGE)
 
-        [templates: templates]
+        def model = [:]
+
+        model.content = g.render(template: 'templateListRecords', collection: templates, var: 'template')
+        if (templates && templates.size() == ITEMS_PER_PAGE) {
+            model.nextPage = g.createLink(action: 'templatesPage', params: [page: page + 1])
+        }
+
+        render model as JSON
     }
 
     def show = {
@@ -70,7 +79,7 @@ class TemplateController {
         def model = [:]
         if (templateService.addTemplate(template)) {
             model.success = true
-            model.redirectTo = g.createLink(controller: 'template')
+            model.redirectTo = g.createLink(controller: 'template', action: 'show', id: template.id)
         }
         else {
             model.error = true

@@ -13,7 +13,7 @@ class TemplateControllerTests extends ControllerUnitTestCase {
 
     @Override protected void setUp() {
         super.setUp();
-        controller.class.metaClass.createLink = { null }
+        controller.class.metaClass.createLink = { 'link' }
     }
 
     void testList() {
@@ -22,13 +22,16 @@ class TemplateControllerTests extends ControllerUnitTestCase {
 
         mockDomain(Template)
 
-        def templates = [new Template(id: 1), new Template(id: 2)]
+        def templates = []
+        (1..TemplateController.ITEMS_PER_PAGE).each {
+            templates << new Template(id: it)
+        }
 
         def templateServiceControl = mockFor(TemplateService)
         templateServiceControl.demand.getMemberTemplates {m, page, max ->
             assertEquals member, m
             assertEquals 1, page
-            assertEquals 10, max
+            assertEquals TemplateController.ITEMS_PER_PAGE, max
             return templates 
         }
         controller.templateService = templateServiceControl.createMock()
@@ -41,11 +44,12 @@ class TemplateControllerTests extends ControllerUnitTestCase {
 
         def result = controller.list()
 
-        assertNotNull result.templates
-        assertEquals 2, result.templates.size()
-
         templateServiceControl.verify()
         springSecurityServiceControl.verify()
+
+        assertNotNull result.templates
+        assertEquals templates.size(), result.templates.size()
+        assertEquals 2, result.nextPage
     }
 
     void testTemplatesPage() {
@@ -54,13 +58,16 @@ class TemplateControllerTests extends ControllerUnitTestCase {
 
         mockDomain(Template)
 
-        def templates = [new Template(id: 1), new Template(id: 2)]
+        def templates = []
+        (1..TemplateController.ITEMS_PER_PAGE).each {
+            templates << new Template(id: it)
+        }
 
         def templateServiceControl = mockFor(TemplateService)
         templateServiceControl.demand.getMemberTemplates {m, page, max ->
             assertEquals member, m
             assertEquals 2, page
-            assertEquals 10, max
+            assertEquals TemplateController.ITEMS_PER_PAGE, max
             return templates
         }
         controller.templateService = templateServiceControl.createMock()
@@ -73,13 +80,15 @@ class TemplateControllerTests extends ControllerUnitTestCase {
 
         controller.params.page = 2
 
-        def result = controller.templatesPage()
-
-        assertNotNull result.templates
-        assertEquals 2, result.templates.size()
+        controller.templatesPage()
 
         templateServiceControl.verify()
         springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertEquals 'link', result.nextPage
+        assertNotNull result.content
     }
 
     void testCreate() {
@@ -232,9 +241,13 @@ class TemplateControllerTests extends ControllerUnitTestCase {
 
         controller.add()
 
+        springSecurityServiceControl.verify()
+        templateServiceControl.verify()
+
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue 'Must be successful.', result.success
+        assertEquals 'link', result.redirectTo
         assertNull result.error
     }
 
@@ -264,18 +277,23 @@ class TemplateControllerTests extends ControllerUnitTestCase {
 
         controller.add()
 
+        springSecurityServiceControl.verify()
+        templateServiceControl.verify()
+
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue 'Must be error.', result.error
         assertNull result.success
+        assertNull result.redirectTo
         assertNotNull result.errors
     }
 
     void testUpdate_Success() {
-        Member.class.metaClass.static.load = { id -> new Member(id: 1)}
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> member}
 
         def templateServiceControl = mockFor(TemplateService)
-        templateServiceControl.demand.getTemplate { id -> return new Template(id: id) }
+        templateServiceControl.demand.getTemplate { id -> return new Template(id: id, owner: member) }
         templateServiceControl.demand.saveTemplate {
             assertEquals 1, it.id
             assertEquals 'Template Name', it.name
@@ -287,7 +305,7 @@ class TemplateControllerTests extends ControllerUnitTestCase {
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {->
-            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
@@ -297,6 +315,9 @@ class TemplateControllerTests extends ControllerUnitTestCase {
         controller.params.templateBody = 'Template Body'
 
         controller.update()
+
+        springSecurityServiceControl.verify()
+        templateServiceControl.verify()
 
         def result = JSON.parse(mockResponse.contentAsString)
 
@@ -313,6 +334,31 @@ class TemplateControllerTests extends ControllerUnitTestCase {
         templateServiceControl.demand.getTemplate { id -> return null }
         controller.templateService = templateServiceControl.createMock()
 
+        controller.params.id = 1
+        controller.params.name = 'Template Name'
+        controller.params.description = 'Template Description'
+        controller.params.templateBody = 'Template Body'
+
+        controller.update()
+
+        templateServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be error.', result.error
+        assertNull result.success
+        assertNull result.errors
+    }
+
+    void testUpdate_Denied() {
+        Member.class.metaClass.static.load = { id -> new Member(id: 1)}
+
+        mockDomain(Template)
+
+        def templateServiceControl = mockFor(TemplateService)
+        templateServiceControl.demand.getTemplate { id -> return new Template(id: id) }
+        controller.templateService = templateServiceControl.createMock()
+
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {->
             return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
@@ -325,6 +371,9 @@ class TemplateControllerTests extends ControllerUnitTestCase {
         controller.params.templateBody = 'Template Body'
 
         controller.update()
+
+        springSecurityServiceControl.verify()
+        templateServiceControl.verify()
 
         def result = JSON.parse(mockResponse.contentAsString)
 

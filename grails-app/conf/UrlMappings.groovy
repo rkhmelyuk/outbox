@@ -13,9 +13,16 @@ class UrlMappings {
                 id matches: /\d+/
             }
         }
+        "/template/$id?"(controller: 'template', action: 'show') {
+            constraints {
+                id matches: /\d+/
+            }
+        }
+
         "/list/$action?/$id?"(controller: 'subscriptionList')
         '/list'(controller: 'subscriptionList', action: 'list')
         '/template'(controller: 'template', action: 'list')
+        '/templates'(controller: 'template', action: 'list')
         "/template/$id?"(controller: 'template', action: 'show') {
             constraints {
                 id matches: /\d+/

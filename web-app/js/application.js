@@ -155,7 +155,7 @@ var App = {
     memberCreate: function() {
         $('#username').focus();
         $('#password').password_strength({container: '.password-strength'});
-        
+
         var validator = $('#memberForm').validate({
             rules: {
                 username: { required: true },
@@ -278,8 +278,12 @@ var App = {
                 name: { required: Message['subscriberType.name.required'] }
             }
         });
-        $('#name').keyup(function(e) { if (e.keyCode == 13) addSubscriberType() });
-        $('#addSubscriberType').click(function() { addSubscriberType() });
+        $('#name').keyup(function(e) {
+            if (e.keyCode == 13) addSubscriberType()
+        });
+        $('#addSubscriberType').click(function() {
+            addSubscriberType()
+        });
         $('.removeSubscriberType').live('click', function() {
             var id = $(this).parent().parent().children('input[name=id]').val();
             if (id && confirm(Message['subscriberType.remove.confirm'])) {
@@ -292,7 +296,7 @@ var App = {
                                 $('.status').show().text(Message['subscriberType.delete.failed']);
                             }
                             else {
-                                $('.type input[type=hidden][value='+id+']').parent().remove();
+                                $('.type input[type=hidden][value=' + id + ']').parent().remove();
                             }
                         }
                     }
@@ -300,7 +304,7 @@ var App = {
             }
         });
         $('.name').live('click', function() {
-            $(this) // {
+            $(this)// {
                     .hide().parent()
                     .children('.editType').show()
                     .children('.editNameInput').focus();
@@ -341,11 +345,13 @@ var App = {
                 });
             }
         }
+
         function cancelEditSubscriberType(elem) {
             var parent = $(elem).parent();
             parent.hide();
             parent.parent().children('.name').show();
         }
+
         function saveSubscriberType(elem) {
             var parent = $(elem).parent();
             parent.hide();
@@ -520,6 +526,26 @@ var App = {
                     }
                 });
             }
+        });
+    },
+
+    templatesList: function() {
+        $('#moreTemplates').click(function() {
+            var link = $(this).attr('rel');
+            $.ajax({
+                url: link,
+                success: function(data) {
+                    if (data.content) {
+                        $('#templates').append(data.content);
+                    }
+                    if (data.nextPage) {
+                        $('#moreTemplates').attr('rel', data.nextPage);
+                    }
+                    else {
+                        $('#moreTemplates').hide()
+                    }
+                }
+            });
         });
     }
 };

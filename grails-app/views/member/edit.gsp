@@ -74,7 +74,7 @@
                 </table>
                 <a href="javascript:void(0);" id="saveMember"><g:message code="save.changes"/></a>
                 &nbsp;&nbsp;
-                <g:link controller="member" action="list"><g:message code="back"/></g:link>
+                <g:link controller="member" action="show" id="${template.id}"><g:message code="back"/></g:link>
             </g:form>
         </g:if>
         <g:else>
