@@ -1,0 +1,49 @@
+package outbox.search
+
+import grails.test.GrailsUnitTestCase
+import outbox.campaign.CampaignConditionsBuilder
+import outbox.member.Member
+
+/**
+ * {@link CampaignConditionsBuilder} tests.
+ *
+ * @author Ruslan Khmelyuk
+ * @since  2010-09-19
+ */
+class BaseConditionsBuilderTests extends GrailsUnitTestCase {
+
+    def condition = new BaseConditionsBuilder()
+
+    void testOwnerCondition() {
+        def conditions = condition.build {
+            ownedBy new Member(id: 1)
+        }
+
+        assertNotNull conditions
+        assertNotNull conditions.get(OwnedByCondition).member
+        assertEquals 1, conditions.get(OwnedByCondition).member.id
+    }
+
+    void testPageCondition() {
+        def conditions = condition.build {
+            page 3
+            max 10
+        }
+
+        assertNotNull conditions
+        assertEquals 3, conditions.get(PageCondition).page
+        assertEquals 10, conditions.get(PageCondition).max
+    }
+
+    void testOrderCondition() {
+        def conditions = condition.build {
+            order 'name', 'asc'
+            order 'date', 'desc'
+        }
+
+        assertNotNull conditions
+        assertNotNull conditions.get(OrderCondition)
+        assertEquals 2, conditions.get(OrderCondition).order.size()
+    }
+
+}
