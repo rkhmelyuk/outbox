@@ -76,7 +76,7 @@ class Campaign implements Comparable<Campaign> {
     int compareTo(Campaign other) {
         def value = 0
         if (dateCreated && other.dateCreated) {
-            value = -dateCreated.compareTo(other.dateCreated)
+            value = dateCreated.compareTo(other.dateCreated)
         }
         else if (dateCreated) {
             return 1
