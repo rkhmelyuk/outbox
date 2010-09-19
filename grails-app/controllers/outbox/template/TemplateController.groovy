@@ -12,7 +12,7 @@ class TemplateController {
 
     private static final int ITEMS_PER_PAGE = 9
 
-    def defaultAction = ''
+    def defaultAction = 'list'
     def allowedMethods = [add: 'POST', update: 'POST', templatesPage: 'GET']
 
     TemplateService templateService
