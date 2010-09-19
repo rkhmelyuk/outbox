@@ -11,8 +11,8 @@
     <body class="templatesList">
         <div class="status" style="display: none;"> </div>
         <h1><g:message code="templates"/></h1>
-        <g:link controller="template" action="create"><g:message code="add.template"/></g:link> 
-        <g:if test="templates">
+        <g:link controller="template" action="create"><g:message code="add.template"/></g:link>
+        <g:if test="${templates}">
             <div id="templates">
                 <g:render template="templateListRecords" collection="${templates}" var="template"/>
             </div>

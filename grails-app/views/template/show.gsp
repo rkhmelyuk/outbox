@@ -5,7 +5,7 @@
         <meta name='layout' content='main'/>
     </head>
     <body class="template">
-        <g:link controller="template"><g:message code="other.templates"/></g:link>
+        <g:link controller="template" action="list"><g:message code="other.templates"/></g:link>
 
         <h2><g:fieldValue bean="${template}" field="name"/></h2>
         <g:if test="${template.description}">

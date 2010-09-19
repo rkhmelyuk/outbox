@@ -29,7 +29,7 @@
             </table>
             <a href="javascript:void(0);" id="addTemplate"><g:message code="add.template"/></a>
             &nbsp;&nbsp;
-            <g:link controller="template"><g:message code="cancel"/></g:link>
+            <g:link controller="template" action="list"><g:message code="cancel"/></g:link>
         </g:form>
     </body>
 </html>

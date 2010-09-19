@@ -1,34 +1,35 @@
 class UrlMappings {
 
 	static mappings = {
+        
+        '/members'(controller: 'member', action: 'list')
+        '/subscribers'(controller: 'subscriptionList', action: 'freeSubscribers')
+        '/templates'(controller: 'template', action: 'list')
+        '/campaigns'(controller: 'campaign', action: 'index')
+        '/list'(controller: 'subscriptionList', action: 'list')
+
         "/subscriber/$id"(controller: 'subscriber', action: 'show') {
             constraints {
                 id matches: /[0-9a-fA-F]{40}/
             }
         }
-
-        "/subscribers"(controller: 'subscriptionList', action: 'freeSubscribers')
         "/list/$id?"(controller: 'subscriptionList', action: 'show') {
             constraints {
                 id matches: /\d+/
             }
         }
-        "/template/$id?"(controller: 'template', action: 'show') {
+        "/template/$id"(controller: 'template', action: 'show') {
+            constraints {
+                id matches: /\d+/
+            }
+        }
+        "/campaign/$id"(controller: 'campaign', action: 'show') {
             constraints {
                 id matches: /\d+/
             }
         }
 
         "/list/$action?/$id?"(controller: 'subscriptionList')
-        '/list'(controller: 'subscriptionList', action: 'list')
-        '/template'(controller: 'template', action: 'list')
-        '/templates'(controller: 'template', action: 'list')
-        "/template/$id?"(controller: 'template', action: 'show') {
-            constraints {
-                id matches: /\d+/
-            }
-        }
-
         '/profile'(controller: 'profile', action: 'edit')
         "/$controller"(action: 'index')
 		"/$controller/$action?/$id?"()
