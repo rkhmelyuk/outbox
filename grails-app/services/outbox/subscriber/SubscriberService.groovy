@@ -2,7 +2,7 @@ package outbox.subscriber
 
 import org.hibernate.Session
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.interceptor.TransactionAspectSupport
+import outbox.ServiceUtil
 import outbox.member.Member
 
 /**
@@ -14,19 +14,6 @@ import outbox.member.Member
 class SubscriberService {
 
     static transactional = true
-
-    @Transactional
-    private boolean saveOrRollback(Object item) {
-        if (!item) {
-            return false
-        }
-
-        boolean saved = (item.save(flush: true) != null)
-        if (!saved) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()
-        }
-        return saved
-    }
 
     /**
      * Gets the subscriber by it's id.
@@ -45,7 +32,7 @@ class SubscriberService {
      */
     @Transactional
     boolean saveSubscriber(Subscriber subscriber) {
-        saveOrRollback subscriber
+        ServiceUtil.saveOrRollback subscriber
     }
 
     /**
@@ -88,7 +75,7 @@ class SubscriberService {
      */
     @Transactional
     boolean addSubscriberType(SubscriberType subscriberType) {
-        saveOrRollback subscriberType
+        ServiceUtil.saveOrRollback subscriberType
     }
 
     /**
@@ -99,7 +86,7 @@ class SubscriberService {
      */
     @Transactional
     boolean saveSubscriberType(SubscriberType subscriberType) {
-        saveOrRollback subscriberType
+        ServiceUtil.saveOrRollback subscriberType
     }
 
     /**

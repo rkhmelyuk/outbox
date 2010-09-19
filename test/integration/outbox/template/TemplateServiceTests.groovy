@@ -62,10 +62,11 @@ class TemplateServiceTests extends GrailsUnitTestCase {
     void testGetMemberTemplates() {
         def template1 = createTestTemplate()
         def template2 = createTestTemplate()
+        template2.name = template2.name + '2'
         assertTrue templateService.addTemplate(template1)
         assertTrue templateService.addTemplate(template2)
 
-        def templates = templateService.getMemberTemplates(member)
+        def templates = templateService.getMemberTemplates(member, 1, 10)
         assertEquals 2, templates.size()
     }
 

@@ -1,7 +1,7 @@
 package outbox.template
 
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.interceptor.TransactionAspectSupport
+import outbox.ServiceUtil
 import outbox.member.Member
 
 /**
@@ -11,19 +11,6 @@ class TemplateService {
 
     static transactional = true
 
-    @Transactional
-    private boolean saveOrRollback(Object item) {
-        if (!item) {
-            return false
-        }
-
-        boolean saved = (item.save(flush: true) != null)
-        if (!saved) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()
-        }
-        return saved
-    }
-
     /**
      * Adds new template.
      *
@@ -32,7 +19,7 @@ class TemplateService {
      */
     @Transactional
     boolean addTemplate(Template template) {
-        saveOrRollback(template)
+        ServiceUtil.saveOrRollback(template)
     }
 
     /**
@@ -43,7 +30,7 @@ class TemplateService {
      */
     @Transactional
     boolean saveTemplate(Template template) {
-        saveOrRollback template
+        ServiceUtil.saveOrRollback template
     }
 
     /**

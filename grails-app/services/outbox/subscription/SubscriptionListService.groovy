@@ -1,7 +1,7 @@
 package outbox.subscription
 
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.interceptor.TransactionAspectSupport
+import outbox.ServiceUtil
 import outbox.member.Member
 
 /**
@@ -11,19 +11,6 @@ class SubscriptionListService {
 
     static transactional = true
 
-    @Transactional
-    private boolean saveOrRollback(Object item) {
-        if (!item) {
-            return false
-        }
-
-        boolean saved = (item.save(flush: true) != null)
-        if (!saved) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()
-        }
-        return saved
-    }
-
     /**
      * Saves subscriptions list to our storage.
      * @param subscriptionList the list to be saved.
@@ -31,7 +18,7 @@ class SubscriptionListService {
      */
     @Transactional
     boolean saveSubscriptionList(SubscriptionList subscriptionList) {
-        saveOrRollback subscriptionList
+        ServiceUtil.saveOrRollback subscriptionList
     }
 
     /**
@@ -77,7 +64,7 @@ class SubscriptionListService {
      */
     @Transactional
     boolean addSubscription(Subscription subscription) {
-        if (saveOrRollback(subscription)) {
+        if (ServiceUtil.saveOrRollback(subscription)) {
             def subscriptionList = subscription.subscriptionList
             subscriptionList.subscribersNumber = Subscription.countBySubscriptionList(subscriptionList)
             saveSubscriptionList(subscriptionList)
