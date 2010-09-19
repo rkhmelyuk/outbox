@@ -56,7 +56,7 @@ class Template implements Comparable<Template> {
         return false
     }
 
-/**
+    /**
      * Check whether name is duplicate. We use member information from template parameter
      * and check name specified as second parameter.
      *
