@@ -16,7 +16,7 @@
         <g:link controller="template" action="edit" id="${template.id}"><g:message code="edit.details"/></g:link>
 
         <div class="body">
-            <g:fieldValue bean="${template}" field="templateBody" />
+            <g:fieldValue bean="${template}" field="templateBody"/>
         </div>
     </body>
 </html>

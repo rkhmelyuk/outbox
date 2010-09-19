@@ -18,7 +18,8 @@
             </div>
             <div class="c"></div>
             <g:if test="${nextPage}">
-            <a href="javascript:void(0);" id="moreTemplates" rel="<g:createLink action="templatesPage" params="[page: nextPage]"/>"><g:message code="more.templates"/></a>
+                <g:set var="nextPageLink" value="${createLink(action:'templatesPage', params: [page: nextPage])}"/>
+                <a href="javascript:void(0);" id="moreTemplates" rel="${nextPageLink}"><g:message code="more.templates"/></a>
             </g:if>
         </g:if>
         <g:else>
