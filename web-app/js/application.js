@@ -547,6 +547,41 @@ var App = {
                 }
             });
         });
+    },
+
+    campaignCreate: function() {
+        $('#name').focus();
+        var validator = $('#campaignForm').validate({
+            rules: {
+                name: { required: true, maxlength: 500 },
+                description: { maxlength: 4000 }
+            },
+            messages: {
+                name: { required: Message['campaign.name.blank'], maxlength: Message['campaign.name.maxSize.exceeded'] },
+                description: { maxlength: Message['campaign.description.maxSize.exceeded'] }
+            }
+        });
+        $('#addCampaign').click(function() {
+            if (validator.form()) {
+                $('#campaignForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (response.success) {
+                                document.location = response.redirectTo;
+                            }
+                            else {
+                                var errors = '';
+                                for (var i in response.errors) {
+                                    errors += response.errors[i] + '<br/>';
+                                }
+                                $('.status').show().html(errors);
+                            }
+                        }
+                    }
+                });
+            }
+        });
     }
 };
 

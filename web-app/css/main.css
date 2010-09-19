@@ -10,12 +10,6 @@
 	padding:20px;
 }
 
-a:link, a:visited, a:hover {
-    color: #666;
-    font-weight: bold;
-    text-decoration: none;
-}
-
 h1 {
     color: #48802c;
     font-weight: normal;

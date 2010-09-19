@@ -2,6 +2,9 @@ Config = {
     contextPath: '${request.contextPath}'
 }
 Message = {
+    'campaign.description.maxSize.exceeded': '<g:message code="campaign.description.maxSize.exceeded"/>',
+    'campaign.name.maxSize.exceeded': '<g:message code="campaign.name.maxSize.exceeded"/>',
+    'campaign.name.blank': '<g:message code="campaign.name.blank"/>',
     'profile.changed.successfully': '<g:message code="profile.changed.successfully"/>',
     'member.changed.successfully': '<g:message code="member.changed.successfully"/>',
     'password.changed.successfully': '<g:message code="password.changed.successfully"/>',
@@ -32,5 +35,5 @@ Message = {
     'template.description.maxSize.exceeded': '<g:message code="template.description.maxSize.exceeded"/>',
     'template.name.maxSize.exceeded': '<g:message code="template.name.maxSize.exceeded"/>',
     'template.name.blank': '<g:message code="template.name.blank"/>',
-    'template.changed.successfully': '<g:message code="template.changed.successfully"/>'
+    'template.changed.successfully': '<g:message code="template.changed.successfully"/>',
 }
