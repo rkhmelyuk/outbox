@@ -175,7 +175,7 @@ class TemplateControllerTests extends ControllerUnitTestCase {
         controller.templateService = templateServiceControl.createMock()
 
         controller.params.id = '10'
-        def result = controller.edit()
+        def result = controller.show()
         assertEquals template, result.template
 
         springSecurityServiceControl.verify()
@@ -188,7 +188,7 @@ class TemplateControllerTests extends ControllerUnitTestCase {
         controller.templateService = templateServiceControl.createMock()
 
         controller.params.id = '10'
-        controller.edit()
+        controller.show()
 
         assertEquals 404, mockResponse.status
 
@@ -210,7 +210,7 @@ class TemplateControllerTests extends ControllerUnitTestCase {
         controller.templateService = templateServiceControl.createMock()
 
         controller.params.id = '10'
-        controller.edit()
+        controller.show()
         assertEquals 403, mockResponse.status
 
         springSecurityServiceControl.verify()
