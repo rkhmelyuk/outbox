@@ -13,10 +13,10 @@ class PageCondition implements Condition {
 
     void build(HibernateCriteriaBuilder builder) {
         if (max) {
-            builder.maxResults = max
+            builder.criteria.maxResults = max
         }
         if (page && max) {
-            builder.firstResult = (page - 1) * max
+            builder.criteria.firstResult = (page - 1) * max
         }
     }
 

@@ -37,7 +37,7 @@ class BaseConditionsBuilder extends BuilderSupport {
         conditions
     }
 
-    def order(String name, String sort) {
+    def order(String name, String sort = 'asc') {
         def condition = conditions.get(OrderCondition, new OrderCondition())
         condition.order.put(name, sort)
         conditions.add condition
