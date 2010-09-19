@@ -45,7 +45,7 @@ class SearchConditions {
      * @param builder the incoming criteria builder for need entity.
      * @return the list with found values.
      */
-    List list(HibernateCriteriaBuilder builder) {
+    List search(HibernateCriteriaBuilder builder) {
         builder.list {
             conditions.each { each ->
                 each.build(builder)

@@ -76,8 +76,9 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertTrue campaignService.addCampaign(campaign1)
         assertTrue campaignService.addCampaign(campaign2)
         assertTrue campaignService.addCampaign(campaign3)
-
-        def found = campaignService.getMemberCampaigns(member)
+ 
+        def conditions = new CampaignConditionsBuilder().build { ownedBy member }
+        def found = campaignService.searchCampaigns(conditions)
 
         assertNotNull found
         assertEquals 3, found.size()
@@ -99,7 +100,8 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertTrue campaignService.addCampaign(campaign2)
         assertTrue campaignService.addCampaign(campaign3)
 
-        def found = campaignService.getMemberCampaigns(member)
+        def conditions = new CampaignConditionsBuilder().build { ownedBy member }
+        def found = campaignService.searchCampaigns(conditions)
 
         assertEquals campaign2, found[0]
         assertEquals campaign3, found[1]

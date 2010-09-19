@@ -2,7 +2,7 @@ package outbox.campaign
 
 import org.springframework.transaction.annotation.Transactional
 import outbox.ServiceUtil
-import outbox.member.Member
+import outbox.search.SearchConditions
 
 /**
  * @author Ruslan Khmelyuk
@@ -61,8 +61,8 @@ class CampaignService {
      * @return the list with found member campaigns.
      */
     @Transactional(readOnly = true)
-    List<Campaign> getMemberCampaigns(Member member) {
-        Campaign.findAllByOwner(member)
+    List<Campaign> searchCampaigns(SearchConditions conditions) {
+        conditions.search(Campaign.createCriteria())
     }
 
 }
