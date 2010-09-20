@@ -141,12 +141,70 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         controller.campaignService = campaignServiceControl.createMock()
 
         controller.params.id = '10'
+        controller.params.page = 'details'
         def result = controller.show()
 
         springSecurityServiceControl.verify()
         campaignServiceControl.verify()
 
         assertEquals campaign, result.campaign
+        assertEquals 'details', result.page
+    }
+
+    void testShow_WrongPage() {
+        def member = new Member(id: 1)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member)
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaign { id ->
+            assertEquals 10, id
+            return campaign
+        }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        controller.params.id = '10'
+        controller.params.page = 'abracadabra'
+        def result = controller.show()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+
+        assertEquals campaign, result.campaign
+        assertEquals 'details', result.page
+    }
+
+    void testShow_AbsentReports() {
+        def member = new Member(id: 1)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member)
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaign { id ->
+            assertEquals 10, id
+            return campaign
+        }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        controller.params.id = '10'
+        controller.params.page = 'reports'
+        def result = controller.show()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+
+        assertEquals campaign, result.campaign
+        assertEquals 'details', result.page
     }
 
     void testShow_NotFound() {

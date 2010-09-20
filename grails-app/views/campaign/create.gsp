@@ -16,7 +16,7 @@
             <table>
                 <tr>
                     <td><g:message code="name"/></td>
-                    <td><g:textField name="name" maxlength="200" value="${campaign.name}"/></td>
+                    <td><g:textField name="name" maxlength="500" value="${campaign.name}"/></td>
                 </tr>
                 <tr>
                     <td><g:message code="description"/></td>

@@ -57,6 +57,12 @@ class Campaign implements Comparable<Campaign> {
         template nullable: true
     }
 
+    static transients = ['hasReports']
+
+    boolean getHasReports() {
+        state == CampaignState.InProgress || state == CampaignState.Finished
+    }
+
     /**
      * Checks whether this Campaign belongs to the user with specified id.
      *

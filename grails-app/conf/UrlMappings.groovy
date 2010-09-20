@@ -23,7 +23,13 @@ class UrlMappings {
                 id matches: /\d+/
             }
         }
-        "/campaign/$id"(controller: 'campaign', action: 'show') {
+        /*"/campaign/$id"(controller: 'campaign', action: 'show') {
+            constraints {
+                id matches: /\d+/
+            }
+        }*/
+
+        "/campaign/$id/$page?"(controller: 'campaign', action: 'show') {
             constraints {
                 id matches: /\d+/
             }
