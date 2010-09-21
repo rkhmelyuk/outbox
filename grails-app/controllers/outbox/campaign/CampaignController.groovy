@@ -55,13 +55,13 @@ class CampaignController {
     def update = {
         def model = [:]
         def campaign = campaignService.getCampaign(params.long('id'))
-        if (campaign) {
+        if (campaign && campaign.ownedBy(springSecurityService.principal.id)) {
             campaign.name = params.name
             campaign.subject = params.subject
             campaign.description = params.description
             campaign.endDate = params.endDate
 
-            if (campaignService.addCampaign(campaign)) {
+            if (campaignService.saveCampaign(campaign)) {
                 model.success = true
                 model.name = campaign.name
                 model.redirectTo = g.createLink(controller: 'campaign', action: 'show', id: campaign.id)

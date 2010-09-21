@@ -242,4 +242,83 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         campaignServiceControl.verify()
     }
 
+    void testEdit_Success() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> member }
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaign { id -> new Campaign(id: id, owner: member) }
+        campaignServiceControl.demand.saveCampaign {
+            assertEquals 1, it.id
+            assertEquals 'Campaign Name', it.name
+            assertEquals 'Campaign Subject', it.subject
+            assertEquals 'Campaign Description', it.description
+            return true
+        }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = '1'
+        controller.params.name = 'Campaign Name'
+        controller.params.description = 'Campaign Description'
+        controller.params.subject = 'Campaign Subject'
+
+        controller.update()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be successful.', result.success
+        assertEquals 'Campaign Name', result.name
+        assertNull result.error
+    }
+
+    void testEdit_Fail() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> member }
+
+        mockDomain(Campaign)
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaign { id -> new Campaign(id: id, owner: member) }
+        campaignServiceControl.demand.saveCampaign {
+            assertEquals 1, it.id
+            assertEquals 'Campaign Name', it.name
+            assertEquals 'Campaign Subject', it.subject
+            assertEquals 'Campaign Description', it.description
+            return false
+        }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], ,member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = '1'
+        controller.params.name = 'Campaign Name'
+        controller.params.description = 'Campaign Description'
+        controller.params.subject = 'Campaign Subject'
+
+        controller.update()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be error.', result.error
+        assertNull result.success
+        assertNull result.name
+        assertNotNull result.errors
+    }
+
 }
