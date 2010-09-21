@@ -2,6 +2,12 @@ package outbox.campaign
 
 import grails.test.GrailsUnitTestCase
 import outbox.member.Member
+import outbox.subscriber.Subscriber
+import outbox.subscriber.SubscriberService
+import outbox.subscription.Subscription
+import outbox.subscription.SubscriptionList
+import outbox.subscription.SubscriptionListService
+import outbox.subscription.SubscriptionStatus
 import outbox.template.Template
 
 /**
@@ -10,6 +16,8 @@ import outbox.template.Template
 class CampaignServiceTests extends GrailsUnitTestCase {
 
     CampaignService campaignService
+    SubscriptionListService subscriptionListService
+    SubscriberService subscriberService
 
     def member
     def template
@@ -108,6 +116,130 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertEquals campaign1, found[2]
     }
 
+    void testAddCampaignSubscription() {
+        def campaign = createTestCampaign()
+        def list = createTestSubscriptionList(1)
+        
+        assertTrue campaignService.addCampaign(campaign)
+        assertTrue subscriptionListService.saveSubscriptionList(list)
+
+        def campaignSubscription = new CampaignSubscription(campaign: campaign, subscriptionList: list)
+        assertTrue campaignService.addCampaignSubscription(campaignSubscription)
+
+        def found = campaignService.getCampaignSubscriptions(campaign)
+        assertEquals 1, found.size()
+        assertTrue found.contains(campaignSubscription)
+    }
+
+    void testDeleteCampaignSubscription() {
+        def campaign = createTestCampaign()
+        def list = createTestSubscriptionList(1)
+
+        assertTrue campaignService.addCampaign(campaign)
+        assertTrue subscriptionListService.saveSubscriptionList(list)
+
+        def campaignSubscription = new CampaignSubscription(campaign: campaign, subscriptionList: list)
+
+        assertTrue campaignService.addCampaignSubscription(campaignSubscription)
+        assertEquals 1, campaignService.getCampaignSubscriptions(campaign).size()
+        assertTrue campaignService.deleteCampaignSubscription(campaignSubscription)
+        assertEquals 0, campaignService.getCampaignSubscriptions(campaign).size()
+    }
+
+    void testDeleteCampaignSubscription_ForStartedCampaign() {
+        def campaign = createTestCampaign()
+        def list = createTestSubscriptionList(1)
+
+        campaign.state = CampaignState.InProgress
+
+        assertTrue campaignService.addCampaign(campaign)
+        assertTrue subscriptionListService.saveSubscriptionList(list)
+
+        def campaignSubscription = new CampaignSubscription(campaign: campaign, subscriptionList: list)
+
+        assertTrue campaignService.addCampaignSubscription(campaignSubscription)
+        assertEquals 1, campaignService.getCampaignSubscriptions(campaign).size()
+        assertFalse campaignService.deleteCampaignSubscription(campaignSubscription)
+        assertEquals 1, campaignService.getCampaignSubscriptions(campaign).size()
+    }
+
+    void testTotalSubscribersNumber() {
+        def campaign = createTestCampaign()
+        def list1 = createTestSubscriptionList(1)
+        def list2 = createTestSubscriptionList(2)
+
+        assertTrue campaignService.addCampaign(campaign)
+        assertTrue subscriptionListService.saveSubscriptionList(list1)
+        assertTrue subscriptionListService.saveSubscriptionList(list2)
+
+        def campaignSubscription1 = new CampaignSubscription(campaign: campaign, subscriptionList: list1)
+        def campaignSubscription2 = new CampaignSubscription(campaign: campaign, subscriptionList: list2)
+
+        assertTrue campaignService.addCampaignSubscription(campaignSubscription1)
+        assertTrue campaignService.addCampaignSubscription(campaignSubscription2)
+
+        def subscribed = new SubscriptionStatus(id: 1, name: 'subscribed').save()
+        def unsubscribed = new SubscriptionStatus(id: 2, name: 'unsubscribed').save()
+
+        def subscriber1 = createTestSubscriber(1)
+        def subscriber2 = createTestSubscriber(2)
+        def subscriber3 = createTestSubscriber(3)
+        def subscriber4 = createTestSubscriber(4)
+        def subscriber5 = createTestSubscriber(5)
+
+        assertTrue subscriberService.saveSubscriber(subscriber1)
+        assertTrue subscriberService.saveSubscriber(subscriber2)
+        assertTrue subscriberService.saveSubscriber(subscriber3)
+        assertTrue subscriberService.saveSubscriber(subscriber4)
+        assertTrue subscriberService.saveSubscriber(subscriber5)
+
+        def subscription1 = new Subscription(subscriber: subscriber1, subscriptionList: list1, status: subscribed)
+        def subscription2 = new Subscription(subscriber: subscriber1, subscriptionList: list2, status: subscribed)
+        def subscription3 = new Subscription(subscriber: subscriber2, subscriptionList: list1, status: unsubscribed)
+        def subscription4 = new Subscription(subscriber: subscriber3, subscriptionList: list1, status: subscribed)
+        def subscription5 = new Subscription(subscriber: subscriber3, subscriptionList: list2, status: subscribed)
+        def subscription6 = new Subscription(subscriber: subscriber4, subscriptionList: list1, status: subscribed)
+        def subscription7 = new Subscription(subscriber: subscriber4, subscriptionList: list2, status: subscribed)
+        def subscription8 = new Subscription(subscriber: subscriber5, subscriptionList: list1, status: unsubscribed)
+        def subscription9 = new Subscription(subscriber: subscriber5, subscriptionList: list2, status: subscribed)
+
+        assertTrue subscriptionListService.addSubscription(subscription1)
+        assertTrue subscriptionListService.addSubscription(subscription2)
+        assertTrue subscriptionListService.addSubscription(subscription3)
+        assertTrue subscriptionListService.addSubscription(subscription4)
+        assertTrue subscriptionListService.addSubscription(subscription5)
+        assertTrue subscriptionListService.addSubscription(subscription6)
+        assertTrue subscriptionListService.addSubscription(subscription7)
+        assertTrue subscriptionListService.addSubscription(subscription8)
+        assertTrue subscriptionListService.addSubscription(subscription9)
+
+        assertEquals 4, campaignService.getTotalSubscribersNumber(campaign)
+    }
+
+    void testGetProposedSubscriptionLists() {
+        def campaign = createTestCampaign()
+        def list1 = createTestSubscriptionList(1)
+        def list2 = createTestSubscriptionList(2)
+        def list3 = createTestSubscriptionList(3)
+
+        assertTrue campaignService.addCampaign(campaign)
+        assertTrue subscriptionListService.saveSubscriptionList(list1)
+        assertTrue subscriptionListService.saveSubscriptionList(list2)
+        assertTrue subscriptionListService.saveSubscriptionList(list3)
+
+        def campaignSubscription1 = new CampaignSubscription(campaign: campaign, subscriptionList: list1)
+        def campaignSubscription2 = new CampaignSubscription(campaign: campaign, subscriptionList: list2)
+
+        assertTrue campaignService.addCampaignSubscription(campaignSubscription1)
+        assertTrue campaignService.addCampaignSubscription(campaignSubscription2)
+
+        def proposed = campaignService.getProposedSubscriptionLists(campaign)
+
+        assertNotNull proposed
+        assertEquals 1, proposed.size()
+        assertEquals list3, proposed[0]
+    }
+
     void assertEquals(Campaign campaign, Campaign found) {
         assertNotNull found.dateCreated
         assertEquals CampaignState.New, found.state
@@ -125,5 +257,28 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         campaign.owner = member
         campaign.template = template
         return campaign
+    }
+
+    SubscriptionList createTestSubscriptionList(id) {
+        SubscriptionList subscriptionList = new SubscriptionList()
+        subscriptionList.name = 'Subscribers list' + id
+        subscriptionList.description = 'Subscribers list description'
+        subscriptionList.owner = member
+        subscriptionList.subscribersNumber = 100
+        return subscriptionList
+    }
+
+    Subscriber createTestSubscriber(id) {
+        Subscriber subscriber = new Subscriber()
+        subscriber.firstName = 'John'
+        subscriber.lastName = 'Doe'
+        subscriber.email = 'john.doe' + id + '@nowhere.com'
+        subscriber.gender = null
+        subscriber.timezone = null
+        subscriber.language = null
+        subscriber.namePrefix = null
+        subscriber.enabled = true
+        subscriber.member = member
+        return subscriber
     }
 }

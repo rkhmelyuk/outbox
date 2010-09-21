@@ -57,10 +57,14 @@ class Campaign implements Comparable<Campaign> {
         template nullable: true
     }
 
-    static transients = ['hasReports']
+    static transients = ['hasReports', 'notStarted']
 
     boolean getHasReports() {
         state == CampaignState.InProgress || state == CampaignState.Finished
+    }
+
+    boolean getNotStarted() {
+        state == CampaignState.New || state == CampaignState.Ready
     }
 
     /**

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <sql-query name="CampaignSubscription.totalSubscribersNumber">
+        <query-param name="campaignId" type="long"/>
+        <return-scalar column="TotalNumber" type="int"/>
+        
+        select count(distinct S.SubscriberId) as TotalNumber
+        from CampaignSubscription as CS
+        join Subscription as S on S.SubscriptionListId = CS.SubscriptionListId
+        where CS.CampaignId = :campaignId and S.SubscriptionStatusId = 1
+    </sql-query>
+
+    <sql-query name="Campaign.findProposedSubscriptionLists">
+        <query-param name="memberId" type="long"/>
+        <query-param name="campaignId" type="long"/>
+
+        <return alias="SL" class="outbox.subscription.SubscriptionList"/>
+
+        select {SL.*} from SubscriptionList as SL
+        where SL.MemberId = :memberId and SL.SubscriptionListId not in (
+            select CS.SubscriptionListId
+            from CampaignSubscription CS
+            where CS.CampaignId = :campaignId)
+    </sql-query>
+
+</hibernate-mapping>

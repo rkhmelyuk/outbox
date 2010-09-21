@@ -299,7 +299,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {->
-            return new OutboxUser('username', 'password', true, false, false, false, [], ,member)
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 

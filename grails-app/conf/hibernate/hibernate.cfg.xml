@@ -1,0 +1,7 @@
+<!DOCTYPE hibernate-configuration SYSTEM
+  "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <mapping resource="Campaign.hbm.xml" />
+    </session-factory>
+</hibernate-configuration>
