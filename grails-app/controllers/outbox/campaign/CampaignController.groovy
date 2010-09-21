@@ -13,7 +13,11 @@ class CampaignController {
     def defaultAction = ''
     def allowedMethods = [add: 'POST', update: 'POST']
 
-    static def SHOW_MODES = ['reports', 'details', 'subscribers', 'template', 'edit']
+    def SHOW_HANDLERS = [
+            reports: handleReports,
+            details: handleDetails,
+            subscribers: handleSubscribers,
+            template: handleTempalte]
 
     CampaignService campaignService
     SpringSecurityService springSecurityService
@@ -89,15 +93,37 @@ class CampaignController {
             return
         }
 
+        def page = fetchPage(campaign)
         def needTemplate = (campaign.template == null)
         def needSubscribers = true
 
+        def handler = SHOW_HANDLERS[page]
+        if (handler) {
+            handler(campaign)
+        }
+
         return [
-                page: fetchPage(campaign),
+                page: page,
                 campaign: campaign,
                 needTemplate: needTemplate,
                 needSubscribers: needSubscribers
         ]
+    }
+
+    def handleReports(Campaign campaign) {
+
+    }
+
+    def handleDetails(Campaign campaign) {
+        // do nothing yet
+    }
+
+    def handleSubscribers(Campaign campaign) {
+
+    }
+
+    def handleTemplate(Campaign campaign) {
+
     }
 
     private String fetchPage(Campaign campaign) {
@@ -108,7 +134,7 @@ class CampaignController {
         else if (page == 'reports' && !campaign.hasReports) {
             page = 'details'
         }
-        else if (!SHOW_MODES.contains(page)) {
+        else if (!SHOW_HANDLERS.contains(page)) {
             page = 'details'
         }
         return page
