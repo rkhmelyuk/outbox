@@ -119,7 +119,7 @@ class CampaignServiceTests extends GrailsUnitTestCase {
     void testAddCampaignSubscription() {
         def campaign = createTestCampaign()
         def list = createTestSubscriptionList(1)
-        
+
         assertTrue campaignService.addCampaign(campaign)
         assertTrue subscriptionListService.saveSubscriptionList(list)
 
@@ -129,6 +129,22 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         def found = campaignService.getCampaignSubscriptions(campaign)
         assertEquals 1, found.size()
         assertTrue found.contains(campaignSubscription)
+    }
+
+    void testGetCampaignSubscription() {
+        def campaign = createTestCampaign()
+        def list = createTestSubscriptionList(1)
+
+        assertTrue campaignService.addCampaign(campaign)
+        assertTrue subscriptionListService.saveSubscriptionList(list)
+
+        def campaignSubscription = new CampaignSubscription(campaign: campaign, subscriptionList: list)
+        assertTrue campaignService.addCampaignSubscription(campaignSubscription)
+
+        def found = campaignService.getCampaignSubscription(campaignSubscription.id)
+        assertNotNull found
+        assertEquals campaignSubscription.campaign.id, found.campaign.id
+        assertEquals campaignSubscription.subscriptionList.id, found.subscriptionList.id
     }
 
     void testDeleteCampaignSubscription() {

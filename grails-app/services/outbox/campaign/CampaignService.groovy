@@ -95,6 +95,17 @@ class CampaignService {
     }
 
     /**
+     * Gets campaign subscription by id.
+     * 
+     * @param id the id to get campaign subscription.
+     * @return the found campaign subscription, otherwise null
+     */
+    @Transactional(readOnly = true)
+    CampaignSubscription getCampaignSubscription(Long id) {
+        CampaignSubscription.get id
+    }
+
+    /**
      * Gets the list of campaign subscriptions.
      * @param campaign the campaign to get subscriptions for.
      * @return the list of found campaign subscriptions.
@@ -109,7 +120,7 @@ class CampaignService {
      * campaign. Currently this is a list of all subscription lists.
      *
      * TODO - proposal list should contain most used or most filled lists in the top of list.
-     * 
+     *
      * @param campaign the campaign to get proposed subscription lists for.
      * @return the list of proposed subscription lists.
      */
@@ -117,18 +128,15 @@ class CampaignService {
     List<SubscriptionList> getProposedSubscriptionLists(Campaign campaign) {
         def result = null
         SubscriptionList.withSession { Session session ->
-            result = session.getNamedQuery('Campaign.findProposedSubscriptionLists')
-                    .setLong('campaignId', campaign.id)
-                    .setLong('memberId', campaign.owner?.id)
-                    .list()
+            result = session.getNamedQuery('Campaign.findProposedSubscriptionLists').setLong('campaignId', campaign.id).setLong('memberId', campaign.owner?.id).list()
         }
-        
+
         result != null ? result : []
     }
 
     /**
      * Gets the number of real unique subscribers for specified campaign.
-     * 
+     *
      * @param campaign the campaign to get total number of unique subscribers for.
      * @return the number of unique subscribers for specified campaign.
      */
@@ -137,8 +145,7 @@ class CampaignService {
         int result = 0
         if (campaign != null) {
             CampaignSubscription.withSession { Session session ->
-                result = (Integer) session.getNamedQuery('CampaignSubscription.totalSubscribersNumber')
-                    .setLong('campaignId', campaign.id).uniqueResult()
+                result = (Integer) session.getNamedQuery('CampaignSubscription.totalSubscribersNumber').setLong('campaignId', campaign.id).uniqueResult()
             }
         }
         return result
