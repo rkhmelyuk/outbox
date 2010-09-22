@@ -40,4 +40,26 @@ class CampaignSubscriptionTests extends GrailsUnitTestCase {
         assertEquals(-1, subscription1.compareTo(subscription2))
         assertEquals(+1, subscription2.compareTo(subscription1))
     }
+
+    void testNonDuplicate() {
+        Campaign campaign = new Campaign(id: 1)
+        CampaignSubscription.class.metaClass.static.findAllByCampaignAndSubscriptionList = { c, l -> return [] }
+
+        SubscriptionList list2 = new SubscriptionList(id: 2)
+        CampaignSubscription subscription2 = new CampaignSubscription(id: 2, campaign: campaign, subscriptionList: list2)
+        assertFalse CampaignSubscription.duplicateSubscription(subscription2)
+    }
+
+    void testDuplicateEmail() {
+        Campaign campaign = new Campaign(id: 1)
+        SubscriptionList list1 = new SubscriptionList(id: 1)
+        CampaignSubscription subscription1 = new CampaignSubscription(id: 1, campaign: campaign, subscriptionList: list1)
+        mockDomain(CampaignSubscription, [subscription1])
+
+        CampaignSubscription.class.metaClass.static.findAllByCampaignAndSubscriptionList = { c, l -> return [subscription1] }
+
+        SubscriptionList list2 = new SubscriptionList(id: 1)
+        CampaignSubscription subscription2 = new CampaignSubscription(id: 2, campaign: campaign, subscriptionList: list2)
+        assertTrue CampaignSubscription.duplicateSubscription(subscription2)
+    }
 }

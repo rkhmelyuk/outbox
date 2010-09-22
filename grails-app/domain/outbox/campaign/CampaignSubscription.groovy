@@ -21,7 +21,11 @@ class CampaignSubscription implements Comparable<CampaignSubscription> {
 
     static constraints = {
         campaign nullable: false
-        subscriptionList nullable: false
+        subscriptionList nullable: false, validator: { val, obj ->
+            if (duplicateSubscription(obj)) {
+                return 'campaignSubscription.subscriptionList.unique'
+            }
+        }
     }
 
     int compareTo(CampaignSubscription other) {
@@ -39,6 +43,22 @@ class CampaignSubscription implements Comparable<CampaignSubscription> {
         }
         
         return 0
+    }
+
+    static boolean duplicateSubscription(CampaignSubscription subscription) {
+        def found = CampaignSubscription.findAllByCampaignAndSubscriptionList(
+                subscription.campaign, subscription.subscriptionList)
+
+        if (!found) {
+            return false
+        }
+
+        for (each in found) {
+            if (each.id != subscription.id) {
+                return true
+            }
+        }
+        return false
     }
 
 }
