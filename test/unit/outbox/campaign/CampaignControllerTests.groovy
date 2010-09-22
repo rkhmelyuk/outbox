@@ -380,4 +380,123 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         assertNull result.error
     }
 
+    void testAddSubscriptionList_Failed() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> member }
+        MemberRole.class.metaClass.static.findAllByMember = { null }
+
+        mockDomain(CampaignSubscription)
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaign { id ->
+            assertEquals 1, id
+            new Campaign(id: id, owner: member) }
+        campaignServiceControl.demand.addCampaignSubscription { false }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            assertEquals 2, id
+            new SubscriptionList(id: id, owner: member)
+        }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        controller.params.campaignId = '1'
+        controller.params.subscriptionList = '2'
+
+        controller.class.metaClass.render = { String template, Map model ->  'model' }
+
+        controller.addSubscriptionList()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+        subscriptionListServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be success.', result.error
+        assertNull result.success
+    }
+
+    void testRemoveSubscriptionList() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> member }
+        MemberRole.class.metaClass.static.findAllByMember = { null }
+
+        mockDomain(Campaign)
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaignSubscription { id ->
+            assertEquals 2, id
+            return new CampaignSubscription(
+                    id: id,
+                    campaign: new Campaign(id: id, owner: member),
+                    subscriptionList: new SubscriptionList(id: id, owner: member)
+            )
+        }
+        campaignServiceControl.demand.deleteCampaignSubscription { true }
+        campaignServiceControl.demand.getProposedSubscriptionLists { [] }
+        campaignServiceControl.demand.getTotalSubscribersNumber { 0 }
+        campaignServiceControl.demand.getCampaignSubscriptions { [] }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.campaignSubscriptionId = '2'
+        controller.removeSubscriptionList()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue 'Must be success.', result.success
+        assertNull result.error
+    }
+
+    void testRemoveSubscriptionList_Failed() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> member }
+        MemberRole.class.metaClass.static.findAllByMember = { null }
+
+        mockDomain(CampaignSubscription)
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaignSubscription { id ->
+            assertEquals 2, id
+            return new CampaignSubscription(
+                    id: id,
+                    campaign: new Campaign(id: id, owner: member),
+                    subscriptionList: new SubscriptionList(id: id, owner: member)
+            )
+        }
+        campaignServiceControl.demand.deleteCampaignSubscription { false }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.campaignSubscriptionId = '2'
+        controller.removeSubscriptionList()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue 'Must be success.', result.error
+        assertNull result.success
+    }
+
 }
