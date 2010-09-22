@@ -69,7 +69,7 @@ class Member {
 	}
 
     Role getAssignableAuthority() {
-        (Role) authorities.find { Role role -> !role.user }
+        (Role) authorities?.find { Role role -> !role.user }
     }
 
     String getFullName() {
