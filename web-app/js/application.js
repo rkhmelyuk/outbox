@@ -43,11 +43,7 @@ var App = {
                                 $('.status').show().text(Message['profile.changed.successfully']);
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -68,7 +64,8 @@ var App = {
             messages: {
                 oldPassword: { required: Message['old.password.required'] },
                 newPassword: { required: Message['new.password.required'], minlength: Message['password.minlength']},
-                passwordConfirmation: { required: Message['password.confirmation.required'], equalTo: Message['wrong.password.confirmation'] }
+                passwordConfirmation: { required: Message['password.confirmation.required'],
+                    equalTo: Message['wrong.password.confirmation'] }
             }
         });
         $('#savePassword').click(function() {
@@ -81,11 +78,7 @@ var App = {
                                 $('.status').show().text(Message['password.changed.successfully']);
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -139,11 +132,7 @@ var App = {
                                 $('.status').show().text(Message['member.changed.successfully']);
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -190,11 +179,7 @@ var App = {
                                 document.location = response.redirectTo;
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -204,7 +189,7 @@ var App = {
     },
 
     subscriberCreate: function() {
-        $('#namePrefix').focus();
+        $('#email').focus();
         var validator = $('#subscriberForm').validate({
             rules: {
                 email: { required: true, email: true }
@@ -223,11 +208,7 @@ var App = {
                                 document.location = response.redirectTo;
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -237,7 +218,7 @@ var App = {
     },
 
     subscriberEdit: function() {
-        $('#nameTitle').focus();
+        $('#email').focus();
         var validator = $('#subscriberForm').validate({
             rules: {
                 email: { required: true, email: true }
@@ -256,11 +237,7 @@ var App = {
                                 $('.status').show().text(Message['subscriber.changed.successfully']);
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -398,11 +375,7 @@ var App = {
                                 document.location = response.redirectTo;
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -433,11 +406,7 @@ var App = {
                                 $('.status').show().text(Message['subscriptionList.changed.successfully']);
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -479,11 +448,7 @@ var App = {
                                 document.location = response.redirectTo;
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -516,11 +481,7 @@ var App = {
                                 $('.status').show().text(Message['template.changed.successfully']);
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -571,11 +532,7 @@ var App = {
                                 document.location = response.redirectTo;
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -607,11 +564,7 @@ var App = {
                                 $('.status').show().text(Message['campaign.changed.successfully']);
                             }
                             else {
-                                var errors = '';
-                                for (var i in response.errors) {
-                                    errors += response.errors[i] + '<br/>';
-                                }
-                                $('.status').show().html(errors);
+                                showErrors(response);
                             }
                         }
                     }
@@ -632,11 +585,7 @@ var App = {
                             $('#subscriptionList').focus();
                         }
                         else {
-                            var errors = '';
-                            for (var i in response.errors) {
-                                errors += response.errors[i] + '<br/>';
-                            }
-                            $('.status').show().html(errors);
+                            showErrors(response);
                         }
                     }
                 }
@@ -653,11 +602,7 @@ var App = {
                             $('#subscriptionList').focus();
                         }
                         else {
-                            var errors = '';
-                            for (var i in response.errors) {
-                                errors += response.errors[i] + '<br/>';
-                            }
-                            $('.status').show().html(errors);
+                            showErrors(response);
                         }
                     }
                 }
@@ -669,6 +614,14 @@ var App = {
         
     }
 };
+
+function showErrors(response) {
+    var errors = '';
+    for (var i in response.errors) {
+        errors += response.errors[i] + '<br/>';
+    }
+    $('.status').show().html(errors);
+}
 
 $(document).ready(function() {
     App.initialize();

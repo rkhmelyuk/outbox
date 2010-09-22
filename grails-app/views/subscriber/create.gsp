@@ -16,6 +16,13 @@
             <g:hiddenField name="listId" value="${listId}"/>
             <table>
                 <tr>
+                    <td><g:message code="email"/></td>
+                    <td><g:textField name="email" maxlength="512" value="${subscriber.email}"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><h3><g:message code="optional.fields"/></h3></td>
+                </tr>
+                <tr>
                     <td><g:message code="title"/></td>
                     <td>
                         <g:select name="namePrefix" from="${NamePrefix.list()}"
@@ -30,10 +37,6 @@
                 <tr>
                     <td><g:message code="lastName"/></td>
                     <td><g:textField name="lastName" maxlength="100" value="${subscriber.lastName}"/></td>
-                </tr>
-                <tr>
-                    <td><g:message code="email"/></td>
-                    <td><g:textField name="email" maxlength="512" value="${subscriber.email}"/></td>
                 </tr>
                 <g:if test="${subscriberTypes}">
                 <tr>
