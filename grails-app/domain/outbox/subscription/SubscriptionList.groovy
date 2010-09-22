@@ -66,6 +66,6 @@ class SubscriptionList {
      * @return {@code true} if belongs, otherwise {@code false}.
      */
     boolean ownedBy(Long memberId) {
-        owner?.id == memberId
+        memberId && owner?.id == memberId
     }
 }

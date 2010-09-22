@@ -131,6 +131,19 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertTrue found.contains(campaignSubscription)
     }
 
+    void testAddCampaignSubscription_ForStartedCampaign() {
+        def campaign = createTestCampaign()
+        def list = createTestSubscriptionList(1)
+
+        campaign.state = CampaignState.InProgress
+
+        assertTrue campaignService.addCampaign(campaign)
+        assertTrue subscriptionListService.saveSubscriptionList(list)
+
+        def campaignSubscription = new CampaignSubscription(campaign: campaign, subscriptionList: list)
+        assertFalse campaignService.addCampaignSubscription(campaignSubscription)
+    }
+
     void testGetCampaignSubscription() {
         def campaign = createTestCampaign()
         def list = createTestSubscriptionList(1)
@@ -166,14 +179,15 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         def campaign = createTestCampaign()
         def list = createTestSubscriptionList(1)
 
-        campaign.state = CampaignState.InProgress
-
         assertTrue campaignService.addCampaign(campaign)
         assertTrue subscriptionListService.saveSubscriptionList(list)
-
         def campaignSubscription = new CampaignSubscription(campaign: campaign, subscriptionList: list)
 
         assertTrue campaignService.addCampaignSubscription(campaignSubscription)
+
+        campaign.state = CampaignState.InProgress
+        assertTrue campaignService.saveCampaign(campaign)
+
         assertEquals 1, campaignService.getCampaignSubscriptions(campaign).size()
         assertFalse campaignService.deleteCampaignSubscription(campaignSubscription)
         assertEquals 1, campaignService.getCampaignSubscriptions(campaign).size()
@@ -194,8 +208,17 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertTrue campaignService.addCampaignSubscription(campaignSubscription1)
         assertTrue campaignService.addCampaignSubscription(campaignSubscription2)
 
-        def subscribed = new SubscriptionStatus(id: 1, name: 'subscribed').save()
-        def unsubscribed = new SubscriptionStatus(id: 2, name: 'unsubscribed').save()
+        def subscribed = SubscriptionStatus.findById(1)
+        if (!subscribed) {
+            subscribed = new SubscriptionStatus(id: 1, name: 'subscribed').save()
+        }
+        def unsubscribed = SubscriptionStatus.findById(2)
+        if (!unsubscribed) {
+            unsubscribed = new SubscriptionStatus(id: 2, name: 'unsubscribed').save()
+        }
+
+        assertEquals 1, subscribed.id
+        assertEquals 2, subscribed.id
 
         def subscriber1 = createTestSubscriber(1)
         def subscriber2 = createTestSubscriber(2)

@@ -43,7 +43,6 @@ class CampaignService {
         if (!campaign.subject) {
             campaign.subject = campaign.name
         }
-
         ServiceUtil.saveOrRollback campaign
     }
 
@@ -76,7 +75,11 @@ class CampaignService {
      */
     @Transactional
     boolean addCampaignSubscription(CampaignSubscription subscription) {
-        ServiceUtil.saveOrRollback subscription
+        if (subscription && subscription.campaign.notStarted) {
+            boolean result = ServiceUtil.saveOrRollback(subscription)
+            return result ? updateCampaignState(subscription.campaign) : false
+        }
+        return false
     }
 
     /**
@@ -89,9 +92,38 @@ class CampaignService {
     boolean deleteCampaignSubscription(CampaignSubscription subscription) {
         if (subscription && subscription.campaign.notStarted) {
             subscription.delete(flush: true)
-            return true
+            return updateCampaignState(subscription.campaign)
         }
         return false
+    }
+
+    /**
+     * Updates campaign state.
+     * @param campaign the campaign state.
+     * @return the campaign state.
+     */
+    private boolean updateCampaignState(Campaign campaign) {
+        campaign.state = getCampaignState(campaign)
+        return saveCampaign(campaign)
+    }
+
+    /**
+     * Gets campaign state.
+     * @param campaign the campaign state.
+     * @return the campaign state.
+     */
+    private CampaignState getCampaignState(Campaign campaign) {
+        def needSubscribers = !getTotalSubscribersNumber(campaign)
+        def needTemplate = campaign.template != null
+
+        if (!needTemplate && !needSubscribers) {
+            return CampaignState.Ready
+        }
+        else if (needTemplate || needSubscribers) {
+            return CampaignState.New
+        }
+
+        return campaign.state
     }
 
     /**
@@ -145,7 +177,8 @@ class CampaignService {
         int result = 0
         if (campaign != null) {
             CampaignSubscription.withSession { Session session ->
-                result = (Integer) session.getNamedQuery('CampaignSubscription.totalSubscribersNumber').setLong('campaignId', campaign.id).uniqueResult()
+                result = (Integer) session.getNamedQuery('CampaignSubscription.totalSubscribersNumber')
+                        .setLong('campaignId', campaign.id).uniqueResult()
             }
         }
         return result

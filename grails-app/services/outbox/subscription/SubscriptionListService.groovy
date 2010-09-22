@@ -67,8 +67,7 @@ class SubscriptionListService {
         if (ServiceUtil.saveOrRollback(subscription)) {
             def subscriptionList = subscription.subscriptionList
             subscriptionList.subscribersNumber = Subscription.countBySubscriptionList(subscriptionList)
-            saveSubscriptionList(subscriptionList)
-            return true
+            return saveSubscriptionList(subscriptionList)
         }
         return false
     }

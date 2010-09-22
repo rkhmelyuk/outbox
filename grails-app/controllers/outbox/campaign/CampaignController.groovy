@@ -176,7 +176,7 @@ class CampaignController {
         def model = [:]
         def campaign = campaignService.getCampaign(params.long('campaignId'))
         def memberId = springSecurityService.principal.id
-        if (campaign && campaign.ownedBy(memberId)) {
+        if (campaign && campaign.ownedBy(memberId) && campaign.notStarted) {
             def subscriptionList = subscriptionListService.getSubscriptionList(params.long('subscriptionList'))
             if (subscriptionList && subscriptionList.ownedBy(memberId)) {
                 CampaignSubscription campaignSubscription = new CampaignSubscription()
@@ -204,7 +204,8 @@ class CampaignController {
         def model = [:]
         def campaignSubscription = campaignService.getCampaignSubscription(params.long('campaignSubscriptionId'))
         def memberId = springSecurityService.principal.id
-        if (campaignSubscription && campaignSubscription.campaign?.ownedBy(memberId)) {
+        def campaign = campaignSubscription?.campaign
+        if (campaign && campaign.ownedBy(memberId) && campaign.notStarted) {
             if (campaignService.deleteCampaignSubscription(campaignSubscription)) {
                 model.success = true
                 def data = handle('subscribers', campaignSubscription.campaign)
