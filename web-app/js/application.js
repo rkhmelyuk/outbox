@@ -620,6 +620,51 @@ var App = {
         });
     },
 
+    campaignSubscribers: function() {
+        $('#subscriptionList').focus();
+        $('#addSubscriptionList').live('click', function() {
+            $('#addSubscriptionListForm').ajaxSubmit({
+                dataType: 'json',
+                success: function(response, status) {
+                    if (response && status == 'success') {
+                        if (response.success) {
+                            $('#showBody').html(response.content);
+                            $('#subscriptionList').focus();
+                        }
+                        else {
+                            var errors = '';
+                            for (var i in response.errors) {
+                                errors += response.errors[i] + '<br/>';
+                            }
+                            $('.status').show().html(errors);
+                        }
+                    }
+                }
+            });
+        });
+        $('.removeSubscriptionList').live('click', function() {
+            $('#campaignSubscriptionId').val($(this).attr('rel'));
+            $('#removeSubscriptionListForm').ajaxSubmit({
+                dataType: 'json',
+                success: function(response, status) {
+                    if (response && status == 'success') {
+                        if (response.success) {
+                            $('#showBody').html(response.content);
+                            $('#subscriptionList').focus();
+                        }
+                        else {
+                            var errors = '';
+                            for (var i in response.errors) {
+                                errors += response.errors[i] + '<br/>';
+                            }
+                            $('.status').show().html(errors);
+                        }
+                    }
+                }
+            });
+        });
+    },
+
     campaignShow: function() {
         
     }

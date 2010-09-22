@@ -1,6 +1,3 @@
-<script type="text/javascript">
-    $(document).ready(function() { App.campaignEdit() })
-</script>
 <g:form name="campaignForm" controller="campaign" action="update" onsubmit="return false;">
     <g:hiddenField name="id" value="${campaign.id}"/>
     <table>

@@ -155,8 +155,31 @@ a:hover {
 #pageWrapper.campaignsIndex #campaigns .campaign .date {
     width: 80px;
     float: right;
-    text-align:right;
+    text-align: right;
     font-style: italic;
     color: #afafaf;
     font-size: 10px;
+}
+
+#pageWrapper.campaignShow div.subMenu { padding: 5px; margin: 4px; }
+
+#pageWrapper.campaignShow div.subMenu a {
+    background-color: #efefef;
+    border: 1px solid #dfdfdf;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+#pageWrapper.campaignShow .note {
+    width: 500px;
+    background-color: #ffffcc;
+    border: 1px solid #ffff99;
+    margin: 5px;
+    padding: 5px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#pageWrapper.campaignShow .note.need {
+    font-weight: bold;
 }

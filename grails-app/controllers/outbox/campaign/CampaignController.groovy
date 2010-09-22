@@ -4,6 +4,7 @@ import grails.converters.JSON
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
 import outbox.member.Member
+import outbox.subscription.SubscriptionListService
 
 /**
  * @author Ruslan Khmelyuk
@@ -11,15 +12,14 @@ import outbox.member.Member
 class CampaignController {
 
     def defaultAction = ''
-    def allowedMethods = [add: 'POST', update: 'POST']
+    def allowedMethods = [add: 'POST', update: 'POST',
+            addSubscriptionList: 'POST',
+            removeSubscriptionList: 'POST']
 
-    def SHOW_HANDLERS = [
-            reports: handleReports,
-            details: handleDetails,
-            subscribers: handleSubscribers,
-            template: handleTempalte]
+    static def SHOW_HANDLERS = ['reports', 'details', 'subscribers', 'template']
 
     CampaignService campaignService
+    SubscriptionListService subscriptionListService
     SpringSecurityService springSecurityService
 
     def index = { 
@@ -94,20 +94,48 @@ class CampaignController {
         }
 
         def page = fetchPage(campaign)
-        def needTemplate = (campaign.template == null)
-        def needSubscribers = true
+        def model = handle(page, campaign)
 
-        def handler = SHOW_HANDLERS[page]
-        if (handler) {
-            handler(campaign)
+        return model
+    }
+
+    def handle(String page, Campaign campaign) {
+        def result
+        switch (page) {
+            case 'details':
+                result = handleDetails(campaign)
+                break
+            case 'reports':
+                result = handleReports(campaign)
+                break
+            case 'subscribers':
+                result = handleSubscribers(campaign)
+                break
+            case 'template':
+                result = handleTemplate(campaign)
+                break
         }
 
-        return [
+        result = (result != null ? result : [:])
+
+        def needTemplate = (campaign.template == null)
+        def needSubscribers
+
+        def totalSubscribers = result.totalSubscribers
+        if (totalSubscribers == null) {
+            totalSubscribers = campaignService.getTotalSubscribersNumber(campaign)
+        }
+
+        needSubscribers = !totalSubscribers
+
+        result << [
                 page: page,
                 campaign: campaign,
                 needTemplate: needTemplate,
                 needSubscribers: needSubscribers
         ]
+
+        return result
     }
 
     def handleReports(Campaign campaign) {
@@ -119,7 +147,11 @@ class CampaignController {
     }
 
     def handleSubscribers(Campaign campaign) {
-
+        def model = [:]
+        model.proposedSubscriptions = campaignService.getProposedSubscriptionLists(campaign)
+        model.totalSubscribers = campaignService.getTotalSubscribersNumber(campaign)
+        model.subscriptions = campaignService.getCampaignSubscriptions(campaign)
+        return model
     }
 
     def handleTemplate(Campaign campaign) {
@@ -140,7 +172,53 @@ class CampaignController {
         return page
     }
 
-    def details = {
+    def addSubscriptionList = {
+        def model = [:]
+        def campaign = campaignService.getCampaign(params.long('campaignId'))
+        def memberId = springSecurityService.principal.id
+        if (campaign && campaign.ownedBy(memberId)) {
+            def subscriptionList = subscriptionListService.getSubscriptionList(params.long('subscriptionList'))
+            if (subscriptionList && subscriptionList.ownedBy(memberId)) {
+                CampaignSubscription campaignSubscription = new CampaignSubscription()
+                campaignSubscription.campaign = campaign
+                campaignSubscription.subscriptionList = subscriptionList
+                if (campaignService.addCampaignSubscription(campaignSubscription)) {
+                    model.success = true
+                    def data = handle('subscribers', campaign)
+                    model.content = g.render(template: 'campaignSubscribers', model: data)
+                }
+                else {
+                    MessageUtil.addErrors(request, model, campaignSubscription.errors)
+                }
+            }
+        }
+
+        if (!model.success) {
+            model.error = true
+        }
         
+        render model as JSON
+    }
+
+    def removeSubscriptionList = {
+        def model = [:]
+        def campaignSubscription = campaignService.getCampaignSubscription(params.long('campaignSubscriptionId'))
+        def memberId = springSecurityService.principal.id
+        if (campaignSubscription && campaignSubscription.campaign?.ownedBy(memberId)) {
+            if (campaignService.deleteCampaignSubscription(campaignSubscription)) {
+                model.success = true
+                def data = handle('subscribers', campaignSubscription.campaign)
+                model.content = g.render(template: 'campaignSubscribers', model: data)
+            }
+            else {
+                MessageUtil.addErrors(request, model, campaignSubscription.errors)
+            }
+        }
+
+        if (!model.success) {
+            model.error = true
+        }
+
+        render model as JSON
     }
 }

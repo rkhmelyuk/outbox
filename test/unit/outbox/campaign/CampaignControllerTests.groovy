@@ -4,9 +4,12 @@ import grails.converters.JSON
 import grails.plugins.springsecurity.SpringSecurityService
 import grails.test.ControllerUnitTestCase
 import outbox.member.Member
+import outbox.member.MemberRole
 import outbox.search.OwnedByCondition
 import outbox.search.PageCondition
 import outbox.security.OutboxUser
+import outbox.subscription.SubscriptionList
+import outbox.subscription.SubscriptionListService
 
 /**
  * @author Ruslan Khmelyuk
@@ -138,6 +141,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
             assertEquals 10, id
             return campaign
         }
+        campaignServiceControl.demand.getTotalSubscribersNumber { 0 }
         controller.campaignService = campaignServiceControl.createMock()
 
         controller.params.id = '10'
@@ -149,6 +153,8 @@ class CampaignControllerTests extends ControllerUnitTestCase {
 
         assertEquals campaign, result.campaign
         assertEquals 'details', result.page
+        assertTrue 'Need subscribers.', result.needSubscribers
+        assertTrue 'Need template.', result.needTemplate
     }
 
     void testShow_WrongPage() {
@@ -166,6 +172,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
             assertEquals 10, id
             return campaign
         }
+        campaignServiceControl.demand.getTotalSubscribersNumber { 0 }
         controller.campaignService = campaignServiceControl.createMock()
 
         controller.params.id = '10'
@@ -177,6 +184,8 @@ class CampaignControllerTests extends ControllerUnitTestCase {
 
         assertEquals campaign, result.campaign
         assertEquals 'details', result.page
+        assertTrue 'Need subscribers.', result.needSubscribers
+        assertTrue 'Need template.', result.needTemplate
     }
 
     void testShow_AbsentReports() {
@@ -194,6 +203,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
             assertEquals 10, id
             return campaign
         }
+        campaignServiceControl.demand.getTotalSubscribersNumber { 10 }
         controller.campaignService = campaignServiceControl.createMock()
 
         controller.params.id = '10'
@@ -204,6 +214,8 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         campaignServiceControl.verify()
 
         assertEquals campaign, result.campaign
+        assertFalse 'Need subscribers.', result.needSubscribers
+        assertTrue 'Need template.', result.needTemplate
         assertEquals 'details', result.page
     }
 
@@ -319,6 +331,53 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         assertNull result.success
         assertNull result.name
         assertNotNull result.errors
+    }
+
+    void testAddSubscriptionList() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> member }
+        MemberRole.class.metaClass.static.findAllByMember = { null }
+
+        mockDomain(Campaign)
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaign { id ->
+            assertEquals 1, id
+            new Campaign(id: id, owner: member) }
+        campaignServiceControl.demand.addCampaignSubscription { true }
+        campaignServiceControl.demand.getProposedSubscriptionLists { [] }
+        campaignServiceControl.demand.getTotalSubscribersNumber { 0 }
+        campaignServiceControl.demand.getCampaignSubscriptions { [] }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            assertEquals 2, id
+            new SubscriptionList(id: id, owner: member)
+        }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        controller.params.campaignId = '1'
+        controller.params.subscriptionList = '2'
+
+        controller.class.metaClass.render = { String template, Map model ->  'model' }
+
+        controller.addSubscriptionList()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+        subscriptionListServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be success.', result.success
+        assertNull result.error
     }
 
 }

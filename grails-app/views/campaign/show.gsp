@@ -7,10 +7,19 @@
         <g:javascript library="jquery.validate" />
 
         <script type="text/javascript">
-            $(document).ready(function() { App.campaignShow() })
+            $(document).ready(function() {
+                <g:if test="${page == 'details'}">
+                    App.campaignEdit() ;
+                </g:if>
+                <g:elseif test="${page == 'reports'}"/>
+                <g:if test="${page == 'subscribers'}">
+                    App.campaignSubscribers();
+                </g:if>
+                <g:elseif test="${page == 'template'}"/>
+            });
         </script>
     </head>
-    <body>
+    <body class="campaignShow">
         <div class="status" style="display: none;"> </div>
         <h1>
             <span id="name"><g:fieldValue bean="${campaign}" field="name"/></span>
@@ -34,10 +43,14 @@
         <g:if test="${needTemplate || needSubscribers}">
             <div class="note need">
                 <g:if test="${needSubscribers}">
-                    You need to <g:link controller="campaign" action="show" id="${campaign.id}" params="[page: 'subscribers']">add subscribers</g:link> to start this campaign.
+                    <div class="item">
+                        You need to <g:link controller="campaign" action="show" id="${campaign.id}" params="[page: 'subscribers']">add subscribers</g:link> to start this campaign.
+                    </div>
                 </g:if>
                 <g:if test="${needTemplate}">
-                    You need to <g:link controller="campaign" action="show" id="${campaign.id}" params="[page: 'template']">setup template</g:link> to start this campaign.
+                    <div class="item">
+                        You need to <g:link controller="campaign" action="show" id="${campaign.id}" params="[page: 'template']">setup template</g:link> to start this campaign.
+                    </div>
                 </g:if>
             </div>
         </g:if>
@@ -45,17 +58,19 @@
             <g:link controller="campaign" action="start">Start</g:link>
         </g:elseif>
 
-        <g:if test="${page == 'details'}">
-            <g:render template="campaignDetails" model="${params}"/>
-        </g:if>
-        <g:elseif test="${page == 'reports'}">
-            <g:render template="campaignReports" model="${params}"/>
-        </g:elseif>
-        <g:elseif test="${page == 'subscribers'}">
-            <g:render template="campaignSubscribers" model="${params}"/>
-        </g:elseif>
-        <g:elseif test="${page == 'template'}">
-            <g:render template="campaignTemplate" model="${params}"/>
-        </g:elseif>
+        <div id="showBody">
+            <g:if test="${page == 'details'}">
+                <g:render template="campaignDetails" model="${params}"/>
+            </g:if>
+            <g:elseif test="${page == 'reports'}">
+                <g:render template="campaignReports" model="${params}"/>
+            </g:elseif>
+            <g:elseif test="${page == 'subscribers'}">
+                <g:render template="campaignSubscribers" model="${params}"/>
+            </g:elseif>
+            <g:elseif test="${page == 'template'}">
+                <g:render template="campaignTemplate" model="${params}"/>
+            </g:elseif>
+        </div>
     </body>
 </html>
