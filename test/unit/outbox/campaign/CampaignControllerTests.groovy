@@ -343,7 +343,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         def campaignServiceControl = mockFor(CampaignService)
         campaignServiceControl.demand.getCampaign { id ->
             assertEquals 1, id
-            new Campaign(id: id, owner: member) }
+            new Campaign(id: id, owner: member, state: CampaignState.New) }
         campaignServiceControl.demand.addCampaignSubscription { true }
         campaignServiceControl.demand.getProposedSubscriptionLists { [] }
         campaignServiceControl.demand.getTotalSubscribersNumber { 0 }
@@ -390,7 +390,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         def campaignServiceControl = mockFor(CampaignService)
         campaignServiceControl.demand.getCampaign { id ->
             assertEquals 1, id
-            new Campaign(id: id, owner: member) }
+            new Campaign(id: id, owner: member, state: CampaignState.New) }
         campaignServiceControl.demand.addCampaignSubscription { false }
         controller.campaignService = campaignServiceControl.createMock()
 
@@ -436,7 +436,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
             assertEquals 2, id
             return new CampaignSubscription(
                     id: id,
-                    campaign: new Campaign(id: id, owner: member),
+                    campaign: new Campaign(id: id, owner: member, state: CampaignState.Ready),
                     subscriptionList: new SubscriptionList(id: id, owner: member)
             )
         }
@@ -475,7 +475,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
             assertEquals 2, id
             return new CampaignSubscription(
                     id: id,
-                    campaign: new Campaign(id: id, owner: member),
+                    campaign: new Campaign(id: id, owner: member, state: CampaignState.New),
                     subscriptionList: new SubscriptionList(id: id, owner: member)
             )
         }

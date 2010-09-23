@@ -114,7 +114,7 @@ class CampaignService {
      */
     private CampaignState getCampaignState(Campaign campaign) {
         def needSubscribers = !getTotalSubscribersNumber(campaign)
-        def needTemplate = campaign.template != null
+        def needTemplate = (campaign.template == null)
 
         if (!needTemplate && !needSubscribers) {
             return CampaignState.Ready
@@ -160,7 +160,9 @@ class CampaignService {
     List<SubscriptionList> getProposedSubscriptionLists(Campaign campaign) {
         def result = null
         SubscriptionList.withSession { Session session ->
-            result = session.getNamedQuery('Campaign.findProposedSubscriptionLists').setLong('campaignId', campaign.id).setLong('memberId', campaign.owner?.id).list()
+            result = session.getNamedQuery('Campaign.findProposedSubscriptionLists')
+                    .setLong('campaignId', campaign.id)
+                    .setLong('memberId', campaign.owner?.id).list()
         }
 
         result != null ? result : []

@@ -68,7 +68,6 @@ class CampaignController {
             if (campaignService.saveCampaign(campaign)) {
                 model.success = true
                 model.name = campaign.name
-                model.redirectTo = g.createLink(controller: 'campaign', action: 'show', id: campaign.id)
             }
             else {
                 model.error = true

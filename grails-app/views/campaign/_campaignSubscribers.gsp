@@ -25,7 +25,12 @@
             </thead>
             <g:each var="subscription" in="${subscriptions}">
                 <tr>
-                    <td><g:fieldValue bean="${subscription}" field="subscriptionList.name"/></td>
+                    <td>
+                        <g:link controller="subscriptionList" action="show" id="${subscription.subscriptionList.id}"
+                                title="${message(code:'view.details')}">
+                            <g:fieldValue bean="${subscription}" field="subscriptionList.name"/>
+                        </g:link>
+                    </td>
                     <td><g:formatDate date="${subscription.subscriptionList.dateCreated}" format="d MMMMM yyyy"/></td>
                     <td>${subscription.subscriptionList.subscribersNumber ? subscription.subscriptionList.subscribersNumber : 0}</td>
                     <td><a href="javascript:void(0);" class="removeSubscriptionList" rel="${subscription.id}"><g:message code="remove"/></a></td>
