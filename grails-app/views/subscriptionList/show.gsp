@@ -52,8 +52,27 @@
                 </table>
             </g:if>
         </div>
-        <div class="campaigns">
-            List of campaigns that used this list. 
-        </div>
+        <g:if test="${campaignSubscriptions}">
+            <div class="campaigns">
+                <h3><g:message code="campaigns"/></h3>
+                <table>
+                    <tr>
+                        <td><g:message code="campaign"/></td>
+                        <td><g:message code="create.date"/></td>
+                        <td><g:message code="status"/></td>
+                    </tr>
+                    <g:each var="campaignSubscription" in="${campaignSubscriptions}">
+                    <tr>
+                        <td><g:link controller="campaign" action="show" id="${campaignSubscription.campaign?.id}"
+                                params="[page: 'subscribers']" title="${message(code:'view.details')}">
+                            <g:fieldValue bean="${campaignSubscription}" field="campaign.name" /></g:link>
+                        </td>
+                        <td><g:formatDate date="${campaignSubscription.campaign?.dateCreated}" format="d MMMMM yyyy"/></td>
+                        <td><g:message code="${campaignSubscription.campaign?.state?.messageCode}"/></td>
+                    </tr>
+                    </g:each>
+                </table>
+            </div>
+        </g:if>
     </body>
 </html>

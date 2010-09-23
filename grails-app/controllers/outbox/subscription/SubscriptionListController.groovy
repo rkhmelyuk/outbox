@@ -4,6 +4,7 @@ import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
+import outbox.campaign.CampaignService
 import outbox.member.Member
 import outbox.subscriber.SubscriberService
 
@@ -18,6 +19,7 @@ class SubscriptionListController {
     SubscriberService subscriberService
     SubscriptionListService subscriptionListService
     SpringSecurityService springSecurityService
+    CampaignService campaignService
 
     /**
      * Shows the list of Subscription Lists.
@@ -55,8 +57,13 @@ class SubscriptionListController {
         }
 
         def subscriptions = subscriptionListService.getSubscriptionsForList(subscriptionList)
+        def campaignSubscriptions = campaignService.getSubscriptions(subscriptionList)
 
-        [subscriptionList: subscriptionList, subscriptions: subscriptions]
+        return [
+                subscriptionList: subscriptionList,
+                subscriptions: subscriptions,
+                campaignSubscriptions: campaignSubscriptions
+        ]
     }
 
     def create = {

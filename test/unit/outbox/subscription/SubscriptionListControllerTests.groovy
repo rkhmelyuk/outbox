@@ -3,6 +3,8 @@ package outbox.subscription
 import grails.converters.JSON
 import grails.plugins.springsecurity.SpringSecurityService
 import grails.test.ControllerUnitTestCase
+import outbox.campaign.CampaignService
+import outbox.campaign.CampaignSubscription
 import outbox.member.Member
 import outbox.security.OutboxUser
 import outbox.subscriber.Subscriber
@@ -333,6 +335,10 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         subscriptionListServiceControl.demand.getSubscriptionsForList { list -> return subscriptions }
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getSubscriptions { list -> [new CampaignSubscription(subscriptionList: list)] }
+        controller.campaignService = campaignServiceControl.createMock()
+
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
             return new OutboxUser('username', 'password', true, false, false, false, [], member)
@@ -342,10 +348,15 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         controller.params.id = '10'
         def result = controller.show()
 
+        campaignServiceControl.verify()
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
+
         assertNotNull result.subscriptionList
         assertEquals 10, result.subscriptionList.id
         assertNotNull result.subscriptions
         assertEquals 2, result.subscriptions.size()
+        assertEquals 1, result.campaignSubscriptions.size()
     }
 
     void testShow_Denied() {
@@ -363,6 +374,9 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
         controller.params.id = '10'
         def result = controller.show()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
 
         assertNull result
         assertEquals 403, mockResponse.status
@@ -396,6 +410,9 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
         controller.params.id = 1
         controller.delete()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
 
         assertEquals 'subscriptionList', controller.redirectArgs.controller
         assertEquals '', controller.redirectArgs.action

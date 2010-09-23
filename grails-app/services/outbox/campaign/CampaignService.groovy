@@ -148,6 +148,16 @@ class CampaignService {
     }
 
     /**
+     * Gets the list of campaign subscriptions by subscription list.
+     * @param subscription the subscription to get campaign subscriptions for.
+     * @return the list of found campaign subscriptions.
+     */
+    @Transactional(readOnly = true)
+    List<CampaignSubscription> getSubscriptions(SubscriptionList subscriptionList) {
+        CampaignSubscription.findAllBySubscriptionList subscriptionList
+    }
+
+    /**
      * Gets the list of subscriptions list that are proposed to be added to the
      * campaign. Currently this is a list of all subscription lists.
      *

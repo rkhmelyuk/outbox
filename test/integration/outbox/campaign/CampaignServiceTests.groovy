@@ -160,6 +160,27 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertEquals campaignSubscription.subscriptionList.id, found.subscriptionList.id
     }
 
+    void testGetSubscriptions() {
+        def campaign1 = createTestCampaign()
+        def campaign2 = createTestCampaign()
+        def list = createTestSubscriptionList(1)
+
+        assertTrue campaignService.addCampaign(campaign1)
+        assertTrue campaignService.addCampaign(campaign2)
+        assertTrue subscriptionListService.saveSubscriptionList(list)
+
+        def campaignSubscription1 = new CampaignSubscription(campaign: campaign1, subscriptionList: list)
+        def campaignSubscription2 = new CampaignSubscription(campaign: campaign2, subscriptionList: list)
+
+        assertTrue campaignService.addCampaignSubscription(campaignSubscription1)
+        assertTrue campaignService.addCampaignSubscription(campaignSubscription2)
+
+        def found = campaignService.getSubscriptions(list)
+        assertEquals 2, found.size()
+        assertTrue found.contains(campaignSubscription1)
+        assertTrue found.contains(campaignSubscription2)
+    }
+
     void testDeleteCampaignSubscription() {
         def campaign = createTestCampaign()
         def list = createTestSubscriptionList(1)
@@ -216,9 +237,6 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         if (!unsubscribed) {
             unsubscribed = new SubscriptionStatus(id: 2, name: 'unsubscribed').save()
         }
-
-        assertEquals 1, subscribed.id
-        assertEquals 2, subscribed.id
 
         def subscriber1 = createTestSubscriber(1)
         def subscriber2 = createTestSubscriber(2)
