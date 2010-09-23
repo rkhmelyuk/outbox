@@ -9,6 +9,7 @@ import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.subscription.SubscriptionStatus
 import outbox.template.Template
+import outbox.template.TemplateService
 
 /**
  * @author Ruslan Khmelyuk
@@ -18,6 +19,7 @@ class CampaignServiceTests extends GrailsUnitTestCase {
     CampaignService campaignService
     SubscriptionListService subscriptionListService
     SubscriberService subscriberService
+    TemplateService templateService
 
     def member
     def template
@@ -297,6 +299,26 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertEquals list3, proposed[0]
     }
 
+    void testGetProposedTemplates() {
+        def campaign = createTestCampaign()
+        def template1 = createTestTemplate(1)
+        def template2 = createTestTemplate(2)
+        def template3 = createTestTemplate(3)
+
+        assertTrue campaignService.addCampaign(campaign)
+        assertTrue templateService.addTemplate(template1)
+        assertTrue templateService.addTemplate(template2)
+        assertTrue templateService.addTemplate(template3)
+
+        def proposed = campaignService.getProposedTemplates(campaign)
+
+        assertNotNull proposed
+        assertEquals 3, proposed.size()
+        assertTrue proposed.contains(template1)
+        assertTrue proposed.contains(template2)
+        assertTrue proposed.contains(template3)
+    }
+
     void assertEquals(Campaign campaign, Campaign found) {
         assertNotNull found.dateCreated
         assertEquals CampaignState.New, found.state
@@ -337,5 +359,14 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         subscriber.enabled = true
         subscriber.member = member
         return subscriber
+    }
+
+    Template createTestTemplate(id) {
+        Template template = new Template()
+        template.name = 'Test Name' + id
+        template.description = 'Test Description'
+        template.templateBody = 'Test Template Body'
+        template.owner = member
+        return template
     }
 }

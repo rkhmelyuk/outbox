@@ -5,6 +5,7 @@ import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
 import outbox.member.Member
 import outbox.subscription.SubscriptionListService
+import outbox.template.TemplateService
 
 /**
  * @author Ruslan Khmelyuk
@@ -21,6 +22,7 @@ class CampaignController {
     CampaignService campaignService
     SubscriptionListService subscriptionListService
     SpringSecurityService springSecurityService
+    TemplateService templateService
 
     def index = { 
         def conditions = new CampaignConditionsBuilder().build {
@@ -154,7 +156,7 @@ class CampaignController {
     }
 
     def handleTemplate(Campaign campaign) {
-
+        [proposedTemplates : campaignService.getProposedTemplates(campaign)]
     }
 
     private String fetchPage(Campaign campaign) {
@@ -212,6 +214,36 @@ class CampaignController {
             }
             else {
                 MessageUtil.addErrors(request, model, campaignSubscription.errors)
+            }
+        }
+
+        if (!model.success) {
+            model.error = true
+        }
+
+        render model as JSON
+    }
+
+    def selectTemplate = {
+        def model = [:]
+        def campaign = campaignService.getCampaign(params.long('campaignId'))
+        def memberId = springSecurityService.principal.id
+        if (campaign && campaign.ownedBy(memberId) && campaign.notStarted) {
+            log.info 0
+            def template = templateService.getTemplate(params.long('template'))
+            if (template && template.ownedBy(memberId)) {
+                campaign.template = template
+                log.info 1
+                if (campaignService.saveCampaign(campaign)) {
+                    log.info 2
+                    model.success = true
+                    def data = handle('template', campaign)
+                    model.content = g.render(template: 'campaignTemplate', model: data)
+                }
+                else {
+                    log.info 3
+                    MessageUtil.addErrors(request, model, campaign.errors)
+                }
             }
         }
 

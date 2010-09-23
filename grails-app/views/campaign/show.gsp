@@ -15,7 +15,9 @@
                 <g:if test="${page == 'subscribers'}">
                     App.campaignSubscribers();
                 </g:if>
-                <g:elseif test="${page == 'template'}"/>
+                <g:elseif test="${page == 'template'}">
+                    App.campaignTemplate();
+                </g:elseif>
             });
         </script>
     </head>

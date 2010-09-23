@@ -10,6 +10,7 @@ import outbox.search.PageCondition
 import outbox.security.OutboxUser
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
+import outbox.template.Template
 
 /**
  * @author Ruslan Khmelyuk
@@ -497,6 +498,38 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
         assertTrue 'Must be success.', result.error
         assertNull result.success
+    }
+
+    void testShow_Template() {
+        def member = new Member(id: 1)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member)
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaign { id ->
+            assertEquals 10, id
+            return campaign
+        }
+        campaignServiceControl.demand.getProposedTemplates { camp -> [new Template(id: 1)] }
+        campaignServiceControl.demand.getTotalSubscribersNumber { 0 }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        controller.params.id = '10'
+        controller.params.page = 'template'
+        
+        def result = controller.show()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+
+        assertEquals campaign, result.campaign
+        assertEquals 'template', result.page
+        assertNotNull result.proposedTemplates
     }
 
 }

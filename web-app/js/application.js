@@ -610,6 +610,26 @@ var App = {
         });
     },
 
+    campaignTemplate: function() {
+        $('#template').focus();
+        $('#useTemplate').live('click', function() {
+            $('#useTemplateForm').ajaxSubmit({
+                dataType: 'json',
+                success: function(response, status) {
+                    if (response && status == 'success') {
+                        if (response.success) {
+                            $('#showBody').html(response.content);
+                            $('#template').focus();
+                        }
+                        else {
+                            showErrors(response);
+                        }
+                    }
+                }
+            });
+        });
+    },
+
     campaignShow: function() {
         
     }
