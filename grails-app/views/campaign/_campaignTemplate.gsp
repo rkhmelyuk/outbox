@@ -1,5 +1,5 @@
 <div id="template">
-    <g:if test="${proposedTemplates}">
+    <g:if test="${campaign.notStarted && proposedTemplates}">
         <g:form name="useTemplateForm" action="selectTemplate" onsubmit="return false;">
             <g:hiddenField name="campaignId" value="${campaign.id}"/>
             Select Template

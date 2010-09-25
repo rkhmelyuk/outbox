@@ -6,15 +6,22 @@
             <td><g:textField name="name" maxlength="500" value="${campaign.name}" style="width:400px;"/></td>
         </tr>
         <tr>
-            <td><g:message code="subject"/></td>
-            <td><g:textField name="subject" maxlength="1000" value="${campaign.subject}" style="width:400px;"/></td>
-        </tr>
-        <tr>
             <td><g:message code="description"/></td>
             <td>
                 <g:textArea name="description" value="${campaign.description}" style="width:400px; height: 100px"/>
                 <br/>
                 <g:message code="short.description.max.4000"/>
+            </td>
+        </tr>
+        <tr>
+            <td><g:message code="subject"/></td>
+            <td>
+                <g:if test="${campaign.notStarted}">
+                    <g:textField name="subject" maxlength="1000" value="${campaign.subject}" style="width:400px;"/>
+                </g:if>
+                <g:else>
+                    <g:fieldValue bean="${campaign}" field="subject"/>
+                </g:else>
             </td>
         </tr>
         <tr>

@@ -209,7 +209,7 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertTrue campaignService.addCampaignSubscription(campaignSubscription)
 
         campaign.state = CampaignState.InProgress
-        assertTrue campaignService.saveCampaign(campaign)
+        assertTrue campaignService.saveCampaign(campaign, false)
 
         assertEquals 1, campaignService.getCampaignSubscriptions(campaign).size()
         assertFalse campaignService.deleteCampaignSubscription(campaignSubscription)

@@ -63,9 +63,11 @@ class CampaignController {
         def campaign = campaignService.getCampaign(params.long('id'))
         if (campaign && campaign.ownedBy(springSecurityService.principal.id)) {
             campaign.name = params.name
-            campaign.subject = params.subject
             campaign.description = params.description
             campaign.endDate = params.endDate
+            if (campaign.notStarted) {
+                campaign.subject = params.subject
+            }
 
             if (campaignService.saveCampaign(campaign)) {
                 model.success = true
