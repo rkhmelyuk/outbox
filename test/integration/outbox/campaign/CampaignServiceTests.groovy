@@ -8,6 +8,7 @@ import outbox.subscription.Subscription
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.subscription.SubscriptionStatus
+import outbox.task.TaskService
 import outbox.template.Template
 import outbox.template.TemplateService
 
@@ -362,6 +363,31 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         }
         catch (Exception e) {
             fail 'Error to delete campaign'
+        }
+    }
+
+    void testSend() {
+        final def taskService = campaignService.taskService
+
+        try {
+            def campaign = createTestCampaign()
+            campaign.state = CampaignState.Ready
+
+            def taskServiceControl = mockFor(TaskService)
+            taskServiceControl.demand.enqueueTask { true }
+            campaignService.taskService = taskServiceControl.createMock()
+            
+            assertTrue campaignService.addCampaign(campaign)
+            assertTrue campaignService.sendCampaign(campaign)
+
+            def found = campaignService.getCampaign(campaign.id)
+            assertNotNull found
+            assertEquals CampaignState.Queued, found.state
+
+            taskServiceControl.verify()
+        }
+        finally {
+            campaignService.taskService = taskService
         }
     }
 

@@ -5,6 +5,8 @@ import org.springframework.transaction.annotation.Transactional
 import outbox.ServiceUtil
 import outbox.search.SearchConditions
 import outbox.subscription.SubscriptionList
+import outbox.task.Task
+import outbox.task.TaskService
 import outbox.template.Template
 import outbox.template.TemplateService
 
@@ -15,6 +17,7 @@ class CampaignService {
 
     static transactional = true
 
+    TaskService taskService
     TemplateService templateService
 
     /**
@@ -69,6 +72,36 @@ class CampaignService {
             campaign.delete(flush: true)
             return true
         }
+        return false
+    }
+
+    /**
+     * Start sending campaign. Before moving on, checks whether campaign is in Ready state.
+     * If not, returns false and don't send nothing.
+     * This method changes campaign state to Queued and enqueue the Send Campaign task.
+     *
+     * @param campaign the campaign to send, if null than false is returned.
+     * @return true if started sending successfully, otherwise false.
+     */
+    @Transactional
+    boolean sendCampaign(Campaign campaign) {
+        if (!campaign) {
+            return false
+        }
+
+        campaign = Campaign.findById(campaign.id)
+        if (campaign?.state == CampaignState.Ready) {
+            campaign.state = CampaignState.Queued
+            if (saveCampaign(campaign, false)) {
+                // TODO - use Task Factory to create instance
+                def task = new Task(name: 'SendCampaign', version: 1, params: [campaign: campaign])
+                if (taskService.enqueueTask(task)) {
+                    return true
+                }
+                ServiceUtil.setRollbackTransaction()
+            }
+        }
+
         return false
     }
 
