@@ -60,7 +60,7 @@ class Campaign implements Comparable<Campaign> {
     static transients = ['hasReports', 'notStarted']
 
     boolean getHasReports() {
-        state == CampaignState.InProgress || state == CampaignState.Finished
+        state == CampaignState.InProgress || state == CampaignState.Finished || state == CampaignState.Sending
     }
 
     boolean getNotStarted() {

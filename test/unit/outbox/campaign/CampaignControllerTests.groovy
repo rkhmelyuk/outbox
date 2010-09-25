@@ -21,6 +21,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
     @Override protected void setUp() {
         super.setUp();
         controller.class.metaClass.createLink = { 'link' }
+        controller.class.metaClass.message = { 'message' }
     }
 
     void testIndex() {
@@ -380,6 +381,10 @@ class CampaignControllerTests extends ControllerUnitTestCase {
 
         assertTrue 'Must be success.', result.success
         assertNull result.error
+        assertNotNull result.content
+        assertNotNull result.notifications
+        assertNotNull result.actions
+        assertEquals 'message', result.stateName
     }
 
     void testAddSubscriptionList_Failed() {
@@ -463,6 +468,10 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
         assertTrue 'Must be success.', result.success
         assertNull result.error
+        assertNotNull result.content
+        assertNotNull result.notifications
+        assertNotNull result.actions
+        assertEquals 'message', result.stateName
     }
 
     void testRemoveSubscriptionList_Failed() {
@@ -573,6 +582,9 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         assertTrue 'Must be success.', result.success
         assertNull result.error
         assertNotNull result.content
+        assertNotNull result.notifications
+        assertNotNull result.actions
+        assertEquals 'message', result.stateName
     }
 
 }

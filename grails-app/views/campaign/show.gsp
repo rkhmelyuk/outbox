@@ -25,7 +25,7 @@
         <div class="status" style="display: none;"> </div>
         <h1>
             <span id="name"><g:fieldValue bean="${campaign}" field="name"/></span>
-            <span style="font-size:10px"><g:message code="${campaign.state?.messageCode}"/></span>
+            <span id="state" style="font-size:10px"><g:message code="${campaign.state?.messageCode}"/></span>
         </h1>
         <span><g:message code="from.date" args="[formatDate(date: campaign.dateCreated, format: 'dd MMM yyyy')]"/></span>
 
@@ -42,23 +42,12 @@
             </g:link>
         </div>
 
-        <g:if test="${needTemplate || needSubscribers}">
-            <div class="note need">
-                <g:if test="${needSubscribers}">
-                    <div class="item">
-                        You need to <g:link controller="campaign" action="show" id="${campaign.id}" params="[page: 'subscribers']">add subscribers</g:link> to start this campaign.
-                    </div>
-                </g:if>
-                <g:if test="${needTemplate}">
-                    <div class="item">
-                        You need to <g:link controller="campaign" action="show" id="${campaign.id}" params="[page: 'template']">setup template</g:link> to start this campaign.
-                    </div>
-                </g:if>
-            </div>
-        </g:if>
-        <g:elseif test="${campaign.state == CampaignState.Ready}">
-            <g:link controller="campaign" action="start">Start</g:link>
-        </g:elseif>
+        <div id="notifications">
+            <g:render template="campaignNotifications"/> 
+        </div>
+        <div id="actions">
+            <g:render template="campaignActions"/>
+        </div>
 
         <div id="showBody">
             <g:if test="${page == 'details'}">

@@ -581,6 +581,9 @@ var App = {
                 success: function(response, status) {
                     if (response && status == 'success') {
                         if (response.success) {
+                            $('#state').html(response.stateName)
+                            $('#notifications').html(response.notifications);
+                            $('#actions').html(response.actions);
                             $('#showBody').html(response.content);
                             $('#subscriptionList').focus();
                         }
@@ -598,6 +601,9 @@ var App = {
                 success: function(response, status) {
                     if (response && status == 'success') {
                         if (response.success) {
+                            $('#state').html(response.stateName)
+                            $('#notifications').html(response.notifications);
+                            $('#actions').html(response.actions);
                             $('#showBody').html(response.content);
                             $('#subscriptionList').focus();
                         }
@@ -618,6 +624,9 @@ var App = {
                 success: function(response, status) {
                     if (response && status == 'success') {
                         if (response.success) {
+                            $('#state').html(response.stateName)
+                            $('#notifications').html(response.notifications);
+                            $('#actions').html(response.actions);
                             $('#showBody').html(response.content);
                             $('#template').focus();
                         }

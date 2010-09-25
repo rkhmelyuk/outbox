@@ -139,12 +139,28 @@ a:hover {
 #pageWrapper.campaignsIndex #campaigns .campaign .status .status_3 {
     width: 70px;
     padding: 2px 3px;
-    background-color: #009999;
+    background-color: #0066ff;
     text-shadow: 1px 1px #006666 ;
     -moz-border-radius: 2px;
     border-radius: 2px;
 }
 #pageWrapper.campaignsIndex #campaigns .campaign .status .status_4 {
+    width: 70px;
+    padding: 2px 3px;
+    background-color: #0099cc;
+    text-shadow: 1px 1px #006666 ;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+#pageWrapper.campaignsIndex #campaigns .campaign .status .status_5 {
+    width: 70px;
+    padding: 2px 3px;
+    background-color: #009999;
+    text-shadow: 1px 1px #006666 ;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+#pageWrapper.campaignsIndex #campaigns .campaign .status .status_6 {
     width: 70px;
     padding: 2px 3px;
     background-color: #666666;
@@ -170,7 +186,7 @@ a:hover {
     border-radius: 2px;
 }
 
-#pageWrapper.campaignShow .note {
+#pageWrapper.campaignShow #notifications .note {
     width: 500px;
     background-color: #ffffcc;
     border: 1px solid #ffff99;
@@ -180,6 +196,6 @@ a:hover {
     border-radius: 3px;
 }
 
-#pageWrapper.campaignShow .note.need {
+#pageWrapper.campaignShow #notifications .note.need {
     font-weight: bold;
 }

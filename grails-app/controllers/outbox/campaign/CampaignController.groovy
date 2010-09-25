@@ -187,6 +187,9 @@ class CampaignController {
                     model.success = true
                     def data = handle('subscribers', campaign)
                     model.content = g.render(template: 'campaignSubscribers', model: data)
+                    model.notifications = g.render(template: 'campaignNotifications', model: data)
+                    model.actions = g.render(template: 'campaignActions', model: data)
+                    model.stateName = message(code: campaign.state.messageCode)
                 }
                 else {
                     MessageUtil.addErrors(request, model, campaignSubscription.errors)
@@ -211,6 +214,9 @@ class CampaignController {
                 model.success = true
                 def data = handle('subscribers', campaignSubscription.campaign)
                 model.content = g.render(template: 'campaignSubscribers', model: data)
+                model.notifications = g.render(template: 'campaignNotifications', model: data)
+                model.actions = g.render(template: 'campaignActions', model: data)
+                model.stateName = message(code: campaign.state.messageCode)
             }
             else {
                 MessageUtil.addErrors(request, model, campaignSubscription.errors)
@@ -229,19 +235,19 @@ class CampaignController {
         def campaign = campaignService.getCampaign(params.long('campaignId'))
         def memberId = springSecurityService.principal.id
         if (campaign && campaign.ownedBy(memberId) && campaign.notStarted) {
-            log.info 0
             def template = templateService.getTemplate(params.long('template'))
             if (template && template.ownedBy(memberId)) {
                 campaign.template = template
-                log.info 1
                 if (campaignService.saveCampaign(campaign)) {
-                    log.info 2
                     model.success = true
+                    
                     def data = handle('template', campaign)
                     model.content = g.render(template: 'campaignTemplate', model: data)
+                    model.notifications = g.render(template: 'campaignNotifications', model: data)
+                    model.actions = g.render(template: 'campaignActions', model: data)
+                    model.stateName = message(code: campaign.state.messageCode)
                 }
                 else {
-                    log.info 3
                     MessageUtil.addErrors(request, model, campaign.errors)
                 }
             }
