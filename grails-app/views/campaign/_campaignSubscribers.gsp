@@ -3,7 +3,7 @@
         <g:if test="${campaign.notStarted && proposedSubscriptions}">
             <g:form name="addSubscriptionListForm" action="addSubscriptionList" onsubmit="return false">
                 <g:hiddenField name="campaignId" value="${campaign.id}"/>
-                Add Subscription List:
+                <g:message code="add.subscription.list"/>
                 <g:select name="subscriptionList"
                         from="${proposedSubscriptions}"
                         optionKey="id" optionValue="name"/>
@@ -13,13 +13,16 @@
     </div>
 
     <g:if test="${subscriptions}">
-        Total Unique Subscribers: ${totalSubscribers}
+        <span>
+            <g:message code="total.unique.subscribers"/> <span>${totalSubscribers}</span>
+        </span>
+        
         <table id="subscriptionLists">
             <thead>
             <tr>
                 <th><g:message code="name"/></th>
                 <th><g:message code="create.date"/></th>
-                <th>Subscribers</th>
+                <th><g:message code="subscribers"/></th>
                 <g:if test="${campaign.notStarted}">
                     <th><g:message code="remove"/></th>
                 </g:if>
