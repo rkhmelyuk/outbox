@@ -79,7 +79,14 @@ class TemplateController {
         def model = [:]
         if (templateService.addTemplate(template)) {
             model.success = true
-            model.redirectTo = g.createLink(controller: 'template', action: 'show', id: template.id)
+            def campaignId = params.long('campaign')
+            if (campaignId) {
+                model.redirectTo = g.createLink(controller: 'campaign', action: 'show', id: campaignId,
+                        params: [page: 'template', template: template.id])
+            }
+            else {
+                model.redirectTo = g.createLink(controller: 'template', action: 'show', id: template.id)
+            }
         }
         else {
             model.error = true

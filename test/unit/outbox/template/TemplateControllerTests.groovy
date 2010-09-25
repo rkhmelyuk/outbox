@@ -251,6 +251,50 @@ class TemplateControllerTests extends ControllerUnitTestCase {
         assertNull result.error
     }
 
+    void testAddAndReturn() {
+        controller.class.metaClass.createLink = { map ->
+            assertEquals 'show', map.action
+            assertEquals 'campaign', map.controller
+            assertEquals 'template', map.params.page
+            assertEquals 10, map.id
+            assertEquals 123, map.params.template
+            return 'link'
+        }
+        Member.class.metaClass.static.load = { id -> new Member(id: 1)}
+
+        def templateServiceControl = mockFor(TemplateService)
+        templateServiceControl.demand.addTemplate {
+            assertEquals 'Template Name', it.name
+            assertEquals 'Template Description', it.description
+            assertEquals 'Template Body', it.templateBody
+            it.id = 123
+            return true
+        }
+        controller.templateService = templateServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.campaign = '10'
+        controller.params.name = 'Template Name'
+        controller.params.description = 'Template Description'
+        controller.params.templateBody = 'Template Body'
+
+        controller.add()
+
+        springSecurityServiceControl.verify()
+        templateServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be successful.', result.success
+        assertEquals 'link', result.redirectTo
+        assertNull result.error
+    }
+
     void testAdd_Fail() {
         Member.class.metaClass.static.load = { id -> new Member(id: 1)}
 

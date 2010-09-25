@@ -13,6 +13,7 @@
     <body>
         <div class="status" style="display: none;"> </div>
         <g:form name="templateForm" controller="template" action="add" onsubmit="return false;">
+            <g:hiddenField name="campaign" value="${params.campaign}"/>
             <table>
                 <tr>
                     <td><g:message code="name"/></td>
@@ -29,7 +30,12 @@
             </table>
             <a href="javascript:void(0);" id="addTemplate"><g:message code="add.template"/></a>
             &nbsp;&nbsp;
-            <g:link controller="template" action="list"><g:message code="cancel"/></g:link>
+            <g:if test="${params.campaign}">
+                <g:link controller="campaign" action="show" id="${params.campaign}" params="[page: 'template']"><g:message code="cancel"/></g:link>
+            </g:if>
+            <g:else>
+                <g:link controller="template" action="list"><g:message code="cancel"/></g:link>
+            </g:else>
         </g:form>
     </body>
 </html>

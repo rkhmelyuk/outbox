@@ -5,6 +5,7 @@
             Select Template
             <g:select from="${proposedTemplates}" optionKey="id" optionValue="name" name="template"/>
             <a href="javascript:void(0);" id="useTemplate"><g:message code="use"/></a>
+            <g:link controller="template" action="create" params="[campaign: campaign.id]"><g:message code="add.new.template"/></g:link>
         </g:form>
     </g:if>
     <g:if test="${campaign.template}">
