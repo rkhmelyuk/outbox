@@ -1,3 +1,8 @@
+<g:if test="${flash.message}">
+    <div class="note">
+        <g:message code="${flash.message}"/>
+    </div>
+</g:if>
 <g:if test="${needTemplate || needSubscribers}">
     <div class="note need">
         <g:if test="${needSubscribers}">

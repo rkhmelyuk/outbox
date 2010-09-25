@@ -85,6 +85,25 @@ class CampaignController {
         render model as JSON
     }
 
+    def delete = {
+        def campaign = campaignService.getCampaign(params.long('id'))
+        if (campaign && campaign.ownedBy(springSecurityService.principal.id)) {
+            if (campaignService.deleteCampaign(campaign)) {
+                redirect controller: 'campaign'
+                return
+            }
+        }
+
+        if (campaign == null) {
+            flash.message = 'campaign.not.found'
+            redirect controller: 'campaign'
+            return
+        }
+
+        flash.message = 'campaign.remove.failed'
+        redirect controller: 'campaign', action: 'show', id: campaign?.id
+    }
+
     def show = {
         def campaign = campaignService.getCampaign(params.long('id'))
         if (!campaign) {

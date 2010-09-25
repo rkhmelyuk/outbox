@@ -319,6 +319,52 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertTrue proposed.contains(template3)
     }
 
+    void testDeleteCampaign() {
+        def campaign = createTestCampaign()
+
+        assertTrue campaignService.addCampaign(campaign)
+        try {
+            assertTrue campaignService.deleteCampaign(campaign)
+            assertNull campaignService.getCampaign(campaign.id)
+        }
+        catch (Exception e) {
+            fail 'Error to delete campaign'
+        }
+    }
+
+    void testDeleteUsedCampaign() {
+        def campaign = createTestCampaign()
+        def list = createTestSubscriptionList(1)
+
+        assertTrue campaignService.addCampaign(campaign)
+        assertTrue subscriptionListService.saveSubscriptionList(list)
+        assertTrue campaignService.addCampaignSubscription(
+                new CampaignSubscription(campaign: campaign, subscriptionList: list))
+
+        try {
+            assertTrue campaignService.deleteCampaign(campaign)
+            assertNull campaignService.getCampaign(campaign.id)
+        }
+        catch (Exception e) {
+            fail 'Error to delete campaign'
+        }
+    }
+
+    void testDeleteCampaign_ForStartedCampaign() {
+        def campaign = createTestCampaign()
+
+        campaign.state = CampaignState.InProgress
+
+        try {
+            assertTrue campaignService.addCampaign(campaign)
+            assertFalse campaignService.deleteCampaign(campaign)
+            assertNotNull campaignService.getCampaign(campaign.id)
+        }
+        catch (Exception e) {
+            fail 'Error to delete campaign'
+        }
+    }
+
     void assertEquals(Campaign campaign, Campaign found) {
         assertNotNull found.dateCreated
         assertEquals CampaignState.New, found.state

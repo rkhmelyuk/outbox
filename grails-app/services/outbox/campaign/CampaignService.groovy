@@ -54,6 +54,34 @@ class CampaignService {
     }
 
     /**
+     * Delete campaign, if campaign is not started yet.
+     * Otherwise ignores request and returns false.
+     * 
+     * @param campaign the campaign to delete.
+     * @return true if was deleted, otherwise false.
+     */
+    @Transactional
+    boolean deleteCampaign(Campaign campaign) {
+        if (campaign && campaign.notStarted) {
+            // 1. delete campaign subscriptions
+            deleteCampaignSubscriptions(campaign)
+            // 2. delete campaign
+            campaign.delete(flush: true)
+            return true
+        }
+        return false
+    }
+
+    /**
+     * Deletes subscriptions for specified campaign.
+     * @param campaign the campaign to remove subscriptions for
+     */
+    private void deleteCampaignSubscriptions(Campaign campaign) {
+        CampaignSubscription.executeUpdate(
+                'delete from CampaignSubscription where campaign = :campaign', [campaign: campaign])
+    }
+
+    /**
      * Gets campaign by it's id.
      * @param id the campaign id.
      * @return the found campaign.
@@ -120,14 +148,16 @@ class CampaignService {
      * @return the campaign state.
      */
     private CampaignState getCampaignState(Campaign campaign) {
-        def needSubscribers = !getTotalSubscribersNumber(campaign)
-        def needTemplate = (campaign.template == null)
+        if (campaign.notStarted) {
+            def needSubscribers = !getTotalSubscribersNumber(campaign)
+            def needTemplate = (campaign.template == null)
 
-        if (!needTemplate && !needSubscribers) {
-            return CampaignState.Ready
-        }
-        else if (needTemplate || needSubscribers) {
-            return CampaignState.New
+            if (!needTemplate && !needSubscribers) {
+                return CampaignState.Ready
+            }
+            else if (needTemplate || needSubscribers) {
+                return CampaignState.New
+            }
         }
 
         return campaign.state
