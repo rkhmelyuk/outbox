@@ -11,6 +11,7 @@ import outbox.security.OutboxUser
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.template.Template
+import outbox.template.TemplateService
 
 /**
  * @author Ruslan Khmelyuk
@@ -530,6 +531,48 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         assertEquals campaign, result.campaign
         assertEquals 'template', result.page
         assertNotNull result.proposedTemplates
+    }
+
+    void testSelectTemplate() {
+        def member = new Member(id: 1)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member, state: CampaignState.New)
+
+        def templateServiceControl = mockFor(TemplateService)
+        templateServiceControl.demand.getTemplate { id ->
+            assertEquals 15, id    
+            return new Template(id: id, owner: member)
+        }
+        controller.templateService = templateServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaign { id ->
+            assertEquals 10, id
+            return campaign
+        }
+        campaignServiceControl.demand.saveCampaign { true }
+        campaignServiceControl.demand.getProposedTemplates { camp -> [new Template(id: 1)] }
+        campaignServiceControl.demand.getTotalSubscribersNumber { 0 }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        controller.params.campaignId = '10'
+        controller.params.template = '15'
+
+        controller.selectTemplate()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+        templateServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+        assertTrue 'Must be success.', result.success
+        assertNull result.error
+        assertNotNull result.content
     }
 
 }
