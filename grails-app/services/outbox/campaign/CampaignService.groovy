@@ -4,8 +4,9 @@ import org.hibernate.Session
 import org.springframework.transaction.annotation.Transactional
 import outbox.ServiceUtil
 import outbox.search.SearchConditions
+import outbox.subscriber.Subscriber
 import outbox.subscription.SubscriptionList
-import outbox.task.Task
+import outbox.task.TaskFactory
 import outbox.task.TaskService
 import outbox.template.Template
 import outbox.template.TemplateService
@@ -85,22 +86,22 @@ class CampaignService {
      */
     @Transactional
     boolean sendCampaign(Campaign campaign) {
-        if (!campaign) {
-            return false
-        }
-
-        campaign = Campaign.findById(campaign.id)
-        if (campaign?.state == CampaignState.Ready) {
-            campaign.state = CampaignState.Queued
-            if (saveCampaign(campaign, false)) {
-                // TODO - use Task Factory to create instance
-                def task = new Task(name: 'SendCampaign', version: 1, params: [campaign: campaign])
-                if (taskService.enqueueTask(task)) {
-                    return true
+        log.info "Starting Sending Campaign $campaign"
+        if (campaign) {
+            campaign = Campaign.findById(campaign.id)
+            if (campaign?.state == CampaignState.Ready) {
+                campaign.state = CampaignState.Queued
+                if (saveCampaign(campaign, false)) {
+                    def task = TaskFactory.createSendCampaignTask(campaign)
+                    if (taskService.enqueueTask(task)) {
+                        log.info "Successfully enqueued task to Send Campaign $campaign"
+                        return true
+                    }
+                    ServiceUtil.setRollbackTransaction()
                 }
-                ServiceUtil.setRollbackTransaction()
             }
         }
+        log.info "Error to enqueued task to Send Campaign $campaign"
 
         return false
     }
@@ -120,8 +121,14 @@ class CampaignService {
      * @return the found campaign.
      */
     @Transactional(readOnly = true)
-    Campaign getCampaign(Long id) {
-        Campaign.get id
+    Campaign getCampaign(Long id, boolean lazy = true) {
+        def result = Campaign.get(id)
+
+        if (!lazy) {
+            result.template?.name
+        }
+        
+        return result
     }
 
     /**
@@ -278,6 +285,24 @@ class CampaignService {
                 result = (Integer) session.getNamedQuery('CampaignSubscription.totalSubscribersNumber')
                         .setLong('campaignId', campaign.id).uniqueResult()
             }
+        }
+        return result
+    }
+
+    /**
+     * Gets the subscribers ready to sent emails too (e.g. only enabled and not unsubscribed).
+     *
+     * @param campaign the campaign to get subscribers for.
+     * @return the list of subscribers.
+     */
+    // TODO - remove this method from this service and move to Mailer
+    // TODO - we will need to split fetching subscribers into groups with 2000 subscribers in each
+    @Transactional(readOnly = true)
+    List<Subscriber> getCampaignSubscribers(Campaign campaign) {
+        def result = []
+        Subscriber.withSession { Session session ->
+            result = session.getNamedQuery('CampaignSubscription.campaignSubscribers')
+                .setLong('campaignId', campaign.id).list()
         }
         return result
     }

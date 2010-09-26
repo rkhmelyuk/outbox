@@ -15,6 +15,17 @@
         where CS.CampaignId = :campaignId and S.SubscriptionStatusId = 1
     </sql-query>
 
+    <sql-query name="CampaignSubscription.CampaignSubscription.campaignSubscribers">
+        <query-param name="campaignId" type="long"/>
+        <return alias="s" class="outbox.subscriber.Subscriber"/>
+
+        select distinct {SS.*}
+        from CampaignSubscription as CS
+        join Subscription as S on S.SubscriptionListId = CS.SubscriptionListId
+        join Subscriber as SS on SS.SubscriberId = S.SubscriberId 
+        where CS.CampaignId = :campaignId and S.SubscriptionStatusId = 1
+    </sql-query>
+
     <sql-query name="Campaign.findProposedSubscriptionLists">
         <query-param name="memberId" type="long"/>
         <query-param name="campaignId" type="long"/>
