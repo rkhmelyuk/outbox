@@ -14,8 +14,8 @@ class CampaignSubscription implements Comparable<CampaignSubscription> {
     static mapping = {
         table 'CampaignSubscription'
         id column: 'CampaignSubscriptionId'
-        campaign column: 'CampaignId'
-        subscriptionList column: 'SubscriptionListId'
+        campaign column: 'CampaignId', lazy: false
+        subscriptionList column: 'SubscriptionListId', lazy: false
         version false
     }
 

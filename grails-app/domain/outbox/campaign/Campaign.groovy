@@ -108,4 +108,8 @@ class Campaign implements Comparable<Campaign> {
         return value
     }
 
+    @Override String toString() {
+        "Campaign[id:$id, name:$name]"
+    }
+
 }
