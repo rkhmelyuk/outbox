@@ -9,7 +9,6 @@ import outbox.mail.EmailService
 import outbox.mail.EmailUtil
 import outbox.subscriber.Subscriber
 import outbox.template.Template
-import org.hibernate.Session
 
 /**
  * Responsible for sending campaign
