@@ -15,9 +15,9 @@
         where CS.CampaignId = :campaignId and S.SubscriptionStatusId = 1
     </sql-query>
 
-    <sql-query name="CampaignSubscription.CampaignSubscription.campaignSubscribers">
+    <sql-query name="CampaignSubscription.campaignSubscribers">
         <query-param name="campaignId" type="long"/>
-        <return alias="s" class="outbox.subscriber.Subscriber"/>
+        <return alias="SS" class="outbox.subscriber.Subscriber"/>
 
         select distinct {SS.*}
         from CampaignSubscription as CS
