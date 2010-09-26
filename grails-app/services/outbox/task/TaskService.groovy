@@ -7,7 +7,6 @@ class TaskService {
 
     static transactional = false
 
-<<<<<<< HEAD
     TaskProcessor sendCampaignTaskProcessor
 
     boolean enqueueTask(Task task) {
@@ -35,10 +34,5 @@ class TaskService {
             default:
                 log.error("Unexpected task $task");
         }
-=======
-    boolean enqueueTask(Task task) {
-        // TODO - should we store task before forward further?
-        false
->>>>>>> cec0eb1... #20: Send Campaign: initial commit.
     }
 }

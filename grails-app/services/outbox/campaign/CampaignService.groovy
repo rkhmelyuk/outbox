@@ -6,11 +6,7 @@ import outbox.ServiceUtil
 import outbox.search.SearchConditions
 import outbox.subscriber.Subscriber
 import outbox.subscription.SubscriptionList
-<<<<<<< HEAD
 import outbox.task.TaskFactory
-=======
-import outbox.task.Task
->>>>>>> cec0eb1... #20: Send Campaign: initial commit.
 import outbox.task.TaskService
 import outbox.template.Template
 import outbox.template.TemplateService
@@ -90,7 +86,6 @@ class CampaignService {
      */
     @Transactional
     boolean sendCampaign(Campaign campaign) {
-<<<<<<< HEAD
         log.info "Starting Sending Campaign $campaign"
         if (campaign) {
             campaign = Campaign.findById(campaign.id)
@@ -107,24 +102,6 @@ class CampaignService {
             }
         }
         log.info "Error to enqueued task to Send Campaign $campaign"
-=======
-        if (!campaign) {
-            return false
-        }
-
-        campaign = Campaign.findById(campaign.id)
-        if (campaign?.state == CampaignState.Ready) {
-            campaign.state = CampaignState.Queued
-            if (saveCampaign(campaign, false)) {
-                // TODO - use Task Factory to create instance
-                def task = new Task(name: 'SendCampaign', version: 1, params: [campaign: campaign])
-                if (taskService.enqueueTask(task)) {
-                    return true
-                }
-                ServiceUtil.setRollbackTransaction()
-            }
-        }
->>>>>>> cec0eb1... #20: Send Campaign: initial commit.
 
         return false
     }
