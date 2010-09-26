@@ -10,4 +10,10 @@ class Task implements Serializable {
     Integer version
 
     Map params
+
+    @Override String toString() {
+        "Task[name: $name, version: $version, params: $params"
+    }
+
+
 }
