@@ -640,7 +640,25 @@ var App = {
     },
 
     campaignShow: function() {
-        
+        $('#sendCampaign').live('click', function() {
+            var link = $(this).attr('rel');
+            $.ajax({
+                url: link,
+                dateType: 'json',
+                success: function(response, status) {
+                    if (response && status == 'success') {
+                        if (response.success) {
+                            $('#state').html(response.stateName)
+                            $('#notifications').html(response.notifications);
+                            $('#actions').html(response.actions);
+                        }
+                        else {
+                            showErrors(response);
+                        }
+                    }
+                }
+            });
+        });
     }
 };
 

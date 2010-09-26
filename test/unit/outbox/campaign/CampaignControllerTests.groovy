@@ -131,7 +131,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
 
     void testShow() {
         def member = new Member(id: 1)
-        def campaign = new Campaign(id: 10, name: 'Name', owner: member)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member, state: CampaignState.Ready)
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {->
@@ -162,7 +162,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
 
     void testShow_WrongPage() {
         def member = new Member(id: 1)
-        def campaign = new Campaign(id: 10, name: 'Name', owner: member)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member, state: CampaignState.Ready)
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {->
@@ -193,7 +193,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
 
     void testShow_AbsentReports() {
         def member = new Member(id: 1)
-        def campaign = new Campaign(id: 10, name: 'Name', owner: member)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member, state: CampaignState.Ready)
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {->
@@ -237,7 +237,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
 
     void testShow_Denied() {
         def member = new Member(id: 1)
-        def campaign = new Campaign(id: 10, name: 'Name', owner: null)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: null, state: CampaignState.Ready)
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {->
@@ -551,7 +551,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
 
     void testShow_Template() {
         def member = new Member(id: 1)
-        def campaign = new Campaign(id: 10, name: 'Name', owner: member)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member, state: CampaignState.Ready)
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {->
@@ -621,6 +621,42 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         assertTrue 'Must be success.', result.success
         assertNull result.error
         assertNotNull result.content
+        assertNotNull result.notifications
+        assertNotNull result.actions
+        assertEquals 'message', result.stateName
+    }
+
+    void testSend_Success() {
+        def member = new Member(id: 1)
+        Member.class.metaClass.static.load = { id -> member }
+
+        def campaignServiceControl = mockFor(CampaignService, true)
+        campaignServiceControl.demand.getCampaign { id -> new Campaign(id: id, owner: member, state: CampaignState.Ready) }
+        campaignServiceControl.demand.sendCampaign {
+            assertEquals 1, it.id
+            return true
+        }
+        campaignServiceControl.demand.getTotalSubscribersNumber { 0 }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = '1'
+        controller.params.page = 'details'
+
+        controller.send()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be successful.', result.success
+        assertNull result.error
         assertNotNull result.notifications
         assertNotNull result.actions
         assertEquals 'message', result.stateName

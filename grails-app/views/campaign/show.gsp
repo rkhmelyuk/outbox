@@ -8,6 +8,7 @@
 
         <script type="text/javascript">
             $(document).ready(function() {
+                App.campaignShow();
                 <g:if test="${page == 'details'}">
                     App.campaignEdit() ;
                 </g:if>

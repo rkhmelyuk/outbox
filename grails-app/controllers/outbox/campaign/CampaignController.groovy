@@ -104,6 +104,26 @@ class CampaignController {
         redirect controller: 'campaign', action: 'show', id: campaign?.id
     }
 
+    def send = {
+        def model = [:]
+        def campaign = campaignService.getCampaign(params.long('id'))
+        if (campaign && campaign.ownedBy(springSecurityService.principal.id)) {
+            if (campaignService.sendCampaign(campaign)) {
+                model.success = true
+
+                def data = handle(params.page, campaign)
+                model.notifications = g.render(template: 'campaignNotifications', model: data)
+                model.actions = g.render(template: 'campaignActions', model: data)
+                model.stateName = message(code: campaign.state.messageCode)
+            }
+        }
+        else {
+            model.error = true
+        }
+
+        render model as JSON
+    }
+
     def show = {
         def campaign = campaignService.getCampaign(params.long('id'))
         if (!campaign) {
@@ -140,15 +160,20 @@ class CampaignController {
 
         result = (result != null ? result : [:])
 
-        def needTemplate = (campaign.template == null)
-        def needSubscribers
+        def needTemplate = false
+        def needSubscribers = false
 
-        def totalSubscribers = result.totalSubscribers
-        if (totalSubscribers == null) {
-            totalSubscribers = campaignService.getTotalSubscribersNumber(campaign)
+        if (campaign.notStarted) {
+            // Don't check whether we need template or subscribers, as it's started already. Too late..
+
+            needTemplate = (campaign.template == null)
+            def totalSubscribers = result.totalSubscribers
+            if (totalSubscribers == null) {
+                totalSubscribers = campaignService.getTotalSubscribersNumber(campaign)
+            }
+
+            needSubscribers = !totalSubscribers
         }
-
-        needSubscribers = !totalSubscribers
 
         result << [
                 page: page,
