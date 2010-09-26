@@ -374,7 +374,10 @@ class CampaignServiceTests extends GrailsUnitTestCase {
             campaign.state = CampaignState.Ready
 
             def taskServiceControl = mockFor(TaskService)
-            taskServiceControl.demand.enqueueTask { true }
+            taskServiceControl.demand.enqueueTask { task ->
+                assertEquals task.params.campaignId, campaign.id
+                return true
+            }
             campaignService.taskService = taskServiceControl.createMock()
             
             assertTrue campaignService.addCampaign(campaign)
