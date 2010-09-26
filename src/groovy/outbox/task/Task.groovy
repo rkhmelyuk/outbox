@@ -10,10 +10,13 @@ class Task implements Serializable {
     Integer version
 
     Map params
+<<<<<<< HEAD
 
     @Override String toString() {
         "Task[name: $name, version: $version, params: $params"
     }
 
 
+=======
+>>>>>>> cec0eb1... #20: Send Campaign: initial commit.
 }
