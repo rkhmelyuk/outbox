@@ -75,9 +75,9 @@ class SendCampaignTaskProcessor implements TaskProcessor {
         email.to = EmailUtil.emailAddress(subscriber.fullName, subscriber.email)
         email.subject = campaign.subject
         email.body = template.templateBody
-                .replace('{{firstName}}', subscriber.firstName)
-                .replace('{{lastName}}', subscriber.lastName)
-                .replace('{{name}}', subscriber.fullName)
+                .replace('{{firstName}}', subscriber.firstName ?: '')
+                .replace('{{lastName}}', subscriber.lastName ?: '')
+                .replace('{{name}}', subscriber.fullName ?: '')
         email.contentType = 'text/html'
 
         return email
