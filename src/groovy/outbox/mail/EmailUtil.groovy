@@ -17,14 +17,18 @@ class EmailUtil {
      * @return the correct email to address as string.
      */
     public static String emailAddress(String recipientName, String recipientEmail) {
+        if (!recipientEmail) {
+            return null
+        }
+        
         def result = new StringBuilder()
-        if (recipientName) {
-            result.append("\"").append(recipientName).append("\"")
-            result.append(" <").append(recipientEmail).append("> ")
+        if (!recipientName) {
+            recipientName = recipientEmail
         }
-        else {
-            result.append(recipientEmail)
-        }
+
+        result.append("\"").append(recipientName).append("\"")
+        result.append(" <").append(recipientEmail).append(">")
+        
         return result.toString()
     }
 
