@@ -26,7 +26,6 @@ class TaskService {
     }
 
     void handler(Task task) {
-        Thread.sleep(1000)
         switch (task.name) {
             case 'SendCampaign':
                 sendCampaignTaskProcessor.process(task)
