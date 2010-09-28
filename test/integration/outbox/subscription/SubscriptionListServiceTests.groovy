@@ -1,6 +1,7 @@
 package outbox.subscription
 
 import outbox.member.Member
+import outbox.subscriber.Subscriber
 
 /**
  * {@link SubscriptionListService}  tests.
@@ -74,6 +75,59 @@ class SubscriptionListServiceTests extends GroovyTestCase {
         assertNull subscriptionListService.getSubscriptionList(subscriptionList.id)
     }
 
+    void testAddSubscription() {
+        def subscriptionList = createTestSubscriptionList()
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList)
+
+        def status = new SubscriptionStatus(id: 1, name: 'test').save()
+        def subscriber = createTestSubscriber(1).save()
+        def subscription = new Subscription(subscriber: subscriber, subscriptionList: subscriptionList, status: status)
+
+        assertTrue subscriptionListService.addSubscription(subscription)
+
+        def found = subscriptionListService.getSubscriptionsForList(subscriptionList)
+        assertEquals 1, found.size()
+        assertTrue found.contains(subscription)
+        assertEquals 1, found.first().status.id
+        assertEquals subscriber.id, found.first().subscriber.id
+        assertEquals subscriptionList.id, found.first().subscriptionList.id
+    }
+
+    void testGetSubscriptions() {
+        def subscriptionList1 = createTestSubscriptionList()
+        def subscriptionList2 = createTestSubscriptionList()
+        subscriptionList1.name += '1'
+        subscriptionList2.name += '2'
+        
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList1)
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList2)
+
+        def status = new SubscriptionStatus(id: 1, name: 'test').save()
+        def subscriber1 = createTestSubscriber(1).save()
+        def subscriber2 = createTestSubscriber(2).save()
+        def subscriber3 = createTestSubscriber(3).save()
+
+        def subscription1 = new Subscription(subscriber: subscriber1, subscriptionList: subscriptionList1, status: status)
+        def subscription2 = new Subscription(subscriber: subscriber2, subscriptionList: subscriptionList1, status: status)
+        def subscription3 = new Subscription(subscriber: subscriber3, subscriptionList: subscriptionList2, status: status)
+
+        assertTrue subscriptionListService.addSubscription(subscription1)
+        assertTrue subscriptionListService.addSubscription(subscription2)
+        assertTrue subscriptionListService.addSubscription(subscription3)
+
+        def found = subscriptionListService.getSubscriptionsForList(subscriptionList1)
+        assertEquals 2, found.size()
+        assertTrue found.contains(subscription1)
+        assertTrue found.contains(subscription2)
+        assertFalse found.contains(subscription3)
+
+        found = subscriptionListService.getSubscriptionsForList(subscriptionList2)
+        assertEquals 1, found.size()
+        assertTrue found.contains(subscription3)
+
+
+    }
+
     void assertEquals(SubscriptionList subscriptionList, SubscriptionList found) {
         assertEquals subscriptionList.id, found.id
         assertEquals subscriptionList.name, found.name
@@ -90,5 +144,19 @@ class SubscriptionListServiceTests extends GroovyTestCase {
         subscriptionList.owner = member
         subscriptionList.subscribersNumber = 100
         return subscriptionList
+    }
+
+    Subscriber createTestSubscriber(id) {
+        Subscriber subscriber = new Subscriber()
+        subscriber.firstName = 'John'
+        subscriber.lastName = 'Doe'
+        subscriber.email = "john.doe$id@nowhere.com"
+        subscriber.gender = null
+        subscriber.timezone = null
+        subscriber.language = null
+        subscriber.namePrefix = null
+        subscriber.enabled = true
+        subscriber.member = member
+        return subscriber
     }
 }
