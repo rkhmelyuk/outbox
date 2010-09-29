@@ -391,6 +391,26 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         }
     }
 
+    void testAddMessage() {
+        def campaign = createTestCampaign()
+        def subscriber = createTestSubscriber(1)
+
+        assertTrue campaignService.addCampaign(campaign)
+        assertTrue subscriberService.saveSubscriber(subscriber)
+
+        def message = new CampaignMessage(campaign: campaign, subscriber: subscriber,
+                sentDate: new Date(), email: 'test@mailsight.com')
+
+        campaignService.addCampaignMessages([message])
+
+        def found = CampaignMessage.findById(message.id)
+
+        assertEquals message.campaign.id, found.campaign.id
+        assertEquals message.subscriber.id, found.subscriber.id
+        assertEquals message.sentDate, found.sentDate
+        assertEquals message.email, found.email
+    }
+
     void assertEquals(Campaign campaign, Campaign found) {
         assertNotNull found.dateCreated
         assertEquals CampaignState.New, found.state

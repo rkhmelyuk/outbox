@@ -16,7 +16,7 @@ class CampaignMessage {
 
     static mapping = {
         table 'CampaignMessage'
-        id column: 'CampaignMessageId'
+        id column: 'CampaignMessageId', generator: 'assigned'
         columns {
             campaign column: 'CampaignId'
             subscriber column: 'SubscriberId'

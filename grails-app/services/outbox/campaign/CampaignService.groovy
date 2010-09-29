@@ -60,7 +60,7 @@ class CampaignService {
     /**
      * Delete campaign, if campaign is not started yet.
      * Otherwise ignores request and returns false.
-     * 
+     *
      * @param campaign the campaign to delete.
      * @return true if was deleted, otherwise false.
      */
@@ -127,7 +127,7 @@ class CampaignService {
         if (!lazy) {
             result.template?.name
         }
-        
+
         return result
     }
 
@@ -245,8 +245,7 @@ class CampaignService {
     List<SubscriptionList> getProposedSubscriptionLists(Campaign campaign) {
         def result = null
         SubscriptionList.withSession { Session session ->
-            result = session.getNamedQuery('Campaign.findProposedSubscriptionLists')
-                    .setLong('campaignId', campaign.id).setLong('memberId', campaign.owner?.id).list()
+            result = session.getNamedQuery('Campaign.findProposedSubscriptionLists').setLong('campaignId', campaign.id).setLong('memberId', campaign.owner?.id).list()
         }
 
         result != null ? result : []
@@ -297,14 +296,26 @@ class CampaignService {
      */
     // TODO - remove this method from this service and move to Mailer
     // TODO - we will need to split fetching subscribers into groups with 2000 subscribers in each
+
     @Transactional(readOnly = true)
     List<Subscriber> getCampaignSubscribers(Campaign campaign) {
         def result = []
         Subscriber.withSession { Session session ->
             result = session.getNamedQuery('CampaignSubscription.campaignSubscribers')
-                .setLong('campaignId', campaign.id).list()
+                    .setLong('campaignId', campaign.id).list()
         }
         return result
+    }
+
+    /**
+     * Add campaign messages to the storage.
+     * @param messages the list of messages to add.
+     */
+    @Transactional
+    void addCampaignMessages(List<CampaignMessage> messages) {
+        messages?.each { message ->
+            message?.save()
+        }
     }
 
 }
