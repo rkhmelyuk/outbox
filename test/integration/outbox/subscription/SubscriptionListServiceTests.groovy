@@ -88,7 +88,7 @@ class SubscriptionListServiceTests extends GroovyTestCase {
         def found = subscriptionListService.getSubscriptionsForList(subscriptionList)
         assertEquals 1, found.size()
         assertTrue found.contains(subscription)
-        assertEquals 1, found.first().status.id
+        assertEquals 'test', found.first().status.name
         assertEquals subscriber.id, found.first().subscriber.id
         assertEquals subscriptionList.id, found.first().subscriptionList.id
     }

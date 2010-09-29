@@ -2,6 +2,7 @@ package outbox.task
 
 import org.apache.log4j.Logger
 import outbox.campaign.Campaign
+import outbox.campaign.CampaignMessage
 import outbox.campaign.CampaignService
 import outbox.campaign.CampaignState
 import outbox.mail.Email
@@ -37,10 +38,20 @@ class SendCampaignTaskProcessor implements TaskProcessor {
         if (startSending(campaign)) {
             def template = campaign.template
             def subscribers = campaignService.getCampaignSubscribers(campaign)
-            def emails = subscribers.collect { subscriber -> buildEmail(campaign, subscriber, template) }
+            def emails = []
+            def messages = []
+            def date = new Date()
+            subscribers.each { subscriber ->
+                emails << buildEmail(campaign, subscriber, template)
+                messages << new CampaignMessage(campaign: campaign, subscriber: subscriber,
+                        email: subscriber.email, sendDate: date )
+            }
 
             // send emails
             emailService.sendEmails emails
+
+            // save messages information
+            campaignService.addCampaignMessages messages
 
             // switch campaign to the In Progress state
             startInProgress(campaign)

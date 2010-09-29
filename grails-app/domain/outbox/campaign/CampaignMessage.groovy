@@ -12,7 +12,7 @@ class CampaignMessage {
     Campaign campaign
     Subscriber subscriber
     String email
-    Date sentDate
+    Date sendDate
 
     static mapping = {
         table 'CampaignMessage'
@@ -21,7 +21,7 @@ class CampaignMessage {
             campaign column: 'CampaignId'
             subscriber column: 'SubscriberId'
             email column: 'SubscriberEmail'
-            sentDate column: 'SentDate'
+            sendDate column: 'SendDate'
         }
         version false
     }
@@ -31,7 +31,7 @@ class CampaignMessage {
         campaign nullable: false
         subscriber nullable: false
         email nullable: false, blank: false
-        sentDate nullable: false
+        sendDate nullable: false
     }
 
     def beforeInsert() {
@@ -45,7 +45,7 @@ class CampaignMessage {
      * @return the generated id.
      */
     String generateId() {
-        String string = email + '-' + campaign?.id + '-' + subscriber?.id + '-' + sentDate.format('yyyyMMddHHmmss')
+        String string = email + '-' + campaign?.id + '-' + subscriber?.id + '-' + sendDate.format('yyyyMMddHHmmss')
         SHA1Codec.encode(string.bytes)
     }
 }

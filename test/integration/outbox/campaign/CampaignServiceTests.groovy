@@ -399,7 +399,7 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertTrue subscriberService.saveSubscriber(subscriber)
 
         def message = new CampaignMessage(campaign: campaign, subscriber: subscriber,
-                sentDate: new Date(), email: 'test@mailsight.com')
+                sendDate: new Date(), email: 'test@mailsight.com')
 
         campaignService.addCampaignMessages([message])
 
@@ -407,7 +407,7 @@ class CampaignServiceTests extends GrailsUnitTestCase {
 
         assertEquals message.campaign.id, found.campaign.id
         assertEquals message.subscriber.id, found.subscriber.id
-        assertEquals message.sentDate, found.sentDate
+        assertEquals message.sendDate, found.sendDate
         assertEquals message.email, found.email
     }
 
