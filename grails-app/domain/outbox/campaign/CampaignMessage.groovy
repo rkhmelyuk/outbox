@@ -40,7 +40,7 @@ class CampaignMessage {
 
     /**
      * Generated id for this object.
-     * Before generating id, both email and member must be set.
+     * Before generating id next fields must be set: email, campaign, subscriber and send date.
      *
      * @return the generated id.
      */
