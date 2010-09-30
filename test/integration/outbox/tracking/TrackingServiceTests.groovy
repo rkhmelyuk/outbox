@@ -38,10 +38,32 @@ class TrackingServiceTests extends GroovyTestCase {
     }
 
     void testAddTrackingReference() {
-        def reference = createTestTrackingReference()
+        def reference = createTestTrackingReference(1)
         assertTrue trackingService.addTrackingReference(reference)
         def found = trackingService.getTrackingReference(reference.id)
 
+        assertEquals(reference, found)
+    }
+
+    void testAddTrackingReferences() {
+        def reference1 = createTestTrackingReference(1)
+        def reference2 = createTestTrackingReference(2)
+        def reference3 = createTestTrackingReference(3)
+
+        assertTrue trackingService.addTrackingReference(reference1)
+        assertTrue trackingService.addTrackingReference(reference2)
+        assertTrue trackingService.addTrackingReference(reference3)
+
+        def found1 = trackingService.getTrackingReference(reference1.id)
+        def found2 = trackingService.getTrackingReference(reference2.id)
+        def found3 = trackingService.getTrackingReference(reference3.id)
+
+        assertEquals reference1, found1
+        assertEquals reference2, found2
+        assertEquals reference3, found3
+    }
+
+    private def assertEquals(TrackingReference reference, TrackingReference found) {
         assertEquals reference.campaignId, found.campaignId
         assertEquals reference.subscriberId, found.subscriberId
         assertEquals reference.campaignMessageId, found.campaignMessageId
@@ -49,9 +71,9 @@ class TrackingServiceTests extends GroovyTestCase {
         assertEquals reference.type, found.type
     }
 
-    TrackingReference createTestTrackingReference() {
+    TrackingReference createTestTrackingReference(id) {
         def campaign = createTestCampaign()
-        def subscriber = createTestSubscriber(1)
+        def subscriber = createTestSubscriber(id)
 
         assertTrue campaignService.addCampaign(campaign)
         assertTrue subscriberService.saveSubscriber(subscriber)
