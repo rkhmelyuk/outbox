@@ -18,7 +18,7 @@ class TrackingReference {
 
     static mapping = {
         table 'TrackingReference'
-        id column: 'TrackingReferenceId'
+        id column: 'TrackingReferenceId', generator: 'assigned'
         columns {
             campaignId column: 'CampaignId'
             subscriberId column: 'SubscriberId'
@@ -50,9 +50,9 @@ class TrackingReference {
      * @return the generated id.
      */
     String generateId() {
-        String string = campaignId + '-' + subscriberId + '-'
-                + campaignMessageId + '-' + reference + '-'
-                + type + '-' + AppConstant.TRACKING_REFERENCE_SALT
+        String string = AppConstant.TRACKING_REFERENCE_SALT + '-' +
+                campaignId + '-' + subscriberId + '-' + 
+                campaignMessageId + '-' + reference + '-' + type.name()
         
         SHA1Codec.encode(string.bytes)
     }
