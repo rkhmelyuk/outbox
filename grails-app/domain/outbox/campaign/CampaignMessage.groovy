@@ -35,7 +35,7 @@ class CampaignMessage {
     }
 
     def beforeInsert() {
-        id = generateId()
+        generateId()
     }
 
     /**
@@ -44,8 +44,8 @@ class CampaignMessage {
      *
      * @return the generated id.
      */
-    String generateId() {
+    void generateId() {
         String string = email + '-' + campaign?.id + '-' + subscriber?.id + '-' + sendDate.format('yyyyMMddHHmmss')
-        SHA1Codec.encode(string.bytes)
+        id = SHA1Codec.encode(string.bytes)
     }
 }

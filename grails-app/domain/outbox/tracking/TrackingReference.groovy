@@ -40,7 +40,7 @@ class TrackingReference {
     }
 
     def beforeInsert() {
-        id = generateId()
+        generateId()
     }
 
     /**
@@ -49,11 +49,11 @@ class TrackingReference {
      *
      * @return the generated id.
      */
-    String generateId() {
+    void generateId() {
         String string = AppConstant.TRACKING_REFERENCE_SALT + '-' +
                 campaignId + '-' + subscriberId + '-' + 
                 campaignMessageId + '-' + reference + '-' + type.name()
         
-        SHA1Codec.encode(string.bytes)
+        id = SHA1Codec.encode(string.bytes)
     }
 }
