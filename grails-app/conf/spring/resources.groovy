@@ -10,5 +10,6 @@ beans = {
     sendCampaignTaskProcessor(outbox.task.SendCampaignTaskProcessor) {
         campaignService = ref('campaignService')
         emailService = ref('emailService')
+        trackingService = ref('trackingService')
     }
 }
