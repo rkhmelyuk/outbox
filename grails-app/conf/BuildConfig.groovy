@@ -27,6 +27,7 @@ grails.project.dependency.resolution = {
 
         runtime 'com.google.collections:google-collections:1.0'
         runtime 'postgresql:postgresql:8.4-701.jdbc4'
+        runtime 'org.freemarker:freemarker:2.3.16'
 
         runtime 'javax.mail:mail:1.4.1'
     }
