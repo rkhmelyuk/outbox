@@ -16,4 +16,5 @@ class Email {
 
     String replyTo
     String contentType
+    String charset
 }

@@ -91,8 +91,8 @@ class EmailService {
         //
         final MimeBodyPart message = new MimeBodyPart()
         multipart.addBodyPart(message)
-        message.setText(email.body)
-        message.setHeader("Content-length", Integer.toString(email.body.length()))
+        message.setText(email.body, email.charset ?: 'UTF-8')
+        message.setHeader("Content-Length", Integer.toString(email.body.length()))
         message.setHeader("Content-Type", email.contentType)
 
         return msg
