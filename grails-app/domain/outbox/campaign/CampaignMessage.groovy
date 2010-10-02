@@ -45,7 +45,8 @@ class CampaignMessage {
      * @return the generated id.
      */
     void generateId() {
-        String string = email + '-' + campaign?.id + '-' + subscriber?.id + '-' + sendDate.format('yyyyMMddHHmmss')
+        String string = email + '-' + campaign?.id + '-' +
+                subscriber?.id + '-' + sendDate.format('yyyyMMddHHmmssSSSZ')
         id = SHA1Codec.encode(string.bytes)
     }
 }
