@@ -310,12 +310,18 @@ class CampaignService {
     /**
      * Add campaign messages to the storage.
      * @param messages the list of messages to add.
+     * @return true if saved messages, otherwise false.
      */
     @Transactional
-    void addCampaignMessages(List<CampaignMessage> messages) {
-        messages?.each { message ->
-            message?.save()
+    boolean addCampaignMessages(List<CampaignMessage> messages) {
+        for (CampaignMessage message in messages) {
+            if (message) {
+                if (!ServiceUtil.saveOrRollback(message)) {
+                    return false
+                }
+            }
         }
+        return true
     }
 
 }

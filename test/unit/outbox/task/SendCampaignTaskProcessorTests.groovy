@@ -13,6 +13,8 @@ import outbox.subscriber.Subscriber
 import outbox.subscriber.SubscriberType
 import outbox.template.Template
 import outbox.template.builder.TemplateFilter
+import outbox.template.builder.TemplateFilterContext
+import outbox.tracking.TrackingService
 
 /**
  * @author Ruslan Khmelyuk
@@ -89,6 +91,12 @@ class SendCampaignTaskProcessorTests extends GrailsUnitTestCase {
         }
         processor.emailService = emailServiceControl.createMock()
 
+        def trackingServiceControl = mockFor(TrackingService, true)
+        trackingServiceControl.demand.addTrackingReferences { references ->
+            return true
+        }
+        processor.trackingService = trackingServiceControl.createMock()
+
         Task task = new Task(params: [campaignId: 11])
 
         Campaign.class.metaClass.static.withTransaction = { closure -> closure()}
@@ -96,8 +104,9 @@ class SendCampaignTaskProcessorTests extends GrailsUnitTestCase {
         processor.process task
 
         campaignServiceControl.verify()
-        emailServiceControl.verify()
         templateFilterChainControl.verify()
+        trackingServiceControl.verify()
+        emailServiceControl.verify()
     }
 
     void testProcess_NotSave() {
@@ -143,9 +152,12 @@ class SendCampaignTaskProcessorTests extends GrailsUnitTestCase {
         }
         processor.templateFilterChain = templateFilterChainControl.createMock()
 
-        def template = new Template()
-        def message = new CampaignMessage()
-        processor.buildTemplate(campaign, template, subscriber, message)
+        def context = new TemplateFilterContext(
+                campaign: campaign,
+                subscriber: subscriber,
+                message: new CampaignMessage())
+
+        processor.buildTemplate(context)
 
         templateFilterChainControl.verify()
     }

@@ -8,8 +8,6 @@ import outbox.campaign.CampaignState
 import outbox.mail.Email
 import outbox.mail.EmailService
 import outbox.mail.EmailUtil
-import outbox.subscriber.Subscriber
-import outbox.template.Template
 import outbox.template.builder.TemplateFilter
 import outbox.template.builder.TemplateFilterContext
 import outbox.tracking.TrackingService
@@ -46,23 +44,34 @@ class SendCampaignTaskProcessor implements TaskProcessor {
             def emails = []
             def messages = []
             def date = new Date()
+            def trackingReferences = []
             subscribers.each { subscriber ->
                 def message  = new CampaignMessage(campaign: campaign, subscriber: subscriber,
                         email: subscriber.email, sendDate: date)
                 message.generateId()
                 messages << message
 
-                emails << buildEmail(campaign, subscriber, template, message)
+                def context = new TemplateFilterContext(
+                        campaign: campaign,
+                        subscriber: subscriber,
+                        message: message,
+                        template: template.templateBody)
+
+                emails << buildEmail(context)
+
+                trackingReferences.addAll context.trackingReferences
             }
 
-            // send emails
-            emailService.sendEmails emails
-
             // save messages information
-            campaignService.addCampaignMessages messages
-
-            // switch campaign to the In Progress state
-            startInProgress(campaign)
+            if (campaignService.addCampaignMessages(messages)) {
+                // save tracking references
+                if (trackingService.addTrackingReferences(trackingReferences)) {
+                    // send emails
+                    emailService.sendEmails emails
+                    // switch campaign to the In Progress state
+                    startInProgress(campaign)
+                }
+            }
         }
         else {
             log.error "Error to change campaign $campaign state to Sending"
@@ -88,25 +97,26 @@ class SendCampaignTaskProcessor implements TaskProcessor {
         return result
     }
 
-    Email buildEmail(Campaign campaign, Subscriber subscriber, Template template, CampaignMessage message) {
+    Email buildEmail(TemplateFilterContext context) {
         def email = new Email()
+
+        def subscriber = context.subscriber
+        def campaign = context.campaign
 
         email.to = EmailUtil.emailAddress(subscriber.fullName, subscriber.email)
         email.subject = campaign.subject
-        email.body = buildTemplate(campaign, template, subscriber, message)
+        email.body = buildTemplate(context)
         email.contentType = 'text/html'
         email.charset = 'utf-8'
 
         return email
     }
 
-    String buildTemplate(Campaign campaign, Template template, Subscriber subscriber, CampaignMessage message) {
-        def context = new TemplateFilterContext(
-                campaign: campaign,
-                subscriber: subscriber,
-                message: message,
-                template: template.templateBody)
+    String buildTemplate(TemplateFilterContext context) {
 
+        def subscriber = context.subscriber
+        def campaign = context.campaign
+        
         context.model.firstName = subscriber.firstName
         context.model.lastName = subscriber.lastName
         context.model.name = subscriber.fullName
