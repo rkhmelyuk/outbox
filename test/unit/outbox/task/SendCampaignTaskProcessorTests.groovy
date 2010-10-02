@@ -2,11 +2,15 @@ package outbox.task
 
 import grails.test.GrailsUnitTestCase
 import outbox.campaign.Campaign
+import outbox.campaign.CampaignMessage
 import outbox.campaign.CampaignService
 import outbox.campaign.CampaignState
+import outbox.dictionary.Gender
+import outbox.dictionary.NamePrefix
 import outbox.mail.EmailService
 import outbox.mail.EmailUtil
 import outbox.subscriber.Subscriber
+import outbox.subscriber.SubscriberType
 import outbox.template.Template
 import outbox.template.builder.TemplateFilter
 
@@ -115,6 +119,35 @@ class SendCampaignTaskProcessorTests extends GrailsUnitTestCase {
         processor.process task
 
         campaignServiceControl.verify()
+    }
+
+    void testBuildTemplate() {
+        def campaign = new Campaign(id: 1, name: 'Test Campaign')
+        def subscriber = new Subscriber(
+                firstName: 'Test', lastName: 'User',
+                email: 'test@mailsight.com',
+                gender: new Gender(name: 'male'),
+                namePrefix: new NamePrefix(name: 'Mr.'),
+                subscriberType: new SubscriberType(name: 'actor'))
+
+
+        def templateFilterChainControl = mockFor(TemplateFilter)
+        templateFilterChainControl.demand.filter { context ->
+            assertEquals campaign.name, context.model.campaignName
+            assertEquals subscriber.firstName, context.model.firstName
+            assertEquals subscriber.lastName, context.model.lastName
+            assertEquals subscriber.email, context.model.email
+            assertEquals subscriber.gender.name, context.model.gender
+            assertEquals subscriber.namePrefix.name, context.model.namePrefix
+            assertEquals subscriber.subscriberType.name, context.model.subscriberType
+        }
+        processor.templateFilterChain = templateFilterChainControl.createMock()
+
+        def template = new Template()
+        def message = new CampaignMessage()
+        processor.buildTemplate(campaign, template, subscriber, message)
+
+        templateFilterChainControl.verify()
     }
 
 }
