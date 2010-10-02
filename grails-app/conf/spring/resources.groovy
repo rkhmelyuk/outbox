@@ -24,7 +24,7 @@ beans = {
 
     trackingLinkBuilder(outbox.template.builder.TrackingLinkBuilder)
 
-    templateTrackingHeaderBuilder(outbox.template.builder.TemplateTrackingHeaderFilter) {
+    templateTrackingHeaderFilter(outbox.template.builder.TemplateTrackingHeaderFilter) {
         trackingHeader = '<img src="http://mailsight.com/ping.png" width="1" height="1" alt="/>'
     }
 

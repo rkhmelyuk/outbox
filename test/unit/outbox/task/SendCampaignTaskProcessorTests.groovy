@@ -2,13 +2,13 @@ package outbox.task
 
 import grails.test.GrailsUnitTestCase
 import outbox.campaign.Campaign
-import outbox.campaign.CampaignMessage
 import outbox.campaign.CampaignService
 import outbox.campaign.CampaignState
 import outbox.mail.EmailService
 import outbox.mail.EmailUtil
 import outbox.subscriber.Subscriber
 import outbox.template.Template
+import outbox.template.builder.TemplateFilter
 
 /**
  * @author Ruslan Khmelyuk
@@ -71,6 +71,10 @@ class SendCampaignTaskProcessorTests extends GrailsUnitTestCase {
         }
         processor.campaignService = campaignServiceControl.createMock()
 
+        def templateFilterChainControl = mockFor(TemplateFilter)
+        templateFilterChainControl.demand.filter { context -> }
+        processor.templateFilterChain = templateFilterChainControl.createMock()
+
         def emailServiceControl = mockFor(EmailService, true)
         emailServiceControl.demand.sendEmails { emails ->
             assertNotNull emails
@@ -89,6 +93,7 @@ class SendCampaignTaskProcessorTests extends GrailsUnitTestCase {
 
         campaignServiceControl.verify()
         emailServiceControl.verify()
+        templateFilterChainControl.verify()
     }
 
     void testProcess_NotSave() {
@@ -110,28 +115,6 @@ class SendCampaignTaskProcessorTests extends GrailsUnitTestCase {
         processor.process task
 
         campaignServiceControl.verify()
-    }
-
-    void testBuildTemplate() {
-        def subscriber = new Subscriber(id: 'abcd', firstName: 'John', lastName: 'Smith')
-        def campaign = new Campaign(id: 1)
-        def template = new Template(id: 2)
-        def message = new CampaignMessage(id: '0123456789')
-
-        template.templateBody = '[firstName]'
-        assertEquals 'John', processor.buildTemplate(campaign, template, subscriber, message)
-
-        template.templateBody = '[lastName]'
-        assertEquals 'Smith', processor.buildTemplate(campaign, template, subscriber, message)
-
-        template.templateBody = '[name]'
-        assertEquals 'John Smith', processor.buildTemplate(campaign, template, subscriber, message)
-
-        template.templateBody = '<img src="test.gif"/>'
-        assertFalse template.templateBody.equals(processor.buildTemplate(campaign, template, subscriber, message))
-
-        template.templateBody = "<a href='http://google.com'>Link</a>"
-        assertFalse template.templateBody.equals(processor.buildTemplate(campaign, template, subscriber, message))
     }
 
 }
