@@ -95,6 +95,7 @@ class SendCampaignTaskProcessor implements TaskProcessor {
         email.subject = campaign.subject
         email.body = buildTemplate(campaign, template, subscriber, message)
         email.contentType = 'text/html'
+        email.charset = 'utf-8'
 
         return email
     }
@@ -106,6 +107,15 @@ class SendCampaignTaskProcessor implements TaskProcessor {
                 message: message,
                 template: template.templateBody)
 
+        context.model.firstName = subscriber.firstName
+        context.model.lastName = subscriber.lastName
+        context.model.name = subscriber.fullName
+        context.model.email = subscriber.email
+        context.model.gender = subscriber.gender?.name
+        context.model.namePrefix = subscriber.namePrefix?.name
+        context.model.subscriberType = subscriber.subscriberType?.name
+        context.model.campaignName = campaign.name
+        
         templateFilterChain.filter context
 
         return context.template

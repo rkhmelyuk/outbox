@@ -22,10 +22,12 @@ beans = {
         configuration = ref('configuration')
     }
 
-    trackingLinkBuilder(outbox.template.builder.TrackingLinkBuilder)
+    trackingLinkBuilder(outbox.template.builder.TrackingLinkBuilder) {
+        grailsApplication = ref('grailsApplication')
+    }
 
     templateTrackingHeaderFilter(outbox.template.builder.TemplateTrackingHeaderFilter) {
-        trackingHeader = '<img src="http://mailsight.com/ping.png" width="1" height="1" alt="/>'
+        trackingHeader = '<img src="http://mailsight.com/ping.png" width="1" height="1" alt=""/>'
     }
 
     templateLinkFilter(outbox.template.builder.TemplateLinkFilter) {
@@ -53,5 +55,6 @@ beans = {
         campaignService = ref('campaignService')
         emailService = ref('emailService')
         trackingService = ref('trackingService')
+        templateFilterChain = ref('templateFilterChain')
     }
 }
