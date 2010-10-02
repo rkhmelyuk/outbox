@@ -134,5 +134,4 @@ class SendCampaignTaskProcessorTests extends GrailsUnitTestCase {
         assertFalse template.templateBody.equals(processor.buildTemplate(campaign, template, subscriber, message))
     }
 
-
 }

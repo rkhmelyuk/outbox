@@ -10,8 +10,8 @@ import outbox.mail.EmailService
 import outbox.mail.EmailUtil
 import outbox.subscriber.Subscriber
 import outbox.template.Template
-import outbox.tracking.TrackingReference
-import outbox.tracking.TrackingReferenceType
+import outbox.template.builder.TemplateFilter
+import outbox.template.builder.TemplateFilterContext
 import outbox.tracking.TrackingService
 
 /**
@@ -29,6 +29,7 @@ class SendCampaignTaskProcessor implements TaskProcessor {
     EmailService emailService
     CampaignService campaignService
     TrackingService trackingService
+    TemplateFilter templateFilterChain
 
     void process(Task task) {
         def campaignId = task?.params?.campaignId
@@ -99,49 +100,15 @@ class SendCampaignTaskProcessor implements TaskProcessor {
     }
 
     String buildTemplate(Campaign campaign, Template template, Subscriber subscriber, CampaignMessage message) {
-        def body = template.templateBody
+        def context = new TemplateFilterContext(
+                campaign: campaign,
+                subscriber: subscriber,
+                message: message,
+                template: template.templateBody)
 
-        body = body.replace('[firstName]', subscriber.firstName ?: '')
-        body = body.replace('[lastName]', subscriber.lastName ?: '')
-        body = body.replace('[name]', subscriber.fullName ?: '')
+        templateFilterChain.filter context
 
-        def src = ~/<img[^>]*src=(["']([^"']*)["'])/
-
-        // TrackingReferenceBuilder
-        // TemplateLinkProcessor
-        // TemplateImageSourceProcessor
-        // TemplateVariablesProcessor
-        // TemplateMacrosProcessor
-
-        def reference = ~/<a[^>]*href=(["']([^"']*)["'])/
-        def link = ~/['"](https?|ftp|ftps|sftp).*/
-        def matcher = (body =~ reference)
-
-        def trackingReferences = [:]
-        while (matcher.find()) {
-            def resource = matcher.group(1)
-            if (resource && resource ==~ link) {
-                def trackingRef = trackingReferences[resource]
-                if (!trackingRef) {
-                    trackingRef = new TrackingReference(
-                            campaignId: campaign.id,
-                            subscriberId: subscriber.id,
-                            campaignMessageId: message.id,
-                            reference: resource,
-                            type: TrackingReferenceType.Link)
-
-                    trackingRef.generateId()
-                    trackingReferences[resource] = trackingRef
-                }
-            }
-        }
-
-        trackingReferences.each { String key, TrackingReference value ->
-            def trackingLink = "'http://track2go.net/tracking/${value.id}'"
-            body = body.replace(key, trackingLink)
-        }
-
-        return body
+        return context.template
     }
 
 }
