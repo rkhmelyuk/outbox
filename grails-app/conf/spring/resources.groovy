@@ -57,4 +57,23 @@ beans = {
         trackingService = ref('trackingService')
         templateFilterChain = ref('templateFilterChain')
     }
+
+    lookupService(com.maxmind.geoip.LookupService, '/usr/share/GeoIP/GeoIP.dat')
+
+    maxMindLookupService(outbox.tracking.geolocation.MaxMindLookupService) {
+        lookupService = ref('lookupService')
+    }
+
+    maxMindGeoLocationService(outbox.tracking.geolocation.MaxMindGeoLocationService) {
+        lookupService = ref('maxMindLookupService')
+    }
+
+    campaignTrackingInfoConverter(outbox.tracking.converter.CampaignTrackingInfoConverter) {
+        geoLocationService = ref('maxMindGeoLocationService')
+    }
+
+    trackingInfoConverterFactory(outbox.tracking.converter.TrackingInfoConverterFactory) {
+        campaignTrackingInfoConverter = ref('campaignTrackingInfoConverter')
+    }
+    
 }
