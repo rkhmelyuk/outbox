@@ -19,6 +19,7 @@ class TrackingInfo {
     String browserVersion
     String operatingSystem
     String ipAddress
+    String locale
 
     String countryCode
     String countryName
@@ -37,6 +38,7 @@ class TrackingInfo {
             trackingReferenceId column: 'TrackingReferenceId'
             click column: 'Click'
             datetime column: 'Date'
+            locale column: 'Locale'
             browserName column: 'BrowserName'
             browserVersion column: 'BrowserVersion'
             operatingSystem column: 'OperatingSystem'
@@ -58,6 +60,8 @@ class TrackingInfo {
         campaignId nullable: false
         subscriberId nullable: false, maxSize: 40
         trackingReferenceId nullable: false, maxSize: 40
+
+        locale maxSize: 50
         datetime nullable: false
         browserName maxSize: 100
         browserVersion maxSize: 100

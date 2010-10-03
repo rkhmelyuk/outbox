@@ -27,6 +27,7 @@ class TrackingInfoTests extends GrailsUnitTestCase {
         trackingInfo.latitude = 23.2333
         trackingInfo.longitude = 45.5545
         trackingInfo.operatingSystem = 'Linux'
+        trackingInfo.locale = 'uk_UA'
 
         assertEquals 'abcdef000', trackingInfo.id
         assertEquals 123, trackingInfo.campaignId
@@ -45,6 +46,7 @@ class TrackingInfoTests extends GrailsUnitTestCase {
         assertEquals '9876', trackingInfo.postalCode
         assertEquals 'US', trackingInfo.countryCode
         assertEquals 'USA', trackingInfo.countryName
+        assertEquals 'uk_UA', trackingInfo.locale
     }
 
     void testGenerateId() {

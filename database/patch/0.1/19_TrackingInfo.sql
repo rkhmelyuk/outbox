@@ -12,6 +12,7 @@ create table TrackingInfo (
     BrowserVersion varchar(100) null,
     OperatingSystem varchar(100) null,
     IPAddress varchar(40) null,
+    Locale varchar(50) null,
     
     LocationCountryCode char(2) null,
     LocationCountryName varchar(100) null,
