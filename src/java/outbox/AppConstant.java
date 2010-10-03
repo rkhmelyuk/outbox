@@ -12,12 +12,9 @@ public interface AppConstant {
     String SUBSCRIBER_ID_SALT = "KSielA3!*sCQrPow(+A";
 
     /**
-     * The salt for generated Subscription id.
-     */
-    String SUBSCRIPTION_ID_SALT = "Ksi*23k?A8!73jD82j(&";
-
-    /**
      * The salt for generated Tracking Reference id.
      */
     String TRACKING_REFERENCE_SALT = "Ksid<>Ajd823lASsK<lsOs;lidH82lkJNAS8-*^&";
+
+    String TRACKING_INFO_SALT = "lAKsjd8Kj23r8AKFjhDIJ38923jD&#KDjdkdnLDMJEU";
 }
