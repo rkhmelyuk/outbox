@@ -17,13 +17,10 @@ class BrowserDetector {
         // as it detects and tries to parse user agent for unknown browser.
         DETECTORS = new ArrayList<Detector>()
         DETECTORS.add(new CustomDetector('IE', 'msie '))
-        DETECTORS.add(new CustomDetector('Firefox', 'firefox/'))
-        DETECTORS.add(new CustomDetector('Chrome', 'chrome/'))
         DETECTORS.add(new SafariDetector())
         DETECTORS.add(new iPhoneDetector())
         DETECTORS.add(new CustomDetector('Android', 'android '))
         DETECTORS.add(new CustomDetector('Opera', 'opera/'))
-        DETECTORS.add(new CustomDetector('Netscape', 'netscape/'))
         DETECTORS.add(new CustomDetector('Konqueror', 'konqueror/'))
         DETECTORS.add(new CustomDetector('Lunascape', 'lunascape/'))
         DETECTORS.add(new CustomDetector('Iron', 'iron/'))
@@ -33,6 +30,8 @@ class BrowserDetector {
         DETECTORS.add(new CustomDetector('Firebird', 'firebird/'))
         DETECTORS.add(new CustomDetector('Phoenix', 'phoenix/'))
         DETECTORS.add(new CustomDetector('Galeon', 'galeon/'))
+        DETECTORS.add(new CustomDetector('Firefox', 'firefox/'))
+        DETECTORS.add(new CustomDetector('Chrome', 'chrome/'))
 
         DETECTORS.add(new UnknownDetector())
     }
