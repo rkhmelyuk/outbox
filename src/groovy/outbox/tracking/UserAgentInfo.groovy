@@ -29,42 +29,46 @@ class UserAgentInfo {
         // Sequence is important, as some user agent headers may contain
         // combined tokens, for example, Mac OS X and iPhone. That's the reason why
         // we add iPhone before Mac OS X entry.
+        
+        // Key must be lowercase
 
         // TODO - move to the configurable storage, maybe database
 
         OPERATING_SYSTEMS = [:] as LinkedHashMap
-        OPERATING_SYSTEMS['Win3.11'] = 'Windows 3.11'
-        OPERATING_SYSTEMS['WinNT3.51'] = 'Windows NT 3.11'
-        OPERATING_SYSTEMS['WinNT4.0'] = 'Windows NT 4.0'
-        OPERATING_SYSTEMS['Win95'] = 'Windows 95'
-        OPERATING_SYSTEMS['Win98'] = 'Windows 98'
-        OPERATING_SYSTEMS['Win 9x 4.90'] = 'Windows Me'
-        OPERATING_SYSTEMS['Windows NT 5.0'] = 'Windows 2000'
-        OPERATING_SYSTEMS['Windows NT 5.1'] = 'Windows XP'
-        OPERATING_SYSTEMS['Windows NT 5.2'] = 'Windows Server 2003/Windows XP x64 Edition'
-        OPERATING_SYSTEMS['Windows NT 6.0'] = 'Windows Vista'
-        OPERATING_SYSTEMS['Windows NT 6.1'] = 'Windows 7'
-        OPERATING_SYSTEMS['Win'] = 'Windows (version unknown)'
+        OPERATING_SYSTEMS['win3.11'] = 'Windows 3.11'
+        OPERATING_SYSTEMS['winnt3.51'] = 'Windows NT 3.11'
+        OPERATING_SYSTEMS['winnt4.0'] = 'Windows NT 4.0'
+        OPERATING_SYSTEMS['win95'] = 'Windows 95'
+        OPERATING_SYSTEMS['win98'] = 'Windows 98'
+        OPERATING_SYSTEMS['win 9x 4.90'] = 'Windows Me'
+        OPERATING_SYSTEMS['windows nt 5.0'] = 'Windows 2000'
+        OPERATING_SYSTEMS['windows nt 5.1'] = 'Windows XP'
+        OPERATING_SYSTEMS['windows nt 5.2'] = 'Windows Server 2003/Windows XP x64 Edition'
+        OPERATING_SYSTEMS['windows nt 6.0'] = 'Windows Vista'
+        OPERATING_SYSTEMS['windows nt 6.1'] = 'Windows 7'
+        OPERATING_SYSTEMS['win'] = 'Windows (version unknown)'
 
-        OPERATING_SYSTEMS['WindowsCE'] = 'Windows CE'
+        OPERATING_SYSTEMS['windowsce'] = 'Windows CE'
 
-        OPERATING_SYSTEMS['Ubuntu'] = 'Ubuntu Linux'
-        OPERATING_SYSTEMS['Linux'] = 'Linux'
-        OPERATING_SYSTEMS['FreeBSD'] = 'FreeBSD'
-        OPERATING_SYSTEMS['OpenBSD'] = 'OpenBSD'
-        OPERATING_SYSTEMS['NetBSD'] = 'NetBSD'
-        OPERATING_SYSTEMS['SunOS'] = 'Solaris'
-        OPERATING_SYSTEMS['Unix'] = 'Unix'
-        OPERATING_SYSTEMS['BeOS'] = 'BeOS '
+        OPERATING_SYSTEMS['ubuntu'] = 'Ubuntu Linux'
+        OPERATING_SYSTEMS['linux'] = 'Linux'
+        OPERATING_SYSTEMS['freebsd'] = 'FreeBSD'
+        OPERATING_SYSTEMS['openbsd'] = 'OpenBSD'
+        OPERATING_SYSTEMS['netbsd'] = 'NetBSD'
+        OPERATING_SYSTEMS['sunos'] = 'Solaris'
+        OPERATING_SYSTEMS['unix'] = 'Unix'
+        OPERATING_SYSTEMS['beos'] = 'BeOS '
 
-        OPERATING_SYSTEMS['iPhone OS'] = 'iPhone'
-        OPERATING_SYSTEMS['SymbianOS'] = 'SymbianOS'
-        OPERATING_SYSTEMS['Nokia'] = 'Nokia'
-        OPERATING_SYSTEMS['BlackBerry'] = 'BlackBerry'
-        OPERATING_SYSTEMS['Nintendo Wii'] = 'Nintendo Wii'
+        OPERATING_SYSTEMS['iphone'] = 'iPhone'
+        OPERATING_SYSTEMS['symbianos'] = 'SymbianOS'
+        OPERATING_SYSTEMS['nokia'] = 'Nokia'
+        OPERATING_SYSTEMS['blackberry'] = 'BlackBerry'
+        OPERATING_SYSTEMS['nintendo wii'] = 'Nintendo Wii'
 
-        OPERATING_SYSTEMS['Mac OS X'] = 'MacOS X'
-        OPERATING_SYSTEMS['Macintosh'] = 'MacOS'
+        OPERATING_SYSTEMS['mac os x 10.6'] = 'MacOS X 10.6'
+        OPERATING_SYSTEMS['mac os x 10.5'] = 'MacOS X 10.5'
+        OPERATING_SYSTEMS['mac os x'] = 'MacOS X'
+        OPERATING_SYSTEMS['macintosh'] = 'MacOS'
     }
 
     final String userAgentHeader
@@ -73,7 +77,7 @@ class UserAgentInfo {
     Browser browser
 
     UserAgentInfo(String userAgentHeader) {
-        this.userAgentHeader = userAgentHeader
+        this.userAgentHeader = userAgentHeader.toLowerCase()
     }
 
     void parse() {
