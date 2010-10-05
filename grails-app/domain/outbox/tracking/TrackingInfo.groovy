@@ -60,19 +60,19 @@ class TrackingInfo {
         campaignId nullable: false
         subscriberId nullable: false, maxSize: 40
         trackingReferenceId nullable: false, maxSize: 40
-
-        locale maxSize: 50
         datetime nullable: false
-        browserName maxSize: 100
-        browserVersion maxSize: 100
-        operatingSystem maxSize: 100
-        ipAddress maxSize: 40
+        
+        locale nullable: true, maxSize: 50
+        browserName nullable: true, maxSize: 100
+        browserVersion nullable: true, maxSize: 100
+        operatingSystem nullable: true, maxSize: 100
+        ipAddress nullable: true, maxSize: 40
 
-        countryCode maxSize: 2
-        countryName maxSize: 100
-        city maxSize: 500
-        region maxSize: 500
-        postalCode maxSize: 20
+        countryCode nullable: true, maxSize: 2
+        countryName nullable: true, maxSize: 100
+        city nullable: true, maxSize: 500
+        region nullable: true, maxSize: 500
+        postalCode nullable: true, maxSize: 20
     }
 
     def beforeInsert() {

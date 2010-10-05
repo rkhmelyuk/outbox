@@ -2,6 +2,7 @@ package outbox.tracking
 
 import org.springframework.transaction.annotation.Transactional
 import outbox.ServiceUtil
+import outbox.tracking.converter.TrackingInfoConverterFactory
 
 /**
  * @author Ruslan Khmelyuk
@@ -9,6 +10,8 @@ import outbox.ServiceUtil
 class TrackingService {
 
     static transactional = true
+
+    TrackingInfoConverterFactory trackingInfoConverterFactory
 
     /**
      * Saves tracking reference.
@@ -46,5 +49,18 @@ class TrackingService {
     TrackingReference getTrackingReference(String id) {
         TrackingReference.findById id
     }
-    
+
+    /**
+     * Track request information.
+     * @param rawTrackingInfo the raw tracking information.
+     */
+    void track(RawTrackingInfo rawTrackingInfo) {
+        if (!rawTrackingInfo) return
+
+        def converter = trackingInfoConverterFactory.createConverter(rawTrackingInfo)
+        if (converter) {
+            def trackingInfo = converter.convert(rawTrackingInfo)
+            println trackingInfo.save(flush: true)
+        }
+    }
 }
