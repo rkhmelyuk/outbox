@@ -9,7 +9,7 @@ import outbox.tracking.RawTrackingInfo
  */
 public class TrackingInfoConverterFactory {
 
-    CampaignTrackingInfoConverter campaignTrackingInfoConverter;
+    def campaignTrackingInfoConverter
 
     TrackingInfoConverter createConverter(RawTrackingInfo rawTrackingInfo) {
         campaignTrackingInfoConverter

@@ -3,6 +3,7 @@ package outbox.tracking.converter
 import org.apache.log4j.Logger
 import outbox.tracking.RawTrackingInfo
 import outbox.tracking.TrackingInfo
+import outbox.tracking.TrackingReferenceType
 import outbox.tracking.UserAgentInfo
 import outbox.tracking.geolocation.GeoLocationService
 
@@ -21,7 +22,13 @@ class CampaignTrackingInfoConverter implements TrackingInfoConverter {
     TrackingInfo convert(RawTrackingInfo rawTrackingInfo) {
         def trackingInfo = new TrackingInfo()
         trackingInfo.ipAddress = rawTrackingInfo.remoteAddress
-        trackingInfo.datetime = rawTrackingInfo.timestamp
+        trackingInfo.datetime = new Date(rawTrackingInfo.timestamp)
+
+        def reference = rawTrackingInfo.reference
+        trackingInfo.campaignId = reference.campaignId
+        trackingInfo.subscriberId = reference.subscriberId
+        trackingInfo.trackingReferenceId = reference.id
+        trackingInfo.click = reference?.type == TrackingReferenceType.Link
 
         fillUserAgentInformation(trackingInfo, rawTrackingInfo)
         fillLanguageInformation(trackingInfo, rawTrackingInfo)
