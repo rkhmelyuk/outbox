@@ -31,7 +31,7 @@ class TrackingInfo {
 
     static mapping = {
         table 'TrackingInfo'
-        id column: 'TrackingInfoId'
+        id column: 'TrackingInfoId', generator: 'assigned'
         columns {
             campaignId column: 'CampaignId'
             subscriberId column: 'SubscriberId'

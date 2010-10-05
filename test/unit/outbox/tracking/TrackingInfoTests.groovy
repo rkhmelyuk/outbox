@@ -53,21 +53,23 @@ class TrackingInfoTests extends GrailsUnitTestCase {
         def trackingInfo1 = new TrackingInfo()
         def trackingInfo2 = new TrackingInfo()
 
+        def date = new Date()
+
         trackingInfo1.campaignId = 123
         trackingInfo1.subscriberId = '123456'
         trackingInfo1.trackingReferenceId = '345678'
-        trackingInfo1.datetime = new Date()
+        trackingInfo1.datetime = date
         trackingInfo1.ipAddress = '123.83.23.11'
 
         trackingInfo2.campaignId = 123
         trackingInfo2.subscriberId = '123456'
         trackingInfo2.trackingReferenceId = '345678'
-        trackingInfo2.datetime = new Date()
+        trackingInfo2.datetime = date
         trackingInfo2.ipAddress = '123.83.23.11'
 
         trackingInfo1.generateId()
         trackingInfo2.generateId()
 
-        assertFalse trackingInfo1.id.equals(trackingInfo2.id) 
+        assertEquals trackingInfo1.id, trackingInfo2.id
     }
 }
