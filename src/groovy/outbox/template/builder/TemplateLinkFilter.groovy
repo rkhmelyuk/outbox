@@ -14,12 +14,13 @@ class TemplateLinkFilter implements TemplateFilter {
         def body = context.template
 
         def reference = ~/<a[^>]*href=(["']([^"']*)["'])/
-        def link = ~/['"](https?|ftp|ftps|sftp).*/
+        def link = ~/(https?|ftp|ftps|sftp).*/
         def matcher = (body =~ reference)
 
         def trackingReferences = [:]
         while (matcher.find()) {
-            def resource = matcher.group(1)
+            def resource = matcher.group(2)
+            println resource
             if (resource && resource ==~ link) {
                 def trackingRef = trackingReferences[resource]
                 if (!trackingRef) {
@@ -36,7 +37,7 @@ class TemplateLinkFilter implements TemplateFilter {
             }
         }
 
-        trackingReferences.each { String key, TrackingReference value ->
+        trackingReferences.each { String key, TrackingReference value -> 
             body = body.replace(key, trackingLinkBuilder.trackingLink(value))
         }
 

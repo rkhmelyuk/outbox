@@ -21,7 +21,7 @@ class TemplateImageFilterTests extends GrailsUnitTestCase {
         def filter = new TemplateImageFilter()
 
         def trackingLinkBuilderControl = mockFor(TrackingLinkBuilder)
-        trackingLinkBuilderControl.demand.trackingLink { ref -> "'http://tracking/123'" }
+        trackingLinkBuilderControl.demand.trackingLink { ref -> 'http://tracking/123' }
         filter.trackingLinkBuilder = trackingLinkBuilderControl.createMock()
 
         filter.filter context
@@ -31,6 +31,6 @@ class TemplateImageFilterTests extends GrailsUnitTestCase {
 
         assertEquals 1, context.trackingReferences.size()
         println context.trackingReferences.first()
-        assertEquals "'logo.png'", context.trackingReferences.first().reference
+        assertEquals 'logo.png', context.trackingReferences.first().reference
     }
 }

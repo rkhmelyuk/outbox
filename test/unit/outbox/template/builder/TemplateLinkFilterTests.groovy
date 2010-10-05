@@ -21,7 +21,7 @@ class TemplateLinkFilterTests extends GrailsUnitTestCase {
         def filter = new TemplateLinkFilter()
 
         def trackingLinkBuilderControl = mockFor(TrackingLinkBuilder)
-        trackingLinkBuilderControl.demand.trackingLink { ref -> "'http://tracking/123'" }
+        trackingLinkBuilderControl.demand.trackingLink { ref -> 'http://tracking/123' }
         filter.trackingLinkBuilder = trackingLinkBuilderControl.createMock()
 
         filter.filter context
@@ -30,6 +30,6 @@ class TemplateLinkFilterTests extends GrailsUnitTestCase {
         assertEquals "<a href='http://tracking/123'>Link</a>", context.template
 
         assertEquals 1, context.trackingReferences.size() 
-        assertEquals "'http://google.com'", context.trackingReferences.first().reference
+        assertEquals "http://google.com", context.trackingReferences.first().reference
     }
 }

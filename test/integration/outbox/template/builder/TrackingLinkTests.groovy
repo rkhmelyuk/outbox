@@ -19,7 +19,7 @@ class TrackingLinkTests extends GrailsUnitTestCase {
         def ref = new TrackingReference()
         ref.id = 'abcdef'
         assertEquals 'abcdef', ref.id
-        assertEquals "'http://localhost:8080/outbox/tracking/abcdef'",
+        assertEquals "http://localhost:8080/outbox/tracking/abcdef",
                 trackingLinkBuilder.trackingLink(ref)
     }
 }

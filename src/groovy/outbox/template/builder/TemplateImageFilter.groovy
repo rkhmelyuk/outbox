@@ -21,7 +21,7 @@ class TemplateImageFilter implements TemplateFilter {
 
         def trackingReferences = [:]
         while (matcher.find()) {
-            def resource = matcher.group(1)
+            def resource = matcher.group(2)
             if (resource) {
                 def trackingRef = trackingReferences[resource]
                 if (!trackingRef) {
