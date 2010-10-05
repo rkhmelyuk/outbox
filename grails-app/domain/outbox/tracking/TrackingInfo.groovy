@@ -73,6 +73,8 @@ class TrackingInfo {
         city nullable: true, maxSize: 500
         region nullable: true, maxSize: 500
         postalCode nullable: true, maxSize: 20
+        latitude nullable: true
+        longitude nullable: true
     }
 
     def beforeInsert() {

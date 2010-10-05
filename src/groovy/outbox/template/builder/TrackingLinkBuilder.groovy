@@ -15,6 +15,6 @@ class TrackingLinkBuilder {
 
     String trackingLink(TrackingReference reference) {
         def serverUrl = grailsApplication.config.grails.serverURL
-        return "'${serverUrl}/tracking/${reference.id}'"
+        return "${serverUrl}/tracking/${reference.id}"
     }
 }

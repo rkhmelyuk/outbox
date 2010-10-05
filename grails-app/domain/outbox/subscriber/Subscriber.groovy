@@ -40,14 +40,14 @@ class Subscriber {
             firstName column: 'FirstName'
             lastName column: 'LastName'
             email column: 'Email'
-            gender column: 'GenderId'
-            language column: 'LanguageId'
-            timezone column: 'TimezoneId'
+            gender column: 'GenderId', lazy: false
+            language column: 'LanguageId', lazy: false
+            timezone column: 'TimezoneId', lazy: false
             dateCreated column: 'CreateDate'
             member column: 'MemberId', lazy: true
             enabled column: 'Enabled'
-            namePrefix column: 'NamePrefixId'
-            subscriberType column: 'SubscriberTypeId'
+            namePrefix column: 'NamePrefixId', lazy: false
+            subscriberType column: 'SubscriberTypeId', lazy: false
         }
         version false
         cache true

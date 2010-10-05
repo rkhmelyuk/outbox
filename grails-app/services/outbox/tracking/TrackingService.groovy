@@ -60,7 +60,7 @@ class TrackingService {
         def converter = trackingInfoConverterFactory.createConverter(rawTrackingInfo)
         if (converter) {
             def trackingInfo = converter.convert(rawTrackingInfo)
-            println trackingInfo.save(flush: true)
+            trackingInfo.save(flush: true)
         }
     }
 }
