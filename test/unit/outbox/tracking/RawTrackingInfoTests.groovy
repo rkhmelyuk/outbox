@@ -13,8 +13,7 @@ class RawTrackingInfoTests extends GroovyTestCase {
         trackingInfo.remoteAddress = '192.134.13.11'
         trackingInfo.remoteHost = 'tank'
         trackingInfo.remoteUser = 'user'
-        def date = new Date()
-        trackingInfo.timestamp = date
+        trackingInfo.timestamp = 123
 
         assertEquals 'Test Accept Language Header', trackingInfo.acceptLanguageHeader
         assertEquals 'abcdef01', trackingInfo.reference.id
@@ -22,6 +21,6 @@ class RawTrackingInfoTests extends GroovyTestCase {
         assertEquals '192.134.13.11', trackingInfo.remoteAddress
         assertEquals 'tank', trackingInfo.remoteHost
         assertEquals 'user', trackingInfo.remoteUser
-        assertEquals date, trackingInfo.timestamp
+        assertEquals 123, trackingInfo.timestamp
     }
 }

@@ -6,7 +6,7 @@ package outbox.tracking
 class RawTrackingInfo {
 
     TrackingReference reference
-    Date timestamp
+    long timestamp
 
     String remoteAddress
     String remoteHost
