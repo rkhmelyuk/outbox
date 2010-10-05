@@ -81,14 +81,15 @@ class CampaignTrackingInfoConverter implements TrackingInfoConverter {
         try {
             def location = geoLocationService.lookupLocation(trackingInfo.ipAddress)
 
-            trackingInfo.city = location.city
-            trackingInfo.countryCode = location.countryCode
-            trackingInfo.countryName = location.countryName
-            trackingInfo.region = location.region
-            trackingInfo.postalCode = location.postal
-            trackingInfo.latitude = location.latitude
-            trackingInfo.longitude = location.longitude
-
+            if (location) {
+                trackingInfo.city = location.city
+                trackingInfo.countryCode = location.countryCode
+                trackingInfo.countryName = location.countryName
+                trackingInfo.region = location.region
+                trackingInfo.postalCode = location.postal
+                trackingInfo.latitude = location.latitude
+                trackingInfo.longitude = location.longitude
+            }
         }
         catch (Exception e) {
             log.error 'Can\'t get IP location information for tracking request, cause:', e
