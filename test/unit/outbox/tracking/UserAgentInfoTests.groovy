@@ -16,6 +16,15 @@ class UserAgentInfoTests extends GroovyTestCase {
         assertEquals '0.8', userAgentInfo.browser.version
     }
 
+    void testParse_Ubuntu() {
+        def userAgent = 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.10) Gecko/20100915 Ubuntu/10.04 (lucid) Firefox/3.6.10'
+        def userAgentInfo = new UserAgentInfo(userAgent)
+
+        userAgentInfo.parse()
+
+        assertEquals 'Ubuntu Linux', userAgentInfo.operatingSystem
+    }
+
     void testParse_Windows() {
         def userAgent = 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/533.17.8 (KHTML, like Gecko) Version/5.0.1 Safari/533.17.8'
         def userAgentInfo = new UserAgentInfo(userAgent)
