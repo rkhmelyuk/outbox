@@ -13,7 +13,7 @@ class ValidateContextWrapper implements ReportExtractor {
 
     ReportExtractor extractor
 
-    def ValidateContextWrapper(extractor) {
+    def ValidateContextWrapper(ReportExtractor extractor) {
         this.extractor = extractor
     }
 
