@@ -5,6 +5,9 @@ import grails.plugins.springsecurity.SpringSecurityService
 import grails.test.ControllerUnitTestCase
 import outbox.member.Member
 import outbox.member.MemberRole
+import outbox.report.Report
+import outbox.report.ReportResult
+import outbox.report.ReportsHolder
 import outbox.search.OwnedByCondition
 import outbox.search.PageCondition
 import outbox.security.OutboxUser
@@ -661,5 +664,58 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         assertNotNull result.actions
         assertEquals 'message', result.stateName
     }
+
+    void testShow_Reports() {
+        def member = new Member(id: 1)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member, state: CampaignState.InProgress)
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaign { id ->
+            assertEquals 10, id
+            return campaign
+        }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        def reportControl = mockFor(Report)
+        reportControl.demand.extract(2..2) { context ->
+            assertEquals campaign.id, context.campaignId
+            def result = new ReportResult()
+            result.addSingle 'clicks', 10
+            result.addSingle 'opens', 20
+            return result
+        }
+        def report = reportControl.createMock()
+        def reportsHolderControl = mockFor(ReportsHolder)
+        reportsHolderControl.demand.getReport(2..2) { name ->
+            if (name == 'totalClicks' || name == 'totalOpens') {
+                return report
+            }
+            fail "Unexpected report name: $name"
+        }
+        controller.reportsHolder = reportsHolderControl.createMock()
+
+        controller.params.id = '10'
+        controller.params.page = 'reports'
+
+        def result = controller.show()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+        reportsHolderControl.verify()
+        reportControl.verify()
+
+        assertEquals campaign, result.campaign
+        assertEquals 'reports', result.page
+        assertEquals 10, result.totalClicks
+        assertEquals 20, result.totalOpens
+    }
+
+
 
 }

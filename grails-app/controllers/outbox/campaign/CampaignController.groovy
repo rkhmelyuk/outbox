@@ -4,6 +4,7 @@ import grails.converters.JSON
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
 import outbox.member.Member
+import outbox.report.ReportsHolder
 import outbox.subscription.SubscriptionListService
 import outbox.template.TemplateService
 
@@ -23,6 +24,7 @@ class CampaignController {
     SubscriptionListService subscriptionListService
     SpringSecurityService springSecurityService
     TemplateService templateService
+    ReportsHolder reportsHolder
 
     def index = { 
         def conditions = new CampaignConditionsBuilder().build {
@@ -186,7 +188,17 @@ class CampaignController {
     }
 
     def handleReports(Campaign campaign) {
+        def model = [:]
 
+        def totalClicksReport = reportsHolder.getReport('totalClicks')
+        def totalClicks = totalClicksReport.extract([campaignId: campaign.id])
+        model.totalClicks = totalClicks.single('clicks')
+
+        def totalOpensReport = reportsHolder.getReport('totalOpens')
+        def totalOpens = totalOpensReport.extract([campaignId: campaign.id])
+        model.totalOpens = totalOpens.single('opens')
+
+        return model
     }
 
     def handleDetails(Campaign campaign) {
