@@ -19,6 +19,7 @@
             where CampaignId = :campaignId and Click = true
                 and date >= :startDate and date <= :endDate
             group by PeriodDate
+            order by PeriodDate
         ]]>
     </sql-query>
 
@@ -51,6 +52,7 @@
             where CampaignId = :campaignId and Click = false and Open = true
                 and date >= :startDate and date <= :endDate
             group by PeriodDate
+            order by PeriodDate
         ]]>
     </sql-query>
 
