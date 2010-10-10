@@ -75,5 +75,12 @@ beans = {
     trackingInfoConverterFactory(outbox.tracking.converter.TrackingInfoConverterFactory) {
         campaignTrackingInfoConverter = ref('campaignTrackingInfoConverter')
     }
-    
+
+    reportsFactory(outbox.report.ReportsFactory)
+
+    reportsHolder(outbox.report.ReportsHolder) { bean ->
+        bean.init = 'init'
+        reportsFactory = ref('reportsFactory')
+    }
+
 }

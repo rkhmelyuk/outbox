@@ -10,6 +10,10 @@ class Report {
     String name
     ReportExtractor extractor
 
+    ReportResult extract(Map context) {
+        extractor.extract context
+    }
+
     public String toString ( ) {
         "Report[name=$name]"
     }
