@@ -40,7 +40,7 @@ class OpensByDateExtractor implements ReportExtractor {
 
         def queryResult = query.list()
 
-        def results = queryResult.collect { [date: it[0], clicks: it[1]]}
+        def results = queryResult.collect { [date: it[0], opens: it[1]]}
 
         def reportResult = new ReportResult()
         reportResult.addDataSet('opens', new ReportDataSet(results))

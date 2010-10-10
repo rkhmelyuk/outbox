@@ -66,11 +66,11 @@ class ClicksByDateExtractorTests extends GrailsUnitTestCase {
         date.hours = 0
 
         set.list().each {
-            if (it[0] == date - 1) {
-                assertEquals 3, it[1]
+            if (it.date == date - 1) {
+                assertEquals 3, it.clicks
             }
-            else if (it[0] == date - 2) {
-                assertEquals 2, it[1]
+            else if (it.date == date - 2) {
+                assertEquals 2, it.clicks
             }
         }
     }
