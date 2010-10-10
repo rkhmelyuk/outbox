@@ -79,10 +79,11 @@ class CampaignService {
     /**
      * Start sending campaign. Before moving on, checks whether campaign is in Ready state.
      * If not, returns false and don't send nothing.
-     * This method changes campaign state to Queued and enqueue the Send Campaign task.
+     * This method changes campaign state to Queued and enqueue the Send Campaign task, and
+     * setup campaign Start Date.
      *
      * @param campaign the campaign to send, if null than false is returned.
-     * @return true if started sending successfully, otherwise false.
+     * @return true if started to send successfully, otherwise false.
      */
     @Transactional
     boolean sendCampaign(Campaign campaign) {
@@ -91,6 +92,7 @@ class CampaignService {
             campaign = Campaign.findById(campaign.id)
             if (campaign?.state == CampaignState.Ready) {
                 campaign.state = CampaignState.Queued
+                campaign.startDate = new Date()
                 if (saveCampaign(campaign, false)) {
                     def task = TaskFactory.createSendCampaignTask(campaign)
                     if (taskService.enqueueTask(task)) {

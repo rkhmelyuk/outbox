@@ -369,6 +369,7 @@ class CampaignServiceTests extends GrailsUnitTestCase {
     void testSend() {
         final def taskService = campaignService.taskService
 
+        def date = new Date()
         try {
             def campaign = createTestCampaign()
             campaign.state = CampaignState.Ready
@@ -383,6 +384,9 @@ class CampaignServiceTests extends GrailsUnitTestCase {
             def found = campaignService.getCampaign(campaign.id)
             assertNotNull found
             assertEquals CampaignState.Queued, found.state
+            assertNotNull found.startDate
+            assertFalse found.startDate.before(date)
+            assertFalse new Date().before(found.startDate)
 
             taskServiceControl.verify()
         }
