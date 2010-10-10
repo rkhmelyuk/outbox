@@ -42,13 +42,14 @@ class TotalOpensExtractorTests extends GrailsUnitTestCase {
     }
 
     void testWithData() {
-        createTrackingInfo(new Date() - 1, false)
-        createTrackingInfo(new Date() - 2, false)
-        createTrackingInfo(new Date() - 1, false)
-        createTrackingInfo(new Date() - 1, false)
-        createTrackingInfo(new Date(), true)
+        createTrackingInfo(new Date() - 1, false, true)
+        createTrackingInfo(new Date() - 2, false, true)
+        createTrackingInfo(new Date() - 1, false, true)
+        createTrackingInfo(new Date() - 1, false, true)
+        createTrackingInfo(new Date() - 1, false, false)
+        createTrackingInfo(new Date(), true, true)
 
-        assertEquals 5, TrackingInfo.count()
+        assertEquals 6, TrackingInfo.count()
 
         def result = extractor.extract([campaignId: 1])
         assertEquals 4, result.single('opens')
@@ -59,13 +60,14 @@ class TotalOpensExtractorTests extends GrailsUnitTestCase {
         assertEquals 0, result.single('opens')
     }
 
-    void createTrackingInfo(Date date, boolean click) {
+    void createTrackingInfo(Date date, boolean click, boolean open) {
         def trackingInfo = new TrackingInfo()
         trackingInfo.campaignId = 1
         trackingInfo.subscriberId = 'abcdef0192'
         trackingInfo.datetime = date
         trackingInfo.trackingReferenceId = 'bcasd123123'
         trackingInfo.click = click
+        trackingInfo.open = open
 
         assertNotNull trackingInfo.save(flush: true)
     }

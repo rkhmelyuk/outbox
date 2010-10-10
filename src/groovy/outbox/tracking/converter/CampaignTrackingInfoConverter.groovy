@@ -1,6 +1,7 @@
 package outbox.tracking.converter
 
 import org.apache.log4j.Logger
+import outbox.AppConstant
 import outbox.tracking.RawTrackingInfo
 import outbox.tracking.TrackingInfo
 import outbox.tracking.TrackingReferenceType
@@ -28,7 +29,8 @@ class CampaignTrackingInfoConverter implements TrackingInfoConverter {
         trackingInfo.campaignId = reference.campaignId
         trackingInfo.subscriberId = reference.subscriberId
         trackingInfo.trackingReferenceId = reference.id
-        trackingInfo.click = reference?.type == TrackingReferenceType.Link
+        trackingInfo.click = (reference?.type == TrackingReferenceType.Link)
+        trackingInfo.open = (reference?.reference == AppConstant.OPEN_PING_RESOURCE)
 
         fillUserAgentInformation(trackingInfo, rawTrackingInfo)
         fillLanguageInformation(trackingInfo, rawTrackingInfo)

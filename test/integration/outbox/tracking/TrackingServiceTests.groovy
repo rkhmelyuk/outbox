@@ -1,5 +1,6 @@
 package outbox.tracking
 
+import outbox.AppConstant
 import outbox.campaign.Campaign
 import outbox.campaign.CampaignMessage
 import outbox.campaign.CampaignService
@@ -71,6 +72,26 @@ class TrackingServiceTests extends GroovyTestCase {
         rawTrackingInfo.remoteUser = 'guest'
         rawTrackingInfo.reference = new TrackingReference(id: '3', campaignId: 1,
                 subscriberId: 'abcdef00', type: TrackingReferenceType.Link)
+        rawTrackingInfo.acceptLanguageHeader = 'en-US'
+
+        rawTrackingInfo.reference.generateId()
+        trackingService.track rawTrackingInfo
+
+        def trackingInfo = TrackingInfo.list()
+
+        assertNotNull trackingInfo
+        assertEquals 1, trackingInfo.size()
+    }
+
+    void testTrack_Ping() {
+        def rawTrackingInfo = new RawTrackingInfo()
+        rawTrackingInfo.userAgentHeader = 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/533.17.8 (KHTML, like Gecko) Version/5.0.1 Safari/533.17.8'
+        rawTrackingInfo.remoteAddress = '192.12.93.122'
+        rawTrackingInfo.remoteHost = 'core'
+        rawTrackingInfo.remoteUser = 'guest'
+        rawTrackingInfo.reference = new TrackingReference(id: '3', campaignId: 1,
+                subscriberId: 'abcdef00', type: TrackingReferenceType.Resource,
+                reference: AppConstant.OPEN_PING_RESOURCE)
         rawTrackingInfo.acceptLanguageHeader = 'en-US'
 
         rawTrackingInfo.reference.generateId()

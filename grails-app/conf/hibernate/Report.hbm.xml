@@ -48,7 +48,7 @@
         <![CDATA[
             select (date_trunc(''{0}'', date)) as PeriodDate, count(TrackingInfoId) as Opens
             from TrackingInfo
-            where CampaignId = :campaignId and Click = false
+            where CampaignId = :campaignId and Click = false and Open = true
                 and date >= :startDate and date <= :endDate
             group by PeriodDate
         ]]>
@@ -64,7 +64,7 @@
         <![CDATA[
             select count(TrackingInfoId) as Opens
             from TrackingInfo
-            where CampaignId = :campaignId and Click = false
+            where CampaignId = :campaignId and Click = false and Open = true
                 and date >= :startDate and date <= :endDate
         ]]>
     </sql-query>

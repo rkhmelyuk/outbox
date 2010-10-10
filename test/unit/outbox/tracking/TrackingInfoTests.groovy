@@ -24,6 +24,7 @@ class TrackingInfoTests extends GrailsUnitTestCase {
         trackingInfo.browserName = 'Mozilla'
         trackingInfo.browserVersion = '3.5'
         trackingInfo.click = true
+        trackingInfo.open = true
         trackingInfo.latitude = 23.2333
         trackingInfo.longitude = 45.5545
         trackingInfo.operatingSystem = 'Linux'
@@ -35,6 +36,7 @@ class TrackingInfoTests extends GrailsUnitTestCase {
         assertEquals '345678', trackingInfo.trackingReferenceId
         assertEquals date, trackingInfo.datetime
         assertEquals true, trackingInfo.click
+        assertEquals true, trackingInfo.open
         assertEquals 23.2333, trackingInfo.latitude
         assertEquals 45.5545, trackingInfo.longitude
         assertEquals 'Linux', trackingInfo.operatingSystem

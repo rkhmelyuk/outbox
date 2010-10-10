@@ -6,6 +6,7 @@ create table TrackingInfo (
     SubscriberId char(40) not null,
     TrackingReferenceId char(40) not null,
     Click boolean not null,
+    Open boolean not null,
 
     Date timestamp not null,
     BrowserName varchar(100) null,

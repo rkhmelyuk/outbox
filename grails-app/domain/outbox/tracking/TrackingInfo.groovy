@@ -13,6 +13,7 @@ class TrackingInfo {
     String subscriberId
     String trackingReferenceId
     boolean click
+    boolean open
 
     Date datetime
     String browserName
@@ -37,6 +38,7 @@ class TrackingInfo {
             subscriberId column: 'SubscriberId'
             trackingReferenceId column: 'TrackingReferenceId'
             click column: 'Click'
+            open column: 'Open'
             datetime column: 'Date'
             locale column: 'Locale'
             browserName column: 'BrowserName'

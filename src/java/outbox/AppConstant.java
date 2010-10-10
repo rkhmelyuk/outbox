@@ -1,6 +1,8 @@
 package outbox;
 
 /**
+ * Application constants
+ *
  * @author Ruslan Khmelyuk
  * @since 2010-09-04
  */
@@ -17,4 +19,6 @@ public interface AppConstant {
     String TRACKING_REFERENCE_SALT = "Ksid<>Ajd823lASsK<lsOs;lidH82lkJNAS8-*^&";
 
     String TRACKING_INFO_SALT = "lAKsjd8Kj23r8AKFjhDIJ38923jD&#KDjdkdnLDMJEU";
+
+    String OPEN_PING_RESOURCE = "http://mailsight.com/ping.png";
 }
