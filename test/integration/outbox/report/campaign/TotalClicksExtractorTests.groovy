@@ -8,7 +8,7 @@ import outbox.tracking.TrackingInfo
 /**
  * @author Ruslan Khmelyuk
  */
-class ClicksByDateExtractorTests extends GrailsUnitTestCase {
+class TotalClicksExtractorTests extends GrailsUnitTestCase {
 
     def sessionFactory
     ReportExtractor extractor
@@ -16,14 +16,14 @@ class ClicksByDateExtractorTests extends GrailsUnitTestCase {
     @Override protected void setUp() {
         super.setUp()
 
-        extractor = new ClicksByDateExtractor()
+        extractor = new TotalClicksExtractor()
         extractor.sessionFactory = sessionFactory
     }
 
     void testParameters() {
         def params = extractor.parameters
 
-        assertEquals 4, params.size()
+        assertEquals 3, params.size()
 
         def campaign = params.find { it.name == 'campaignId' }
         assertNotNull campaign
@@ -39,11 +39,6 @@ class ClicksByDateExtractorTests extends GrailsUnitTestCase {
         assertNotNull endDate
         assertEquals ParameterType.Date, endDate.type
         assertFalse endDate.required
-        
-        def period = params.find { it.name == 'period'}
-        assertNotNull period
-        assertEquals ParameterType.Period, period.type
-        assertFalse period.required
     }
 
     void testWithData() {
@@ -51,34 +46,17 @@ class ClicksByDateExtractorTests extends GrailsUnitTestCase {
         createTrackingInfo(new Date() - 2, true)
         createTrackingInfo(new Date() - 1, true)
         createTrackingInfo(new Date() - 1, true)
-        createTrackingInfo(new Date() - 2, true)
         createTrackingInfo(new Date(), false)
 
-        assertEquals 6, TrackingInfo.count()
+        assertEquals 5, TrackingInfo.count()
 
         def result = extractor.extract([campaignId: 1])
-        def set = result.dataSet('clicks')
-        assertEquals 2, set.data.size()
-
-        def date = new Date()
-        date.seconds = 0
-        date.minutes = 0
-        date.hours = 0
-
-        set.list().each {
-            if (it[0] == date - 1) {
-                assertEquals 3, it[1]
-            }
-            else if (it[0] == date - 2) {
-                assertEquals 2, it[1]
-            }
-        }
+        assertEquals 4, result.single('clicks')
     }
 
     void testWithoutData() {
         def result = extractor.extract([campaignId: 1])
-        def set = result.dataSet('clicks')
-        assertEquals 0, set.size()
+        assertEquals 0, result.single('clicks')
     }
 
     void createTrackingInfo(Date date, boolean click) {

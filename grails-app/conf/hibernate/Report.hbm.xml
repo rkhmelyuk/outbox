@@ -18,7 +18,54 @@
             from TrackingInfo
             where CampaignId = :campaignId and Click = true
                 and date >= :startDate and date <= :endDate
-            group by PeriodDate;
+            group by PeriodDate
+        ]]>
+    </sql-query>
+
+    <sql-query name="Report.totalClicks">
+        <query-param name="campaignId" type="long"/>
+        <query-param name="startDate" type="timestamp"/>
+        <query-param name="endDate" type="timestamp"/>
+
+        <return-scalar column="Clicks" type="int"/>
+
+        <![CDATA[
+            select count(TrackingInfoId) as Clicks
+            from TrackingInfo
+            where CampaignId = :campaignId and Click = true
+                and date >= :startDate and date <= :endDate
+        ]]>
+    </sql-query>
+
+    <sql-query name="Report.opensByDate">
+        <query-param name="campaignId" type="long"/>
+        <query-param name="startDate" type="timestamp"/>
+        <query-param name="endDate" type="timestamp"/>
+
+        <return-scalar column="PeriodDate" type="date"/>
+        <return-scalar column="Opens" type="int"/>
+
+        <![CDATA[
+            select (date_trunc(''{0}'', date)) as PeriodDate, count(TrackingInfoId) as Opens
+            from TrackingInfo
+            where CampaignId = :campaignId and Click = false
+                and date >= :startDate and date <= :endDate
+            group by PeriodDate
+        ]]>
+    </sql-query>
+
+    <sql-query name="Report.totalOpens">
+        <query-param name="campaignId" type="long"/>
+        <query-param name="startDate" type="timestamp"/>
+        <query-param name="endDate" type="timestamp"/>
+
+        <return-scalar column="Opens" type="int"/>
+
+        <![CDATA[
+            select count(TrackingInfoId) as Opens
+            from TrackingInfo
+            where CampaignId = :campaignId and Click = false
+                and date >= :startDate and date <= :endDate
         ]]>
     </sql-query>
 
