@@ -7,7 +7,7 @@ import outbox.subscriber.Subscriber
 /**
  * @author Ruslan Khmelyuk
  */
-class TemplateTrackingHeaderFilterTests extends GroovyTestCase {
+class TemplateTrackingHeaderFilterUnitTests extends GroovyTestCase {
 
     void testFilter() {
         def context = new TemplateFilterContext(

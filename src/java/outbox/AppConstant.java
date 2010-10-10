@@ -20,5 +20,8 @@ public interface AppConstant {
 
     String TRACKING_INFO_SALT = "lAKsjd8Kj23r8AKFjhDIJ38923jD&#KDjdkdnLDMJEU";
 
+    /**
+     * The address for Openings resource
+     */
     String OPEN_PING_RESOURCE = "http://mailsight.com/ping.png";
 }

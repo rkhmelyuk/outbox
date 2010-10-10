@@ -1,3 +1,5 @@
+import outbox.AppConstant
+
 beans = {
 
     userDetailsService(outbox.security.OutboxUserDetailsService) {
@@ -27,7 +29,7 @@ beans = {
     }
 
     templateTrackingHeaderFilter(outbox.template.builder.TemplateTrackingHeaderFilter) {
-        trackingHeader = '<img src="http://mailsight.com/ping.png" width="1" height="1" alt=""/>'
+        trackingHeader = "<img src='${AppConstant.OPEN_PING_RESOURCE}' width='1' height='1' alt=''/>"
     }
 
     templateLinkFilter(outbox.template.builder.TemplateLinkFilter) {
