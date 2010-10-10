@@ -25,6 +25,11 @@ target(main: "The description of the script goes here!") {
             revert version
             return
         }
+        else if (action.equals("repatch")) {
+            String env = environment(argsMap)
+            def version = version(argsMap["params"][2])
+            repatch env, version
+        }
     }
 
     usage()
@@ -113,6 +118,55 @@ private def revert(String version) {
     println "*** Done!"
 }
 
+private def repatch(String env, String version) {
+    println "*** Repatching database on version ${version} for enviroment ${env}"
+
+    def dbPatchDir = "${grailsSettings.baseDir}/database/patch"
+    def dataSourceConfig = configSlurper.parse(classLoader.loadClass("DataSource"))
+
+    def ver = (version.equals("all") ? "" : "${version}/");
+
+    def scanner = ant.fileScanner {
+        fileset(dir: "${dbPatchDir}/${ver}") {
+            include(name: "**/*_revert.sql")
+            exclude(name: "**/.reverts/*.sql")
+        }
+    }
+    def files = scanner.findAll {true} as List
+    Collections.reverse(files)
+
+    ant.delete(dir: "${dbPatchDir}/${ver}.reverts", deleteonexit: true)
+    ant.mkdir(dir: "${dbPatchDir}/${ver}.reverts")
+    files.eachWithIndex {file, i ->
+        def index = i.sprintf("%05d", i)
+        ant.copy(tofile: "${dbPatchDir}/${ver}.reverts/${index}.sql") {
+            fileset(file: file)
+        }
+    }
+
+    ant.sql(url: dataSourceConfig.dataSource.url,
+            driver: dataSourceConfig.dataSource.driverClassName,
+            userid: dataSourceConfig.dataSource.username,
+            password: dataSourceConfig.dataSource.password, onerror: "continue") {
+        fileset(dir: "${dbPatchDir}/${ver}.reverts") {
+            include(name: "*.sql")
+        }
+
+        fileset(dir: "${dbPatchDir}/${ver}") {
+            include(name: "**/*.sql")
+            exclude(name: "**/*_revert.sql")
+            exclude(name: "**/.reverts/*.sql")
+            if (env.equals("prod")) {
+                exclude(name: "**/*_dev.sql")
+            }
+            else if (env.equals("dev")) {
+                exclude(name: "**/*_prod.sql")
+            }
+        }
+    }
+
+    println "*** Done!"
+}
 
 private def usage() {
     println """Usage:
