@@ -5,9 +5,6 @@ import grails.plugins.springsecurity.SpringSecurityService
 import grails.test.ControllerUnitTestCase
 import outbox.member.Member
 import outbox.member.MemberRole
-import outbox.report.Report
-import outbox.report.ReportResult
-import outbox.report.ReportsHolder
 import outbox.search.OwnedByCondition
 import outbox.search.PageCondition
 import outbox.security.OutboxUser
@@ -15,6 +12,7 @@ import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.template.Template
 import outbox.template.TemplateService
+import outbox.report.*
 
 /**
  * @author Ruslan Khmelyuk
@@ -665,9 +663,10 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         assertEquals 'message', result.stateName
     }
 
-    void testShow_Reports() {
+    void testShow_Reports1() {
         def member = new Member(id: 1)
-        def campaign = new Campaign(id: 10, name: 'Name', owner: member, state: CampaignState.InProgress)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member,
+                state: CampaignState.InProgress, startDate: new Date())
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {->
@@ -683,7 +682,7 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         controller.campaignService = campaignServiceControl.createMock()
 
         def reportControl = mockFor(Report)
-        reportControl.demand.extract(2..2) { context ->
+        reportControl.demand.extract(4..4) { context ->
             assertEquals campaign.id, context.campaignId
             def result = new ReportResult()
             result.addSingle 'clicks', 10
@@ -692,8 +691,9 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         }
         def report = reportControl.createMock()
         def reportsHolderControl = mockFor(ReportsHolder)
-        reportsHolderControl.demand.getReport(2..2) { name ->
-            if (name == 'totalClicks' || name == 'totalOpens') {
+        reportsHolderControl.demand.getReport(4..4) { name ->
+            if (name == 'totalClicks' || name == 'totalOpens' ||
+                    name == 'clicksByDate' || name == 'opensByDate') {
                 return report
             }
             fail "Unexpected report name: $name"
@@ -716,6 +716,63 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         assertEquals 20, result.totalOpens
     }
 
+    void testShow_Reports2() {
+        def member = new Member(id: 1)
+        def campaign = new Campaign(id: 10, name: 'Name', owner: member,
+                state: CampaignState.InProgress, startDate: new Date())
 
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def campaignServiceControl = mockFor(CampaignService)
+        campaignServiceControl.demand.getCampaign { id ->
+            assertEquals 10, id
+            return campaign
+        }
+        controller.campaignService = campaignServiceControl.createMock()
+
+        def reportControl = mockFor(Report)
+        int index = 0
+        reportControl.demand.extract(4..4) { context ->
+            assertEquals campaign.id, context.campaignId
+            if (index > 1) {
+                assertEquals Period.Hour, context.period
+            }
+            index++
+
+            def result = new ReportResult()
+            result.addDataSet 'clicks', new ReportDataSet([1, 2])
+            result.addDataSet 'opens', new ReportDataSet([1, 2, 3])
+            return result
+        }
+        def report = reportControl.createMock()
+        def reportsHolderControl = mockFor(ReportsHolder)
+        reportsHolderControl.demand.getReport(4..4) { name ->
+            if (name == 'totalClicks' || name == 'totalOpens' ||
+                    name == 'clicksByDate' || name == 'opensByDate') {
+                return report
+            }
+            fail "Unexpected report name: $name"
+        }
+        controller.reportsHolder = reportsHolderControl.createMock()
+
+        controller.params.id = '10'
+        controller.params.page = 'reports'
+
+        def result = controller.show()
+
+        springSecurityServiceControl.verify()
+        campaignServiceControl.verify()
+        reportsHolderControl.verify()
+        reportControl.verify()
+
+        assertEquals campaign, result.campaign
+        assertEquals 'reports', result.page
+        assertEquals 2, result.clicksByDate.size()
+        assertEquals 3, result.opensByDate.size()
+    }
 
 }

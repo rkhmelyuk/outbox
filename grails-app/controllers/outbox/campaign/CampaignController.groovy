@@ -4,6 +4,7 @@ import grails.converters.JSON
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
 import outbox.member.Member
+import outbox.report.ReportUtil
 import outbox.report.ReportsHolder
 import outbox.subscription.SubscriptionListService
 import outbox.template.TemplateService
@@ -197,6 +198,17 @@ class CampaignController {
         def totalOpensReport = reportsHolder.getReport('totalOpens')
         def totalOpens = totalOpensReport.extract([campaignId: campaign.id])
         model.totalOpens = totalOpens.single('opens')
+
+        def period = ReportUtil.bestPeriod(campaign.startDate)
+        model.period = period
+
+        def clicksByDateReport = reportsHolder.getReport('clicksByDate')
+        def clicksByDate = clicksByDateReport.extract([campaignId: campaign.id, period: period])
+        model.clicksByDate = clicksByDate.dataSet('clicks')?.list()
+
+        def opensByDateReport = reportsHolder.getReport('opensByDate')
+        def opensByDate = opensByDateReport.extract([campaignId: campaign.id, period: period])
+        model.opensByDate = opensByDate.dataSet('opens')?.list()
 
         return model
     }
