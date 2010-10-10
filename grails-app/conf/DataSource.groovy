@@ -23,9 +23,14 @@ environments {
     }
     test {
         dataSource {
-            driverClassName = "org.hsqldb.jdbcDriver"
             dbCreate = "create-drop"
-            url = "jdbc:hsqldb:mem:testDb"
+            url = 'jdbc:postgresql://127.0.0.1:5432/outbox_test'
+            driverClassName = 'org.postgresql.Driver'
+            username = 'outbox'
+            password = 'outbox123'
+        }
+        hibernate {
+            show_sql = true
         }
     }
     production {

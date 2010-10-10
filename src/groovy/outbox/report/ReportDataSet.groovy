@@ -29,6 +29,10 @@ class ReportDataSet {
         data << row
     }
 
+    List list() {
+        data
+    }
+
     int size() {
         data ? data.size() : 0
     }

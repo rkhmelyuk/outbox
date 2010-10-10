@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <sql-query name="Report.clicksByDate">
+        <query-param name="campaignId" type="long"/>
+        <query-param name="startDate" type="timestamp"/>
+        <query-param name="endDate" type="timestamp"/>
+
+        <return-scalar column="PeriodDate" type="date"/>
+        <return-scalar column="Clicks" type="int"/>
+
+        <![CDATA[
+            select (date_trunc(''{0}'', date)) as PeriodDate, count(TrackingInfoId) as Clicks
+            from TrackingInfo
+            where CampaignId = :campaignId and Click = true
+                and date >= :startDate and date <= :endDate
+            group by PeriodDate;
+        ]]>
+    </sql-query>
+
+</hibernate-mapping>

@@ -5,15 +5,21 @@ package outbox.report
  */
 public enum Period {
 
-    Hour,
+    Hour('hour'),
 
-    Day,
+    Day('day'),
 
-    Week,
+    Week('week'),
 
-    Month,
+    Month('month'),
 
-    Quarter,
+    Quarter('quarter'),
 
-    Year
+    Year('year')
+
+    final String sqlPeriod
+
+    Period(String sqlPeriod) {
+        this.sqlPeriod = sqlPeriod
+    }
 }

@@ -3,5 +3,6 @@
 <hibernate-configuration>
     <session-factory>
         <mapping resource="Campaign.hbm.xml" />
+        <mapping resource="Report.hbm.xml" />
     </session-factory>
 </hibernate-configuration>
