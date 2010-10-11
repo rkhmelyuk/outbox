@@ -37,4 +37,16 @@ class ReportsFactoryTests extends GroovyTestCase {
         assertEquals 'opensByDate', report.name
         assertTrue report.extractor instanceof DefaultReportExtractorWrapper
     }
+
+    void testTotalSubscribersReport() {
+        def report = factory.totalSubscribersReport()
+        assertEquals 'totalSubscribers', report.name
+        assertTrue report.extractor instanceof DefaultReportExtractorWrapper
+    }
+
+    void testOpenedReport() {
+        def report = factory.openedReport()
+        assertEquals 'opened', report.name
+        assertTrue report.extractor instanceof DefaultReportExtractorWrapper
+    }
 }

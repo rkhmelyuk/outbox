@@ -199,6 +199,16 @@ class CampaignController {
         def totalOpens = totalOpensReport.extract([campaignId: campaign.id])
         model.totalOpens = totalOpens.single('opens')
 
+        def openedReport = reportsHolder.getReport('opened')
+        def opened = openedReport.extract([campaignId: campaign.id])
+        model.opened = opened.single('number') ?: 0
+
+        def totalSubscribersReport = reportsHolder.getReport('totalSubscribers')
+        def totalSubscribers = totalSubscribersReport.extract([campaignId: campaign.id])
+        model.totalSubscribers = totalSubscribers.single('number') ?: 0
+
+        model.notOpened = model.totalSubscribers - model.opened
+
         def period = ReportUtil.bestPeriod(campaign.startDate)
         model.period = period
 

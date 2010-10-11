@@ -32,6 +32,8 @@ class ReportsHolderTests extends GrailsUnitTestCase {
         reportsFactoryControl.demand.totalOpensReport { -> return new Report(name: 'totalOpens') }
         reportsFactoryControl.demand.clicksByDateReport { -> return new Report(name: 'clicksByDate') }
         reportsFactoryControl.demand.opensByDateReport { -> return new Report(name: 'opensByDate') }
+        reportsFactoryControl.demand.totalSubscribersReport { -> return new Report(name: 'totalSubscribers') }
+        reportsFactoryControl.demand.openedReport { -> return new Report(name: 'opened') }
 
         holder.reportsFactory = reportsFactoryControl.createMock()
 
@@ -43,6 +45,8 @@ class ReportsHolderTests extends GrailsUnitTestCase {
         assertNotNull holder.getReport('totalOpens')
         assertNotNull holder.getReport('clicksByDate')
         assertNotNull holder.getReport('opensByDate')
+        assertNotNull holder.getReport('totalSubscribers')
+        assertNotNull holder.getReport('opened')
     }
 
 }

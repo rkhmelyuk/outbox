@@ -49,7 +49,7 @@
         <![CDATA[
             select (date_trunc(''{0}'', date)) as PeriodDate, count(TrackingInfoId) as Opens
             from TrackingInfo
-            where CampaignId = :campaignId and Click = false and Open = true
+            where CampaignId = :campaignId and Open = true
                 and date >= :startDate and date <= :endDate
             group by PeriodDate
             order by PeriodDate
@@ -66,9 +66,33 @@
         <![CDATA[
             select count(TrackingInfoId) as Opens
             from TrackingInfo
-            where CampaignId = :campaignId and Click = false and Open = true
+            where CampaignId = :campaignId and Open = true
                 and date >= :startDate and date <= :endDate
         ]]>
+    </sql-query>
+
+    <sql-query name="Report.opened">
+        <query-param name="campaignId" type="long"/>
+        <query-param name="startDate" type="timestamp"/>
+        <query-param name="endDate" type="timestamp"/>
+
+        <return-scalar column="Number" type="int"/>
+
+        <![CDATA[
+            select count(distinct(SubscriberId)) as Number
+            from TrackingInfo
+            where CampaignId = :campaignId and Open = true
+                and date >= :startDate and date <= :endDate
+        ]]>
+    </sql-query>
+
+    <sql-query name="Report.totalSubscribers">
+        <query-param name="campaignId" type="long"/>
+        <return-scalar column="Number" type="int"/>
+
+        select count(distinct(SubscriberId)) as Number
+        from CampaignMessage
+        where CampaignId = :campaignId
     </sql-query>
 
 </hibernate-mapping>

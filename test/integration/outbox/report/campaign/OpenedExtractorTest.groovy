@@ -1,7 +1,6 @@
 package outbox.report.campaign
 
 import grails.test.GrailsUnitTestCase
-import org.hibernate.SessionFactory
 import outbox.report.extractor.ReportExtractor
 import outbox.report.metadata.ParameterType
 import outbox.tracking.TrackingInfo
@@ -9,22 +8,22 @@ import outbox.tracking.TrackingInfo
 /**
  * @author Ruslan Khmelyuk
  */
-class OpensByDateExtractorTests extends GrailsUnitTestCase {
+class OpenedExtractorTest extends GrailsUnitTestCase {
 
+    def sessionFactory
     ReportExtractor extractor
-    SessionFactory sessionFactory
 
     @Override protected void setUp() {
         super.setUp()
 
-        extractor = new OpensByDateExtractor()
+        extractor = new OpenedExtractor()
         extractor.sessionFactory = sessionFactory
     }
 
     void testParameters() {
         def params = extractor.parameters
 
-        assertEquals 4, params.size()
+        assertEquals 3, params.size()
 
         def campaign = params.find { it.name == 'campaignId' }
         assertNotNull campaign
@@ -40,52 +39,30 @@ class OpensByDateExtractorTests extends GrailsUnitTestCase {
         assertNotNull endDate
         assertEquals ParameterType.Date, endDate.type
         assertFalse endDate.required
-
-        def period = params.find { it.name == 'period'}
-        assertNotNull period
-        assertEquals ParameterType.Period, period.type
-        assertFalse period.required
     }
 
     void testWithData() {
-        createTrackingInfo(new Date() - 1, false, true)
-        createTrackingInfo(new Date() - 2, false, true)
-        createTrackingInfo(new Date() - 1, false, true)
-        createTrackingInfo(new Date() - 1, false, true)
-        createTrackingInfo(new Date() - 2, false, true)
-        createTrackingInfo(new Date() - 2, false, false)
+        createTrackingInfo(new Date() - 1, false, true, 1)
+        createTrackingInfo(new Date() - 2, false, true, 2)
+        createTrackingInfo(new Date() - 1, false, true, 1)
+        createTrackingInfo(new Date() - 1, false, true, 3)
+        createTrackingInfo(new Date() - 1, false, false, 3)
 
-        assertEquals 6, TrackingInfo.count()
+        assertEquals 5, TrackingInfo.count()
 
         def result = extractor.extract([campaignId: 1])
-        def set = result.dataSet('opens')
-        assertEquals 2, set.data.size()
-
-        def date = new Date()
-        date.seconds = 0
-        date.minutes = 0
-        date.hours = 0
-
-        set.list().each {
-            if (it.date == date - 1) {
-                assertEquals 3, it.opens
-            }
-            else if (it.date == date - 2) {
-                assertEquals 2, it.opens
-            }
-        }
+        assertEquals 3, result.single('number')
     }
 
     void testWithoutData() {
         def result = extractor.extract([campaignId: 1])
-        def set = result.dataSet('opens')
-        assertEquals 0, set.size()
+        assertEquals 0, result.single('number')
     }
 
-    void createTrackingInfo(Date date, boolean click, boolean open) {
+    void createTrackingInfo(Date date, boolean click, boolean open, id) {
         def trackingInfo = new TrackingInfo()
         trackingInfo.campaignId = 1
-        trackingInfo.subscriberId = 'abcdef0192'
+        trackingInfo.subscriberId = 'abcdef0192' + id
         trackingInfo.datetime = date
         trackingInfo.trackingReferenceId = 'bcasd123123'
         trackingInfo.click = click
@@ -93,5 +70,4 @@ class OpensByDateExtractorTests extends GrailsUnitTestCase {
 
         assertNotNull trackingInfo.save(flush: true)
     }
-
 }

@@ -18,7 +18,7 @@ class ReportUtil {
     static Period bestPeriod(Date start, Date end = null) {
         end = end ?: new Date()
 
-        int days = end.minus(start)
+        int days = end - start
         if (days <= 1) { // up to 1 day
             return Period.Hour
         }

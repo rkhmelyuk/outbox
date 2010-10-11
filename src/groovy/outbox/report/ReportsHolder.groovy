@@ -13,6 +13,8 @@ class ReportsHolder {
         register(reportsFactory.clicksByDateReport())
         register(reportsFactory.totalOpensReport())
         register(reportsFactory.totalClicksReport())
+        register(reportsFactory.totalSubscribersReport())
+        register(reportsFactory.openedReport())
     }
 
     synchronized void register(Report report) {

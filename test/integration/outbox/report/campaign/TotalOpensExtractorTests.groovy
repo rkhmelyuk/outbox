@@ -47,9 +47,8 @@ class TotalOpensExtractorTests extends GrailsUnitTestCase {
         createTrackingInfo(new Date() - 1, false, true)
         createTrackingInfo(new Date() - 1, false, true)
         createTrackingInfo(new Date() - 1, false, false)
-        createTrackingInfo(new Date(), true, true)
 
-        assertEquals 6, TrackingInfo.count()
+        assertEquals 5, TrackingInfo.count()
 
         def result = extractor.extract([campaignId: 1])
         assertEquals 4, result.single('opens')

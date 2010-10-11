@@ -1,11 +1,8 @@
 package outbox.report
 
 import org.hibernate.SessionFactory
-import outbox.report.campaign.ClicksByDateExtractor
-import outbox.report.campaign.OpensByDateExtractor
-import outbox.report.campaign.TotalClicksExtractor
-import outbox.report.campaign.TotalOpensExtractor
 import outbox.report.extractor.DefaultReportExtractorWrapper
+import outbox.report.campaign.*
 
 /**
  * @author Ruslan Khmelyuk
@@ -36,6 +33,18 @@ class ReportsFactory {
         def extractor = new OpensByDateExtractor(sessionFactory: sessionFactory)
         extractor = new DefaultReportExtractorWrapper(extractor, [period: Period.Day])
         new Report(name: 'opensByDate', extractor: extractor)
+    }
+
+    Report openedReport() {
+        def extractor = new OpenedExtractor(sessionFactory: sessionFactory)
+        extractor = new DefaultReportExtractorWrapper(extractor)
+        new Report(name: 'opened', extractor: extractor)
+    }
+
+    Report totalSubscribersReport() {
+        def extractor = new TotalSubscribersExtractor(sessionFactory: sessionFactory)
+        extractor = new DefaultReportExtractorWrapper(extractor)
+        new Report(name: 'totalSubscribers', extractor: extractor)
     }
 
 }

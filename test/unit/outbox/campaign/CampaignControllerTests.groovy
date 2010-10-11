@@ -682,18 +682,20 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         controller.campaignService = campaignServiceControl.createMock()
 
         def reportControl = mockFor(Report)
-        reportControl.demand.extract(4..4) { context ->
+        reportControl.demand.extract(6..6) { context ->
             assertEquals campaign.id, context.campaignId
             def result = new ReportResult()
             result.addSingle 'clicks', 10
             result.addSingle 'opens', 20
+            result.addSingle 'number', 10
             return result
         }
         def report = reportControl.createMock()
         def reportsHolderControl = mockFor(ReportsHolder)
-        reportsHolderControl.demand.getReport(4..4) { name ->
+        reportsHolderControl.demand.getReport(6..6) { name ->
             if (name == 'totalClicks' || name == 'totalOpens' ||
-                    name == 'clicksByDate' || name == 'opensByDate') {
+                    name == 'clicksByDate' || name == 'opensByDate' ||
+                    name == 'totalSubscribers' || name == 'opened') {
                 return report
             }
             fail "Unexpected report name: $name"
@@ -714,6 +716,9 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         assertEquals 'reports', result.page
         assertEquals 10, result.totalClicks
         assertEquals 20, result.totalOpens
+        assertEquals 10, result.opened
+        assertEquals 10, result.totalSubscribers
+        assertEquals 0, result.notOpened
     }
 
     void testShow_Reports2() {
@@ -736,9 +741,9 @@ class CampaignControllerTests extends ControllerUnitTestCase {
 
         def reportControl = mockFor(Report)
         int index = 0
-        reportControl.demand.extract(4..4) { context ->
+        reportControl.demand.extract(6..6) { context ->
             assertEquals campaign.id, context.campaignId
-            if (index > 1) {
+            if (index > 3) {
                 assertEquals Period.Hour, context.period
             }
             index++
@@ -750,9 +755,10 @@ class CampaignControllerTests extends ControllerUnitTestCase {
         }
         def report = reportControl.createMock()
         def reportsHolderControl = mockFor(ReportsHolder)
-        reportsHolderControl.demand.getReport(4..4) { name ->
+        reportsHolderControl.demand.getReport(6..6) { name ->
             if (name == 'totalClicks' || name == 'totalOpens' ||
-                    name == 'clicksByDate' || name == 'opensByDate') {
+                    name == 'clicksByDate' || name == 'opensByDate' ||
+                    name == 'totalSubscribers' || name == 'opened') {
                 return report
             }
             fail "Unexpected report name: $name"
