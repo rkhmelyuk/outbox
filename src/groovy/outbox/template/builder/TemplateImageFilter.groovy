@@ -20,8 +20,10 @@ class TemplateImageFilter implements TemplateFilter {
         def matcher = (body =~ reference)
 
         def trackingReferences = [:]
+        def positions = [:]
         while (matcher.find()) {
             def resource = matcher.group(2)
+            def position = matcher.start(2)
             if (resource) {
                 def trackingRef = trackingReferences[resource]
                 if (!trackingRef) {
@@ -35,14 +37,29 @@ class TemplateImageFilter implements TemplateFilter {
                     trackingRef.generateId()
                     trackingReferences[resource] = trackingRef
                 }
+                def positionList = positions[resource]
+                if (!positionList) {
+                    positionList = []
+                    positions[resource] = positionList
+                }
+                positionList << position
             }
         }
 
-        trackingReferences.each { String key, TrackingReference value ->
-            body = body.replace(key, trackingLinkBuilder.trackingLink(value))
+        def builder = new StringBuilder(body)
+        int delta = 0
+        trackingReferences.each { String resource, TrackingReference value ->
+            def resourcePositions = positions[resource]
+            def resourceLength = resource.length()
+            resourcePositions?.each { start ->
+                def trackingLink = trackingLinkBuilder.trackingLink(value)
+                start += delta
+                builder.replace(start, start + resourceLength, trackingLink)
+                delta += trackingLink.length() - resourceLength
+            }
         }
 
-        context.template = body
+        context.template = builder.toString()
         context.trackingReferences += trackingReferences.values()
     }
 

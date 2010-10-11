@@ -53,7 +53,7 @@ class TemplateLinkFilter implements TemplateFilter {
                 def trackingLink = trackingLinkBuilder.trackingLink(value)
                 start += delta
                 builder.replace(start, start + resourceLength, trackingLink)
-                delta += trackingLink.length() - resource.length()
+                delta += trackingLink.length() - resourceLength
             }
         }
 
