@@ -1,9 +1,6 @@
 package outbox.report
 
-import outbox.report.campaign.ClicksByDateExtractor
-import outbox.report.campaign.OpensByDateExtractor
-import outbox.report.campaign.TotalClicksExtractor
-import outbox.report.campaign.TotalOpensExtractor
+import outbox.report.extractor.DefaultReportExtractorWrapper
 
 /**
  * @author Ruslan Khmelyuk
@@ -20,24 +17,24 @@ class ReportsFactoryTests extends GroovyTestCase {
     void testTotalClicksReport() {
         def report = factory.totalClicksReport()
         assertEquals 'totalClicks', report.name
-        assertTrue report.extractor instanceof TotalClicksExtractor
+        assertTrue report.extractor instanceof DefaultReportExtractorWrapper
     }
 
     void testTotalOpensReport() {
         def report = factory.totalOpensReport()
         assertEquals 'totalOpens', report.name
-        assertTrue report.extractor instanceof TotalOpensExtractor
+        assertTrue report.extractor instanceof DefaultReportExtractorWrapper
     }
 
     void testClicksByDateReport() {
         def report = factory.clicksByDateReport()
         assertEquals 'clicksByDate', report.name
-        assertTrue report.extractor instanceof ClicksByDateExtractor
+        assertTrue report.extractor instanceof DefaultReportExtractorWrapper
     }
 
     void testOpensByDateReport() {
         def report = factory.opensByDateReport()
         assertEquals 'opensByDate', report.name
-        assertTrue report.extractor instanceof OpensByDateExtractor
+        assertTrue report.extractor instanceof DefaultReportExtractorWrapper
     }
 }
