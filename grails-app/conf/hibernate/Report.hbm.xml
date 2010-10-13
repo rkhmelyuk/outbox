@@ -7,8 +7,8 @@
 
     <sql-query name="Report.clicksByDate">
         <query-param name="campaignId" type="long"/>
-        <query-param name="startDate" type="timestamp"/>
-        <query-param name="endDate" type="timestamp"/>
+        <query-param name="startDate" type="date"/>
+        <query-param name="endDate" type="date"/>
 
         <return-scalar column="PeriodDate" type="date"/>
         <return-scalar column="Clicks" type="int"/>
@@ -25,8 +25,8 @@
 
     <sql-query name="Report.totalClicks">
         <query-param name="campaignId" type="long"/>
-        <query-param name="startDate" type="timestamp"/>
-        <query-param name="endDate" type="timestamp"/>
+        <query-param name="startDate" type="date"/>
+        <query-param name="endDate" type="date"/>
 
         <return-scalar column="Clicks" type="int"/>
 
@@ -40,8 +40,8 @@
 
     <sql-query name="Report.opensByDate">
         <query-param name="campaignId" type="long"/>
-        <query-param name="startDate" type="timestamp"/>
-        <query-param name="endDate" type="timestamp"/>
+        <query-param name="startDate" type="date"/>
+        <query-param name="endDate" type="date"/>
 
         <return-scalar column="PeriodDate" type="date"/>
         <return-scalar column="Opens" type="int"/>
@@ -58,8 +58,8 @@
 
     <sql-query name="Report.totalOpens">
         <query-param name="campaignId" type="long"/>
-        <query-param name="startDate" type="timestamp"/>
-        <query-param name="endDate" type="timestamp"/>
+        <query-param name="startDate" type="date"/>
+        <query-param name="endDate" type="date"/>
 
         <return-scalar column="Opens" type="int"/>
 
@@ -73,8 +73,8 @@
 
     <sql-query name="Report.opened">
         <query-param name="campaignId" type="long"/>
-        <query-param name="startDate" type="timestamp"/>
-        <query-param name="endDate" type="timestamp"/>
+        <query-param name="startDate" type="date"/>
+        <query-param name="endDate" type="date"/>
 
         <return-scalar column="Number" type="int"/>
 

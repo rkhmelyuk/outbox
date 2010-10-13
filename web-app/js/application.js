@@ -659,6 +659,10 @@ var App = {
                 }
             });
         });
+    },
+
+    campaignReports: function() {
+
     }
 };
 

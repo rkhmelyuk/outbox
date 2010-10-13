@@ -6,16 +6,23 @@
         <g:javascript library="jquery.form" />
         <g:javascript library="jquery.validate" />
 
+        <g:if test="${page == 'reports'}">
+            <g:javascript library="highcharts.src" />
+            <g:javascript library="report" />
+        </g:if>
+
         <script type="text/javascript">
             $(document).ready(function() {
                 App.campaignShow();
                 <g:if test="${page == 'details'}">
-                    App.campaignEdit() ;
+                    App.campaignEdit();
                 </g:if>
-                <g:elseif test="${page == 'reports'}"/>
-                <g:if test="${page == 'subscribers'}">
+                <g:elseif test="${page == 'reports'}">
+                    App.campaignReports();
+                </g:elseif>
+                <g:elseif test="${page == 'subscribers'}">
                     App.campaignSubscribers();
-                </g:if>
+                </g:elseif>
                 <g:elseif test="${page == 'template'}">
                     App.campaignTemplate();
                 </g:elseif>

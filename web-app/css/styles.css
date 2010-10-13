@@ -199,3 +199,72 @@ a:hover {
 #pageWrapper.campaignShow #notifications .note.need {
     font-weight: bold;
 }
+
+.openedNotOpenedChart {
+    float: left;
+}
+
+.openedNotOpened {
+    float: left;
+    padding-right: 40px;
+}
+.openedNotOpened .item {
+    padding: 5px 0;
+}
+
+.openedNotOpened .item .title {
+    font-weight: bold;
+    font-size: 20px;
+    width: 140px;
+    float: left;
+    text-shadow: 1px 1px #dfdfdf;
+}
+
+.openedNotOpened .item .value {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 24px;
+    padding: 0 10px 0 0;
+    text-shadow: 1px 1px #dfdfdf;
+}
+
+.openedNotOpened .item .percent {
+    font-weight: normal;
+    font-style: italic;
+    color: #888888;
+    font-size: 16px;
+    text-shadow: 1px 1px #dfdfdf;
+}
+
+.opensRectangle {
+    width: 10px;
+    height: 10px;
+    background-color: #0077CC;
+    float: left;
+    margin: 6px;
+
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.notOpenedRectangle {
+    width: 10px;
+    height: 10px;
+    background-color: #666666;
+    float: left;
+    margin: 6px;
+
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.clicksRectangle {
+    width: 10px;
+    height: 10px;
+    background-color: #259E01;
+    float: left;
+    margin: 6px;
+
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}

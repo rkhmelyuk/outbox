@@ -1,6 +1,7 @@
 package outbox.template
 
 import grails.converters.JSON
+import grails.plugins.springsecurity.Secured
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
 import outbox.member.Member
@@ -8,6 +9,7 @@ import outbox.member.Member
 /**
  * @author Ruslan Khmelyuk
  */
+@Secured(['ROLE_CLIENT'])
 class TemplateController {
 
     private static final int ITEMS_PER_PAGE = 9

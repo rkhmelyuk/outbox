@@ -1,6 +1,7 @@
 package outbox.campaign
 
 import grails.converters.JSON
+import grails.plugins.springsecurity.Secured
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
 import outbox.member.Member
@@ -12,6 +13,7 @@ import outbox.template.TemplateService
 /**
  * @author Ruslan Khmelyuk
  */
+@Secured(['ROLE_CLIENT'])
 class CampaignController {
 
     def defaultAction = ''

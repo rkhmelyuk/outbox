@@ -16,6 +16,7 @@ class ReportUtil {
      * @return the best fit period
      */
     static Period bestPeriod(Date start, Date end = null) {
+        start = start ?: new Date()
         end = end ?: new Date()
 
         int days = end - start
@@ -35,4 +36,5 @@ class ReportUtil {
             return Period.Year
         }
     }
+
 }
