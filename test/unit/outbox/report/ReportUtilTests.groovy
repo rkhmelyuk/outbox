@@ -8,6 +8,7 @@ class ReportUtilTests extends GroovyTestCase {
     void testBestPeriod() {
         def date = new Date()
 
+        assertEquals Period.Hour, ReportUtil.bestPeriod(null, null)
         assertEquals Period.Hour, ReportUtil.bestPeriod(date - 1, date)
         assertEquals Period.Hour, ReportUtil.bestPeriod(date - 1, null)
         assertEquals Period.Day, ReportUtil.bestPeriod(date - 5, date)

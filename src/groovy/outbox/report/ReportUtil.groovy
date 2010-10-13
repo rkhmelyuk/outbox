@@ -9,9 +9,10 @@ class ReportUtil {
      * Gets the best period to show results before two dates,
      * for example, between campaign start date and today.
      * <br/>
+     * If start date is null, then current date will be used.
      * If end date is null, then current date will be used.
      *
-     * @param start the start date, can't be null.
+     * @param start the start date.
      * @param end the end date.
      * @return the best fit period
      */
