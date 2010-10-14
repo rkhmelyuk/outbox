@@ -236,6 +236,20 @@ a:hover {
     text-shadow: 1px 1px #dfdfdf;
 }
 
+.opens-clicks-legend {
+    float: right;
+    font-size: 12px;
+}
+
+.opens-clicks-legend .item {
+    float: left;
+    margin: 0 10px 0 5px;
+}
+
+.opens-clicks-legend .item .title {
+    float: left;
+}
+
 .opensRectangle {
     width: 10px;
     height: 10px;
@@ -267,4 +281,26 @@ a:hover {
 
     -moz-border-radius: 3px;
     border-radius: 3px;
+}
+
+.clicksRectangleSmall {
+    width: 8px;
+    height: 8px;
+    background-color: #259E01;
+    float: left;
+    margin: 3px 5px;
+
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.opensRectangleSmall {
+    width: 8px;
+    height: 8px;
+    background-color: #0077CC;
+    float: left;
+    margin: 3px 5px;
+
+    -moz-border-radius: 2px;
+    border-radius: 2px;
 }

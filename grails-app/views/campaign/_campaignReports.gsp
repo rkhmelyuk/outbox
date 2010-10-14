@@ -5,10 +5,23 @@
     });
 </script>
 
-<div id="opens-clicks" style="width: 800px; height: 200px"></div>
+<div id="opens-clicks-report" style="width: 800px;">
+    <div class="opens-clicks-legend">
+        <div class="item" title="<g:message code="opens.title"/>">
+            <div class="opensRectangleSmall"></div>
+            <div class="title"><g:message code="opens"/></div>
+        </div>
+        <div class="item" title="<g:message code="clicks.title"/>">
+            <div class="clicksRectangleSmall"></div>
+            <div class="title"><g:message code="clicks"/></div>
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+    <div id="opens-clicks" style="width: 800px; height: 180px"></div>
+</div>
 <div style="clear: both;"></div>
 
-<div>
+<div style="padding-top: 25px;">
     <div class="openedNotOpenedChart">
         <div id="opened-notOpened" style="width: 200px; height: 200px"></div>
     </div>

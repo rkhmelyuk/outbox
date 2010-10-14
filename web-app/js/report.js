@@ -34,7 +34,7 @@ var Report = {
         new Highcharts.Chart({
             chart: {
                 renderTo: container,
-                margin: [10, 10, 60, 30],
+                margin: [10, 10, 25, 30],
                 defaultSeriesType: 'line',
                 alignTicks: false
             },
@@ -92,6 +92,9 @@ var Report = {
                     width: 1,
                     color: '#808080'
                 }]
+            },
+            legend: {
+                enabled: false
             },
             symbols: ['circle', 'circle'],
             series: data
