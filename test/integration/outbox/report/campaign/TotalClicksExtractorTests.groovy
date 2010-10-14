@@ -54,6 +54,20 @@ class TotalClicksExtractorTests extends GrailsUnitTestCase {
         assertEquals 4, result.single('clicks')
     }
 
+    void testWithDataAndDateRange() {
+        def date = new Date()
+        createTrackingInfo(date - 5, true)
+        createTrackingInfo(date - 4, true)
+        createTrackingInfo(date - 3, true)
+        createTrackingInfo(date - 2, true)
+        createTrackingInfo(date - 1, false)
+
+        assertEquals 5, TrackingInfo.count()
+
+        def result = extractor.extract([campaignId: 1, startDate: date - 3, endDate: null])
+        assertEquals 2, result.single('clicks')
+    }
+
     void testWithoutData() {
         def result = extractor.extract([campaignId: 1])
         assertEquals 0, result.single('clicks')

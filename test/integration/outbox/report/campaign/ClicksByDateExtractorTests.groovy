@@ -75,6 +75,25 @@ class ClicksByDateExtractorTests extends GrailsUnitTestCase {
         }
     }
 
+    void testWithDataAndDateCondition() {
+        def date = new Date()
+        createTrackingInfo(date - 6, true)
+        createTrackingInfo(date - 5, true)
+        createTrackingInfo(date - 4, true)
+        createTrackingInfo(date - 3, true)
+        createTrackingInfo(date - 2, true)
+        createTrackingInfo(date - 1, true)
+        createTrackingInfo(date, false)
+
+        assertEquals 7, TrackingInfo.count()
+
+        def result = extractor.extract([campaignId: 1,
+                startDate: date - 4, endDate: date - 2])
+
+        def set = result.dataSet('clicks')
+        assertEquals 3, set.data.size()
+    }
+
     void testWithoutData() {
         def result = extractor.extract([campaignId: 1])
         def set = result.dataSet('clicks')

@@ -76,6 +76,23 @@ class OpensByDateExtractorTests extends GrailsUnitTestCase {
         }
     }
 
+    void testWithDataAndDateCondition() {
+        def date = new Date()
+
+        createTrackingInfo(date - 6, false, true)
+        createTrackingInfo(date - 5, false, true)
+        createTrackingInfo(date - 4, false, true)
+        createTrackingInfo(date - 3, false, true)
+        createTrackingInfo(date - 2, false, true)
+        createTrackingInfo(date - 1, false, false)
+
+        assertEquals 6, TrackingInfo.count()
+
+        def result = extractor.extract([campaignId: 1, startDate: date - 5, endDate: date - 2])
+        def set = result.dataSet('opens')
+        assertEquals 4, set.data.size()
+    }
+
     void testWithoutData() {
         def result = extractor.extract([campaignId: 1])
         def set = result.dataSet('opens')

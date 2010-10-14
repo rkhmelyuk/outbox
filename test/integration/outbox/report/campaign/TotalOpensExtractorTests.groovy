@@ -54,6 +54,20 @@ class TotalOpensExtractorTests extends GrailsUnitTestCase {
         assertEquals 4, result.single('opens')
     }
 
+    void testWithDataAndDateRange() {
+        def date = new Date()
+        createTrackingInfo(date - 5, false, true)
+        createTrackingInfo(date - 4, false, true)
+        createTrackingInfo(date - 3, false, true)
+        createTrackingInfo(date - 2, false, true)
+        createTrackingInfo(date - 1, false, false)
+
+        assertEquals 5, TrackingInfo.count()
+
+        def result = extractor.extract([campaignId: 1, startDate: date - 5, endDate: date - 3])
+        assertEquals 3, result.single('opens')
+    }
+
     void testWithoutData() {
         def result = extractor.extract([campaignId: 1])
         assertEquals 0, result.single('opens')
