@@ -60,7 +60,8 @@ class ReportTagLib {
             categories << date.format('dd EEE, HH:00')
         }
 
-        def data = [[name: "${message(code: 'opens')}", data: opensNum.values() ],
+        def data = [
+                [name: "${message(code: 'opens')}", data: opensNum.values() ],
                 [name: "${message(code: 'clicks')}", data: clicksNum.values() ]]
 
         data = data as JSON
