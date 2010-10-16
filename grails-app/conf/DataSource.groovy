@@ -21,6 +21,17 @@ environments {
             dialect = 'org.hibernate.dialect.PostgreSQLDialect'
         }
     }
+    staging {
+        dataSource {
+            url = 'jdbc:postgresql://127.0.0.1:5432/outbox'
+            driverClassName = 'org.postgresql.Driver'
+            username = 'outbox'
+            password = 'outbox123'
+        }
+        hibernate {
+            dialect = 'org.hibernate.dialect.PostgreSQLDialect'
+        }
+    }
     test {
         dataSource {
             dbCreate = "create-drop"
