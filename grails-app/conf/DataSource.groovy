@@ -23,10 +23,10 @@ environments {
     }
     staging {
         dataSource {
-            url = 'jdbc:postgresql://127.0.0.1:5432/outbox'
+            url = 'jdbc:postgresql://127.0.0.1:5432/outboxstg'
             driverClassName = 'org.postgresql.Driver'
             username = 'outbox'
-            password = 'outbox123'
+            password = '84znOsrIo'
         }
         hibernate {
             dialect = 'org.hibernate.dialect.PostgreSQLDialect'
