@@ -60,7 +60,7 @@ beans = {
         templateFilterChain = ref('templateFilterChain')
     }
 
-    lookupService(com.maxmind.geoip.LookupService, '/usr/share/GeoIP/GeoIP.dat')
+    lookupService(com.maxmind.geoip.LookupService, '/usr/local/share/GeoIP/GeoLiteCity.dat')
 
     maxMindLookupService(outbox.tracking.geolocation.MaxMindLookupService) {
         lookupService = ref('lookupService')
