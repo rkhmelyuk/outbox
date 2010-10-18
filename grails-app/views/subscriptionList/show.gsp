@@ -24,35 +24,39 @@
         <g:link controller="subscriptionList" action="edit" id="${subscriptionList.id}"><g:message code="edit.details"/></g:link>
         <g:if test="${canDelete}">
             <a href="javascript:void(0)" id="deleteSubscriptionList"><g:message code="subscriptionList.delete"/></a>
+        </g:if>
+        <g:if test="${subscriptionList.archived}">
+            <a href="javascript:void(0)" id="restoreSubscriptionList"><g:message code="subscriptionList.restore"/></a>
+        </g:if>
+        <g:elseif test="${!subscriptionList.archived}">
+            <a href="javascript:void(0)" id="archiveSubscriptionList"><g:message code="subscriptionList.archive"/></a>
+        </g:elseif>
 
-            <div id="removeNotion">
+        <g:if test="${canDelete}">
+            <div id="removeNotion" class="notion">
                 <h3><g:message code="notion"/></h3>
                 <g:message code="subscriptionList.delete.notion.message"/>
                 <br/>
                 <g:link controller="subscriptionList" action="delete" id="${subscriptionList.id}"><g:message code="delete.confirm"/></g:link>
-                <a href="javascript:void(0);" id="discard"><g:message code="delete.discard"/></a>
+                <a href="javascript:void(0);" class="discard"><g:message code="delete.discard"/></a>
             </div>
         </g:if>
-        <g:elseif test="${!subscriptionList.archived}">
-            <a href="javascript:void(0)" id="archiveSubscriptionList"><g:message code="subscriptionList.archive"/></a>
-
-            <div id="removeNotion">
-                <h3><g:message code="notion"/></h3>
-                <g:message code="subscriptionList.archive.notion.message"/>
-                <br/>
-                <g:link controller="subscriptionList" action="archive" id="${subscriptionList.id}"><g:message code="archive.confirm"/></g:link>
-                <a href="javascript:void(0);" id="discard"><g:message code="cancel"/></a>
-            </div>
-        </g:elseif>
-        <g:elseif test="${subscriptionList.archived}">
-            <a href="javascript:void(0)" id="restoreSubscriptionList"><g:message code="subscriptionList.restore"/></a>
-
-            <div id="removeNotion">
+        <g:if test="${subscriptionList.archived}">
+            <div id="restoreNotion" class="notion">
                 <h3><g:message code="notion"/></h3>
                 <g:message code="subscriptionList.restore.notion.message"/>
                 <br/>
                 <g:link controller="subscriptionList" action="restore" id="${subscriptionList.id}"><g:message code="restore.confirm"/></g:link>
-                <a href="javascript:void(0);" id="discard"><g:message code="cancel"/></a>
+                <a href="javascript:void(0);" class="discard"><g:message code="cancel"/></a>
+            </div>
+        </g:if>
+        <g:elseif test="${!subscriptionList.archived}">
+            <div id="archiveNotion" class="notion">
+                <h3><g:message code="notion"/></h3>
+                <g:message code="subscriptionList.archive.notion.message"/>
+                <br/>
+                <g:link controller="subscriptionList" action="archive" id="${subscriptionList.id}"><g:message code="archive.confirm"/></g:link>
+                <a href="javascript:void(0);" class="discard"><g:message code="cancel"/></a>
             </div>
         </g:elseif>
 

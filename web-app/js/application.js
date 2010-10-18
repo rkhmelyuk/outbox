@@ -416,11 +416,20 @@ var App = {
     },
 
     subscriptionListShow: function() {
-        $('#deleteSubscriptionList, #archiveSubscriptionList, #restoreSubscriptionList').click(function() {
+        $('#deleteSubscriptionList').click(function() {
+            $('.notion').slideUp();
             $('#removeNotion').slideDown();
         });
-        $('#discard').click(function() {
-            $('#removeNotion').slideUp();
+        $('#archiveSubscriptionList').click(function() {
+            $('.notion').slideUp();
+            $('#archiveNotion').slideDown();
+        });
+        $('#restoreSubscriptionList').click(function() {
+            $('.notion').slideUp();
+            $('#restoreNotion').slideDown();
+        });
+        $('.discard').click(function() {
+            $('.notion').slideUp();
         });
     },
 
