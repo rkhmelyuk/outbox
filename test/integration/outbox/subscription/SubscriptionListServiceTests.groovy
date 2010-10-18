@@ -51,6 +51,25 @@ class SubscriptionListServiceTests extends GroovyTestCase {
         assertNull subscriptionList2.id
     }
 
+    void testArchiveSubscriptionList() {
+        def subscriptionList = createTestSubscriptionList()
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList)
+        assertTrue subscriptionListService.archiveSubscriptionList(subscriptionList)
+
+        def found = subscriptionListService.getSubscriptionList(subscriptionList.id)
+        assertTrue found.archived
+    }
+
+    void testRestoreSubscriptionList() {
+        def subscriptionList = createTestSubscriptionList()
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList)
+        assertTrue subscriptionListService.archiveSubscriptionList(subscriptionList)
+        assertTrue subscriptionListService.restoreSubscriptionList(subscriptionList)
+
+        def found = subscriptionListService.getSubscriptionList(subscriptionList.id)
+        assertFalse found.archived
+    }
+
     void testGetSubscriptionList() {
         def subscriptionList1 = createTestSubscriptionList()
         def subscriptionList2 = createTestSubscriptionList()
@@ -64,6 +83,26 @@ class SubscriptionListServiceTests extends GroovyTestCase {
 
         assertEquals subscriptionList1, found1
         assertEquals subscriptionList2, found2
+    }
+
+    void testGetMemberSubscriptionList() {
+        def subscriptionList1 = createTestSubscriptionList()
+        def subscriptionList2 = createTestSubscriptionList()
+        subscriptionList2.name = 'Other name'
+
+        subscriptionList1.archived = false
+        subscriptionList2.archived = true
+
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList1)
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList2)
+
+        def active = subscriptionListService.getMemberSubscriptionLists(member)
+        def archived = subscriptionListService.getArchivedMemberSubscriptionLists(member)
+
+        assertEquals 1, active.size()
+        assertEquals 1, archived.size()
+        assertTrue active.contains(subscriptionList1)
+        assertTrue archived.contains(subscriptionList2)
     }
 
     void testDeleteSubscriptionList_Empty() {

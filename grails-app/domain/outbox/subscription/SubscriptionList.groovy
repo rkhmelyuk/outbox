@@ -12,12 +12,14 @@ import outbox.member.Member
 class SubscriptionList {
 
     Long id
+    Member owner
+
     String name
     String description
     Integer subscribersNumber
-    Date dateCreated
+    boolean archived
 
-    Member owner
+    Date dateCreated
 
     static mapping = {
         table 'SubscriptionList'
@@ -27,6 +29,7 @@ class SubscriptionList {
             description column: 'Description'
             subscribersNumber column: 'SubscribersNumber'
             owner column: 'MemberId'
+            archived column: 'Archived'
             dateCreated column: 'CreateDate'
         }
         version false

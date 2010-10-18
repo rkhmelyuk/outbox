@@ -12,7 +12,7 @@ import outbox.subscriber.SubscriberService
 
 /**
  * {@link SubscriptionListController} tests.
- * 
+ *
  * @author Ruslan Khmelyuk
  */
 class SubscriptionListControllerTests extends ControllerUnitTestCase {
@@ -30,13 +30,13 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscribersWithoutSubscriptionCount {
-            assertEquals member.id, it.id    
+            assertEquals member.id, it.id
             return 5
         }
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def subscriptionListServiceControl = mockFor(SubscriptionListService)
-        subscriptionListServiceControl.demand.getMemberSubscriptionList {
+        subscriptionListServiceControl.demand.getMemberSubscriptionLists {
             assertEquals member.id, it.id;
             return subscriptionLists
         }
@@ -49,10 +49,38 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         def result = controller.list()
-        
+
         assertNotNull result
         assertEquals subscriptionLists, result.subscriptionLists
         assertEquals 5, result.freeSubscribersCount
+    }
+
+    void testArchived() {
+        def member = new Member(id: 10)
+        def subscriptionLists = null
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getArchivedMemberSubscriptionLists {
+            assertEquals member, it;
+            return subscriptionLists
+        }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        def result = controller.archived()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertNotNull result
+        assertEquals subscriptionLists, result.subscriptionLists
     }
 
     void testFreeSubscribers() {
@@ -95,7 +123,7 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         subscriptionListServiceControl.demand.saveSubscriptionList {
             assertEquals 'Subscription List Name', it.name
             assertEquals 'Subscription List Description', it.description
-            return true 
+            return true
         }
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
@@ -149,7 +177,7 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
     void testEdit() {
         def member = new Member(id: 1)
-        
+
         def subscriptionListServiceControl = mockFor(SubscriptionListService)
         subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member) }
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
@@ -474,6 +502,187 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
         controller.params.id = 1
         controller.delete()
+
+        subscriptionListServiceControl.verify()
+
+        assertEquals 'subscriptionList', controller.redirectArgs.controller
+        assertEquals '', controller.redirectArgs.action
+    }
+
+    void testArchive_Success() {
+        def member = new Member(id: 1)
+
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            assertEquals 1, id
+            return new SubscriptionList(id: id, owner: member) }
+        subscriptionListServiceControl.demand.archiveSubscriptionList { it ->
+            assertEquals 1, it.id
+            return true }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.archive()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals 'show', controller.redirectArgs.action
+        assertEquals 1, controller.redirectArgs.id
+    }
+
+    void testArchive_Failed() {
+        def member = new Member(id: 1)
+
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member) }
+        subscriptionListServiceControl.demand.archiveSubscriptionList { it -> return false }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.archive()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals 'show', controller.redirectArgs.action
+        assertEquals 1, controller.redirectArgs.id
+    }
+
+    void testArchive_Denied() {
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            return new SubscriptionList(id: id, owner: new Member(id: 2))
+        }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [],  new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.archive()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals 'subscriptionList', controller.redirectArgs.controller
+        assertEquals '', controller.redirectArgs.action
+    }
+
+    void testArchive_NotFound() {
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> return null }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.archive()
+
+        subscriptionListServiceControl.verify()
+
+        assertEquals 'subscriptionList', controller.redirectArgs.controller
+        assertEquals '', controller.redirectArgs.action
+    }
+
+
+    // -------------------------------------
+
+    void testRestore_Success() {
+        def member = new Member(id: 1)
+
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            assertEquals 1, id
+            return new SubscriptionList(id: id, owner: member) }
+        subscriptionListServiceControl.demand.restoreSubscriptionList { it ->
+            assertEquals 1, it.id
+            return true }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.restore()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals 'show', controller.redirectArgs.action
+        assertEquals 1, controller.redirectArgs.id
+    }
+
+    void testRestore_Failed() {
+        def member = new Member(id: 1)
+
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member) }
+        subscriptionListServiceControl.demand.restoreSubscriptionList { it -> return false }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.restore()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals 'show', controller.redirectArgs.action
+        assertEquals 1, controller.redirectArgs.id
+    }
+
+    void testRestore_Denied() {
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            return new SubscriptionList(id: id, owner: new Member(id: 2))
+        }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [],  new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.restore()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals 'subscriptionList', controller.redirectArgs.controller
+        assertEquals '', controller.redirectArgs.action
+    }
+
+    void testRestore_NotFound() {
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> return null }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.restore()
 
         subscriptionListServiceControl.verify()
 

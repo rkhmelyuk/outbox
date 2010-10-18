@@ -26,10 +26,18 @@ class SubscriptionListController {
      */
     def list = {
         def member = Member.load(springSecurityService.principal.id)
-        def subscriptionLists = subscriptionListService.getMemberSubscriptionList(member)
+        def subscriptionLists = subscriptionListService.getMemberSubscriptionLists(member)
         int freeSubscribersCount = subscriberService.getSubscribersWithoutSubscriptionCount(member)
 
         [subscriptionLists: subscriptionLists, freeSubscribersCount: freeSubscribersCount]
+    }
+
+    /**
+     * Shows the list of Subscription Lists.
+     */
+    def archived = {
+        def member = Member.load(springSecurityService.principal.id)
+        [subscriptionLists: subscriptionListService.getArchivedMemberSubscriptionLists(member)]
     }
 
     /**
@@ -127,12 +135,32 @@ class SubscriptionListController {
     }
 
     def delete = {
-        final SubscriptionList subscriptionList = subscriptionListService.getSubscriptionList(params.long('id'))
+        def subscriptionList = subscriptionListService.getSubscriptionList(params.long('id'))
         if (subscriptionList && subscriptionList.ownedBy(springSecurityService.principal.id)) {
             if (!subscriptionListService.deleteSubscriptionList(subscriptionList)) {
                 redirect controller: 'subscriptionList', action: 'show', id: subscriptionList.id
                 return
             }
+        }
+        redirect controller: 'subscriptionList', action: ''
+    }
+
+    def archive = {
+        def subscriptionList = subscriptionListService.getSubscriptionList(params.long('id'))
+        if (subscriptionList && subscriptionList.ownedBy(springSecurityService.principal.id)) {
+            subscriptionListService.archiveSubscriptionList(subscriptionList)
+            redirect action: 'show', id: subscriptionList.id
+            return
+        }
+        redirect controller: 'subscriptionList', action: ''
+    }
+
+    def restore = {
+        def subscriptionList = subscriptionListService.getSubscriptionList(params.long('id'))
+        if (subscriptionList && subscriptionList.ownedBy(springSecurityService.principal.id)) {
+            subscriptionListService.restoreSubscriptionList(subscriptionList)
+            redirect action: 'show', id: subscriptionList.id
+            return
         }
         redirect controller: 'subscriptionList', action: ''
     }

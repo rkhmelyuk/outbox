@@ -17,6 +17,7 @@ class SubscriptionListTests extends GrailsUnitTestCase {
         list.subscribersNumber = 100
         list.owner = new Member(id: 2)
         list.dateCreated = date
+        list.archived = true
 
         assertEquals 1, list.id
         assertEquals 'SL Name', list.name
@@ -24,6 +25,7 @@ class SubscriptionListTests extends GrailsUnitTestCase {
         assertEquals 100, list.subscribersNumber
         assertEquals 2, list.owner.id
         assertEquals date, list.dateCreated
+        assertTrue list.archived
     }
 
     void testNonDuplicateName() {
@@ -44,7 +46,6 @@ class SubscriptionListTests extends GrailsUnitTestCase {
     }
 
     void testOwnedBy() {
-
         def list = new SubscriptionList(owner: null)
 
         assertFalse list.ownedBy(1)
@@ -55,4 +56,5 @@ class SubscriptionListTests extends GrailsUnitTestCase {
         assertFalse list.ownedBy(null)
         assertTrue list.ownedBy(2)
     }
+
 }

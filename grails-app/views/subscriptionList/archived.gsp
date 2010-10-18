@@ -1,24 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
-        <title><g:message code="list.subscriptionList.title"/></title>
+        <title><g:message code="archived.subscriptionList.title"/></title>
         <meta name='layout' content='main'/>
     </head>
     <body>
         <div class="status" style="display: none;"> </div>
 
-        <g:link controller="subscriptionList" action="create"><g:message code="create.subscriptionList"/></g:link>
-        |
-        <g:link controller="subscriber" action="create"><g:message code="create.subscriber"/></g:link>
-        |
-        <g:link controller="subscriptionList" action="archived"><g:message code="archived"/></g:link>
+        <g:link controller="subscriptionList"><< <g:message code="active.subscriptionList"/></g:link>
 
-        <g:if test="${freeSubscribersCount}">
-            |
-            <g:link controller="subscriptionList" action="freeSubscribers">
-                <g:message code="subscribers.without.subscription" args="[freeSubscribersCount]"/>
-            </g:link>
-        </g:if>
+        <div class="c"/>
+
+        <g:if test="${subscriptionLists}">
         <table id="results" style="width: 800px;">
             <thead>
                 <tr>
@@ -44,5 +37,9 @@
                 </g:each>
             </tbody>
         </table>
+        </g:if>
+        <g:else>
+            Archive Empty
+        </g:else>
     </body>
 </html>

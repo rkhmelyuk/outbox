@@ -33,13 +33,23 @@ class SubscriptionListService {
     }
 
     /**
-     * Gets members subscriptions lists.
+     * Gets members active subscriptions lists.
      * @param member the member to get owned subscriptions lists.
-     * @return the found subscriptions lists.
+     * @return the found active subscriptions lists.
      */
     @Transactional(readOnly = true)
-    List<SubscriptionList> getMemberSubscriptionList(Member member) {
-        SubscriptionList.findAllByOwner member
+    List<SubscriptionList> getMemberSubscriptionLists(Member member) {
+        SubscriptionList.findAllByOwnerAndArchived member, false
+    }
+
+    /**
+     * Gets members archived subscriptions lists.
+     * @param member the member to get owned subscriptions lists.
+     * @return the found archived subscriptions lists.
+     */
+    @Transactional(readOnly = true)
+    List<SubscriptionList> getArchivedMemberSubscriptionLists(Member member) {
+        SubscriptionList.findAllByOwnerAndArchived member, true
     }
 
     /**
@@ -58,6 +68,34 @@ class SubscriptionListService {
             catch (Exception e) {
                 return false
             }
+        }
+        return false
+    }
+
+    /**
+     * Archive subscription list.
+     * @param subscriptionList the subscription list to be archived.
+     * @return true if was archived successfully, otherwise false.
+     */
+    @Transactional
+    boolean archiveSubscriptionList(SubscriptionList subscriptionList) {
+        if (subscriptionList) {
+            subscriptionList.archived = true
+            return saveSubscriptionList(subscriptionList)
+        }
+        return false
+    }
+
+    /**
+     * Restore subscription list.
+     * @param subscriptionList the subscription list to be restored.
+     * @return true if was restored successfully, otherwise false.
+     */
+    @Transactional
+    boolean restoreSubscriptionList(SubscriptionList subscriptionList) {
+        if (subscriptionList) {
+            subscriptionList.archived = false
+            return saveSubscriptionList(subscriptionList)
         }
         return false
     }

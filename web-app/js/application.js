@@ -416,10 +416,10 @@ var App = {
     },
 
     subscriptionListShow: function() {
-        $('#deleteSubscriptionList').click(function() {
+        $('#deleteSubscriptionList, #archiveSubscriptionList, #restoreSubscriptionList').click(function() {
             $('#removeNotion').slideDown();
         });
-        $('#discardDeleteSubscriptionList').click(function() {
+        $('#discard').click(function() {
             $('#removeNotion').slideUp();
         });
     },
