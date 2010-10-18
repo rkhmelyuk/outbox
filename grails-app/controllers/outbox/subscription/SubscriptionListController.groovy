@@ -62,7 +62,8 @@ class SubscriptionListController {
         return [
                 subscriptionList: subscriptionList,
                 subscriptions: subscriptions,
-                campaignSubscriptions: campaignSubscriptions
+                campaignSubscriptions: campaignSubscriptions,
+                canDelete: campaignSubscriptions.empty
         ]
     }
 
@@ -128,7 +129,10 @@ class SubscriptionListController {
     def delete = {
         final SubscriptionList subscriptionList = subscriptionListService.getSubscriptionList(params.long('id'))
         if (subscriptionList && subscriptionList.ownedBy(springSecurityService.principal.id)) {
-            subscriptionListService.deleteSubscriptionList subscriptionList
+            if (!subscriptionListService.deleteSubscriptionList(subscriptionList)) {
+                redirect controller: 'subscriptionList', action: 'show', id: subscriptionList.id
+                return
+            }
         }
         redirect controller: 'subscriptionList', action: ''
     }

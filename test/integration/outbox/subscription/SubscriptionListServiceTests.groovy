@@ -66,13 +66,32 @@ class SubscriptionListServiceTests extends GroovyTestCase {
         assertEquals subscriptionList2, found2
     }
 
-    void testDeleteSubscriptionList() {
+    void testDeleteSubscriptionList_Empty() {
         def subscriptionList = createTestSubscriptionList()
         assertTrue subscriptionListService.saveSubscriptionList(subscriptionList)
         assertNotNull subscriptionList.id
 
         subscriptionListService.deleteSubscriptionList subscriptionList
         assertNull subscriptionListService.getSubscriptionList(subscriptionList.id)
+    }
+
+    void testDeleteSubscriptionList_NotEmpty() {
+        def subscriptionList = createTestSubscriptionList()
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList)
+        assertNotNull subscriptionList.id
+
+        def status = new SubscriptionStatus(id: 1, name: 'test').save()
+        def subscriber1 = createTestSubscriber(1).save()
+        def subscriber2 = createTestSubscriber(2).save()
+        def subscription1 = new Subscription(subscriber: subscriber1, subscriptionList: subscriptionList, status: status)
+        def subscription2 = new Subscription(subscriber: subscriber2, subscriptionList: subscriptionList, status: status)
+
+        assertTrue subscriptionListService.addSubscription(subscription1)
+        assertTrue subscriptionListService.addSubscription(subscription2)
+
+        subscriptionListService.deleteSubscriptionList subscriptionList
+        assertNull subscriptionListService.getSubscriptionList(subscriptionList.id)
+        assertEquals 0, subscriptionListService.getSubscriptionsForList(subscriptionList).size()
     }
 
     void testAddSubscription() {

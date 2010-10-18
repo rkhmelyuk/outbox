@@ -357,6 +357,7 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         assertNotNull result.subscriptions
         assertEquals 2, result.subscriptions.size()
         assertEquals 1, result.campaignSubscriptions.size()
+        assertFalse result.canDelete
     }
 
     void testShow_Denied() {
@@ -394,12 +395,12 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         assertEquals 404, mockResponse.status
     }
 
-    void testDelete() {
+    void testDelete_Success() {
         def member = new Member(id: 1)
 
         def subscriptionListServiceControl = mockFor(SubscriptionListService)
         subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member) }
-        subscriptionListServiceControl.demand.deleteSubscriptionList { }
+        subscriptionListServiceControl.demand.deleteSubscriptionList { return true}
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
@@ -413,6 +414,68 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
         subscriptionListServiceControl.verify()
         springSecurityServiceControl.verify()
+
+        assertEquals 'subscriptionList', controller.redirectArgs.controller
+        assertEquals '', controller.redirectArgs.action
+    }
+
+    void testDelete_Failed() {
+        def member = new Member(id: 1)
+
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> new SubscriptionList(id: id, owner: member) }
+        subscriptionListServiceControl.demand.deleteSubscriptionList { return false }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.delete()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals 'subscriptionList', controller.redirectArgs.controller
+        assertEquals 'show', controller.redirectArgs.action
+        assertEquals 1, controller.redirectArgs.id
+    }
+
+    void testDelete_Denied() {
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            return new SubscriptionList(id: id, owner: new Member(id: 2))
+        }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [],  new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.delete()
+
+        subscriptionListServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals 'subscriptionList', controller.redirectArgs.controller
+        assertEquals '', controller.redirectArgs.action
+    }
+
+    void testDelete_NotFound() {
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id -> return null }
+        controller.subscriptionListService = subscriptionListServiceControl.createMock()
+
+        controller.params.id = 1
+        controller.delete()
+
+        subscriptionListServiceControl.verify()
 
         assertEquals 'subscriptionList', controller.redirectArgs.controller
         assertEquals '', controller.redirectArgs.action

@@ -45,15 +45,31 @@ class SubscriptionListService {
     /**
      * Delete subscriptions list. In this case any relationship with subscribers are removed,
      * but subscribers are not removed.
-     * @param subscribersList the subscriptions list to remove.
+     * @param subscriptionList the subscriptions list to remove.
      */
     @Transactional
-    void deleteSubscriptionList(SubscriptionList subscribersList) {
-        if (subscribersList) {
-            // TODO - 1. cleanup subscribers list relationship
-            // 2. delete subscribers list
-            subscribersList.delete()
+    boolean deleteSubscriptionList(SubscriptionList subscriptionList) {
+        if (subscriptionList) {
+            try {
+                deleteSubscriptions(subscriptionList)
+                subscriptionList.delete(flush: true)
+                return true
+            }
+            catch (Exception e) {
+                return false
+            }
         }
+        return false
+    }
+
+    /**
+     * Delete subscriptions for specified Subscription List.
+     * @param subscriptionList the subscription list to remove subscriptions for.
+     */
+    private void deleteSubscriptions(SubscriptionList subscriptionList) {
+        Subscription.executeUpdate(
+                'delete from Subscription where subscriptionList = :subscriptionList',
+                [subscriptionList: subscriptionList])
     }
 
     /**

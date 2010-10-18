@@ -19,15 +19,17 @@
             </div>
         </g:if>
         <g:link controller="subscriptionList" action="edit" id="${subscriptionList.id}"><g:message code="edit.details"/></g:link>
-        <a href="javascript:void(0)" id="deleteSubscriptionList"><g:message code="subscriptionList.delete"/></a>
+        <g:if test="${canDelete}">
+            <a href="javascript:void(0)" id="deleteSubscriptionList"><g:message code="subscriptionList.delete"/></a>
 
-        <div id="removeNotion">
-            <h3><g:message code="notion"/></h3>
-            <g:message code="subscriptionList.delete.notion.message"/>
-            <br/>
-            <g:link controller="subscriptionList" action="delete" id="${subscriptionList.id}"><g:message code="delete.confirm"/></g:link>
-            <a href="javascript:void(0);" id="discardDeleteSubscriptionList"><g:message code="delete.discard"/></a>
-        </div>
+            <div id="removeNotion">
+                <h3><g:message code="notion"/></h3>
+                <g:message code="subscriptionList.delete.notion.message"/>
+                <br/>
+                <g:link controller="subscriptionList" action="delete" id="${subscriptionList.id}"><g:message code="delete.confirm"/></g:link>
+                <a href="javascript:void(0);" id="discardDeleteSubscriptionList"><g:message code="delete.discard"/></a>
+            </div>
+        </g:if>
 
         <div class="subscribers">
             <h3><g:message code="subscribers"/></h3>
