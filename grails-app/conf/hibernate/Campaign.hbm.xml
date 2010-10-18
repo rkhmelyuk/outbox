@@ -33,10 +33,11 @@
         <return alias="SL" class="outbox.subscription.SubscriptionList"/>
 
         select {SL.*} from SubscriptionList as SL
-        where SL.MemberId = :memberId and SL.SubscriptionListId not in (
-            select CS.SubscriptionListId
-            from CampaignSubscription CS
-            where CS.CampaignId = :campaignId)
+        where SL.MemberId = :memberId and SL.Archived = false
+            and SL.SubscriptionListId not in (
+                select CS.SubscriptionListId
+                from CampaignSubscription CS
+                where CS.CampaignId = :campaignId)
     </sql-query>
 
 </hibernate-mapping>

@@ -247,7 +247,9 @@ class CampaignService {
     List<SubscriptionList> getProposedSubscriptionLists(Campaign campaign) {
         def result = null
         SubscriptionList.withSession { Session session ->
-            result = session.getNamedQuery('Campaign.findProposedSubscriptionLists').setLong('campaignId', campaign.id).setLong('memberId', campaign.owner?.id).list()
+            result = session.getNamedQuery('Campaign.findProposedSubscriptionLists')
+                    .setLong('campaignId', campaign.id)
+                    .setLong('memberId', campaign.owner?.id).list()
         }
 
         result != null ? result : []
