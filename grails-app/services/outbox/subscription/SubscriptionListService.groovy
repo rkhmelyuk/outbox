@@ -3,6 +3,7 @@ package outbox.subscription
 import org.springframework.transaction.annotation.Transactional
 import outbox.ServiceUtil
 import outbox.member.Member
+import outbox.search.SearchConditions
 
 /**
  * @author Ruslan Khmelyuk
@@ -39,7 +40,10 @@ class SubscriptionListService {
      */
     @Transactional(readOnly = true)
     List<SubscriptionList> getMemberSubscriptionLists(Member member) {
-        SubscriptionList.findAllByOwnerAndArchived member, false
+        search(new SubscriptionListConditionsBuilder().build {
+            ownedBy member
+            archived false
+        })
     }
 
     /**
@@ -49,7 +53,10 @@ class SubscriptionListService {
      */
     @Transactional(readOnly = true)
     List<SubscriptionList> getArchivedMemberSubscriptionLists(Member member) {
-        SubscriptionList.findAllByOwnerAndArchived member, true
+        search(new SubscriptionListConditionsBuilder().build {
+            ownedBy member
+            archived true
+        })
     }
 
     /**
@@ -112,7 +119,7 @@ class SubscriptionListService {
 
     /**
      * Adds subscription.
-     * 
+     *
      * @param subscription the subscription to be added.
      * @return {@code true} if added, otherwise {@code false}.
      */
@@ -135,5 +142,15 @@ class SubscriptionListService {
     @Transactional(readOnly = true)
     List<Subscription> getSubscriptionsForList(SubscriptionList subscriptionList) {
         Subscription.findAllBySubscriptionList subscriptionList
+    }
+
+    /**
+     * Search Subscription lists by specified conditions.
+     * @param conditions the search conditions.
+     * @return the list with found subscription lists.
+     */
+    @Transactional(readOnly = true)
+    List<SubscriptionList> search(SearchConditions conditions) {
+        conditions.search(SubscriptionList.createCriteria())
     }
 }

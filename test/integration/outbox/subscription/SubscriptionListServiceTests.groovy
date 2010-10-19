@@ -182,8 +182,57 @@ class SubscriptionListServiceTests extends GroovyTestCase {
         found = subscriptionListService.getSubscriptionsForList(subscriptionList2)
         assertEquals 1, found.size()
         assertTrue found.contains(subscription3)
+    }
 
+    void testSearchSubscriptionList_All() {
+        def subscriptionList1 = createTestSubscriptionList()
+        def subscriptionList2 = createTestSubscriptionList()
+        subscriptionList1.name += '1'
+        subscriptionList1.archived = true
+        subscriptionList2.name += '2'
+        subscriptionList2.archived = false
 
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList1)
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList2)
+
+        def conditions = new SubscriptionListConditionsBuilder().build {
+            ownedBy member
+        }
+
+        def found = subscriptionListService.search(conditions)
+        assertEquals 2, found.size()
+
+        assertTrue found.contains(subscriptionList1)
+        assertTrue found.contains(subscriptionList2)
+    }
+
+    void testSearchSubscriptionList_Archived() {
+        def subscriptionList1 = createTestSubscriptionList()
+        def subscriptionList2 = createTestSubscriptionList()
+        subscriptionList1.name += '1'
+        subscriptionList1.archived = true
+        subscriptionList2.name += '2'
+        subscriptionList2.archived = false
+
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList1)
+        assertTrue subscriptionListService.saveSubscriptionList(subscriptionList2)
+
+        def conditions = new SubscriptionListConditionsBuilder().build {
+            ownedBy member
+            archived true
+        }
+        def found = subscriptionListService.search(conditions)
+        assertEquals 1, found.size()
+
+        assertTrue found.contains(subscriptionList1)
+
+        conditions = new SubscriptionListConditionsBuilder().build {
+            ownedBy member
+            archived false
+        }
+        found = subscriptionListService.search(conditions)
+        assertEquals 1, found.size()
+        assertTrue found.contains(subscriptionList2)
     }
 
     void assertEquals(SubscriptionList subscriptionList, SubscriptionList found) {
