@@ -68,4 +68,8 @@ class BaseConditionsBuilder extends BuilderSupport {
     def returnResult(boolean flag) {
         conditions.includeFound = flag
     }
+
+    def cache(boolean cache) {
+        conditions.cacheQuery = cache
+    }
 }

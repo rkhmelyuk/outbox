@@ -10,6 +10,7 @@ class SearchConditions {
 
     boolean includeCount = false
     boolean includeFound = true
+    boolean cacheQuery = false
 
     /**
      * Add condition.
@@ -59,6 +60,7 @@ class SearchConditions {
                         each.build(builder)
                     }
                 }
+                cache cacheQuery
             }
         }
 
@@ -68,6 +70,7 @@ class SearchConditions {
                 conditions.each { each ->
                      each.build(builder)
                 }
+                cache cacheQuery
             }
         }
         else {

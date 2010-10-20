@@ -50,11 +50,22 @@ class BaseConditionsBuilderTests extends GrailsUnitTestCase {
         def conditions = condition.build {
             returnCount true
             returnResult true
+            cache true
         }
 
         assertNotNull conditions
         assertTrue conditions.includeCount
         assertTrue conditions.includeFound
+        assertTrue conditions.cacheQuery
+    }
+
+    void testDefaultFlags() {
+        def conditions = condition.build { }
+
+        assertNotNull conditions
+        assertTrue conditions.includeFound
+        assertFalse conditions.includeCount
+        assertFalse conditions.cacheQuery
     }
 
 }
