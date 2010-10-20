@@ -6,6 +6,8 @@ import grails.test.ControllerUnitTestCase
 import outbox.campaign.CampaignService
 import outbox.campaign.CampaignSubscription
 import outbox.member.Member
+import outbox.search.ArchivedCondition
+import outbox.search.OwnedByCondition
 import outbox.security.OutboxUser
 import outbox.subscriber.Subscriber
 import outbox.subscriber.SubscriberService
@@ -36,8 +38,9 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def subscriptionListServiceControl = mockFor(SubscriptionListService)
-        subscriptionListServiceControl.demand.getMemberSubscriptionLists {
-            assertEquals member.id, it.id;
+        subscriptionListServiceControl.demand.search { conditions ->
+            assertEquals member.id, conditions.get(OwnedByCondition).member.id
+            assertFalse conditions.get(ArchivedCondition).archived
             return subscriptionLists
         }
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
@@ -62,8 +65,9 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         Member.class.metaClass.static.load = { id -> member }
 
         def subscriptionListServiceControl = mockFor(SubscriptionListService)
-        subscriptionListServiceControl.demand.getArchivedMemberSubscriptionLists {
-            assertEquals member, it;
+        subscriptionListServiceControl.demand.search { conditions ->
+            assertEquals member.id, conditions.get(OwnedByCondition).member.id
+            assertFalse conditions.get(ArchivedCondition).archived
             return subscriptionLists
         }
         controller.subscriptionListService = subscriptionListServiceControl.createMock()

@@ -2,7 +2,6 @@ package outbox.subscription
 
 import org.springframework.transaction.annotation.Transactional
 import outbox.ServiceUtil
-import outbox.member.Member
 import outbox.search.SearchConditions
 
 /**
@@ -31,32 +30,6 @@ class SubscriptionListService {
     @Transactional(readOnly = true)
     SubscriptionList getSubscriptionList(Long id) {
         SubscriptionList.get id
-    }
-
-    /**
-     * Gets members active subscriptions lists.
-     * @param member the member to get owned subscriptions lists.
-     * @return the found active subscriptions lists.
-     */
-    @Transactional(readOnly = true)
-    List<SubscriptionList> getMemberSubscriptionLists(Member member) {
-        search(new SubscriptionListConditionsBuilder().build {
-            ownedBy member
-            archived false
-        })
-    }
-
-    /**
-     * Gets members archived subscriptions lists.
-     * @param member the member to get owned subscriptions lists.
-     * @return the found archived subscriptions lists.
-     */
-    @Transactional(readOnly = true)
-    List<SubscriptionList> getArchivedMemberSubscriptionLists(Member member) {
-        search(new SubscriptionListConditionsBuilder().build {
-            ownedBy member
-            archived true
-        })
     }
 
     /**

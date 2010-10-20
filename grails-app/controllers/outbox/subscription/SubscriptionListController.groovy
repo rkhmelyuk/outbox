@@ -26,8 +26,13 @@ class SubscriptionListController {
      */
     def list = {
         def member = Member.load(springSecurityService.principal.id)
-        def subscriptionLists = subscriptionListService.getMemberSubscriptionLists(member)
         int freeSubscribersCount = subscriberService.getSubscribersWithoutSubscriptionCount(member)
+
+        def conditions = new SubscriptionListConditionsBuilder().build {
+            ownedBy member
+            archived false
+        }
+        def subscriptionLists = subscriptionListService.search(conditions)
 
         [subscriptionLists: subscriptionLists, freeSubscribersCount: freeSubscribersCount]
     }
@@ -37,7 +42,12 @@ class SubscriptionListController {
      */
     def archived = {
         def member = Member.load(springSecurityService.principal.id)
-        [subscriptionLists: subscriptionListService.getArchivedMemberSubscriptionLists(member)]
+        def conditions = new SubscriptionListConditionsBuilder().build {
+            ownedBy member
+            archived false
+        }
+
+        [subscriptionLists: subscriptionListService.search(conditions)]
     }
 
     /**
