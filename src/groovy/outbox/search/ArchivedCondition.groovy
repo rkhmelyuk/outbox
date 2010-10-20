@@ -17,6 +17,10 @@ class ArchivedCondition implements Condition {
         this.set = true
     }
 
+    boolean isConditionFilter() {
+        true
+    }
+
     void build(HibernateCriteriaBuilder builder) {
         if (set) {
             builder.eq 'archived', archived

@@ -46,4 +46,15 @@ class BaseConditionsBuilderTests extends GrailsUnitTestCase {
         assertEquals 2, conditions.get(OrderCondition).order.size()
     }
 
+    void testFlags() {
+        def conditions = condition.build {
+            returnCount true
+            returnResult true
+        }
+
+        assertNotNull conditions
+        assertTrue conditions.includeCount
+        assertTrue conditions.includeFound
+    }
+
 }

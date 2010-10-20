@@ -124,6 +124,6 @@ class SubscriptionListService {
      */
     @Transactional(readOnly = true)
     List<SubscriptionList> search(SearchConditions conditions) {
-        conditions.search(SubscriptionList.createCriteria())
+        conditions.search(SubscriptionList).list
     }
 }

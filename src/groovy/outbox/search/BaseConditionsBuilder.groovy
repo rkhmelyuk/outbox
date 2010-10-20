@@ -60,4 +60,12 @@ class BaseConditionsBuilder extends BuilderSupport {
         condition.max = max
         conditions.add condition
     }
+
+    def returnCount(boolean flag) {
+        conditions.includeCount = flag
+    }
+
+    def returnResult(boolean flag) {
+        conditions.includeFound = flag
+    }
 }

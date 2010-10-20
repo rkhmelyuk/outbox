@@ -13,6 +13,10 @@ class NotUsedInCampaignCondition implements Condition {
 
     Campaign campaign
 
+    boolean isConditionFilter() {
+        true
+    }
+
     void build(HibernateCriteriaBuilder builder) {
         builder.sqlRestriction """SubscriptionListId not in
                 (select CS.SubscriptionListId from CampaignSubscription CS

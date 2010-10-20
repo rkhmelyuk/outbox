@@ -1,7 +1,5 @@
 package outbox.search
 
-import grails.orm.HibernateCriteriaBuilder
-
 /**
  * @author Ruslan Khmelyuk
  * @since 2010-09-19
@@ -9,6 +7,9 @@ import grails.orm.HibernateCriteriaBuilder
 class SearchConditions {
 
     List<Condition> conditions = []
+
+    boolean includeCount = false
+    boolean includeFound = true
 
     /**
      * Add condition.
@@ -43,14 +44,37 @@ class SearchConditions {
     /**
      * Gets the list of results using specified builder.
      * @param builder the incoming criteria builder for need entity.
-     * @return the list with found values.
+     * @return search results.
      */
-    List search(HibernateCriteriaBuilder builder) {
-        builder.list {
-            conditions.each { each ->
-                each.build(builder)
+    SearchResult search(def entityClazz) {
+        def result = new SearchResult()
+
+        def builder
+
+        if (includeCount) {
+            builder = entityClazz.createCriteria()
+            result.total = builder.count {
+                conditions.each { each ->
+                    if (!each.conditionFilter) {
+                        each.build(builder)
+                    }
+                }
             }
         }
+
+        if (includeFound) {
+            builder = entityClazz.createCriteria()
+            result.list = builder.list {
+                conditions.each { each ->
+                     each.build(builder)
+                }
+            }
+        }
+        else {
+            result.list = []
+        }
+
+        return result
     }
 
 }

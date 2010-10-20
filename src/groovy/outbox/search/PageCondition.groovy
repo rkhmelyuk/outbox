@@ -11,6 +11,10 @@ class PageCondition implements Condition {
     int page
     int max
 
+    boolean isConditionFilter() {
+        false
+    }
+
     void build(HibernateCriteriaBuilder builder) {
         if (max) {
             builder.criteria.maxResults = max

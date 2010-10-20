@@ -11,6 +11,10 @@ class OwnedByCondition implements Condition {
 
     Member member
 
+    boolean isConditionFilter() {
+        true
+    }
+
     void build(HibernateCriteriaBuilder builder) {
         if (member) {
             builder.eq 'owner', member

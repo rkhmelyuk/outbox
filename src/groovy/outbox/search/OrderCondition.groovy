@@ -10,6 +10,10 @@ class OrderCondition implements Condition {
 
     Map<String, String> order = [:] as LinkedHashMap<String, String>
 
+    boolean isConditionFilter() {
+        false
+    }
+
     void build(HibernateCriteriaBuilder builder) {
         order.each { first, sort ->
             builder.order(first, sort)

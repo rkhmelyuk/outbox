@@ -143,7 +143,7 @@ class CampaignService {
      */
     @Transactional(readOnly = true)
     List<Campaign> searchCampaigns(SearchConditions conditions) {
-        conditions.search(Campaign.createCriteria())
+        conditions.search(Campaign).list
     }
 
     /**
