@@ -26,19 +26,4 @@
         where CS.CampaignId = :campaignId and S.SubscriptionStatusId = 1
     </sql-query>
 
-    <sql-query name="Campaign.findProposedSubscriptionLists">
-        <query-param name="memberId" type="long"/>
-        <query-param name="campaignId" type="long"/>
-
-        <return alias="SL" class="outbox.subscription.SubscriptionList"/>
-
-        select {SL.*} from SubscriptionList as SL
-        where SL.MemberId = :memberId
-            and SL.Archived = false
-            and SL.SubscriptionListId not in (
-                select CS.SubscriptionListId
-                from CampaignSubscription CS
-                where CS.CampaignId = :campaignId)
-    </sql-query>
-
 </hibernate-mapping>
