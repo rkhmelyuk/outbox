@@ -44,7 +44,7 @@ class SubscriptionListController {
         def member = Member.load(springSecurityService.principal.id)
         def conditions = new SubscriptionListConditionsBuilder().build {
             ownedBy member
-            archived false
+            archived true
         }
 
         [subscriptionLists: subscriptionListService.search(conditions)]

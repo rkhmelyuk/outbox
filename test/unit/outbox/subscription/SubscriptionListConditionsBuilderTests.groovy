@@ -18,4 +18,14 @@ class SubscriptionListConditionsBuilderTests extends GroovyTestCase {
         assertTrue conditions.get(ArchivedCondition).archived
     }
 
+    void testNotUsedInCampaign() {
+        def campaign = null
+        def conditions = condition.build {
+            notUsedInCampaign campaign
+        }
+
+        assertNotNull conditions
+        assertSame campaign, conditions.get(NotUsedInCampaignCondition).campaign
+    }
+
 }

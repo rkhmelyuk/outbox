@@ -67,7 +67,7 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         def subscriptionListServiceControl = mockFor(SubscriptionListService)
         subscriptionListServiceControl.demand.search { conditions ->
             assertEquals member.id, conditions.get(OwnedByCondition).member.id
-            assertFalse conditions.get(ArchivedCondition).archived
+            assertTrue conditions.get(ArchivedCondition).archived
             return subscriptionLists
         }
         controller.subscriptionListService = subscriptionListServiceControl.createMock()

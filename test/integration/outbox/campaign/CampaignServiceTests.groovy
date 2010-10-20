@@ -281,11 +281,16 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         def list1 = createTestSubscriptionList(1)
         def list2 = createTestSubscriptionList(2)
         def list3 = createTestSubscriptionList(3)
+        def list4 = createTestSubscriptionList(4)
+
+        list3.archived = true
+        list4.archived = false
 
         assertTrue campaignService.addCampaign(campaign)
         assertTrue subscriptionListService.saveSubscriptionList(list1)
         assertTrue subscriptionListService.saveSubscriptionList(list2)
         assertTrue subscriptionListService.saveSubscriptionList(list3)
+        assertTrue subscriptionListService.saveSubscriptionList(list4)
 
         def campaignSubscription1 = new CampaignSubscription(campaign: campaign, subscriptionList: list1)
         def campaignSubscription2 = new CampaignSubscription(campaign: campaign, subscriptionList: list2)
@@ -297,7 +302,7 @@ class CampaignServiceTests extends GrailsUnitTestCase {
 
         assertNotNull proposed
         assertEquals 1, proposed.size()
-        assertEquals list3, proposed[0]
+        assertEquals list4, proposed[0]
     }
 
     void testGetProposedTemplates() {

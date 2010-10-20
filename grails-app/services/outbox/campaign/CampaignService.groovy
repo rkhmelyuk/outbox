@@ -6,6 +6,8 @@ import outbox.ServiceUtil
 import outbox.search.SearchConditions
 import outbox.subscriber.Subscriber
 import outbox.subscription.SubscriptionList
+import outbox.subscription.SubscriptionListConditionsBuilder
+import outbox.subscription.SubscriptionListService
 import outbox.task.TaskFactory
 import outbox.task.TaskService
 import outbox.template.Template
@@ -20,6 +22,7 @@ class CampaignService {
 
     TaskService taskService
     TemplateService templateService
+    SubscriptionListService subscriptionListService
 
     /**
      * Adds new campaign. Default campaign state is new. 
@@ -245,14 +248,12 @@ class CampaignService {
      */
     @Transactional(readOnly = true)
     List<SubscriptionList> getProposedSubscriptionLists(Campaign campaign) {
-        def result = null
-        SubscriptionList.withSession { Session session ->
-            result = session.getNamedQuery('Campaign.findProposedSubscriptionLists')
-                    .setLong('campaignId', campaign.id)
-                    .setLong('memberId', campaign.owner?.id).list()
+        def conditions = new SubscriptionListConditionsBuilder().build {
+            archived false
+            notUsedInCampaign campaign
         }
 
-        result != null ? result : []
+        subscriptionListService.search(conditions)
     }
 
     /**
