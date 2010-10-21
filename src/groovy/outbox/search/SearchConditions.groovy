@@ -56,7 +56,7 @@ class SearchConditions {
             builder = entityClazz.createCriteria()
             result.total = builder.count {
                 conditions.each { each ->
-                    if (!each.conditionFilter) {
+                    if (each.conditionFilter) {
                         each.build(builder)
                     }
                 }

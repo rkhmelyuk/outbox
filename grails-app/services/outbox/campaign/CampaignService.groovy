@@ -253,7 +253,7 @@ class CampaignService {
             notUsedInCampaign campaign
         }
 
-        subscriptionListService.search(conditions)
+        subscriptionListService.search(conditions).list
     }
 
     /**

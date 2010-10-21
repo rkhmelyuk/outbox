@@ -24,17 +24,26 @@ class SubscriptionListController {
     /**
      * Shows the list of Subscription Lists.
      */
-    def list = {
+    def list = { SubscriptionListConditions conditions ->
         def member = Member.load(springSecurityService.principal.id)
         int freeSubscribersCount = subscriberService.getSubscribersWithoutSubscriptionCount(member)
 
-        def conditions = new SubscriptionListConditionsBuilder().build {
+        def searchConditions = new SubscriptionListConditionsBuilder().build {
             ownedBy member
             archived false
+            max conditions.itemsPerPage
+            page conditions.page
+            returnCount true
         }
-        def subscriptionLists = subscriptionListService.search(conditions)
 
-        [subscriptionLists: subscriptionLists, freeSubscribersCount: freeSubscribersCount]
+        def result = subscriptionListService.search(searchConditions)
+
+        return [
+                subscriptionLists: result.list,
+                total: result.total,
+                freeSubscribersCount: freeSubscribersCount,
+                conditions: conditions
+        ]
     }
 
     /**
@@ -45,9 +54,11 @@ class SubscriptionListController {
         def conditions = new SubscriptionListConditionsBuilder().build {
             ownedBy member
             archived true
+            returnCount true
         }
 
-        [subscriptionLists: subscriptionListService.search(conditions)]
+        def result = subscriptionListService.search(conditions)
+        [subscriptionLists: result.list, total: result.total]
     }
 
     /**
@@ -173,5 +184,13 @@ class SubscriptionListController {
             return
         }
         redirect controller: 'subscriptionList', action: ''
+    }
+
+    /**
+     * Filter conditions.
+     */
+    static class SubscriptionListConditions {
+        int page = 1
+        int itemsPerPage = 10
     }
 }

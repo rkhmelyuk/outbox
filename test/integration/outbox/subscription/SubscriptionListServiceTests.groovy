@@ -170,7 +170,7 @@ class SubscriptionListServiceTests extends GroovyTestCase {
             ownedBy member
         }
 
-        def found = subscriptionListService.search(conditions)
+        def found = subscriptionListService.search(conditions).list
         assertEquals 2, found.size()
 
         assertTrue found.contains(subscriptionList1)
@@ -192,7 +192,7 @@ class SubscriptionListServiceTests extends GroovyTestCase {
             ownedBy member
             archived true
         }
-        def found = subscriptionListService.search(conditions)
+        def found = subscriptionListService.search(conditions).list
         assertEquals 1, found.size()
 
         assertTrue found.contains(subscriptionList1)
@@ -201,7 +201,7 @@ class SubscriptionListServiceTests extends GroovyTestCase {
             ownedBy member
             archived false
         }
-        found = subscriptionListService.search(conditions)
+        found = subscriptionListService.search(conditions).list
         assertEquals 1, found.size()
         assertTrue found.contains(subscriptionList2)
     }

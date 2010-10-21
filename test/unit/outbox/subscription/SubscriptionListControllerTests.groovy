@@ -8,6 +8,8 @@ import outbox.campaign.CampaignSubscription
 import outbox.member.Member
 import outbox.search.ArchivedCondition
 import outbox.search.OwnedByCondition
+import outbox.search.PageCondition
+import outbox.search.SearchResult
 import outbox.security.OutboxUser
 import outbox.subscriber.Subscriber
 import outbox.subscriber.SubscriberService
@@ -41,7 +43,14 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         subscriptionListServiceControl.demand.search { conditions ->
             assertEquals member.id, conditions.get(OwnedByCondition).member.id
             assertFalse conditions.get(ArchivedCondition).archived
-            return subscriptionLists
+            assertTrue conditions.includeCount
+
+            def pageConditions = conditions.get(PageCondition)
+            assertNotNull pageConditions
+            assertEquals 10, pageConditions.max
+            assertEquals 1, pageConditions.page
+
+            return new SearchResult(list: subscriptionLists, total: 10)
         }
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
@@ -51,11 +60,15 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
-        def result = controller.list()
+        def conditions = new SubscriptionListController.SubscriptionListConditions()
+        def result = controller.list(conditions)
 
         assertNotNull result
         assertEquals subscriptionLists, result.subscriptionLists
+        assertEquals 10, result.conditions.itemsPerPage
+        assertEquals 1, result.conditions.page
         assertEquals 5, result.freeSubscribersCount
+        assertEquals 10, result.total
     }
 
     void testArchived() {
@@ -68,7 +81,7 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         subscriptionListServiceControl.demand.search { conditions ->
             assertEquals member.id, conditions.get(OwnedByCondition).member.id
             assertTrue conditions.get(ArchivedCondition).archived
-            return subscriptionLists
+            return new SearchResult(list: subscriptionLists, total: 10)
         }
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
 
@@ -85,6 +98,7 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
         assertNotNull result
         assertEquals subscriptionLists, result.subscriptionLists
+        assertEquals 10, result.total
     }
 
     void testFreeSubscribers() {

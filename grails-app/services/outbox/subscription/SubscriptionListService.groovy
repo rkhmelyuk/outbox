@@ -3,6 +3,7 @@ package outbox.subscription
 import org.springframework.transaction.annotation.Transactional
 import outbox.ServiceUtil
 import outbox.search.SearchConditions
+import outbox.search.SearchResult
 
 /**
  * @author Ruslan Khmelyuk
@@ -120,10 +121,10 @@ class SubscriptionListService {
     /**
      * Search Subscription lists by specified conditions.
      * @param conditions the search conditions.
-     * @return the list with found subscription lists.
+     * @return the search results.
      */
     @Transactional(readOnly = true)
-    List<SubscriptionList> search(SearchConditions conditions) {
-        conditions.search(SubscriptionList).list
+    SearchResult search(SearchConditions conditions) {
+        conditions.search(SubscriptionList)
     }
 }
