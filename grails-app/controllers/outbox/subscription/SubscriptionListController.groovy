@@ -49,16 +49,22 @@ class SubscriptionListController {
     /**
      * Shows the list of Subscription Lists.
      */
-    def archived = {
+    def archived = { SubscriptionListConditions conditions ->
         def member = Member.load(springSecurityService.principal.id)
-        def conditions = new SubscriptionListConditionsBuilder().build {
+        def searchConditions = new SubscriptionListConditionsBuilder().build {
             ownedBy member
             archived true
+            max conditions.itemsPerPage
+            page conditions.page
             returnCount true
         }
 
-        def result = subscriptionListService.search(conditions)
-        [subscriptionLists: result.list, total: result.total]
+        def result = subscriptionListService.search(searchConditions)
+        return [
+                subscriptionLists: result.list,
+                total: result.total,
+                conditions: conditions
+        ]
     }
 
     /**

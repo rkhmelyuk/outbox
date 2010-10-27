@@ -16,7 +16,7 @@
         <g:layoutHead />
     </head>
     <body>
-        <div class="ajaxError"> Server Error </div>
+        <div class="ajaxError">Server Error</div>
         <div id="grailsLogo"><g:link controller="dashboard"><img src="${resource(dir:'images',file:'grails_logo.png')}" alt="Grails" border="0" /></g:link></div>
 
         <sec:ifLoggedIn>

@@ -4,7 +4,7 @@
         <title><g:message code="list.subscriptionList.title"/></title>
         <meta name='layout' content='main'/>
         <script type="text/javascript">
-            $(document).ready(function() { App.membersList() })
+            $(document).ready(function() { App.subscriptionLists() })
         </script>
     </head>
     <body>

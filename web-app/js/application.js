@@ -359,6 +359,12 @@ var App = {
         });
     },
 
+    archivedSubscriptionLists: function() {
+        $(".page_callback").click(function() {
+            $('#filterForm').submit();
+        });
+    },
+
     subscriptionListCreate: function() {
         $('#name').focus();
         var validator = $('#subscriptionListForm').validate({

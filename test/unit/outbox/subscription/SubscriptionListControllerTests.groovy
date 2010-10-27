@@ -63,6 +63,10 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         def conditions = new SubscriptionListController.SubscriptionListConditions()
         def result = controller.list(conditions)
 
+        subscriberServiceControl.verify()
+        springSecurityServiceControl.verify()
+        subscriptionListServiceControl.verify()
+
         assertNotNull result
         assertEquals subscriptionLists, result.subscriptionLists
         assertEquals 10, result.conditions.itemsPerPage
@@ -81,6 +85,13 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         subscriptionListServiceControl.demand.search { conditions ->
             assertEquals member.id, conditions.get(OwnedByCondition).member.id
             assertTrue conditions.get(ArchivedCondition).archived
+            assertTrue conditions.includeCount
+
+            def pageConditions = conditions.get(PageCondition)
+            assertNotNull pageConditions
+            assertEquals 10, pageConditions.max
+            assertEquals 1, pageConditions.page
+
             return new SearchResult(list: subscriptionLists, total: 10)
         }
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
@@ -91,13 +102,16 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
-        def result = controller.archived()
+        def conditions = new SubscriptionListController.SubscriptionListConditions()
+        def result = controller.archived(conditions)
 
         subscriptionListServiceControl.verify()
         springSecurityServiceControl.verify()
 
         assertNotNull result
         assertEquals subscriptionLists, result.subscriptionLists
+        assertEquals 10, result.conditions.itemsPerPage
+        assertEquals 1, result.conditions.page
         assertEquals 10, result.total
     }
 
