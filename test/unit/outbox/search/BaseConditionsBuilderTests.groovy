@@ -39,6 +39,8 @@ class BaseConditionsBuilderTests extends GrailsUnitTestCase {
         def conditions = condition.build {
             order 'name', 'asc'
             order 'date', 'desc'
+            order null, 'desc'
+            order 'type', null
         }
 
         assertNotNull conditions

@@ -14,9 +14,17 @@ class OrderCondition implements Condition {
         false
     }
 
+    void put(String field, String sort) {
+        if (field && sort) {
+            order.put(field, sort)
+        }
+    }
+
     void build(HibernateCriteriaBuilder builder) {
-        order.each { first, sort ->
-            builder.order(first, sort)
+        order.each { field, sort ->
+            if (field && sort) {
+                builder.order(field, sort)
+            }
         }
     }
 }
