@@ -5,6 +5,20 @@ package outbox
  */
 class PaginationTagLib {
 
+    def sortColumn = { attrs, body ->
+        def field = attrs.remove('field')
+        def order = attrs.remove('order') ?: 'column'
+        def sort = attrs.remove('sort') ?: 'sort'
+        def style = attrs.remove('class')
+
+        def function = /$("#$order").val("$field"); / +
+                /if ($("#$sort").val() == "asc") / +
+                /{ $("#$sort").val("desc");} / +
+                /else {$("#$sort").val("asc");}/
+
+        out << "<a href='javascript:void(0);' rel='$field' class='sortColumn $style' onclick='$function'>${body()}</a>"
+    }
+
     def formPagination = { attrs ->
         def name = attrs.name
         def total = attrs.total

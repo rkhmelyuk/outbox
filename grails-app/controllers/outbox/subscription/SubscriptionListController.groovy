@@ -34,6 +34,7 @@ class SubscriptionListController {
             max conditions.itemsPerPage
             page conditions.page
             returnCount true
+            order conditions.column, conditions.sort
         }
 
         def result = subscriptionListService.search(searchConditions)
@@ -57,6 +58,7 @@ class SubscriptionListController {
             max conditions.itemsPerPage
             page conditions.page
             returnCount true
+            order conditions.column, conditions.sort
         }
 
         def result = subscriptionListService.search(searchConditions)
@@ -198,5 +200,8 @@ class SubscriptionListController {
     static class SubscriptionListConditions {
         int page = 1
         int itemsPerPage = 10
+
+        String column
+        String sort
     }
 }

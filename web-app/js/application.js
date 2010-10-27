@@ -354,13 +354,27 @@ var App = {
     },
 
     subscriptionLists: function() {
-        $(".page_callback").click(function() {
+        var orderColumn = $('#column').val();
+        $('.sortColumn').each(function () {
+            if ($(this).attr('rel') == orderColumn) {
+                $(this).addClass($('#sort').val());
+            }
+        });
+
+        $('.page_callback').click(function() {
             $('#filterForm').submit();
         });
     },
 
     archivedSubscriptionLists: function() {
-        $(".page_callback").click(function() {
+        var orderColumn = $('#column').val();
+        $('.sortColumn').each(function () {
+            if ($(this).attr('rel') == orderColumn) {
+                $(this).addClass($('#sort').val());
+            }
+        });
+
+        $('.page_callback').click(function() {
             $('#filterForm').submit();
         });
     },

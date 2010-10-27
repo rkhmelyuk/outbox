@@ -15,12 +15,14 @@
         <div class="c"></div>
 
         <g:form name="filterForm" action="archived" method="GET">
+            <g:hiddenField name="column" value="${conditions.column}"/>
+            <g:hiddenField name="sort" value="${conditions.sort}"/>
             <table id="results" style="width: 800px;">
                 <thead>
                     <tr>
-                        <td><g:message code="name"/></td>
-                        <td><g:message code="subscribers.number"/></td>
-                        <td><g:message code="create.date"/></td>
+                        <td><g:sortColumn field="name" class="page_callback"><g:message code="name"/></g:sortColumn></td>
+                        <td><g:sortColumn field="subscribersNumber" class="page_callback"><g:message code="subscribers.number"/></g:sortColumn></td>
+                        <td><g:sortColumn field="dateCreated" class="page_callback"><g:message code="create.date"/></g:sortColumn></td>
                         <td><g:message code="view"/></td>
                     </tr>
                 </thead>

@@ -6,13 +6,10 @@ import grails.test.ControllerUnitTestCase
 import outbox.campaign.CampaignService
 import outbox.campaign.CampaignSubscription
 import outbox.member.Member
-import outbox.search.ArchivedCondition
-import outbox.search.OwnedByCondition
-import outbox.search.PageCondition
-import outbox.search.SearchResult
 import outbox.security.OutboxUser
 import outbox.subscriber.Subscriber
 import outbox.subscriber.SubscriberService
+import outbox.search.*
 
 /**
  * {@link SubscriptionListController} tests.
@@ -45,6 +42,9 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
             assertFalse conditions.get(ArchivedCondition).archived
             assertTrue conditions.includeCount
 
+            def orderConditions = conditions.get(OrderCondition)
+            assertEquals 'desc', orderConditions.order.name
+
             def pageConditions = conditions.get(PageCondition)
             assertNotNull pageConditions
             assertEquals 10, pageConditions.max
@@ -61,6 +61,8 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         def conditions = new SubscriptionListController.SubscriptionListConditions()
+        conditions.column = 'name'
+        conditions.sort = 'desc'
         def result = controller.list(conditions)
 
         subscriberServiceControl.verify()
@@ -71,6 +73,8 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         assertEquals subscriptionLists, result.subscriptionLists
         assertEquals 10, result.conditions.itemsPerPage
         assertEquals 1, result.conditions.page
+        assertEquals 'name', result.conditions.column
+        assertEquals 'desc', result.conditions.sort
         assertEquals 5, result.freeSubscribersCount
         assertEquals 10, result.total
     }
@@ -87,6 +91,9 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
             assertTrue conditions.get(ArchivedCondition).archived
             assertTrue conditions.includeCount
 
+            def orderConditions = conditions.get(OrderCondition)
+            assertEquals 'desc', orderConditions.order.name
+
             def pageConditions = conditions.get(PageCondition)
             assertNotNull pageConditions
             assertEquals 10, pageConditions.max
@@ -103,6 +110,9 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         def conditions = new SubscriptionListController.SubscriptionListConditions()
+        conditions.column = 'name'
+        conditions.sort = 'desc'
+
         def result = controller.archived(conditions)
 
         subscriptionListServiceControl.verify()
@@ -110,6 +120,8 @@ class SubscriptionListControllerTests extends ControllerUnitTestCase {
 
         assertNotNull result
         assertEquals subscriptionLists, result.subscriptionLists
+        assertEquals 'name', result.conditions.column
+        assertEquals 'desc', result.conditions.sort
         assertEquals 10, result.conditions.itemsPerPage
         assertEquals 1, result.conditions.page
         assertEquals 10, result.total
