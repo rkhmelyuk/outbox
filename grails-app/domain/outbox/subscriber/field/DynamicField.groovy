@@ -44,7 +44,11 @@ class DynamicField implements Comparable<DynamicField> {
 
     static constraints = {
         owner nullable: false
-        name  nullable: false, blank: false, maxSize: 200
+        name  nullable: false, blank: false, maxSize: 200, validator: { val, obj ->
+            if (DynamicField.duplicateName(obj, val)) {
+                return 'dynamicField.name.unique'
+            }
+        }
         label nullable: false, blank: false, maxSize: 200
         type nullable: false
         min nullable: true
@@ -59,10 +63,20 @@ class DynamicField implements Comparable<DynamicField> {
      * @return {@code true} if belongs, otherwise {@code false}.
      */
     boolean ownedBy(Long memberId) {
-        if (memberId) {
-            return (owner != null && owner.id == memberId)
-        }
-        return false
+        memberId && owner?.id == memberId
+    }
+
+    /**
+     * Check whether name is duplicate. We use member information from dynamic field parameter value
+     * and check name specified as second parameter.
+     *
+     * @param field the dynamic field, that should have this name.
+     * @param name the new name for the dynamic field.
+     * @return {@code true} if name is duplicate for this member, otherwise returns {@code false}.
+     */
+    static boolean duplicateName(DynamicField field, String name) {
+        def found = DynamicField.findByOwnerAndName(field.owner, name)
+        return (found && !found.id.equals(field.id))
     }
 
     int compareTo(DynamicField other) {

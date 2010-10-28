@@ -58,6 +58,7 @@
                 <ul>
                     <li><g:link controller="member" action="list">Members</g:link></li>
                     <li><g:link controller="subscriber" action="types">Subscriber Types</g:link></li>
+                    <li><g:link controller="dynamicField" action="index">Dynamic Fields</g:link></li>
                     <li><g:link controller="subscriptionList" action="list">Subscriptions</g:link></li>
                     <li><g:link controller="template" action="list">Templates</g:link></li>
                     <li><g:link controller="campaign" action="index">Campaigns</g:link></li>

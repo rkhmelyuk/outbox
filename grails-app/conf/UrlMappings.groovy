@@ -7,6 +7,7 @@ class UrlMappings {
         '/templates'(controller: 'template', action: 'list')
         '/campaigns'(controller: 'campaign', action: 'index')
         '/list'(controller: 'subscriptionList', action: 'list')
+        '/fields'(controller: 'dynamicField', action: 'index')
 
         "/subscriber/$id"(controller: 'subscriber', action: 'show') {
             constraints {

@@ -10,26 +10,29 @@ public enum DynamicFieldType {
     /**
      * String value.
      */
-    String(1),
+    String(1, 'dynamicFieldType.string'),
 
     /**
      * Number value.
      */
-    Number(2),
+    Number(2, 'dynamicFieldType.number'),
 
     /**
      * User can check or un-check value only.
      */
-    Boolean(3),
+    Boolean(3, 'dynamicFieldType.boolean'),
 
     /**
      * User can select one element from list.
      */
-    SingleSelect(4);
+    SingleSelect(4, 'dynamicFieldType.singleSelect');
 
     final int id
+    final String messageCode
 
-    DynamicFieldType(int id) {
+    DynamicFieldType(int id, String messageCode) {
         this.id = id
+        this.messageCode = messageCode
     }
+
 }

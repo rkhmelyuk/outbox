@@ -40,4 +40,33 @@ class DynamicFieldTests extends GrailsUnitTestCase {
         assertEquals(1, new DynamicField(sequence: 1).compareTo(new DynamicField(sequence: 0)))
         assertEquals(-1, new DynamicField(sequence: 0).compareTo(new DynamicField(sequence: 1)))
     }
+
+    void testNonDuplicateName() {
+        DynamicField field = new DynamicField(id: 1, name: 'name', owner: new Member(id: 1))
+        mockDomain(DynamicField, [field])
+
+        assertFalse DynamicField.duplicateName(field, field.name)
+    }
+
+    void testDuplicateEmail() {
+        Member member = new Member(id: 1)
+        DynamicField field1 = new DynamicField(id: 1, name: 'name', owner: member)
+        DynamicField field2 = new DynamicField(id: 2, name: 'name', owner: member)
+
+        mockDomain(DynamicField, [field1, field2])
+
+        assertTrue DynamicField.duplicateName(field2, field2.name)
+    }
+
+    void testOwnedBy() {
+        def field = new DynamicField(owner: null)
+
+        assertFalse field.ownedBy(1)
+        assertFalse field.ownedBy(null)
+
+        field.owner = new Member(id: 2)
+        assertFalse field.ownedBy(1)
+        assertFalse field.ownedBy(null)
+        assertTrue field.ownedBy(2)
+    }
 }
