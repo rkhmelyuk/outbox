@@ -7,7 +7,7 @@ import outbox.member.Member
  *
  * @author Ruslan Khmelyuk
  */
-class DynamicField {
+class DynamicField implements Comparable<DynamicField> {
 
     Long id
     Member owner
@@ -51,4 +51,26 @@ class DynamicField {
         max  nullable: true
         maxlength nullable: true, min: 0, max: 4000
     }
+
+    /**
+     * Checks whether this Campaign belongs to the user with specified id.
+     *
+     * @param memberId the member id
+     * @return {@code true} if belongs, otherwise {@code false}.
+     */
+    boolean ownedBy(Long memberId) {
+        if (memberId) {
+            return (owner != null && owner.id == memberId)
+        }
+        return false
+    }
+
+    int compareTo(DynamicField other) {
+        if (!other) {
+            return 1
+        }
+
+        sequence <=> other.sequence
+    }
+
 }

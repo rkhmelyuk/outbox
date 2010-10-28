@@ -15,7 +15,7 @@ class DynamicFieldTests extends GrailsUnitTestCase {
         field.owner = new Member(id: 2)
         field.name = 'testName'
         field.label = 'Test Label'
-        field.type = DynamicFieldType.Integer
+        field.type = DynamicFieldType.Number
         field.sequence = 3
         field.mandatory = true
         field.min = 0
@@ -30,7 +30,14 @@ class DynamicFieldTests extends GrailsUnitTestCase {
         assertEquals 50, field.maxlength
         assertEquals 'testName', field.name
         assertEquals 'Test Label', field.label
-        assertEquals DynamicFieldType.Integer, field.type
+        assertEquals DynamicFieldType.Number, field.type
         assertTrue field.mandatory
+    }
+
+    void testSorting() {
+        assertEquals(1, new DynamicField().compareTo(null))
+        assertEquals(0, new DynamicField(sequence: 1).compareTo(new DynamicField(sequence: 1)))
+        assertEquals(1, new DynamicField(sequence: 1).compareTo(new DynamicField(sequence: 0)))
+        assertEquals(-1, new DynamicField(sequence: 0).compareTo(new DynamicField(sequence: 1)))
     }
 }
