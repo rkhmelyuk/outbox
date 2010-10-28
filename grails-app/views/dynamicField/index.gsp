@@ -3,15 +3,22 @@
     <head>
         <title><g:message code="dynamicFields.title"/></title>
         <meta name='layout' content='main'/>
-        %{--<g:javascript library="jquery.form" />
+
+        <link rel="stylesheet" href="${resource(dir:'css',file:'jquery.fancybox.css')}" />
+
+        <g:javascript library="jquery.form" />
         <g:javascript library="jquery.validate" />
+        <g:javascript library="jquery.fancybox" />
 
         <script type="text/javascript">
-            $(document).ready(function() { App.subscriberTypes() })
-        </script>--}%
+            $(document).ready(function() { App.dynamicFields() })
+        </script>
     </head>
     <body class="dynamicFields">
         <div class="status" style="display: none;"> </div>
+
+        <g:link elementId="create" controller="dynamicField" action="create">
+            <g:message code="add.dynamicField"/></g:link>
 
         <table>
             <tr>

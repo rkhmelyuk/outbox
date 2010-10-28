@@ -2,6 +2,7 @@ package outbox.subscriber
 
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.member.Member
+import outbox.subscriber.field.DynamicField
 
 /**
  * @author Ruslan Khmelyuk
@@ -21,5 +22,12 @@ class DynamicFieldController {
         def dynamicFields = dynamicFieldService.getDynamicFields(member)
 
         [dynamicFields: dynamicFields]
+    }
+
+    /**
+     * Create dynamic field view.
+     */
+    def create = {
+        [dynamicField: new DynamicField()]
     }
 }

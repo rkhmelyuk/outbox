@@ -1,5 +1,7 @@
 package outbox
 
+import org.codehaus.groovy.grails.plugins.springsecurity.SecurityRequestHolder as SRH
+
 import java.text.MessageFormat
 import javax.servlet.http.HttpServletRequest
 import org.codehaus.groovy.grails.commons.ApplicationHolder
@@ -36,8 +38,9 @@ class MessageUtil {
     }
 
     public static String getMessage(String messageCode, Object[] params, HttpServletRequest request) {
-        Locale locale = RequestContextUtils.getLocale(request)
-        MessageSource messageSource = (MessageSource) ApplicationHolder.application.mainContext.getBean("messageSource");
-        return messageSource.getMessage(messageCode, params, locale)
+        request = request ?: SRH.request
+        def locale = RequestContextUtils.getLocale(request)
+        def messageSource = (MessageSource) ApplicationHolder.application.mainContext.getBean("messageSource");
+        messageSource.getMessage(messageCode, params, locale)
     }
 }

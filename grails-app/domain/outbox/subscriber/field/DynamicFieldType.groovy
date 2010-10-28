@@ -1,5 +1,7 @@
 package outbox.subscriber.field
 
+import outbox.MessageUtil
+
 /**
  * The type of dynamic field.
  * 
@@ -33,6 +35,10 @@ public enum DynamicFieldType {
     DynamicFieldType(int id, String messageCode) {
         this.id = id
         this.messageCode = messageCode
+    }
+
+    String getMessage() {
+        MessageUtil.getMessage(messageCode, null, null)
     }
 
 }

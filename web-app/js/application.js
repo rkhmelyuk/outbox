@@ -246,6 +246,40 @@ var App = {
         });
     },
 
+    dynamicFields: function() {
+        var browserHeight = jQuery(document).height();
+
+        $('a#create').fancybox({
+            hideOnOverlayClick: false,
+            hideOnContentClick: false,
+            width: 640,
+            height: 400,
+            type: 'ajax'
+        });
+    },
+
+    createDynamicField: function() {
+        var validator = $('#addSubscriberTypeForm').validate({
+            rules: {
+                name: { required: true}
+            },
+            messages: {
+                name: { required: Message['subscriberType.name.required'] }
+            }
+        });
+        $('#add').live('click', function() {
+            /*if (validator.form()) {
+                $('#createForm').ajaxSubmit();
+            }*/
+        });
+        $('#cancel').live('click', function() {
+            $.fancybox.close();
+        });
+        $('#type').change(function() {
+            var value = $(this).val();
+        });
+    },
+
     subscriberTypes: function() {
         var validator = $('#addSubscriberTypeForm').validate({
             rules: {
@@ -351,7 +385,8 @@ var App = {
                 }
             });
         }
-    },
+    }
+    ,
 
     subscriptionLists: function() {
         var orderColumn = $('#column').val();
@@ -364,7 +399,8 @@ var App = {
         $('.page_callback').click(function() {
             $('#filterForm').submit();
         });
-    },
+    }
+    ,
 
     archivedSubscriptionLists: function() {
         var orderColumn = $('#column').val();
@@ -377,7 +413,8 @@ var App = {
         $('.page_callback').click(function() {
             $('#filterForm').submit();
         });
-    },
+    }
+    ,
 
     subscriptionListCreate: function() {
         $('#name').focus();
@@ -408,7 +445,8 @@ var App = {
                 });
             }
         });
-    },
+    }
+    ,
 
     subscriptionListEdit: function() {
         $('#name').focus();
@@ -439,7 +477,8 @@ var App = {
                 });
             }
         });
-    },
+    }
+    ,
 
     subscriptionListShow: function() {
         $('#deleteSubscriptionList').click(function() {
@@ -457,7 +496,8 @@ var App = {
         $('.discard').click(function() {
             $('.notion').slideUp();
         });
-    },
+    }
+    ,
 
     templateCreate: function() {
         $('#name').focus();
@@ -490,7 +530,8 @@ var App = {
                 });
             }
         });
-    },
+    }
+    ,
 
     templateEdit: function() {
         $('#name').focus();
@@ -523,7 +564,8 @@ var App = {
                 });
             }
         });
-    },
+    }
+    ,
 
     templatesList: function() {
         $('#moreTemplates').click(function() {
@@ -543,7 +585,8 @@ var App = {
                 }
             });
         });
-    },
+    }
+    ,
 
     campaignCreate: function() {
         $('#name').focus();
@@ -574,7 +617,8 @@ var App = {
                 });
             }
         });
-    },
+    }
+    ,
 
     campaignEdit: function() {
         $('#name').focus();
@@ -606,7 +650,8 @@ var App = {
                 });
             }
         });
-    },
+    }
+    ,
 
     campaignSubscribers: function() {
         $('#subscriptionList').focus();
@@ -649,7 +694,8 @@ var App = {
                 }
             });
         });
-    },
+    }
+    ,
 
     campaignTemplate: function() {
         $('#template').focus();
@@ -672,7 +718,8 @@ var App = {
                 }
             });
         });
-    },
+    }
+    ,
 
     campaignShow: function() {
         $('#sendCampaign').live('click', function() {
@@ -694,12 +741,14 @@ var App = {
                 }
             });
         });
-    },
+    }
+    ,
 
     campaignReports: function() {
 
     }
-};
+}
+        ;
 
 function showErrors(response) {
     var errors = '';
