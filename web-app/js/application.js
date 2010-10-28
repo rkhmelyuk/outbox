@@ -385,8 +385,7 @@ var App = {
                 }
             });
         }
-    }
-    ,
+    },
 
     subscriptionLists: function() {
         var orderColumn = $('#column').val();
@@ -399,8 +398,7 @@ var App = {
         $('.page_callback').click(function() {
             $('#filterForm').submit();
         });
-    }
-    ,
+    },
 
     archivedSubscriptionLists: function() {
         var orderColumn = $('#column').val();
@@ -413,8 +411,7 @@ var App = {
         $('.page_callback').click(function() {
             $('#filterForm').submit();
         });
-    }
-    ,
+    },
 
     subscriptionListCreate: function() {
         $('#name').focus();
@@ -445,8 +442,7 @@ var App = {
                 });
             }
         });
-    }
-    ,
+    },
 
     subscriptionListEdit: function() {
         $('#name').focus();
@@ -477,8 +473,7 @@ var App = {
                 });
             }
         });
-    }
-    ,
+    },
 
     subscriptionListShow: function() {
         $('#deleteSubscriptionList').click(function() {
@@ -496,8 +491,7 @@ var App = {
         $('.discard').click(function() {
             $('.notion').slideUp();
         });
-    }
-    ,
+    },
 
     templateCreate: function() {
         $('#name').focus();
@@ -530,8 +524,7 @@ var App = {
                 });
             }
         });
-    }
-    ,
+    },
 
     templateEdit: function() {
         $('#name').focus();
@@ -564,8 +557,7 @@ var App = {
                 });
             }
         });
-    }
-    ,
+    },
 
     templatesList: function() {
         $('#moreTemplates').click(function() {
@@ -585,8 +577,7 @@ var App = {
                 }
             });
         });
-    }
-    ,
+    },
 
     campaignCreate: function() {
         $('#name').focus();
@@ -617,8 +608,7 @@ var App = {
                 });
             }
         });
-    }
-    ,
+    },
 
     campaignEdit: function() {
         $('#name').focus();
@@ -650,8 +640,7 @@ var App = {
                 });
             }
         });
-    }
-    ,
+    },
 
     campaignSubscribers: function() {
         $('#subscriptionList').focus();
@@ -694,8 +683,7 @@ var App = {
                 }
             });
         });
-    }
-    ,
+    },
 
     campaignTemplate: function() {
         $('#template').focus();
@@ -718,8 +706,7 @@ var App = {
                 }
             });
         });
-    }
-    ,
+    },
 
     campaignShow: function() {
         $('#sendCampaign').live('click', function() {
@@ -741,14 +728,12 @@ var App = {
                 }
             });
         });
-    }
-    ,
+    },
 
     campaignReports: function() {
 
     }
-}
-        ;
+};
 
 function showErrors(response) {
     var errors = '';
