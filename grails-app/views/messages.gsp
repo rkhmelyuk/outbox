@@ -25,7 +25,7 @@ Message = {
     'member.timezone.nullable': '<g:message code="member.timezone.nullable"/>',
     'subscriber.email.blank': '<g:message code="subscriber.email.blank"/>',
     'member.role.nullable': '<g:message code="member.role.nullable"/>',
-    'subscriberType.name.required': '<g:message code="subscriberType.name.required"/>',
+    'subscriberType.name.required': '<g:message code="subscriberType.name.blank"/>',
     'subscriberType.remove.confirm': '<g:message code="subscriberType.remove.confirm"/>',
     'subscriberType.delete.failed': '<g:message code="subscriberType.delete.failed"/>',
     'subscriptionList.name.blank': '<g:message code="subscriptionList.name.blank"/>',
@@ -37,4 +37,7 @@ Message = {
     'template.name.maxSize.exceeded': '<g:message code="template.name.maxSize.exceeded"/>',
     'template.name.blank': '<g:message code="template.name.blank"/>',
     'template.changed.successfully': '<g:message code="template.changed.successfully"/>',
+    'dynamicField.label.required': '<g:message code="dynamicField.label.blank"/>',
+    'dynamicField.type.required': '<g:message code="dynamicField.type.nullable"/>',
+    'dynamicField.name.required': '<g:message code="dynamicField.name.blank"/>'
 }

@@ -252,31 +252,68 @@ var App = {
         $('a#create').fancybox({
             hideOnOverlayClick: false,
             hideOnContentClick: false,
-            width: 640,
-            height: 400,
             type: 'ajax'
         });
     },
 
     createDynamicField: function() {
-        var validator = $('#addSubscriberTypeForm').validate({
+        var value = $('#type').val();
+        $('.constraint').hide();
+        $('.constraint_' + value).show();
+
+        var validator = $('#createForm').validate({
             rules: {
-                name: { required: true}
+                label: { required: true },
+                name: { required: true },
+                type: { required: true },
+                maxlength: { number: true, min: 0, max: 4000 },
+                min: { number: true },
+                max: { number: true }
             },
             messages: {
-                name: { required: Message['subscriberType.name.required'] }
+                label: { required: Message['dynamicField.label.required'] },
+                name: { required: Message['dynamicField.name.required'] },
+                type: { required: Message['dynamicField.type.required'] }
             }
         });
+        $('#label').live('keyup', function() {
+            $('#name').val($(this).val().replace(/\s+/g, '_').replace(/[^\w\d_]/g, '').toLowerCase());
+        });
         $('#add').live('click', function() {
-            /*if (validator.form()) {
-                $('#createForm').ajaxSubmit();
-            }*/
+            if (validator.form()) {
+                $('#createForm').ajaxSubmit({
+                    dataType: 'json',
+                    success: function(response, status) {
+                        if (response && status == 'success') {
+                            if (response.success) {
+                                //$.fancybox.close();
+                                document.location = response.redirectTo;
+                            }
+                            else {
+                                showErrors(response);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        $('#addNewSelectValue').live('click', function() {
+            var value = $('#newSelectValue').val();
+            if (value) {
+                $('#newSelectValue').val('').focus();
+                $('#selectValues').append('<li><input type="hidden" name="selectValue" value="'+value+'"/>'+value+'</li>');
+            }
+        });
+        $('#newSelectValue').live('keyup', function(e) {
+            if (e.keyCode == 13) $('#addNewSelectValue').click();
         });
         $('#cancel').live('click', function() {
             $.fancybox.close();
         });
         $('#type').change(function() {
             var value = $(this).val();
+            $('.constraint').hide();
+            $('.constraint_' + value).show()
         });
     },
 

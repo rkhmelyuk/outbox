@@ -41,4 +41,15 @@ public enum DynamicFieldType {
         MessageUtil.getMessage(messageCode, null, null)
     }
 
+    static DynamicFieldType getById(Integer id) {
+        if (id) {
+            for (DynamicFieldType type in values()) {
+                if (type.id == id) {
+                    return type
+                }
+            }
+        }
+        return null
+    }
+
 }

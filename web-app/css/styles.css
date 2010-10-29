@@ -307,3 +307,5 @@ a:hover {
 
 .asc { font-weight: bold; background: url('../images/skin/sorted_asc.gif') right no-repeat; padding: 0 8px 0 0; }
 .desc { font-weight: bold; background: url('../images/skin/sorted_desc.gif') right no-repeat; padding: 0 8px 0 0; }
+
+.constraint { display: none; }
