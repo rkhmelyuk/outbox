@@ -291,8 +291,8 @@ var App = {
                     success: function(response, status) {
                         if (response && status == 'success') {
                             if (response.success) {
-                                //$.fancybox.close();
-                                document.location = response.redirectTo;
+                                $.fancybox.close();
+                                $('#dynamicFields').load(response.dynamicFieldsLink);
                             }
                             else {
                                 showErrors(response);

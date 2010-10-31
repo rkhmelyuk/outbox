@@ -177,7 +177,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue 'Must be successful.', result.success
-        assertEquals 'link', result.redirectTo
+        assertEquals 'link', result.dynamicFieldsLink
         assertNull result.error
     }
 
@@ -222,7 +222,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue 'Must be successful.', result.success
-        assertEquals 'link', result.redirectTo
+        assertEquals 'link', result.dynamicFieldsLink
         assertNull result.error
     }
 
@@ -267,7 +267,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue 'Must be successful.', result.success
-        assertEquals 'link', result.redirectTo
+        assertEquals 'link', result.dynamicFieldsLink
         assertNull result.error
     }
 
@@ -320,7 +320,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue 'Must be successful.', result.success
-        assertEquals 'link', result.redirectTo
+        assertEquals 'link', result.dynamicFieldsLink
         assertNull result.error
     }
 
@@ -398,7 +398,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue 'Must be successful.', result.success
-        assertEquals 'link', result.redirectTo
+        assertEquals 'link', result.dynamicFieldsLink
         assertNull result.error
     }
 

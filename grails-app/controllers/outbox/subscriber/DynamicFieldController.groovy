@@ -75,7 +75,7 @@ class DynamicFieldController {
                 }
                 dynamicFieldService.addDynamicFieldItems(dynamicField, items)
             }
-            model.redirectTo = g.createLink(controller: 'dynamicField')
+            model.dynamicFieldsLink = g.createLink(controller: 'dynamicField', action: 'dynamicFields')
             model.success = true
         }
         else {
@@ -140,7 +140,7 @@ class DynamicFieldController {
             }
             dynamicFieldService.updateDynamicFieldItems(dynamicField, items)
 
-            model.redirectTo = g.createLink(controller: 'dynamicField')
+            model.dynamicFieldsLink = g.createLink(controller: 'dynamicField', action: 'dynamicFields')
             model.success = true
         }
         else {
