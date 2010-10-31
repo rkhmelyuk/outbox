@@ -281,6 +281,7 @@ var App = {
                 max: { integer: Message['dynamicField.max.integer'] }
             }
         });
+        $('#saveForm').data('validator', validator);
         $('#label').live('keyup', function() {
             $('#name').val($(this).val().replace(/\s+/g, '_').replace(/[^\w\d_]/g, '').toLowerCase());
         });
@@ -318,7 +319,7 @@ var App = {
         $('#cancel').live('click', function() {
             $.fancybox.close();
         });
-        $('#type').change(function() {
+        $('#type').live('change', function() {
             var value = $(this).val();
             $('.constraint').hide();
             $('.constraint_' + value).show()

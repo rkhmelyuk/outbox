@@ -1,3 +1,6 @@
+<script type="text/javascript">
+    $(document).ready(function() { App.dynamicFields() })
+</script>
 <table>
     <tr>
         <td><g:message code="label"/></td>
