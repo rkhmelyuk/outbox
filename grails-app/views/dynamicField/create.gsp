@@ -2,6 +2,12 @@
 <script type="text/javascript">
     $(document).ready(function() { App.createDynamicField() })
 </script>
+<script id="selectValueItemTemplate" type="text/x-jquery-tmpl">
+    <li>
+        <input type="hidden" name="selectValue" value="{{= value}}"/>
+        {{= value}} - <a href="javascript:void(0);" class="removeSelectedValue"><g:message code="remove"/></a>
+    </li>
+</script>
 <div style="width: 650px; height: 400px;">
     <div class="status" style="display: none;"> </div>
     <g:form name="createForm" action="add" onsubmit="return false;">
@@ -44,16 +50,7 @@
                     <g:message code="add.new.value" /><br/>
                     <input type="text" id="newSelectValue" maxlength="200"/>
                     <a href="javascript:void(0);" id="addNewSelectValue"><g:message code="add"/></a>
-                    <ul id="selectValues">
-                    <g:if test="${selectValues}">
-                        <g:each in="${selectValues}" var="value" status="index">
-                            <li>
-                                <g:hiddenField name="selectValue" value="${value.label}"/>
-                                ${value.encodeAsHTML()}
-                            </li>
-                        </g:each>
-                    </g:if>
-                    </ul>
+                    <ul id="selectValues"> </ul>
                 </td>
             </tr>
         </table>

@@ -31,7 +31,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
+        springSecurityServiceControl.demand.getPrincipal {->
             return new OutboxUser('username', 'password', true, false, false, false, [], member)
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
@@ -59,7 +59,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
+        springSecurityServiceControl.demand.getPrincipal {->
             return new OutboxUser('username', 'password', true, false, false, false, [], member)
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
@@ -98,7 +98,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
+        springSecurityServiceControl.demand.getPrincipal {->
             return new OutboxUser('username', 'password', true, false, false, false, [], member)
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
@@ -143,7 +143,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
+        springSecurityServiceControl.demand.getPrincipal {->
             return new OutboxUser('username', 'password', true, false, false, false, [], member)
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
@@ -155,6 +155,104 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.params.min = '0'
         controller.params.max = '10'
         controller.params.mandatory = 'true'
+
+        controller.add()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be successful.', result.success
+        assertEquals 'link', result.redirectTo
+        assertNull result.error
+    }
+
+    void testAdd_Boolean() {
+        def member = new Member(id: 10)
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.addDynamicField { field ->
+            assertEquals member, field.owner
+            assertEquals 'Label', field.label
+            assertEquals 'label', field.name
+            assertEquals DynamicFieldType.Boolean, field.type
+            assertNull field.max
+            assertNull field.min
+            assertNull field.maxlength
+            assertTrue field.mandatory
+            return true
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.label = 'Label'
+        controller.params.name = 'label'
+        controller.params.type = '3'
+        controller.params.maxlength = '20'
+        controller.params.min = '0'
+        controller.params.max = '10'
+        controller.params.mandatory = 'true'
+
+        controller.add()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be successful.', result.success
+        assertEquals 'link', result.redirectTo
+        assertNull result.error
+    }
+
+    void testAdd_SingleSelect() {
+        def member = new Member(id: 10)
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.addDynamicField { field ->
+            assertEquals member, field.owner
+            assertEquals 'Label', field.label
+            assertEquals 'label', field.name
+            assertEquals DynamicFieldType.SingleSelect, field.type
+            assertNull field.max
+            assertNull field.min
+            assertNull field.maxlength
+            assertTrue field.mandatory
+
+            field.id = 123
+            return true
+        }
+        dynamicFieldServiceControl.demand.addDynamicFieldItems { field, items ->
+            assertEquals 123, field.id
+            items.each { assertTrue(['hello', 'world', 'how', 'are', 'you'].contains(it.name)) }
+            return true
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.label = 'Label'
+        controller.params.name = 'label'
+        controller.params.type = '4'
+        controller.params.maxlength = '20'
+        controller.params.min = '0'
+        controller.params.max = '10'
+        controller.params.mandatory = 'true'
+        controller.params.selectValue = 'hello,world,how,are,you'
 
         controller.add()
 

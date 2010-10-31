@@ -9,6 +9,7 @@
         <g:javascript library="jquery.form" />
         <g:javascript library="jquery.validate" />
         <g:javascript library="jquery.fancybox" />
+        <g:javascript library="jquery.tmpl" />
 
         <script type="text/javascript">
             $(document).ready(function() { App.dynamicFields() })

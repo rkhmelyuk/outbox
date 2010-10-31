@@ -301,8 +301,11 @@ var App = {
             var value = $('#newSelectValue').val();
             if (value) {
                 $('#newSelectValue').val('').focus();
-                $('#selectValues').append('<li><input type="hidden" name="selectValue" value="'+value+'"/>'+value+'</li>');
+                $('#selectValueItemTemplate').tmpl({value: value}).appendTo('#selectValues');
             }
+        });
+        $('.removeSelectedValue').live('click', function() {
+            $(this).parent().remove();
         });
         $('#newSelectValue').live('keyup', function(e) {
             if (e.keyCode == 13) $('#addNewSelectValue').click();

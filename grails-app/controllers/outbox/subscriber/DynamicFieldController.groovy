@@ -1,15 +1,18 @@
 package outbox.subscriber
 
 import grails.converters.JSON
+import grails.plugins.springsecurity.Secured
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
 import outbox.member.Member
 import outbox.subscriber.field.DynamicField
+import outbox.subscriber.field.DynamicFieldItem
 import outbox.subscriber.field.DynamicFieldType
 
 /**
  * @author Ruslan Khmelyuk
  */
+@Secured(['ROLE_CLIENT'])
 class DynamicFieldController {
 
     static allowedMethods = [updateDynamicField: 'POST', add: 'POST', delete: 'POST']
@@ -53,7 +56,7 @@ class DynamicFieldController {
         dynamicField.name = params.name
         dynamicField.type = DynamicFieldType.getById(params.int('type'))
         dynamicField.owner = Member.load(springSecurityService.principal.id)
-        dynamicField.mandatory = params.boolean('mandatory')
+        dynamicField.mandatory = params.boolean('mandatory') ?: false
 
         if (dynamicField.type == DynamicFieldType.String) {
             dynamicField.maxlength = params.int('maxlength')
@@ -66,9 +69,14 @@ class DynamicFieldController {
         def model = [:]
         if (dynamicFieldService.addDynamicField(dynamicField)) {
             if (dynamicField.type == DynamicFieldType.SingleSelect) {
-                def items = params.selectValue
-                println items
-                //dynamicFieldService.saveDynamicFieldList(dynamicField, )
+                int index = 1
+                def items = params.selectValue.collect {
+                    new DynamicFieldItem(
+                            field: dynamicField,
+                            name: it?.trim(),
+                            sequence: index++)
+                }
+                dynamicFieldService.addDynamicFieldItems(dynamicField, items)
             }
             model.redirectTo = g.createLink(controller: 'dynamicField')
             model.success = true
