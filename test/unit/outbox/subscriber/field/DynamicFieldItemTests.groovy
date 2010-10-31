@@ -20,11 +20,14 @@ class DynamicFieldItemTests extends GrailsUnitTestCase {
 
     void testSorting() {
 
-        def left = new DynamicFieldItem(name: 'b')
-        def right = new DynamicFieldItem(name: 'b')
+        def left = new DynamicFieldItem(id: 1, name: 'b')
+        def right = new DynamicFieldItem(id: 1, name: 'b')
 
         assertEquals(1, left.compareTo(null))
         assertEquals(0, left.compareTo(right))
+
+        left.id = 2
+        assertEquals(1, left.compareTo(right))
 
         left.name = 'a'
         assertEquals(-1, left.compareTo(right))

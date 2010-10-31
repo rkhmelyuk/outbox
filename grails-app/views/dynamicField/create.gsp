@@ -1,6 +1,6 @@
 <%@ page import="outbox.subscriber.field.DynamicFieldType" %>
 <script type="text/javascript">
-    $(document).ready(function() { App.createDynamicField() })
+    $(document).ready(function() { App.createEditDynamicField() })
 </script>
 <script id="selectValueItemTemplate" type="text/x-jquery-tmpl">
     <li>
@@ -11,7 +11,7 @@
 <div style="width: 650px; height: 400px;">
     <h2>Create Dynamic Field</h2>
     <div class="status" style="display: none;"> </div>
-    <g:form name="createForm" action="add" onsubmit="return false;">
+    <g:form name="saveForm" action="add" onsubmit="return false;">
         <table>
             <tr>
                 <td><label for="label"><g:message code="label"/></label></td>
@@ -55,7 +55,7 @@
                 </td>
             </tr>
         </table>
-        <a href="javascript:void(0);" id="add"><g:message code="add"/></a>
+        <a href="javascript:void(0);" id="save"><g:message code="add"/></a>
         <a href="javascript:void(0);" id="cancel"><g:message code="cancel"/></a>
     </g:form>
 </div>

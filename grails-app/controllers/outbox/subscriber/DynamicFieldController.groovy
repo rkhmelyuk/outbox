@@ -15,7 +15,7 @@ import outbox.subscriber.field.DynamicFieldType
 @Secured(['ROLE_CLIENT'])
 class DynamicFieldController {
 
-    static allowedMethods = [updateDynamicField: 'POST', add: 'POST', delete: 'POST']
+    static allowedMethods = [add: 'POST', update: 'POST', delete: 'POST']
 
     DynamicFieldService dynamicFieldService
     SpringSecurityService springSecurityService
@@ -69,7 +69,7 @@ class DynamicFieldController {
         def model = [:]
         if (dynamicFieldService.addDynamicField(dynamicField)) {
             if (dynamicField.type == DynamicFieldType.SingleSelect) {
-                def selectValues = params.selectValue as TreeSet
+                def selectValues = params.list('singleSelect') as TreeSet
                 def items = selectValues.collect {
                     new DynamicFieldItem(field: dynamicField, name: it?.trim())
                 }
@@ -86,6 +86,9 @@ class DynamicFieldController {
         render model as JSON
     }
 
+    /**
+     * Dynamic field edit form.
+     */
     def edit = {
         def dynamicField = dynamicFieldService.getDynamicField(params.long('id'))
         if (!dynamicField || !dynamicField.ownedBy(springSecurityService.principal.id)) {
@@ -94,5 +97,57 @@ class DynamicFieldController {
         }
         def dynamicFieldItems = dynamicFieldService.getDynamicFieldItems(dynamicField)
         [dynamicField: dynamicField, dynamicFieldItems: dynamicFieldItems]
+    }
+
+    /**
+     * Update dynamic field.
+     */
+    def update = {
+        def memberId = springSecurityService.principal.id
+        def dynamicField = dynamicFieldService.getDynamicField(params.long('id'))
+        if (!dynamicField || !dynamicField.ownedBy(memberId)) {
+            response.sendError 404
+            return
+        }
+
+        dynamicField.label = params.label
+        dynamicField.name = params.name
+        dynamicField.type = DynamicFieldType.getById(params.int('type'))
+        dynamicField.owner = Member.load(memberId)
+        dynamicField.mandatory = params.boolean('mandatory') ?: false
+
+        if (dynamicField.type == DynamicFieldType.String) {
+            dynamicField.maxlength = params.int('maxlength')
+            dynamicField.min = null
+            dynamicField.max = null
+        }
+        else if (dynamicField.type == DynamicFieldType.Number) {
+            dynamicField.min = params.int('min')
+            dynamicField.max = params.int('max')
+            dynamicField.maxlength = null
+        }
+
+        def model = [:]
+        if (dynamicFieldService.saveDynamicField(dynamicField)) {
+            def items = []
+            if (dynamicField.type == DynamicFieldType.SingleSelect) {
+                def currentItems = dynamicFieldService.getDynamicFieldItems(dynamicField)
+                def selectValues = params.list('selectValue') as TreeSet
+                items = selectValues.collect { name ->
+                    def item = currentItems.find { it.name == name }
+                    item ?: new DynamicFieldItem(field: dynamicField, name: name)
+                }
+            }
+            dynamicFieldService.updateDynamicFieldItems(dynamicField, items)
+
+            model.redirectTo = g.createLink(controller: 'dynamicField')
+            model.success = true
+        }
+        else {
+            model.error = true
+            MessageUtil.addErrors(request, model, dynamicField.errors);
+        }
+
+        render model as JSON
     }
 }

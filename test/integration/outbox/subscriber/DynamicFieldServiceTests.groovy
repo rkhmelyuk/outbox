@@ -210,7 +210,6 @@ class DynamicFieldServiceTests extends GrailsUnitTestCase {
         assertEquals left.id, right.id
         assertEquals left.name, right.name
         assertEquals left.field.id, right.field.id
-        assertEquals left.sequence, right.sequence
     }
 
     DynamicField createDynamicField(def id) {
@@ -230,6 +229,6 @@ class DynamicFieldServiceTests extends GrailsUnitTestCase {
     }
 
     DynamicFieldItem createDynamicFieldItem(DynamicField dynamicField) {
-        return new DynamicFieldItem(field: dynamicField, name: 'Item', sequence: 1)
+        return new DynamicFieldItem(field: dynamicField, name: 'Item')
     }
 }

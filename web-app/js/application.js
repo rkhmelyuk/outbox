@@ -247,21 +247,21 @@ var App = {
     },
 
     dynamicFields: function() {
-        $('a#create').fancybox({
+        $('a#create, a.edit').fancybox({
             hideOnOverlayClick: false,
             hideOnContentClick: false,
             type: 'ajax'
         });
     },
 
-    createDynamicField: function() {
+    createEditDynamicField: function() {
         var value = $('#type').val();
         $('.constraint').hide();
         $('.constraint_' + value).show();
 
         addIntegerValidationRule();
         addLessThanValidationRule();
-        var validator = $('#createForm').validate({
+        var validator = $('#saveForm').validate({
             rules: {
                 label: { required: true },
                 name: { required: true },
@@ -284,9 +284,9 @@ var App = {
         $('#label').live('keyup', function() {
             $('#name').val($(this).val().replace(/\s+/g, '_').replace(/[^\w\d_]/g, '').toLowerCase());
         });
-        $('#add').live('click', function() {
+        $('#save').live('click', function() {
             if (validator.form()) {
-                $('#createForm').ajaxSubmit({
+                $('#saveForm').ajaxSubmit({
                     dataType: 'json',
                     success: function(response, status) {
                         if (response && status == 'success') {

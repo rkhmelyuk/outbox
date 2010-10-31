@@ -114,7 +114,7 @@ class DynamicFieldService {
 
         def currentItems = getDynamicFieldItems(field)
         for (DynamicFieldItem item : items) {
-            def found = currentItems.find { it.id == item.id} != null
+            def found = currentItems.find { it.id == item.id } != null
             if (item.id == null || found) {
                 item.field = field
                 if (!saveDynamicFieldItem(item)) {

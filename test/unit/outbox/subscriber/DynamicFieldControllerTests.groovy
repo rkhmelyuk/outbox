@@ -5,6 +5,8 @@ import grails.plugins.springsecurity.SpringSecurityService
 import grails.test.ControllerUnitTestCase
 import outbox.member.Member
 import outbox.security.OutboxUser
+import outbox.subscriber.field.DynamicField
+import outbox.subscriber.field.DynamicFieldItem
 import outbox.subscriber.field.DynamicFieldType
 
 /**
@@ -76,6 +78,62 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
     void testCreate() {
         def result = controller.create()
         assertNotNull result.dynamicField
+    }
+
+    void testEdit() {
+        def dynamicField = new DynamicField(id: 1, owner: new Member(id: 1))
+        def dynamicFieldItems = []
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            return dynamicField
+        }
+        dynamicFieldServiceControl.demand.getDynamicFieldItems { field ->
+            assertEquals dynamicField, field
+            return dynamicFieldItems
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = '1'
+        def result = controller.edit()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals dynamicField, result.dynamicField
+        assertEquals dynamicFieldItems, result.dynamicFieldItems
+    }
+
+    void testEdit_Denied() {
+        def dynamicField = new DynamicField(id: 1, owner: new Member(id: 2))
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            return dynamicField
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = '1'
+        controller.edit()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals 404, mockResponse.status
     }
 
     void testAdd_String() {
@@ -265,4 +323,83 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         assertEquals 'link', result.redirectTo
         assertNull result.error
     }
+
+    void testUpdate_SingleSelect() {
+        def member = new Member(id: 10)
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            new DynamicField(id: 1, owner: member)
+        }
+        dynamicFieldServiceControl.demand.saveDynamicField { field ->
+            assertEquals member, field.owner
+            assertEquals 'Label', field.label
+            assertEquals 'label', field.name
+            assertEquals DynamicFieldType.SingleSelect, field.type
+            assertNull field.max
+            assertNull field.min
+            assertNull field.maxlength
+            assertTrue field.mandatory
+            return true
+        }
+        dynamicFieldServiceControl.demand.getDynamicFieldItems { field ->
+            assertEquals 1, field.id
+            [
+                    new DynamicFieldItem(id: 1, name: 'hello'),
+                    new DynamicFieldItem(id: 2, name: 'how'),
+                    new DynamicFieldItem(id: 3, name: 'u'),
+            ]
+
+        }
+        dynamicFieldServiceControl.demand.updateDynamicFieldItems { field, items ->
+            assertEquals 1, field.id
+            items.each {
+                if (it.name == 'hello') {
+                    assertEquals 1, it.id
+                }
+                else if (it.name == 'how') {
+                    assertEquals 2, it.id
+                }
+                else if (it.name == 'world' || it.name == 'are' || it.name == 'you') {
+                    assertNull it.id
+                }
+                else {
+                    fail "Unexpected item $it.name"
+                }
+            }
+            return true
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.id = '1'
+        controller.params.label = 'Label'
+        controller.params.name = 'label'
+        controller.params.type = '4'
+        controller.params.maxlength = '20'
+        controller.params.min = '0'
+        controller.params.max = '10'
+        controller.params.mandatory = 'true'
+        controller.params.selectValue = ['hello', 'world', 'how', 'are', 'you']
+
+        controller.update()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be successful.', result.success
+        assertEquals 'link', result.redirectTo
+        assertNull result.error
+    }
+
 }

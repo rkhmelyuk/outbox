@@ -31,7 +31,12 @@ class DynamicFieldItem implements Comparable<DynamicFieldItem> {
 
     int compareTo(DynamicFieldItem other) {
         if (!other) return 1
-        name <=> other.name
+
+        int result = name <=> other.name
+        if (result == 0) {
+            result = id <=> other.id
+        }
+        return result
     }
 
 
