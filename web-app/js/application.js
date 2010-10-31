@@ -247,8 +247,6 @@ var App = {
     },
 
     dynamicFields: function() {
-        var browserHeight = jQuery(document).height();
-
         $('a#create').fancybox({
             hideOnOverlayClick: false,
             hideOnContentClick: false,
@@ -414,8 +412,8 @@ var App = {
             var parent = $(elem).parent();
             parent.hide();
             parent.parent().children('.name').show();
-            var id = parent.parent().children('input[name=id]').val()
-            var name = parent.children('input[name=name]').val()
+            var id = parent.parent().children('input[name=id]').val();
+            var name = parent.children('input[name=name]').val();
             $('#updateSubscriberTypeId').val(id);
             $('#updateSubscriberTypeName').val(name);
             $('#updateSubscriberTypeForm').ajaxSubmit({

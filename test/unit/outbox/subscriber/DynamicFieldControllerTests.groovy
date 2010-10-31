@@ -252,7 +252,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.params.min = '0'
         controller.params.max = '10'
         controller.params.mandatory = 'true'
-        controller.params.selectValue = 'hello,world,how,are,you'
+        controller.params.selectValue = ['hello', 'world', 'how', 'are', 'you']
 
         controller.add()
 

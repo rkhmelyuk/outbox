@@ -69,12 +69,9 @@ class DynamicFieldController {
         def model = [:]
         if (dynamicFieldService.addDynamicField(dynamicField)) {
             if (dynamicField.type == DynamicFieldType.SingleSelect) {
-                int index = 1
-                def items = params.selectValue.collect {
-                    new DynamicFieldItem(
-                            field: dynamicField,
-                            name: it?.trim(),
-                            sequence: index++)
+                def selectValues = params.selectValue as TreeSet
+                def items = selectValues.collect {
+                    new DynamicFieldItem(field: dynamicField, name: it?.trim())
                 }
                 dynamicFieldService.addDynamicFieldItems(dynamicField, items)
             }
@@ -87,5 +84,15 @@ class DynamicFieldController {
         }
 
         render model as JSON
+    }
+
+    def edit = {
+        def dynamicField = dynamicFieldService.getDynamicField(params.long('id'))
+        if (!dynamicField || !dynamicField.ownedBy(springSecurityService.principal.id)) {
+            response.sendError 404
+            return
+        }
+        def dynamicFieldItems = dynamicFieldService.getDynamicFieldItems(dynamicField)
+        [dynamicField: dynamicField, dynamicFieldItems: dynamicFieldItems]
     }
 }

@@ -53,7 +53,7 @@ class DynamicField implements Comparable<DynamicField> {
         type nullable: false
         max nullable: true
         min nullable: true, validator: { val, obj ->
-            if (val != null && obj.max != null && obj.max > val) {
+            if (val != null && obj.max != null && obj.max <= val) {
                 return 'dynamicField.min.larger.max'
             }
         }

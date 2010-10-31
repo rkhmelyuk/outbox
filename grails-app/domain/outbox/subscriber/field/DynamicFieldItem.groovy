@@ -11,7 +11,6 @@ class DynamicFieldItem implements Comparable<DynamicFieldItem> {
     Long id
     DynamicField field
     String name
-    int sequence
 
     static mapping = {
         table 'DynamicFieldItem'
@@ -19,11 +18,10 @@ class DynamicFieldItem implements Comparable<DynamicFieldItem> {
         id column: 'DynamicFieldItemId'
         field column: 'DynamicFieldId'
         name column: 'Name'
-        sequence column: 'Sequence'
 
         version false
         cache true
-        sort 'sequence'
+        sort 'name'
     }
 
     static constraints = {
@@ -33,7 +31,7 @@ class DynamicFieldItem implements Comparable<DynamicFieldItem> {
 
     int compareTo(DynamicFieldItem other) {
         if (!other) return 1
-        sequence <=> other.sequence
+        name <=> other.name
     }
 
 

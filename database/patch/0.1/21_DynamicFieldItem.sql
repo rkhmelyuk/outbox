@@ -3,9 +3,7 @@ create table DynamicFieldItem (
 
     DynamicFieldItemId bigserial,
     DynamicFieldId bigint not null,
-
     Name varchar(500) not null,
-    Sequence int not null,
 
     primary key(DynamicFieldItemId),
 
