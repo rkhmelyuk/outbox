@@ -261,19 +261,26 @@ var App = {
         $('.constraint').hide();
         $('.constraint_' + value).show();
 
+        addIntegerValidationRule();
+        addLessThanValidationRule();
         var validator = $('#createForm').validate({
             rules: {
                 label: { required: true },
                 name: { required: true },
                 type: { required: true },
-                maxlength: { number: true, min: 0, max: 4000 },
-                min: { number: true },
-                max: { number: true }
+                maxlength: { integer: true, min: 0, max: 9999 },
+                min: { integer: true, lessThan: '#max' },
+                max: { integer: true }
             },
             messages: {
                 label: { required: Message['dynamicField.label.required'] },
                 name: { required: Message['dynamicField.name.required'] },
-                type: { required: Message['dynamicField.type.required'] }
+                type: { required: Message['dynamicField.type.required'] },
+                maxlength: { integer: Message['dynamicField.maxlength.integer'],
+                    min: Message['dynamicField.maxlength.min'],
+                    max: Message['dynamicField.maxlength.max']},
+                min: { integer: Message['dynamicField.min.integer'] },
+                max: { integer: Message['dynamicField.max.integer'] }
             }
         });
         $('#label').live('keyup', function() {
@@ -690,7 +697,7 @@ var App = {
                 success: function(response, status) {
                     if (response && status == 'success') {
                         if (response.success) {
-                            $('#state').html(response.stateName)
+                            $('#state').html(response.stateName);
                             $('#notifications').html(response.notifications);
                             $('#actions').html(response.actions);
                             $('#showBody').html(response.content);
@@ -710,7 +717,7 @@ var App = {
                 success: function(response, status) {
                     if (response && status == 'success') {
                         if (response.success) {
-                            $('#state').html(response.stateName)
+                            $('#state').html(response.stateName);
                             $('#notifications').html(response.notifications);
                             $('#actions').html(response.actions);
                             $('#showBody').html(response.content);
@@ -733,7 +740,7 @@ var App = {
                 success: function(response, status) {
                     if (response && status == 'success') {
                         if (response.success) {
-                            $('#state').html(response.stateName)
+                            $('#state').html(response.stateName);
                             $('#notifications').html(response.notifications);
                             $('#actions').html(response.actions);
                             $('#showBody').html(response.content);
@@ -757,7 +764,7 @@ var App = {
                 success: function(response, status) {
                     if (response && status == 'success') {
                         if (response.success) {
-                            $('#state').html(response.stateName)
+                            $('#state').html(response.stateName);
                             $('#notifications').html(response.notifications);
                             $('#actions').html(response.actions);
                         }
@@ -782,6 +789,26 @@ function showErrors(response) {
     }
     $('.status').show().html(errors);
 }
+
+function addIntegerValidationRule() {
+    $.validator.addMethod('integer', function(value, element, param) {
+        return this.optional(element) || value == parseInt(value, 10);
+    }, 'Please enter an integer value.');
+}
+
+function addLessThanValidationRule() {
+    $.validator.addMethod('lessThan', function(value, element, param) {
+        if (this.optional(element)) {
+            return true
+        }
+        var otherValue = parseInt($(param).val(), 10);
+        if (isNaN(otherValue)) {
+            return true
+        }
+        return parseInt(value, 10) < otherValue;
+    }, 'Value is too large.');
+}
+
 
 $(document).ready(function() {
     App.initialize();
