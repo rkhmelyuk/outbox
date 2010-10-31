@@ -48,9 +48,10 @@
             <tr class="constraint constraint_4">
                 <td><g:message code="values.list"/></td>
                 <td>
-                    <g:message code="add.new.value" /><br/>
+                    <h4><g:message code="add.new.value" /></h4>
                     <input type="text" id="newSelectValue" maxlength="200"/>
                     <a href="javascript:void(0);" id="addNewSelectValue"><g:message code="add"/></a>
+                    <h4><g:message code="items"/></h4>
                     <ul id="selectValues"> </ul>
                 </td>
             </tr>
