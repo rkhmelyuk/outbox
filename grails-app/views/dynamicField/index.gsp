@@ -5,11 +5,13 @@
         <meta name='layout' content='main'/>
 
         <link rel="stylesheet" href="${resource(dir:'css',file:'jquery.fancybox.css')}" />
+        <link rel="stylesheet" href="${resource(dir:'css/ui-outbox',file:'jquery.ui.css')}" />
 
         <g:javascript library="jquery.form" />
         <g:javascript library="jquery.fancybox" />
         <g:javascript library="jquery.validate" />
         <g:javascript library="jquery.tmpl" />
+        <g:javascript library="jquery.ui" />
 
     </head>
     <body class="dynamicFields">

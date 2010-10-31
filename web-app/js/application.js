@@ -252,6 +252,22 @@ var App = {
             hideOnContentClick: false,
             type: 'ajax'
         });
+
+
+        $("#dynamicFields").sortable({
+            handle: 'div.handler',
+            items: 'div.item',
+            cursor: 'move',
+            update: function(event, ui) {
+                var field = $(ui.item).attr('id');
+                var after = $(ui.item).prev().attr('id');
+                after = after != undefined ? after : '';
+
+                $('#reorderForm > #fieldId').val(field);
+                $('#reorderForm > #afterFieldId').val(after);
+                $('#reorderForm').ajaxSubmit();
+            }
+        });
     },
 
     createEditDynamicField: function() {
@@ -285,7 +301,7 @@ var App = {
         $('#label').live('keyup', function() {
             $('#name').val($(this).val().replace(/\s+/g, '_').replace(/[^\w\d_]/g, '').toLowerCase());
         });
-        $('#save').live('click', function() {
+        $('#save').click(function() {
             if (validator.form()) {
                 $('#saveForm').ajaxSubmit({
                     dataType: 'json',
@@ -303,23 +319,23 @@ var App = {
                 });
             }
         });
-        $('#addNewSelectValue').live('click', function() {
+        $('#addNewSelectValue').click(function() {
             var value = $('#newSelectValue').val();
             if (value) {
                 $('#newSelectValue').val('').focus();
                 $('#selectValueItemTemplate').tmpl({value: value}).appendTo('#selectValues');
             }
         });
-        $('.removeSelectedValue').live('click', function() {
+        $('.removeSelectedValue').click(function() {
             $(this).parent().remove();
         });
-        $('#newSelectValue').live('keyup', function(e) {
+        $('#newSelectValue').keyup(function(e) {
             if (e.keyCode == 13) $('#addNewSelectValue').click();
         });
-        $('#cancel').live('click', function() {
+        $('#cancel').click(function() {
             $.fancybox.close();
         });
-        $('#type').live('change', function() {
+        $('#type').change(function() {
             var value = $(this).val();
             $('.constraint').hide();
             $('.constraint_' + value).show()

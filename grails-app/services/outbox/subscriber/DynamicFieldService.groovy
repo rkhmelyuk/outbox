@@ -16,6 +16,9 @@ class DynamicFieldService {
 
     static transactional = true
 
+    def session
+    def sessionFactory
+
     /**
      * Add dynamic field.
      * If sequence is not set (ie 0), then correct sequence will be found and set.
@@ -152,5 +155,38 @@ class DynamicFieldService {
             return DynamicFieldItem.findAllByField(dynamicField)
         }
         return []
+    }
+
+    /**
+     * Moves specified dynamic field to new position.
+     * @param dynamicField the dynamic field.
+     * @param newPosition the new position of dynamic field.
+     * @return true if position was changed or wasn't need to change, otherwise false.
+     */
+    @Transactional
+    boolean moveDynamicField(DynamicField dynamicField, int newPosition) {
+        if (dynamicField) {
+            def position = dynamicField.sequence
+            if (newPosition == position) {
+                return true
+            }
+
+            println "position: $position, newPosition: $newPosition"
+
+            if (newPosition > position) {
+                DynamicField.executeUpdate('update DynamicField set sequence = sequence - 1 ' +
+                        'where owner = :owner and sequence > :position and sequence <= :newPosition',
+                        [owner: dynamicField.owner, position: position, newPosition: newPosition])
+            }
+            else if (newPosition < position) {
+                DynamicField.executeUpdate('update DynamicField set sequence = sequence + 1 ' +
+                        'where owner = :owner and sequence >= :newPosition and sequence < :position',
+                        [owner: dynamicField.owner, position: position, newPosition: newPosition])
+            }
+
+            dynamicField.sequence = newPosition
+            return saveDynamicField(dynamicField)
+        }
+        return false
     }
 }

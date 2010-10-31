@@ -34,7 +34,7 @@ environments {
     }
     test {
         dataSource {
-            dbCreate = "create-drop"
+            dbCreate = "create"
             url = 'jdbc:postgresql://127.0.0.1:5432/outbox_test'
             driverClassName = 'org.postgresql.Driver'
             username = 'outbox'
