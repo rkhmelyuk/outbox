@@ -3,6 +3,7 @@ package outbox.subscriber
 import grails.test.GrailsUnitTestCase
 import outbox.member.Member
 import outbox.subscriber.field.DynamicField
+import outbox.subscriber.field.DynamicFieldItem
 import outbox.subscriber.field.DynamicFieldType
 
 /**
@@ -76,6 +77,121 @@ class DynamicFieldServiceTests extends GrailsUnitTestCase {
         assertTrue fields.contains(field3)
     }
 
+    void testSaveDynamicFieldItem() {
+        def field = createDynamicField(1)
+        assertTrue dynamicFieldService.saveDynamicField(field)
+
+        def item = createDynamicFieldItem(field)
+        assertTrue dynamicFieldService.saveDynamicFieldItem(item)
+
+        def found = dynamicFieldService.getDynamicFieldItem(item.id)
+        assertEquals(item, found)
+    }
+
+    void testAddDynamicFieldItems_Sequence() {
+        def field = createDynamicField(1)
+        field.type = DynamicFieldType.SingleSelect
+        assertTrue dynamicFieldService.saveDynamicField(field)
+
+        def item1 = createDynamicFieldItem(field)
+        def item2 = createDynamicFieldItem(field)
+        def item3 = createDynamicFieldItem(field)
+        assertTrue dynamicFieldService.addDynamicFieldItems(field, [item1, item2, item3])
+
+        def found1 = dynamicFieldService.getDynamicFieldItem(item1.id)
+        def found2 = dynamicFieldService.getDynamicFieldItem(item2.id)
+        def found3 = dynamicFieldService.getDynamicFieldItem(item3.id)
+
+        assertEquals(item1, found1)
+        assertEquals(item2, found2)
+        assertEquals(item3, found3)
+    }
+
+    void testAddDynamicFieldItems_NotSequence() {
+        def field = createDynamicField(1)
+        field.type = DynamicFieldType.String
+        assertTrue dynamicFieldService.saveDynamicField(field)
+
+        def item1 = createDynamicFieldItem(field)
+        def item2 = createDynamicFieldItem(field)
+        def item3 = createDynamicFieldItem(field)
+        assertFalse dynamicFieldService.addDynamicFieldItems(field, [item1, item2, item3])
+
+        assertNull dynamicFieldService.getDynamicFieldItem(item1.id)
+        assertNull dynamicFieldService.getDynamicFieldItem(item2.id)
+        assertNull dynamicFieldService.getDynamicFieldItem(item3.id)
+    }
+
+    void testGetDynamicFieldItems_Sequence() {
+        def field = createDynamicField(1)
+        field.type = DynamicFieldType.SingleSelect
+        assertTrue dynamicFieldService.saveDynamicField(field)
+
+        def item1 = createDynamicFieldItem(field)
+        def item2 = createDynamicFieldItem(field)
+        def item3 = createDynamicFieldItem(field)
+        assertTrue dynamicFieldService.addDynamicFieldItems(field, [item1, item2, item3])
+
+        def found = dynamicFieldService.getDynamicFieldItems(field)
+
+        assertEquals 3, found.size()
+        assertTrue found.contains(item1)
+        assertTrue found.contains(item2)
+        assertTrue found.contains(item3)
+    }
+
+    void testGetDynamicFieldItems_NotSequence() {
+        def field = createDynamicField(1)
+        field.type = DynamicFieldType.String
+        assertTrue dynamicFieldService.saveDynamicField(field)
+
+        def found = dynamicFieldService.getDynamicFieldItems(field)
+        assertEquals 0, found.size()
+    }
+
+    void testUpdateDynamicFieldItems_Update() {
+        def field = createDynamicField(1)
+        field.type = DynamicFieldType.SingleSelect
+        assertTrue dynamicFieldService.saveDynamicField(field)
+
+        def item1 = createDynamicFieldItem(field)
+        def item2 = createDynamicFieldItem(field)
+        def item3 = createDynamicFieldItem(field)
+        assertTrue dynamicFieldService.addDynamicFieldItems(field, [item1, item2, item3])
+        dynamicFieldService.getDynamicFieldItems(field)
+
+        item1.name = 'Changed Name'
+        def item4 = createDynamicFieldItem(field)
+        def item5 = createDynamicFieldItem(field)
+
+        assertTrue dynamicFieldService.updateDynamicFieldItems(field, [item1, item4, item5])
+
+        def found = dynamicFieldService.getDynamicFieldItems(field)
+
+        assertEquals 3, found.size()
+        assertTrue found.contains(item1)
+        assertTrue found.contains(item4)
+        assertTrue found.contains(item5)
+
+        assertEquals item1.name, dynamicFieldService.getDynamicFieldItem(item1.id).name
+    }
+
+    void testUpdateDynamicFieldItems_Cleanup() {
+        def field = createDynamicField(1)
+        field.type = DynamicFieldType.SingleSelect
+        assertTrue dynamicFieldService.saveDynamicField(field)
+
+        def item1 = createDynamicFieldItem(field)
+        def item2 = createDynamicFieldItem(field)
+        def item3 = createDynamicFieldItem(field)
+
+        assertTrue dynamicFieldService.addDynamicFieldItems(field, [item1, item2, item3])
+        assertEquals 3, dynamicFieldService.getDynamicFieldItems(field).size()
+
+        assertTrue dynamicFieldService.updateDynamicFieldItems(field, [])
+        assertEquals 0, dynamicFieldService.getDynamicFieldItems(field).size()
+    }
+
     void assertEquals(DynamicField left, DynamicField right) {
         assertNotNull right
         assertEquals left.id, right.id
@@ -87,6 +203,14 @@ class DynamicFieldServiceTests extends GrailsUnitTestCase {
         assertEquals left.max, right.max
         assertEquals left.min, right.min
         assertEquals left.maxlength, right.maxlength
+    }
+
+    void assertEquals(DynamicFieldItem left, DynamicFieldItem right) {
+        assertNotNull right
+        assertEquals left.id, right.id
+        assertEquals left.name, right.name
+        assertEquals left.field.id, right.field.id
+        assertEquals left.sequence, right.sequence
     }
 
     DynamicField createDynamicField(def id) {
@@ -103,5 +227,9 @@ class DynamicFieldServiceTests extends GrailsUnitTestCase {
         dynamicField.maxlength = 120
 
         return dynamicField
+    }
+
+    DynamicFieldItem createDynamicFieldItem(DynamicField dynamicField) {
+        return new DynamicFieldItem(field: dynamicField, name: 'Item', sequence: 1)
     }
 }
