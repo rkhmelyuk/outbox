@@ -19,7 +19,7 @@ class ServiceUtil {
             return false
         }
 
-        boolean saved = (item.save(flush: true) != null)
+        boolean saved = (item.save(flush: true, validate: false) != null)
         if (!saved) {
             setRollbackTransaction()
         }
