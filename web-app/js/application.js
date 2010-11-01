@@ -250,7 +250,14 @@ var App = {
         $('a#create, a.edit').fancybox({
             hideOnOverlayClick: false,
             hideOnContentClick: false,
-            type: 'ajax'
+            type: 'ajax',
+            onComplete: function() {
+                $('#label').focus();
+            }
+        });
+        $('a#removeConfirm').fancybox({
+            modal: true,
+            type: 'inline'
         });
 
         var over = true;
@@ -258,9 +265,9 @@ var App = {
             handle: 'div.handler',
             items: 'div.item',
             cursor: 'move',
-            connectWith: $('#trash'),
-            dropOnEmpty: true,
-            tolerance: 'pointer',
+            //connectWith: $('#trash'),
+            //dropOnEmpty: true,
+            //tolerance: 'pointer',
             start: function(event, ui) {
                 over =  true
             },
@@ -274,17 +281,15 @@ var App = {
                     $('#reorderForm > #afterFieldId').val(after);
                     $('#reorderForm').ajaxSubmit();
                 }
-            },
-            remove: function(event, ui) {
-                var field = $(ui.item).attr('id');
-                $('#removeForm > #fieldId').val(field);
-                $('#removeForm').ajaxSubmit();
             }
         });
 
+        var draggable = null;
         $("#trash").droppable({
 			drop: function(event, ui) {
-                $(ui.draggable).remove();
+                $("a#removeConfirm").trigger('click');
+                draggable = ui.draggable;
+                $(draggable).hide();
 			},
             out: function(event, ui) {
                 over = true;
@@ -293,6 +298,26 @@ var App = {
                 over = false;
             }
 		});
+
+        $('#cancelRemove').click(function() {
+            $(draggable).show();
+            $("#dynamicFields").sortable('cancel');
+            $.fancybox.close();
+        });
+        $('#hideField').click(function() {
+            $("#dynamicFields").sortable('cancel');
+            $.fancybox.close();
+        });
+        $('#removeField').click(function() {
+            $(draggable).remove();
+            $.fancybox.close();
+
+            var field = $(draggable).attr('id');
+            $('#removeForm > #fieldId').val(field);
+            $('#removeForm').ajaxSubmit();
+
+            $("#dynamicFields").sortable('refresh');
+        });
     },
 
     createEditDynamicField: function() {
