@@ -1,6 +1,5 @@
 package outbox.subscriber
 
-import grails.test.GrailsUnitTestCase
 import org.hibernate.Session
 import outbox.member.Member
 import outbox.subscriber.field.DynamicField
@@ -12,7 +11,7 @@ import outbox.subscriber.field.DynamicFieldType
  *
  * @author Ruslan Khmelyuk
  */
-class DynamicFieldServiceTests extends GrailsUnitTestCase {
+class DynamicFieldServiceTests extends GroovyTestCase {
 
     Session session
     DynamicFieldService dynamicFieldService
@@ -193,32 +192,6 @@ class DynamicFieldServiceTests extends GrailsUnitTestCase {
         assertTrue dynamicFieldService.updateDynamicFieldItems(field, [])
         assertEquals 0, dynamicFieldService.getDynamicFieldItems(field).size()
     }
-
-    /*
-    void testMoveDynamicField() {
-        def field1 = createDynamicField(1)
-        def field2 = createDynamicField(2)
-        def field3 = createDynamicField(3)
-
-        assertTrue dynamicFieldService.addDynamicField(field1)
-        assertTrue dynamicFieldService.addDynamicField(field2)
-        assertTrue dynamicFieldService.addDynamicField(field3)
-
-        assertEquals 1, field1.sequence
-        assertEquals 2, field2.sequence
-        assertEquals 3, field3.sequence
-
-        assertTrue dynamicFieldService.moveDynamicField(field1, field1.sequence)
-        assertTrue dynamicFieldService.moveDynamicField(field1, field3.sequence)
-
-        field1 = dynamicFieldService.getDynamicField(field1.id)
-        field2 = dynamicFieldService.getDynamicField(field2.id)
-        field3 = dynamicFieldService.getDynamicField(field3.id)
-
-        assertEquals 3, field1.sequence
-        assertEquals 2, field2.sequence
-        assertEquals 1, field3.sequence
-    }*/
 
     void assertEquals(DynamicField left, DynamicField right) {
         assertNotNull right

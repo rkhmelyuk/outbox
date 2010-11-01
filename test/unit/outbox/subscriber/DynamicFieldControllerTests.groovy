@@ -402,4 +402,40 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         assertNull result.error
     }
 
+    void testReOrderField() {
+        def member = new Member(id: 10)
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField(2..2) { id ->
+            assertTrue (id == 1 || id == 2)
+            return new DynamicField(id: id, owner: member, sequence: id)
+        }
+        dynamicFieldServiceControl.demand.moveDynamicField { field, newPosition ->
+            assertEquals 2, newPosition
+            assertEquals 1, field.id
+            return true
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.fieldId = '1'
+        controller.params.afterFieldId = '2'
+
+        controller.reOrderField()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be successful.', result.success
+    }
+
 }

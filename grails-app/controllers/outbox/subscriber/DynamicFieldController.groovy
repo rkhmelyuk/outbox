@@ -168,10 +168,7 @@ class DynamicFieldController {
             return
         }
 
-        def newPosition = (afterField?.sequence ?: 1)// + 1
-        if (newPosition > field.sequence) {
-            newPosition++
-        }
+        def newPosition = (afterField?.sequence ?: 0)
         def result = dynamicFieldService.moveDynamicField(field, newPosition)
 
         render([success: result] as JSON)
