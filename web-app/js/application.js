@@ -303,6 +303,7 @@ var App = {
         });
         $('#save').click(function() {
             if (validator.form()) {
+                $(this).attr('disabled', 'disabled');
                 $('#saveForm').ajaxSubmit({
                     dataType: 'json',
                     success: function(response, status) {
@@ -315,6 +316,9 @@ var App = {
                                 showErrors(response);
                             }
                         }
+                    },
+                    complete: function() {
+                        $(this).removeAttr('disabled');
                     }
                 });
             }
