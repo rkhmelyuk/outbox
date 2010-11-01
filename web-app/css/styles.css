@@ -309,3 +309,43 @@ a:hover {
 .desc { font-weight: bold; background: url('../images/skin/sorted_desc.gif') right no-repeat; padding: 0 8px 0 0; }
 
 .constraint { display: none; }
+
+#dynamicFieldsBody {
+    width: 600px;
+}
+
+#dynamicFieldsBody #dynamicFields {
+    width: 200px;
+    float: left;
+}
+
+#dynamicFieldsBody #dynamicFields .item {
+    width: 200px;
+    height: 30px;
+    border: 1px solid #afafaf;
+    margin: 2px 0;
+    background-color: #ffffff;
+}
+
+#dynamicFieldsBody #dynamicFields .item .handler {
+    float: left;
+    width: 10px;
+    height: 26px;
+    background-color: #dfdfdf;
+    margin: 2px;
+    cursor: move;
+}
+
+#dynamicFieldsBody #dynamicFields .item .name {
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#dynamicFieldsBody #trash {
+    float: right;
+    border: 1px solid #999999;
+    background-color: #efefef;
+    width: 180px;
+    height: 200px;
+}

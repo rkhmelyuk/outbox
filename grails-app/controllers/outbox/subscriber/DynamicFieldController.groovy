@@ -151,25 +151,41 @@ class DynamicFieldController {
         render model as JSON
     }
 
-    def reOrderField = {
+    def move = {
         def fieldId = params.long('fieldId')
         def afterFieldId = params.long('afterFieldId')
 
         def field = dynamicFieldService.getDynamicField(fieldId)
         def afterField = afterFieldId ? dynamicFieldService.getDynamicField(afterFieldId) : null
-
         def memberId = springSecurityService.principal.id
+
+        def result
         if (!field || !field.ownedBy(memberId)) {
-            response.sendError 404
-            return
+            result = false
         }
-        if (afterField && !afterField.ownedBy(memberId)) {
-            response.sendError 404
-            return
+        else if (afterField && !afterField.ownedBy(memberId)) {
+            result = false
+        }
+        else {
+            def newPosition = (afterField?.sequence ?: 0)
+            result = dynamicFieldService.moveDynamicField(field, newPosition)
         }
 
-        def newPosition = (afterField?.sequence ?: 0)
-        def result = dynamicFieldService.moveDynamicField(field, newPosition)
+        render([success: result] as JSON)
+    }
+
+    def remove = {
+        def fieldId = params.long('fieldId')
+        def field = dynamicFieldService.getDynamicField(fieldId)
+        def memberId = springSecurityService.principal.id
+
+        def result
+        if (!field || !field.ownedBy(memberId)) {
+            result = false
+        }
+        else {
+            result = dynamicFieldService.deleteDynamicField(field)
+        }
 
         render([success: result] as JSON)
     }

@@ -193,6 +193,13 @@ class DynamicFieldServiceTests extends GroovyTestCase {
         assertEquals 0, dynamicFieldService.getDynamicFieldItems(field).size()
     }
 
+    void testDeleteDynamicField() {
+        def field = createDynamicField(1)
+        assertTrue dynamicFieldService.saveDynamicField(field)
+        assertTrue dynamicFieldService.deleteDynamicField(field)
+        assertNull dynamicFieldService.getDynamicField(field.id)
+    }
+
     void assertEquals(DynamicField left, DynamicField right) {
         assertNotNull right
         assertEquals left.id, right.id

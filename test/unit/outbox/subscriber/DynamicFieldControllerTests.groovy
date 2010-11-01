@@ -402,7 +402,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         assertNull result.error
     }
 
-    void testReOrderField() {
+    void testMove() {
         def member = new Member(id: 10)
 
         Member.class.metaClass.static.load = { id -> member }
@@ -428,7 +428,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.params.fieldId = '1'
         controller.params.afterFieldId = '2'
 
-        controller.reOrderField()
+        controller.move()
 
         dynamicFieldServiceControl.verify()
         springSecurityServiceControl.verify()
@@ -436,6 +436,97 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue 'Must be successful.', result.success
+    }
+
+    void testRemove_Success() {
+        def member = new Member(id: 10)
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            return new DynamicField(id: id, owner: member, sequence: id)
+        }
+        dynamicFieldServiceControl.demand.deleteDynamicField { field ->
+            assertEquals 1, field.id
+            return true
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.fieldId = '1'
+
+        controller.remove()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be successful.', result.success
+    }
+
+    void testRemove_NotFound() {
+        def member = new Member(id: 10)
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField { id -> return null }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.fieldId = '1'
+
+        controller.remove()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertFalse 'Must be failed.', result.success
+    }
+
+    void testRemove_NotPermitted() {
+        def member = new Member(id: 10)
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            return new DynamicField(id: id, owner: new Member(id: 1), sequence: id)
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.fieldId = '1'
+
+        controller.remove()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertFalse 'Must be failed.', result.success
     }
 
 }

@@ -18,8 +18,14 @@
         <g:link elementId="create" controller="dynamicField" action="create">
             <g:message code="add.dynamicField"/></g:link>
 
-        <div id="dynamicFields">
+        <div id="dynamicFieldsBody">
             <g:render template="dynamicFields"/>
+
+            <div id="trash">
+                <h3>Trash</h3>
+                <br/>
+                Drop fields here to remove.
+            </div>
         </div>
     </body>
 </html>

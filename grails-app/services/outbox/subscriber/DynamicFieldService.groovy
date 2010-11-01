@@ -44,6 +44,21 @@ class DynamicFieldService {
         ServiceUtil.saveOrRollback dynamicField
     }
 
+    /**
+     * Deletes dynamic field.
+     * @param dynamicField the dynamic field to delete.
+     * @return true if dynamic field was deleted, otherwise false.
+     */
+    @Transactional
+    boolean deleteDynamicField(DynamicField dynamicField) {
+        if (dynamicField) {
+            deleteDynamicFieldItems dynamicField
+            dynamicField.delete flush: true
+            return true
+        }
+        return false
+    }
+
     /**               `
      * Gets the list of dynamic fields for member.
      * @param dynamicField the dynamic field to save.
@@ -108,7 +123,7 @@ class DynamicFieldService {
         if (!field) return false
 
         if (!items) {
-            DynamicFieldItem.executeUpdate('delete DynamicFieldItem where field = :field', [field: field])
+            deleteDynamicFieldItems(field)
             return true
         }
 
@@ -128,6 +143,10 @@ class DynamicFieldService {
         }
 
         return true
+    }
+
+    private void deleteDynamicFieldItems(DynamicField field) {
+        DynamicFieldItem.executeUpdate('delete DynamicFieldItem where field = :field', [field: field])
     }
 
     /**

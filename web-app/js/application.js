@@ -253,21 +253,46 @@ var App = {
             type: 'ajax'
         });
 
-
+        var over = true;
         $("#dynamicFields").sortable({
             handle: 'div.handler',
             items: 'div.item',
             cursor: 'move',
+            connectWith: $('#trash'),
+            dropOnEmpty: true,
+            tolerance: 'pointer',
+            start: function(event, ui) {
+                over =  true
+            },
             update: function(event, ui) {
-                var field = $(ui.item).attr('id');
-                var after = $(ui.item).prev().attr('id');
-                after = after != undefined ? after : '';
+                if (over) {
+                    var field = $(ui.item).attr('id');
+                    var after = $(ui.item).prev().attr('id');
+                    after = after != undefined ? after : '';
 
-                $('#reorderForm > #fieldId').val(field);
-                $('#reorderForm > #afterFieldId').val(after);
-                $('#reorderForm').ajaxSubmit();
+                    $('#reorderForm > #fieldId').val(field);
+                    $('#reorderForm > #afterFieldId').val(after);
+                    $('#reorderForm').ajaxSubmit();
+                }
+            },
+            remove: function(event, ui) {
+                var field = $(ui.item).attr('id');
+                $('#removeForm > #fieldId').val(field);
+                $('#removeForm').ajaxSubmit();
             }
         });
+
+        $("#trash").droppable({
+			drop: function(event, ui) {
+                $(ui.draggable).remove();
+			},
+            out: function(event, ui) {
+                over = true;
+            },
+            over: function(event, ui) {
+                over = false;
+            }
+		});
     },
 
     createEditDynamicField: function() {
