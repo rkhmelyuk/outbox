@@ -22,9 +22,7 @@
             <g:render template="dynamicFields"/>
 
             <div id="trash">
-                <h3><g:message code="trash" /></h3>
-                <br/>
-                <g:message code="drop.fields.here.to.remove" />
+                <div><g:message code="drop.fields.here.to.remove" /></div>
             </div>
         </div>
     </body>

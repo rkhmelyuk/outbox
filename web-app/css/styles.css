@@ -311,41 +311,86 @@ a:hover {
 .constraint { display: none; }
 
 #dynamicFieldsBody {
-    width: 600px;
+    width: 800px;
 }
 
 #dynamicFieldsBody #dynamicFields {
-    width: 200px;
+    width: 800px;
     float: left;
+    text-shadow: 1px 1px #ffffff;
 }
 
 #dynamicFieldsBody #dynamicFields .item {
-    width: 200px;
+    width: 800px;
     height: 30px;
-    border: 1px solid #afafaf;
-    margin: 2px 0;
-    background-color: #ffffff;
+    margin: 1px 0;
+    border: 1px solid #bfbfbf;
+    background-color: #f3f3f3;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+#dynamicFieldsBody #dynamicFields .item:hover {
+    background-color: #f8f8f8;
+    border: 1px solid #aaaaaa;
 }
 
 #dynamicFieldsBody #dynamicFields .item .handler {
     float: left;
-    width: 10px;
+    width: 14px;
     height: 26px;
-    background-color: #dfdfdf;
+    background-color: #aaaaaa;
     margin: 2px;
     cursor: move;
 }
 
 #dynamicFieldsBody #dynamicFields .item .name {
     float: left;
-    font-size: 14px;
+    width: 250px;
+    padding: 7px 5px;
     font-weight: bold;
+
+    height:15px;
+    overflow:hidden;
+}
+
+#dynamicFieldsBody #dynamicFields .item .type {
+    float: left;
+    width: 150px;
+    padding: 7px 5px;
+    font-style: italic;
+}
+
+#dynamicFieldsBody #dynamicFields .item .column {
+    float: left;
+    width: 125px;
+    padding: 7px 5px;
+    font-style: italic;
+    font-size: 12px;
+}
+
+#dynamicFieldsBody #dynamicFields .item .editLink {
+    float: right;
+    width: 75px;
+    text-align: center;
+    padding: 7px 5px;
 }
 
 #dynamicFieldsBody #trash {
-    float: right;
+    float: left;
     border: 1px solid #999999;
-    background-color: #efefef;
-    width: 180px;
-    height: 200px;
+    background-color: #eaeaea;
+    width: 800px;
+    height: 45px;
+    margin: 5px 0;
+
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+#dynamicFieldsBody #trash div {
+    font-size: 18px;
+    text-align: center;
+    padding: 12px 0;
+    font-stretch:condensed;
 }
