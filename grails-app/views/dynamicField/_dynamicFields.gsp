@@ -1,10 +1,16 @@
-<%@ page import="outbox.subscriber.field.DynamicFieldType" %>
+<%@ page import="outbox.subscriber.field.DynamicFieldStatus; outbox.subscriber.field.DynamicFieldType" %>
 <script type="text/javascript">
     $(document).ready(function() { App.dynamicFields() })
 </script>
+<g:if test="${dynamicFields && dynamicFields.size() >= 15}">
+    <div class="trash">
+        <div><g:message code="drop.fields.here.to.remove" /></div>
+    </div>
+</g:if>
+
 <div id="dynamicFields">
 <g:each var="dynamicField" in="${dynamicFields}">
-    <div class="item" id="${dynamicField.id}">
+    <div class="item <g:if test="${dynamicField.status == DynamicFieldStatus.Hidden}">hiddenField</g:if>" id="${dynamicField.id}">
         <div class="handler"> </div>
         <div class="name">
             <g:fieldValue bean="${dynamicField}" field="label"/>
@@ -16,7 +22,12 @@
             <g:if test="${dynamicField.mandatory}"><g:message code="mandatory"/></g:if>
         </div>
         <div class="column">
-            %{--<g:if test="${dynamicField.hidden}"><g:message code="hidden"/></g:if>--}%
+            <g:if test="${dynamicField.status == DynamicFieldStatus.Active}">
+                <g:message code="visible"/>
+            </g:if>
+            <g:elseif test="${dynamicField.status == DynamicFieldStatus.Hidden}">
+                <g:message code="hidden"/>
+            </g:elseif>
         </div>
         <div class="editLink">
             <g:link class="edit" controller="dynamicField" action="edit" id="${dynamicField.id}"><g:message code="edit"/></g:link>
@@ -25,11 +36,20 @@
 </g:each>
 </div>
 
+<g:if test="${dynamicFields}">
+    <div class="trash">
+        <div><g:message code="drop.fields.here.to.remove" /></div>
+    </div>
+</g:if>
+
 <g:form name="reorderForm" controller="dynamicField" action="move">
     <g:hiddenField name="fieldId"/>
     <g:hiddenField name="afterFieldId"/>
 </g:form>
 <g:form name="removeForm" controller="dynamicField" action="remove">
+    <g:hiddenField name="fieldId"/>
+</g:form>
+<g:form name="hideForm" controller="dynamicField" action="hide">
     <g:hiddenField name="fieldId"/>
 </g:form>
 

@@ -7,6 +7,7 @@ import outbox.MessageUtil
 import outbox.member.Member
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldItem
+import outbox.subscriber.field.DynamicFieldStatus
 import outbox.subscriber.field.DynamicFieldType
 
 /**
@@ -15,7 +16,7 @@ import outbox.subscriber.field.DynamicFieldType
 @Secured(['ROLE_CLIENT'])
 class DynamicFieldController {
 
-    static allowedMethods = [add: 'POST', update: 'POST', delete: 'POST']
+    static allowedMethods = [add: 'POST', update: 'POST', delete: 'POST', hide: 'POST']
 
     DynamicFieldService dynamicFieldService
     SpringSecurityService springSecurityService
@@ -57,6 +58,7 @@ class DynamicFieldController {
         dynamicField.type = DynamicFieldType.getById(params.int('type'))
         dynamicField.owner = Member.load(springSecurityService.principal.id)
         dynamicField.mandatory = params.boolean('mandatory') ?: false
+        dynamicField.status = DynamicFieldStatus.Active
 
         if (dynamicField.type == DynamicFieldType.String) {
             dynamicField.maxlength = params.int('maxlength')
@@ -115,6 +117,9 @@ class DynamicFieldController {
         dynamicField.type = DynamicFieldType.getById(params.int('type'))
         dynamicField.owner = Member.load(memberId)
         dynamicField.mandatory = params.boolean('mandatory') ?: false
+
+        def visible = params.boolean('visible') ?: false
+        dynamicField.status = visible ? DynamicFieldStatus.Active : DynamicFieldStatus.Hidden
 
         if (dynamicField.type == DynamicFieldType.String) {
             dynamicField.maxlength = params.int('maxlength')
@@ -179,14 +184,31 @@ class DynamicFieldController {
         def field = dynamicFieldService.getDynamicField(fieldId)
         def memberId = springSecurityService.principal.id
 
-        def result
+        def model = [:]
         if (!field || !field.ownedBy(memberId)) {
-            result = false
+            model.success = false
         }
         else {
-            result = dynamicFieldService.deleteDynamicField(field)
+            model.success = dynamicFieldService.deleteDynamicField(field)
+            model.dynamicFieldsLink = g.createLink(controller: 'dynamicField', action: 'dynamicFields')
         }
 
-        render([success: result] as JSON)
+        render(model as JSON)
+    }
+
+    def hide = {
+        def fieldId = params.long('fieldId')
+        def field = dynamicFieldService.getDynamicField(fieldId)
+        def memberId = springSecurityService.principal.id
+
+        def model = [:]
+        if (!field || !field.ownedBy(memberId)) {
+            model.success = false
+        }
+        else {
+            model.success = dynamicFieldService.hideDynamicField(field)
+        }
+
+        render(model as JSON)
     }
 }

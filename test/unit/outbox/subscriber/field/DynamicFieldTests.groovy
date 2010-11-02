@@ -16,6 +16,7 @@ class DynamicFieldTests extends GrailsUnitTestCase {
         field.name = 'testName'
         field.label = 'Test Label'
         field.type = DynamicFieldType.Number
+        field.status = DynamicFieldStatus.Hidden
         field.sequence = 3
         field.mandatory = true
         field.min = 0
@@ -31,6 +32,7 @@ class DynamicFieldTests extends GrailsUnitTestCase {
         assertEquals 'testName', field.name
         assertEquals 'Test Label', field.label
         assertEquals DynamicFieldType.Number, field.type
+        assertEquals DynamicFieldStatus.Hidden, field.status
         assertTrue field.mandatory
     }
 

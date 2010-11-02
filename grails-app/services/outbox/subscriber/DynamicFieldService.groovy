@@ -5,6 +5,7 @@ import outbox.ServiceUtil
 import outbox.member.Member
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldItem
+import outbox.subscriber.field.DynamicFieldStatus
 import outbox.subscriber.field.DynamicFieldType
 
 /**
@@ -55,6 +56,20 @@ class DynamicFieldService {
             deleteDynamicFieldItems dynamicField
             dynamicField.delete flush: true
             return true
+        }
+        return false
+    }
+
+    /**
+     * Hides dynamic field.
+     * @param dynamicField the dynamic field to hide.
+     * @return true if dynamic field was hide, otherwise false.
+     */
+    @Transactional
+    boolean hideDynamicField(DynamicField dynamicField) {
+        if (dynamicField) {
+            dynamicField.status = DynamicFieldStatus.Hidden
+            return saveDynamicField(dynamicField)
         }
         return false
     }

@@ -1,4 +1,4 @@
-<%@ page import="outbox.subscriber.field.DynamicFieldType" %>
+<%@ page import="outbox.subscriber.field.DynamicFieldStatus; outbox.subscriber.field.DynamicFieldType" %>
 <script type="text/javascript">
     $(document).ready(function() { App.createEditDynamicField() })
 </script>
@@ -28,6 +28,10 @@
                             optionKey="id" optionValue="message"
                             value="${dynamicField.type.id}"/>
                 </td>
+            </tr>
+            <tr>
+                <td><label for="visible"><g:message code="visible"/></label></td>
+                <td><g:checkBox name="visible" value="true" checked="${dynamicField.status == DynamicFieldStatus.Active}"/></td>
             </tr>
             <tr>
                 <td><label for="mandatory"><g:message code="mandatory"/></label></td>

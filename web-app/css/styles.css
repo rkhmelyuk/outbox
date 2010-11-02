@@ -330,9 +330,21 @@ a:hover {
     border-radius: 2px;
 }
 
+#dynamicFieldsBody #dynamicFields .hiddenField {
+    border: 1px solid #bfbfbf;
+    background-color: #efefef;
+    color: #999999;
+}
+
 #dynamicFieldsBody #dynamicFields .item:hover {
     background-color: #f8f8f8;
     border: 1px solid #aaaaaa;
+}
+
+#dynamicFieldsBody #dynamicFields .hiddenField:hover {
+    border: 1px solid #bfbfbf;
+    background-color: #f4f4f4;
+    color: #666666;
 }
 
 #dynamicFieldsBody #dynamicFields .item .handler {
@@ -376,7 +388,7 @@ a:hover {
     padding: 7px 5px;
 }
 
-#dynamicFieldsBody #trash {
+#dynamicFieldsBody .trash {
     float: left;
     border: 1px solid #999999;
     background-color: #eaeaea;
@@ -388,7 +400,7 @@ a:hover {
     border-radius: 2px;
 }
 
-#dynamicFieldsBody #trash div {
+#dynamicFieldsBody .trash div {
     font-size: 18px;
     text-align: center;
     padding: 12px 0;

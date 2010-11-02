@@ -20,10 +20,6 @@
 
         <div id="dynamicFieldsBody">
             <g:render template="dynamicFields"/>
-
-            <div id="trash">
-                <div><g:message code="drop.fields.here.to.remove" /></div>
-            </div>
         </div>
     </body>
 </html>

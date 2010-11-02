@@ -265,9 +265,6 @@ var App = {
             handle: 'div.handler',
             items: 'div.item',
             cursor: 'move',
-            //connectWith: $('#trash'),
-            //dropOnEmpty: true,
-            //tolerance: 'pointer',
             start: function(event, ui) {
                 over =  true
             },
@@ -285,11 +282,17 @@ var App = {
         });
 
         var draggable = null;
-        $("#trash").droppable({
+        $(".trash").droppable({
 			drop: function(event, ui) {
-                $("a#removeConfirm").trigger('click');
                 draggable = ui.draggable;
                 $(draggable).hide();
+                if ($(draggable).hasClass('hiddenField')) {
+                    $('#hideField').hide();
+                }
+                else {
+                    $('#hideField').show();
+                }
+                $("a#removeConfirm").trigger('click');
 			},
             out: function(event, ui) {
                 over = true;
@@ -305,18 +308,43 @@ var App = {
             $.fancybox.close();
         });
         $('#hideField').click(function() {
+            $(draggable).show();
             $("#dynamicFields").sortable('cancel');
-            $.fancybox.close();
+
+            var field = $(draggable).attr('id');
+            $('#hideForm > #fieldId').val(field);
+            $('#hideForm').ajaxSubmit({
+                dataType: 'json',
+                success: function(response, status) {
+                    if (response && status == 'success') {
+                        if (response.success) {
+                            $(draggable).addClass('hiddenField');
+                        }
+                    }
+                },
+                complete: function() {
+                    $.fancybox.close();
+                }
+            });
         });
         $('#removeField').click(function() {
             $(draggable).remove();
-            $.fancybox.close();
 
             var field = $(draggable).attr('id');
             $('#removeForm > #fieldId').val(field);
-            $('#removeForm').ajaxSubmit();
-
-            $("#dynamicFields").sortable('refresh');
+            $('#removeForm').ajaxSubmit({
+                dataType: 'json',
+                success: function(response, status) {
+                    if (response && status == 'success') {
+                        if (response.success) {
+                            $('#dynamicFieldsBody').load(response.dynamicFieldsLink);
+                        }
+                    }
+                },
+                complete: function() {
+                    $.fancybox.close();
+                }
+            });
         });
     },
 
@@ -360,7 +388,7 @@ var App = {
                         if (response && status == 'success') {
                             if (response.success) {
                                 $.fancybox.close();
-                                $('#dynamicFields').load(response.dynamicFieldsLink);
+                                $('#dynamicFieldsBody').load(response.dynamicFieldsLink);
                             }
                             else {
                                 showErrors(response);

@@ -7,6 +7,7 @@ import outbox.member.Member
 import outbox.security.OutboxUser
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldItem
+import outbox.subscriber.field.DynamicFieldStatus
 import outbox.subscriber.field.DynamicFieldType
 
 /**
@@ -147,6 +148,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
             assertEquals 'Label', field.label
             assertEquals 'label', field.name
             assertEquals DynamicFieldType.String, field.type
+            assertEquals DynamicFieldStatus.Active, field.status
             assertEquals 20, field.maxlength
             assertNull field.max
             assertNull field.min
@@ -168,6 +170,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.params.min = '0'
         controller.params.max = '10'
         controller.params.mandatory = 'true'
+        controller.params.visible = 'false'
 
         controller.add()
 
@@ -192,6 +195,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
             assertEquals 'Label', field.label
             assertEquals 'label', field.name
             assertEquals DynamicFieldType.Number, field.type
+            assertEquals DynamicFieldStatus.Active, field.status
             assertEquals 10, field.max
             assertEquals 0, field.min
             assertNull field.maxlength
@@ -237,6 +241,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
             assertEquals 'Label', field.label
             assertEquals 'label', field.name
             assertEquals DynamicFieldType.Boolean, field.type
+            assertEquals DynamicFieldStatus.Active, field.status
             assertNull field.max
             assertNull field.min
             assertNull field.maxlength
@@ -282,6 +287,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
             assertEquals 'Label', field.label
             assertEquals 'label', field.name
             assertEquals DynamicFieldType.SingleSelect, field.type
+            assertEquals DynamicFieldStatus.Active, field.status
             assertNull field.max
             assertNull field.min
             assertNull field.maxlength
@@ -339,6 +345,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
             assertEquals 'Label', field.label
             assertEquals 'label', field.name
             assertEquals DynamicFieldType.SingleSelect, field.type
+            assertEquals DynamicFieldStatus.Hidden, field.status
             assertNull field.max
             assertNull field.min
             assertNull field.maxlength
@@ -387,6 +394,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.params.maxlength = '20'
         controller.params.min = '0'
         controller.params.max = '10'
+        controller.params.visible = 'false'
         controller.params.mandatory = 'true'
         controller.params.selectValue = ['hello', 'world', 'how', 'are', 'you']
 
@@ -470,6 +478,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue 'Must be successful.', result.success
+        assertEquals 'link', result.dynamicFieldsLink
     }
 
     void testRemove_NotFound() {
@@ -520,6 +529,97 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.params.fieldId = '1'
 
         controller.remove()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertFalse 'Must be failed.', result.success
+    }
+
+    void testHide_Success() {
+        def member = new Member(id: 10)
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            return new DynamicField(id: id, owner: member, sequence: id)
+        }
+        dynamicFieldServiceControl.demand.hideDynamicField { field ->
+            assertEquals 1, field.id
+            return true
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.fieldId = '1'
+
+        controller.hide()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertTrue 'Must be successful.', result.success
+    }
+
+    void testHide_NotFound() {
+        def member = new Member(id: 10)
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField { id -> return null }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.fieldId = '1'
+
+        controller.hide()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        def result = JSON.parse(mockResponse.contentAsString)
+
+        assertFalse 'Must be failed.', result.success
+    }
+
+    void testHide_NotPermitted() {
+        def member = new Member(id: 10)
+
+        Member.class.metaClass.static.load = { id -> member }
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            return new DynamicField(id: id, owner: new Member(id: 1), sequence: id)
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.fieldId = '1'
+
+        controller.hide()
 
         dynamicFieldServiceControl.verify()
         springSecurityServiceControl.verify()

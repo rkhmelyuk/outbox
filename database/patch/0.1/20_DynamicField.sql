@@ -7,6 +7,7 @@ create table DynamicField (
     Name varchar(200) not null,
     Label varchar(200) not null,
     Type smallint not null,
+    Status smallint not null,
     Mandatory boolean not null,
 
     MinValue int null,
@@ -22,4 +23,4 @@ create table DynamicField (
         references Member(MemberId)
 );
 
-create index IX_DynamicField_MemberId on DynamicField(MemberId);
+create index IX_DynamicField_MemberId_Status on DynamicField(MemberId, Status);

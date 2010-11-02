@@ -4,6 +4,7 @@ import org.hibernate.Session
 import outbox.member.Member
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldItem
+import outbox.subscriber.field.DynamicFieldStatus
 import outbox.subscriber.field.DynamicFieldType
 
 /**
@@ -200,11 +201,22 @@ class DynamicFieldServiceTests extends GroovyTestCase {
         assertNull dynamicFieldService.getDynamicField(field.id)
     }
 
+    void testHideDynamicField() {
+        def field = createDynamicField(1)
+        assertTrue dynamicFieldService.saveDynamicField(field)
+        assertTrue dynamicFieldService.hideDynamicField(field)
+
+        def found = dynamicFieldService.getDynamicField(field.id)
+        assertEquals DynamicFieldStatus.Hidden, found.status
+    }
+
     void assertEquals(DynamicField left, DynamicField right) {
         assertNotNull right
         assertEquals left.id, right.id
         assertEquals left.name, right.name
         assertEquals left.sequence, right.sequence
+        assertEquals left.type, right.type
+        assertEquals left.status, right.status
         assertEquals left.label, right.label
         assertEquals left.mandatory, right.mandatory
         assertEquals left.owner.id, right.owner.id
@@ -225,6 +237,7 @@ class DynamicFieldServiceTests extends GroovyTestCase {
 
         dynamicField.name = 'dynamicField' + id
         dynamicField.type = DynamicFieldType.String
+        dynamicField.status = DynamicFieldStatus.Active
         dynamicField.sequence = 0
         dynamicField.label = 'Dynaic Field Label'
         dynamicField.mandatory = true

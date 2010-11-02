@@ -16,6 +16,7 @@ class DynamicField implements Comparable<DynamicField> {
     String name
     String label
     DynamicFieldType type
+    DynamicFieldStatus status
     int sequence
 
     // Constraints
@@ -31,6 +32,7 @@ class DynamicField implements Comparable<DynamicField> {
         name column: 'Name'
         label column: 'Label'
         type column: 'Type'
+        status column: 'Status'
         sequence column: 'Sequence'
         mandatory column: 'Mandatory'
         min column: 'MinValue'
@@ -50,6 +52,7 @@ class DynamicField implements Comparable<DynamicField> {
             }
         }
         label nullable: false, blank: false, maxSize: 200
+        status nullable: false
         type nullable: false
         max nullable: true
         min nullable: true, validator: { val, obj ->
