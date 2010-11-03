@@ -417,5 +417,26 @@ a:hover {
     font-size: 18px;
     text-align: center;
     padding: 12px 0;
-    font-stretch:condensed;
+}
+
+#selectValues .viewItem, #selectValues .editItem {
+    margin: 0 5px;
+    text-align: left;
+    line-height: 25px;
+}
+
+#selectValues .viewItem .itemName {
+    float: left;
+    width: 150px;
+    overflow: hidden;
+}
+
+#selectValues .editItem .itemName {
+    float: left;
+    width: 150px;
+    overflow: hidden;
+}
+
+#selectValues .editItem .itemName #itemNameLabel {
+    width: 140px;
 }

@@ -409,7 +409,7 @@ var App = {
             }
         });
         $('.removeSelectedValue').click(function() {
-            $(this).parent().remove();
+            $(this).parent().parent().remove();
         });
         $('#newSelectValue').keyup(function(e) {
             if (e.keyCode == 13) $('#addNewSelectValue').click();
@@ -421,6 +421,35 @@ var App = {
             var value = $(this).val();
             $('.constraint').hide();
             $('.constraint_' + value).show()
+        });
+
+        $('.viewItem .itemName').live('click', function() {
+            $('#cancelEditSelectedValue').trigger('click');
+
+            var parent = $(this).parent().hide();
+            $('#editSelectValueItemTemplate').tmpl({value: $(this).text()}).insertAfter(parent);
+            $('#itemNameLabel').focus();
+        });
+        $('#saveEditSelectedValue').live('click', function() {
+            var value = $('#itemNameLabel').val();
+            $('.editItem').siblings('#selectValueLabels').val(value);
+
+            var item = $('.editItem').siblings('.viewItem');
+            $(item).children('.itemName').text(value);
+
+            $('.editItem').remove();
+            $(item).show();
+        });
+        $('#cancelEditSelectedValue').live('click', function() {
+            var editItem = $('.editItem');
+            $(editItem).siblings('.viewItem').show();
+            $(editItem).remove();
+        });
+        $('#itemNameLabel').live('keyup', function(e) {
+            if (e.keyCode == 13) {
+                $('#saveEditSelectedValue').trigger('click');
+                e.stopPropagation();
+            }
         });
     },
 

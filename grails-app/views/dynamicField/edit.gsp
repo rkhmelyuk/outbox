@@ -4,10 +4,24 @@
 </script>
 <script id="selectValueItemTemplate" type="text/x-jquery-tmpl">
     <li>
-        <input type="hidden" name="selectValueIds" value=""/>
-        <input type="hidden" name="selectValueLabels" value="{{= value}}"/>
-        {{= value}} - <a href="javascript:void(0);" class="removeSelectedValue"><g:message code="remove"/></a>
+        <input type="hidden" id="selectValueIds" name="selectValueIds" value=""/>
+        <input type="hidden" id="selectValueLabels" name="selectValueLabels" value="{{= value}}"/>
+        <div class="viewItem">
+            <div class="itemName">{{= value}}</div>
+            <a href="javascript:void(0);" class="removeSelectedValue"><g:message code="remove"/></a>
+        </div>
     </li>
+</script>
+<script id="editSelectValueItemTemplate" type="text/x-jquery-tmpl">
+    <div style="clear: both;"> </div>
+    <div class="editItem">
+        <div class="itemName">
+            <input id="itemNameLabel" type="text" maxlength="200" value="{{= value}}"/>
+        </div>
+        <a href="javascript:void(0);" id="saveEditSelectedValue"><g:message code="save"/></a>
+        <a href="javascript:void(0);" id="cancelEditSelectedValue"><g:message code="cancel"/></a>
+    </div>
+    <div style="clear: both;"> </div>
 </script>
 <div style="width: 650px; height: 400px;">
     <h2>Edit Dynamic Field</h2>
@@ -62,7 +76,10 @@
                             <li>
                                 <g:hiddenField name="selectValueIds" value="${item.id}"/>
                                 <g:hiddenField name="selectValueLabels" value="${item.name}"/>
-                                ${item.name} - <a href="javascript:void(0);" class="removeSelectedValue"><g:message code="remove"/></a>
+                                <div class="viewItem">
+                                    <div class="itemName">${item.name}</div>
+                                    <a href="javascript:void(0);" class="removeSelectedValue"><g:message code="remove"/></a>
+                                </div>
                             </li>
                         </g:each>
                     </ul>
