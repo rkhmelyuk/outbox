@@ -356,9 +356,9 @@ a:hover {
     cursor: move;
 }
 
-#dynamicFieldsBody #dynamicFields .item .name {
+#dynamicFieldsBody #dynamicFields .item .label {
     float: left;
-    width: 250px;
+    width: 200px;
     padding: 7px 5px;
     font-weight: bold;
 
@@ -366,24 +366,37 @@ a:hover {
     overflow:hidden;
 }
 
+#dynamicFieldsBody #dynamicFields .item .name {
+    float: left;
+    width: 200px;
+    padding: 7px 5px;
+    font-weight: bold;
+
+    font-size: 12px;
+    font-family: "Courier New", Monaco, monospace;
+
+    height:15px;
+    overflow:hidden;
+}
+
 #dynamicFieldsBody #dynamicFields .item .type {
     float: left;
-    width: 150px;
+    width: 100px;
     padding: 7px 5px;
     font-style: italic;
 }
 
 #dynamicFieldsBody #dynamicFields .item .column {
     float: left;
-    width: 125px;
-    padding: 7px 5px;
+    width: 70px;
+    padding: 7px 5px 7px 20px;
     font-style: italic;
     font-size: 12px;
 }
 
 #dynamicFieldsBody #dynamicFields .item .editLink {
     float: right;
-    width: 75px;
+    width: 50px;
     text-align: center;
     padding: 7px 5px;
 }

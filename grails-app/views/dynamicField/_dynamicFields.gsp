@@ -12,15 +12,10 @@
 <g:each var="dynamicField" in="${dynamicFields}">
     <div class="item <g:if test="${dynamicField.status == DynamicFieldStatus.Hidden}">hiddenField</g:if>" id="${dynamicField.id}">
         <div class="handler"> </div>
-        <div class="name">
-            <g:fieldValue bean="${dynamicField}" field="label"/>
-        </div>
-        <div class="type">
-            <g:message code="${dynamicField.type?.messageCode}"/>
-        </div>
-        <div class="column">
-            <g:if test="${dynamicField.mandatory}"><g:message code="mandatory"/></g:if>
-        </div>
+        <div class="label"><g:fieldValue bean="${dynamicField}" field="label"/></div>
+        <div class="name"><g:fieldValue bean="${dynamicField}" field="name"/></div>
+        <div class="type"><g:message code="${dynamicField.type?.messageCode}"/></div>
+        <div class="column"><g:if test="${dynamicField.mandatory}"><g:message code="mandatory"/></g:if></div>
         <div class="column">
             <g:if test="${dynamicField.status == DynamicFieldStatus.Active}">
                 <g:message code="visible"/>
