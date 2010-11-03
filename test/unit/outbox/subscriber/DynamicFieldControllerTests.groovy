@@ -358,6 +358,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
                     new DynamicFieldItem(id: 1, name: 'hello'),
                     new DynamicFieldItem(id: 2, name: 'how'),
                     new DynamicFieldItem(id: 3, name: 'u'),
+                    new DynamicFieldItem(id: 4, name: '!'),
             ]
 
         }
@@ -370,7 +371,10 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
                 else if (it.name == 'how') {
                     assertEquals 2, it.id
                 }
-                else if (it.name == 'world' || it.name == 'are' || it.name == 'you') {
+                else if (it.name == 'you') {
+                    assertEquals 3, it.id
+                }
+                else if (it.name == 'world' || it.name == 'are') {
                     assertNull it.id
                 }
                 else {
@@ -396,7 +400,8 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.params.max = '10'
         controller.params.visible = 'false'
         controller.params.mandatory = 'true'
-        controller.params.selectValue = ['hello', 'world', 'how', 'are', 'you']
+        controller.params.selectValueIds = ['1', '', '2', '', '3']
+        controller.params.selectValueLabels = ['hello', 'world', 'how', 'are', 'you']
 
         controller.update()
 

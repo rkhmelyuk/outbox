@@ -4,7 +4,8 @@
 </script>
 <script id="selectValueItemTemplate" type="text/x-jquery-tmpl">
     <li>
-        <input type="hidden" name="selectValue" value="{{= value}}"/>
+        <input type="hidden" name="selectValueIds" value=""/>
+        <input type="hidden" name="selectValueLabels" value="{{= value}}"/>
         {{= value}} - <a href="javascript:void(0);" class="removeSelectedValue"><g:message code="remove"/></a>
     </li>
 </script>
@@ -59,7 +60,8 @@
                     <ul id="selectValues">
                         <g:each var="item" in="${dynamicFieldItems}">
                             <li>
-                                <g:hiddenField name="selectValue" value="${item.name}"/>
+                                <g:hiddenField name="selectValueIds" value="${item.id}"/>
+                                <g:hiddenField name="selectValueLabels" value="${item.name}"/>
                                 ${item.name} - <a href="javascript:void(0);" class="removeSelectedValue"><g:message code="remove"/></a>
                             </li>
                         </g:each>

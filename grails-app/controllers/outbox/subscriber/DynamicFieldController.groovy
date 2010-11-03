@@ -4,6 +4,7 @@ import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
+import outbox.ValueUtil
 import outbox.member.Member
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldItem
@@ -71,7 +72,7 @@ class DynamicFieldController {
         def model = [:]
         if (dynamicFieldService.addDynamicField(dynamicField)) {
             if (dynamicField.type == DynamicFieldType.SingleSelect) {
-                def selectValues = params.list('singleSelect') as TreeSet
+                def selectValues = params.list('selectValue') as TreeSet
                 def items = selectValues.collect {
                     new DynamicFieldItem(field: dynamicField, name: it?.trim())
                 }
@@ -137,10 +138,29 @@ class DynamicFieldController {
             def items = []
             if (dynamicField.type == DynamicFieldType.SingleSelect) {
                 def currentItems = dynamicFieldService.getDynamicFieldItems(dynamicField)
-                def selectValues = params.list('selectValue') as TreeSet
-                items = selectValues.collect { name ->
-                    def item = currentItems.find { it.name == name }
-                    item ?: new DynamicFieldItem(field: dynamicField, name: name)
+
+                def selectValueIds = params.list('selectValueIds')
+                def selectValueLabels = params.list('selectValueLabels')
+
+                def selectValues = []
+                for (int i = 0; i < selectValueIds.size(); i++) {
+                    def id = ValueUtil.getLong(selectValueIds[i])
+                    selectValues << [id: id, label: selectValueLabels[i]?.trim()]
+                }
+
+                selectValues.sort { left, right ->
+                    left.label <=> right.label
+                }
+
+                items = selectValues.collect { value ->
+                    def item = currentItems.find { it.id == value.id }
+                    if (item) {
+                        item.name = value.label
+                    }
+                    else {
+                        item = new DynamicFieldItem(field: dynamicField, name: value.label)
+                    }
+                    return item
                 }
             }
             dynamicFieldService.updateDynamicFieldItems(dynamicField, items)
