@@ -13,7 +13,7 @@
     </li>
 </script>
 <script id="editSelectValueItemTemplate" type="text/x-jquery-tmpl">
-    <div style="clear: both;"> </div>
+    <div class="c"></div>
     <div class="editItem">
         <div class="itemName">
             <input id="itemNameLabel" type="text" maxlength="200" value="{{= value}}"/>
@@ -21,8 +21,9 @@
         <a href="javascript:void(0);" id="saveEditSelectedValue"><g:message code="save"/></a>
         <a href="javascript:void(0);" id="cancelEditSelectedValue"><g:message code="cancel"/></a>
     </div>
-    <div style="clear: both;"> </div>
+    <div class="c"></div>
 </script>
+
 <div style="width: 650px; height: 400px;">
     <h2>Edit Dynamic Field</h2>
     <div class="status" style="display: none;"> </div>

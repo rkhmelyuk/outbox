@@ -30,6 +30,11 @@ class DynamicFieldValue {
         numberValue column: 'NumberValue'
         booleanValue column: 'BooleanValue'
         singleItem column: 'DynamicFieldItemId'
+
+        version false
+        cache true
+
+        sort 'dynamicField'
     }
 
     static constraints = {
