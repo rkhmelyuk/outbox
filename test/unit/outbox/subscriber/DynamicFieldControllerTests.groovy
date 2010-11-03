@@ -196,7 +196,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
             assertEquals 'label', field.name
             assertEquals DynamicFieldType.Number, field.type
             assertEquals DynamicFieldStatus.Active, field.status
-            assertEquals 10, field.max
+            assertEquals 10.25, field.max
             assertEquals 0, field.min
             assertNull field.maxlength
             assertTrue field.mandatory
@@ -215,7 +215,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         controller.params.type = '2'
         controller.params.maxlength = '20'
         controller.params.min = '0'
-        controller.params.max = '10'
+        controller.params.max = '10.25'
         controller.params.mandatory = 'true'
 
         controller.add()

@@ -21,7 +21,7 @@ class DynamicField implements Comparable<DynamicField> {
 
     // Constraints
     boolean mandatory
-    Integer min, max
+    BigDecimal min, max
     Integer maxlength
 
     static mapping = {

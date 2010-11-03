@@ -361,8 +361,8 @@ var App = {
                 name: { required: true },
                 type: { required: true },
                 maxlength: { integer: true, min: 0, max: 9999 },
-                min: { integer: true, lessThan: '#max' },
-                max: { integer: true }
+                min: { number: true, lessThan: '#max' },
+                max: { number: true }
             },
             messages: {
                 label: { required: Message['dynamicField.label.required'] },
@@ -371,8 +371,8 @@ var App = {
                 maxlength: { integer: Message['dynamicField.maxlength.integer'],
                     min: Message['dynamicField.maxlength.min'],
                     max: Message['dynamicField.maxlength.max']},
-                min: { integer: Message['dynamicField.min.integer'] },
-                max: { integer: Message['dynamicField.max.integer'] }
+                min: { number: Message['dynamicField.min.number'] },
+                max: { number: Message['dynamicField.max.number'] }
             }
         });
         $('#saveForm').data('validator', validator);
@@ -898,11 +898,11 @@ function addLessThanValidationRule() {
         if (this.optional(element)) {
             return true
         }
-        var otherValue = parseInt($(param).val(), 10);
+        var otherValue = parseFloat($(param).val(), 10);
         if (isNaN(otherValue)) {
             return true
         }
-        return parseInt(value, 10) < otherValue;
+        return parseFloat(value, 10) < otherValue;
     }, 'Value is too large.');
 }
 
