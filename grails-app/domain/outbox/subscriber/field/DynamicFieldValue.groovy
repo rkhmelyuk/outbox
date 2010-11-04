@@ -99,13 +99,13 @@ class DynamicFieldValue {
         if (dynamicField?.type != null) {
             switch (dynamicField.type) {
                 case DynamicFieldType.String:
-                    stringValue = value
+                    stringValue = value as String
                     return
                 case DynamicFieldType.Number:
-                    numberValue = value
+                    numberValue = value as BigDecimal
                     return
                 case DynamicFieldType.Boolean:
-                    booleanValue = value
+                    booleanValue = value as Boolean
                     return
                 case DynamicFieldType.SingleSelect:
                     singleItem = value

@@ -74,11 +74,11 @@ class DynamicFieldValueTests extends GrailsUnitTestCase {
         assertEquals 'most', value.stringValue
 
         value.dynamicField.type = DynamicFieldType.String
-        value.value = 'test'
-        assertEquals 'test', value.stringValue
+        value.value = 123
+        assertEquals '123', value.stringValue
 
         value.dynamicField.type = DynamicFieldType.Number
-        value.value = 12.22
+        value.value = '12.22'
         assertEquals 12.22, value.numberValue
         assertNull value.stringValue
 
