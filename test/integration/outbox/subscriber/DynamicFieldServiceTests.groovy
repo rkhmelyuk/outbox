@@ -2,10 +2,7 @@ package outbox.subscriber
 
 import org.hibernate.Session
 import outbox.member.Member
-import outbox.subscriber.field.DynamicField
-import outbox.subscriber.field.DynamicFieldItem
-import outbox.subscriber.field.DynamicFieldStatus
-import outbox.subscriber.field.DynamicFieldType
+import outbox.subscriber.field.*
 
 /**
  * {@link outbox.subscriber.DynamicFieldService} tests.
@@ -16,6 +13,7 @@ class DynamicFieldServiceTests extends GroovyTestCase {
 
     Session session
     DynamicFieldService dynamicFieldService
+    SubscriberService subscriberService
 
     Member member
 
@@ -210,6 +208,60 @@ class DynamicFieldServiceTests extends GroovyTestCase {
         assertEquals DynamicFieldStatus.Hidden, found.status
     }
 
+    void testAddDynamicFieldValue() {
+        def field = createDynamicField(1)
+        assertTrue dynamicFieldService.addDynamicField(field)
+
+        def subscriber = createTestSubscriber()
+        assertTrue subscriberService.saveSubscriber(subscriber)
+
+        def value = new DynamicFieldValue()
+        value.subscriber = subscriber
+        value.dynamicField = field
+        value.value = '123'
+
+        assertTrue dynamicFieldService.saveDynamicFieldValue(value)
+        def found = dynamicFieldService.getDynamicFieldValue(value.id)
+
+        assertNotNull found
+        assertEquals value.subscriber.id, found.subscriber.id
+        assertEquals value.dynamicField.id, found.dynamicField.id
+        assertEquals value.value, found.value
+    }
+
+    void testGetDynamicFieldValues() {
+        def field1 = createDynamicField(1)
+        def field2 = createDynamicField(2)
+        def field3 = createDynamicField(3)
+        def field4 = createDynamicField(4)
+
+        assertTrue dynamicFieldService.addDynamicField(field1)
+        assertTrue dynamicFieldService.addDynamicField(field2)
+        assertTrue dynamicFieldService.addDynamicField(field3)
+        assertTrue dynamicFieldService.addDynamicField(field4)
+
+        def subscriber = createTestSubscriber()
+        assertTrue subscriberService.saveSubscriber(subscriber)
+
+        def value1 = new DynamicFieldValue(subscriber: subscriber, dynamicField: field1, value: '123')
+        def value2 = new DynamicFieldValue(subscriber: subscriber, dynamicField: field2, value: '123')
+        def value3 = new DynamicFieldValue(subscriber: subscriber, dynamicField: field3, value: '123')
+        def value4 = new DynamicFieldValue(subscriber: subscriber, dynamicField: field4, value: '123')
+
+        assertTrue dynamicFieldService.saveDynamicFieldValue(value1)
+        assertTrue dynamicFieldService.saveDynamicFieldValue(value2)
+        assertTrue dynamicFieldService.saveDynamicFieldValue(value3)
+        assertTrue dynamicFieldService.saveDynamicFieldValue(value4)
+
+        def found = dynamicFieldService.getDynamicFieldValues(subscriber)
+
+        assertEquals 4, found.size()
+        assertTrue found.contains(value1)
+        assertTrue found.contains(value2)
+        assertTrue found.contains(value3)
+        assertTrue found.contains(value4)
+    }
+
     void assertEquals(DynamicField left, DynamicField right) {
         assertNotNull right
         assertEquals left.id, right.id
@@ -251,5 +303,19 @@ class DynamicFieldServiceTests extends GroovyTestCase {
 
     DynamicFieldItem createDynamicFieldItem(DynamicField dynamicField) {
         return new DynamicFieldItem(field: dynamicField, name: 'Item')
+    }
+
+    Subscriber createTestSubscriber() {
+        Subscriber subscriber = new Subscriber()
+        subscriber.firstName = 'John'
+        subscriber.lastName = 'Doe'
+        subscriber.email = 'john.doe@nowhere.com'
+        subscriber.gender = null
+        subscriber.timezone = null
+        subscriber.language = null
+        subscriber.namePrefix = null
+        subscriber.enabled = true
+        subscriber.member = member
+        return subscriber
     }
 }

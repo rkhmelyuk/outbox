@@ -3,10 +3,7 @@ package outbox.subscriber
 import org.springframework.transaction.annotation.Transactional
 import outbox.ServiceUtil
 import outbox.member.Member
-import outbox.subscriber.field.DynamicField
-import outbox.subscriber.field.DynamicFieldItem
-import outbox.subscriber.field.DynamicFieldStatus
-import outbox.subscriber.field.DynamicFieldType
+import outbox.subscriber.field.*
 
 /**
  * Service to work with dynamic fields and it's values.
@@ -218,5 +215,35 @@ class DynamicFieldService {
             return saveDynamicField(dynamicField)
         }
         return false
+    }
+
+    /**
+     * Saves dynamic field value.
+     * @param value the dynamic field value.
+     * @return true if dynamic field value saved, otherwise false.
+     */
+    @Transactional
+    boolean saveDynamicFieldValue(DynamicFieldValue value) {
+        ServiceUtil.saveOrRollback(value)
+    }
+
+    /**
+     * Gets dynamic field value by id.
+     * @param id the dynamic field value id.
+     * @return the found dynamic field value.
+     */
+    @Transactional(readOnly = true)
+    DynamicFieldValue getDynamicFieldValue(Long id) {
+        DynamicFieldValue.get(id)
+    }
+
+    /**
+     * Gets dynamic field values for subscriber.
+     * @param subscriber the subscriber
+     * @return the list with subscriber dynamic field values.
+     */
+    @Transactional(readOnly = true)
+    List<DynamicFieldValue> getDynamicFieldValues(Subscriber subscriber) {
+        DynamicFieldValue.findAllBySubscriber subscriber
     }
 }
