@@ -13,10 +13,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 class OutboxUserDetailsService extends GormUserDetailsService {
 
     protected loadUser(String username, session) {
-        def conf = SpringSecurityUtils.securityConfig
+        def config = SpringSecurityUtils.securityConfig
         
-        String userDomainClassName = conf.userLookup.userDomainClassName
-        String usernamePropertyName = conf.userLookup.usernamePropertyName
+        String userDomainClassName = config.userLookup.userDomainClassName
+        String usernamePropertyName = config.userLookup.usernamePropertyName
 
         List<?> users = session.createQuery(
                 "from $userDomainClassName where $usernamePropertyName = :username or email = :email")
@@ -30,14 +30,14 @@ class OutboxUserDetailsService extends GormUserDetailsService {
     }
 
     protected GrailsUser createUserDetails(Object user, Collection<GrantedAuthority> authorities) {
-        def conf = SpringSecurityUtils.securityConfig
+        def config = SpringSecurityUtils.securityConfig
 
-        String usernamePropertyName = conf.userLookup.usernamePropertyName
-        String passwordPropertyName = conf.userLookup.passwordPropertyName
-        String enabledPropertyName = conf.userLookup.enabledPropertyName
-        String accountExpiredPropertyName = conf.userLookup.accountExpiredPropertyName
-        String accountLockedPropertyName = conf.userLookup.accountLockedPropertyName
-        String passwordExpiredPropertyName = conf.userLookup.passwordExpiredPropertyName
+        String usernamePropertyName = config.userLookup.usernamePropertyName
+        String passwordPropertyName = config.userLookup.passwordPropertyName
+        String enabledPropertyName = config.userLookup.enabledPropertyName
+        String accountExpiredPropertyName = config.userLookup.accountExpiredPropertyName
+        String accountLockedPropertyName = config.userLookup.accountLockedPropertyName
+        String passwordExpiredPropertyName = config.userLookup.passwordExpiredPropertyName
 
         String username = user."$usernamePropertyName"
         String password = user."$passwordPropertyName"
@@ -47,7 +47,8 @@ class OutboxUserDetailsService extends GormUserDetailsService {
         boolean accountLocked = accountLockedPropertyName ? user."$accountLockedPropertyName" : false
         boolean passwordExpired = passwordExpiredPropertyName ? user."$passwordExpiredPropertyName" : false
 
-        return new OutboxUser(username, password, enabled, !accountExpired, !passwordExpired,
+        return new OutboxUser(username, password, enabled,
+                !accountExpired, !passwordExpired,
                 !accountLocked, authorities, user)
     }
 
