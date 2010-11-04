@@ -4,6 +4,9 @@ import org.hibernate.Session
 import org.springframework.transaction.annotation.Transactional
 import outbox.ServiceUtil
 import outbox.member.Member
+import outbox.subscriber.field.DynamicFieldStatus
+import outbox.subscriber.field.DynamicFieldValue
+import outbox.subscriber.field.DynamicFieldValues
 
 /**
  * This service used to manipulation with subscriber and it's details.
@@ -14,6 +17,8 @@ import outbox.member.Member
 class SubscriberService {
 
     static transactional = true
+
+    def dynamicFieldService
 
     /**
      * Gets the subscriber by it's id.
@@ -157,6 +162,57 @@ class SubscriberService {
         }
 
         return firstResult
+    }
+
+    /**
+     * Gets dynamic field values for specified subscriber.
+     * @param subscriber the subscriber to get field values for.
+     * @return the dynamic field values.
+     */
+    @Transactional(readOnly = true)
+    DynamicFieldValues getSubscriberDynamicFields(Subscriber subscriber) {
+        if (subscriber && subscriber.member) {
+            def fields = dynamicFieldService.getDynamicFields(subscriber.member)
+            def values = dynamicFieldService.getDynamicFieldValues(subscriber)
+            return new DynamicFieldValues(fields, values)
+        }
+        return null
+    }
+
+    /**
+     * Gets active dynamic field values for specified subscriber.
+     * @param subscriber the subscriber to get field values for.
+     * @return the active dynamic field values.
+     */
+    @Transactional(readOnly = true)
+    DynamicFieldValues getActiveSubscriberDynamicFields(Subscriber subscriber) {
+        if (subscriber && subscriber.member) {
+            def fields = dynamicFieldService.getDynamicFields(subscriber.member)
+            def values = dynamicFieldService.getDynamicFieldValues(subscriber)
+
+            def activeFields = fields.findAll { it.status == DynamicFieldStatus.Active }
+            def activeValues = values.findAll { it.dynamicField.status == DynamicFieldStatus.Active }
+
+            return new DynamicFieldValues(activeFields, activeValues)
+        }
+        return null
+    }
+
+    /**
+     * Saves dynamic field values.
+     * @param values the dynamic field values.
+     * @return true if was saved successfully, otherwise false.
+     */
+    @Transactional
+    boolean saveSubscriberDynamicFields(DynamicFieldValues values) {
+        if (values) {
+            for (DynamicFieldValue each : values.values) {
+                if (!dynamicFieldService.saveDynamicFieldValue(each)) {
+                    return false
+                }
+            }
+        }
+        return true
     }
 
 }
