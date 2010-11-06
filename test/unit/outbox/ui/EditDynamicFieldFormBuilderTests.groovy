@@ -1,25 +1,57 @@
 package outbox.ui
 
-import outbox.subscriber.field.DynamicField
-import outbox.subscriber.field.DynamicFieldItem
-import outbox.subscriber.field.DynamicFieldType
-import outbox.subscriber.field.DynamicFieldValue
+import grails.test.GrailsUnitTestCase
+import outbox.subscriber.DynamicFieldService
 import outbox.ui.element.UICheckbox
 import outbox.ui.element.UIInputText
 import outbox.ui.element.UIInputTextArea
 import outbox.ui.element.UISelectSingle
+import outbox.subscriber.field.*
 
 /**
  * @author Ruslan Khmelyuk
  */
-class EditDynamicFieldFormBuilderTests extends GroovyTestCase {
+class EditDynamicFieldFormBuilderTests extends GrailsUnitTestCase {
 
-    def builder
+    EditDynamicFieldsFormBuilder builder
 
     @Override protected void setUp() {
         super.setUp()
 
         builder = new EditDynamicFieldsFormBuilder()
+    }
+
+    void testBuild() {
+        def field1 = new DynamicField(name: 'field1', label: 'Label', type: DynamicFieldType.String)
+        def field2 = new DynamicField(name: 'field2', label: 'Label', type: DynamicFieldType.Number)
+        def field3 = new DynamicField(name: 'field3', label: 'Label', type: DynamicFieldType.Boolean)
+        def field4 = new DynamicField(name: 'field4', label: 'Label', type: DynamicFieldType.SingleSelect)
+
+        def value1 = new DynamicFieldValue(dynamicField: field1)
+        def value2 = new DynamicFieldValue(dynamicField: field2)
+        def value3 = new DynamicFieldValue(dynamicField: field3)
+        def value4 = new DynamicFieldValue(dynamicField: field3)
+
+        def values = new DynamicFieldValues(
+                [field1, field2, field3, field4],
+                [value1, value2, value3, value4])
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicFieldItems { field ->
+            assertEquals field1, field
+            return []
+        }
+        builder.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def elements = builder.build(values)
+
+        dynamicFieldServiceControl.verify()
+
+        assertEquals 4, elements.elements.size()
+        assertEquals 'field1', elements.elements[0].id
+        assertEquals 'field2', elements.elements[1].id
+        assertEquals 'field3', elements.elements[2].id
+        assertEquals 'field4', elements.elements[3].id
     }
 
     void testBuildString() {

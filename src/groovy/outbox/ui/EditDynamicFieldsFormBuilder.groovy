@@ -1,5 +1,6 @@
 package outbox.ui
 
+import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.field.*
 import outbox.ui.element.*
 
@@ -10,12 +11,14 @@ import outbox.ui.element.*
  */
 class EditDynamicFieldsFormBuilder {
 
+    DynamicFieldService dynamicFieldService
+
     UIContainer build(DynamicFieldValues values) {
         def container = new UIContainer()
 
         values.fields.each { field ->
             def uiElement = null
-            def value = values.value(field)
+            def value = values.get(field)
 
             if (field.type == DynamicFieldType.String) {
                 uiElement = buildString(field, value)
@@ -27,7 +30,8 @@ class EditDynamicFieldsFormBuilder {
                 uiElement = buildBoolean(field, value)
             }
             else if (field.type == DynamicFieldType.SingleSelect) {
-                uiElement = buildSelect(field, value)
+                def items = dynamicFieldService.getDynamicFieldItems(field)
+                uiElement = buildSelect(field, items, value)
             }
 
             if (uiElement) {
