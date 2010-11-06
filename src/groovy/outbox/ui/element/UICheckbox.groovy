@@ -3,7 +3,7 @@ package outbox.ui.element
 /**
  * @author Ruslan Khmelyuk
  */
-class UICheckbox extends UIInputElement {
+class UICheckbox extends UIInput {
 
     Boolean value
 
