@@ -260,6 +260,12 @@ class DynamicFieldServiceTests extends GroovyTestCase {
         assertTrue found.contains(value2)
         assertTrue found.contains(value3)
         assertTrue found.contains(value4)
+
+        found = dynamicFieldService.getDynamicFieldValues(null)
+        assertEquals 0, found.size()
+
+        found = dynamicFieldService.getDynamicFieldValues(new Subscriber())
+        assertEquals 0, found.size()
     }
 
     void assertEquals(DynamicField left, DynamicField right) {

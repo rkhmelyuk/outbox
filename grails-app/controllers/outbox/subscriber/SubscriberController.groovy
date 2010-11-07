@@ -9,6 +9,7 @@ import outbox.dictionary.Language
 import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
+import outbox.subscriber.field.DynamicFieldValue
 import outbox.subscriber.field.DynamicFieldValues
 import outbox.subscription.Subscription
 import outbox.subscription.SubscriptionList
@@ -75,7 +76,10 @@ class SubscriberController {
             subscriber.namePrefix = NamePrefix.load(params.int('namePrefix'))
             subscriber.subscriberType = SubscriberType.load(params.long('subscriberType'))
 
-            if (subscriberService.saveSubscriber(subscriber)) {
+            def dynamicFieldValues = subscriberService.getSubscriberDynamicFields(subscriber)
+            fillDynamicFieldValues(subscriber, dynamicFieldValues)
+
+            if (subscriberService.saveSubscriber(subscriber, dynamicFieldValues)) {
                 model << [success: true]
             }
             else {
@@ -117,8 +121,11 @@ class SubscriberController {
         subscriber.namePrefix = NamePrefix.load(params.int('namePrefix'))
         subscriber.subscriberType = SubscriberType.load(params.long('subscriberType'))
 
+        def dynamicFieldValues = subscriberService.getSubscriberDynamicFields(subscriber)
+        fillDynamicFieldValues(subscriber, dynamicFieldValues)
+
         def model = [:]
-        if (subscriberService.saveSubscriber(subscriber)) {
+        if (subscriberService.saveSubscriber(subscriber, dynamicFieldValues)) {
             def listId = params.long('listId')
             model.success = true
             if (listId) {
@@ -135,6 +142,17 @@ class SubscriberController {
         }
 
         render model as JSON
+    }
+
+    private void fillDynamicFieldValues(Subscriber subscriber, DynamicFieldValues values) {
+        values.fields.each { field ->
+            def currentValue = values.get(field)
+            if (!currentValue) {
+                currentValue = new DynamicFieldValue(subscriber: subscriber, dynamicField: field)
+                values.addValue(currentValue)
+            }
+            currentValue.value = params[field.name]
+        }
     }
 
     private void subscribe(Subscriber subscriber, Long listId) {

@@ -36,7 +36,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { -> return principal }
+        springSecurityServiceControl.demand.getPrincipal {-> return principal }
 
         controller.subscriberService = subscriberServiceControl.createMock()
         controller.springSecurityService = springSecurityServiceControl.createMock()
@@ -70,7 +70,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { -> return principal }
+        springSecurityServiceControl.demand.getPrincipal {-> return principal }
 
         controller.subscriberService = subscriberServiceControl.createMock()
         controller.springSecurityService = springSecurityServiceControl.createMock()
@@ -100,8 +100,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
 
         controller.subscriberService = subscriberServiceControl.createMock()
         controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
@@ -143,8 +144,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         editDynamicFieldsFormBuilderControl.demand.build { f -> return new UIContainer() }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
 
         controller.subscriberService = subscriberServiceControl.createMock()
         controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
@@ -165,7 +167,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
     void testAdd_Success() {
         def member = new Member(id: 1)
-        
+
         Gender.class.metaClass.static.load = { id -> return new Gender(id: id) }
         Language.class.metaClass.static.load = { id -> return new Language(id: id) }
         Timezone.class.metaClass.static.load = { id -> return new Timezone(id: id) }
@@ -173,13 +175,20 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         SubscriberType.class.metaClass.static.load = { id -> return new SubscriberType(id: id) }
         Member.class.metaClass.static.load = { id -> return member}
 
+        def values = new DynamicFieldValues([], [])
         def subscriberServiceControl = mockFor(SubscriberService)
         def Subscriber subscriber = null
-        subscriberServiceControl.demand.saveSubscriber { subscr -> subscriber = subscr; return true}
+        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> return values}
+        subscriberServiceControl.demand.saveSubscriber { subscr, _values ->
+            subscriber = subscr;
+            assertEquals values, _values
+            return true
+        }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
 
         controller.subscriberService = subscriberServiceControl.createMock()
         controller.springSecurityService = springSecurityServiceControl.createMock()
@@ -194,6 +203,10 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.params.subscriberType = '6'
 
         controller.add()
+
+        subscriberServiceControl.verify()
+        springSecurityServiceControl.verify()
+
         assertNotNull mockResponse.contentAsString
 
         def result = JSON.parse(mockResponse.contentAsString)
@@ -224,7 +237,8 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def Subscriber subscriber = null
         def subscriberServiceControl = mockFor(SubscriberService)
-        subscriberServiceControl.demand.saveSubscriber { subscr ->
+        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
+        subscriberServiceControl.demand.saveSubscriber { subscr, values ->
             subscriber = subscr;
             subscriber.id = '123';
             return true
@@ -242,8 +256,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
 
         controller.subscriberService = subscriberServiceControl.createMock()
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
@@ -280,7 +295,8 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def Subscriber subscriber = null
         def subscriberServiceControl = mockFor(SubscriberService)
-        subscriberServiceControl.demand.saveSubscriber { subscr ->
+        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], [])}
+        subscriberServiceControl.demand.saveSubscriber { subscr, values ->
             subscriber = subscr;
             subscriber.id = 123;
             return true
@@ -293,8 +309,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
 
         controller.subscriberService = subscriberServiceControl.createMock()
         controller.subscriptionListService = subscriptionListServiceControl.createMock()
@@ -302,7 +319,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         controller.params.email = 'test@mailsight.com'
         controller.params.listId = 22
-        
+
         controller.add()
         assertNotNull mockResponse.contentAsString
 
@@ -328,11 +345,13 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         Member.class.metaClass.static.load = { id -> return member }
 
         def subscriberServiceControl = mockFor(SubscriberService)
-        subscriberServiceControl.demand.saveSubscriber { subscriber -> return false}
+        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
+        subscriberServiceControl.demand.saveSubscriber { subscr, values -> return false }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
 
         controller.subscriberService = subscriberServiceControl.createMock()
         controller.springSecurityService = springSecurityServiceControl.createMock()
@@ -345,7 +364,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertNotNull mockResponse.contentAsString
 
         def result = JSON.parse(mockResponse.contentAsString)
-        
+
         assertTrue 'Error is expected.', result.error
         assertNull 'Success is unexpected.', result.success
         assertNotNull result.errors
@@ -354,7 +373,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
     void testEdit() {
         def member = new Member(id: 1)
         Member.class.metaClass.static.load = { id -> return member }
-        
+
         def subscriber = new Subscriber(id: '0000000', member: member)
 
         def dynamicFieldValues = new DynamicFieldValues([], [])
@@ -376,8 +395,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.editDynamicFieldsFormBuilder = editDynamicFieldsFormBuilderControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         controller.params.id = '0000000'
@@ -423,9 +443,14 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         SubscriberType.class.metaClass.static.load = { id -> return new SubscriberType(id: id) }
         Member.class.metaClass.static.load = { id -> return member}
 
+        def values = new DynamicFieldValues([], [])
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
-        subscriberServiceControl.demand.saveSubscriber { subscr -> return true}
+        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> values }
+        subscriberServiceControl.demand.saveSubscriber { subscr, _values->
+            assertEquals values, _values
+            return true
+        }
         controller.subscriberService = subscriberServiceControl.createMock()
 
         controller.params.email = 'test2@mailsight.com'
@@ -469,7 +494,8 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
-        subscriberServiceControl.demand.saveSubscriber { subscr -> return true}
+        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
+        subscriberServiceControl.demand.saveSubscriber { subscr, values -> return true}
         controller.subscriberService = subscriberServiceControl.createMock()
 
         controller.params.email = 'test@mailsight.com'
@@ -498,7 +524,8 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
-        subscriberServiceControl.demand.saveSubscriber { subscr -> return true}
+        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
+        subscriberServiceControl.demand.saveSubscriber { subscr, values -> return true}
         controller.subscriberService = subscriberServiceControl.createMock()
 
         controller.params.email = 'test@mailsight.com'
@@ -526,7 +553,8 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
-        subscriberServiceControl.demand.saveSubscriber { subscr -> return false}
+        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
+        subscriberServiceControl.demand.saveSubscriber { subscr, values -> return false}
         controller.subscriberService = subscriberServiceControl.createMock()
 
         controller.params.email = ''
@@ -542,7 +570,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
     }
 
     void testUpdate_NotFound() {
-        
+
         mockDomain(Subscriber)
 
         Language.class.metaClass.static.load = { id -> return null}
@@ -581,8 +609,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
 
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
@@ -602,8 +631,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         controller.params.name = 'Software Developer'
@@ -625,8 +655,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         mockDomain(SubscriberType)
@@ -658,8 +689,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         controller.params.id = 2
@@ -690,8 +722,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         controller.params.id = 2
@@ -718,8 +751,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         controller.params.id = 2
@@ -742,8 +776,9 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.subscriberService = subscriberServiceControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal { ->
-            return new OutboxUser('username', 'password', true, false, false, false, [], member) }
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         controller.params.id = 2

@@ -1,5 +1,6 @@
 package outbox.ui
 
+import java.text.NumberFormat
 import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.field.*
 import outbox.ui.element.*
@@ -89,7 +90,7 @@ class EditDynamicFieldsFormBuilder {
     UIElement buildNumber(DynamicField field, DynamicFieldValue value) {
         def numberValue = null
         if (value && value.numberValue) {
-            numberValue = value.numberValue.toPlainString()
+            numberValue = NumberFormat.instance.format(value.numberValue)
         }
         if (!numberValue) {
             numberValue = ''

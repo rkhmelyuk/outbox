@@ -41,6 +41,23 @@ class SubscriberService {
     }
 
     /**
+     * Save subscriber with dynamic field values to database.
+     * @param subscriber the subscriber to be saved.
+     * @param dynamicFieldValues the dynamic fields values to be saved.
+     * @return true if saved successfully, otherwise returns false.
+     */
+    @Transactional
+    boolean saveSubscriber(Subscriber subscriber, DynamicFieldValues values) {
+        if (ServiceUtil.saveOrRollback(subscriber)) {
+            if (values) {
+                return saveSubscriberDynamicFields(values)
+            }
+            return true
+        }
+        return false
+    }
+
+    /**
      * Enable subscriber and save change to database.
      * @param subscriber the subscriber to enabled.
      * @return true if enabled successfully, otherwise returns false.

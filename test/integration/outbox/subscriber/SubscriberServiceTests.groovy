@@ -2,14 +2,11 @@ package outbox.subscriber
 
 import org.hibernate.Session
 import outbox.member.Member
-import outbox.subscriber.field.DynamicField
-import outbox.subscriber.field.DynamicFieldStatus
-import outbox.subscriber.field.DynamicFieldType
-import outbox.subscriber.field.DynamicFieldValue
 import outbox.subscription.Subscription
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.subscription.SubscriptionStatus
+import outbox.subscriber.field.*
 
 /**
  * {@link SubscriberService} tests.
@@ -75,6 +72,23 @@ class SubscriberServiceTests extends GroovyTestCase {
         subscriber.email = 'email@mail.com'
 
         assertTrue 'Subscriber is not changed.', subscriberService.saveSubscriber(subscriber)
+
+        Subscriber found = subscriberService.getSubscriber(subscriber.id)
+        assertNotNull 'Subscriber is not found.', found
+        assertEquals subscriber, found
+    }
+
+    void testSaveSubscriberWithValues() {
+        Subscriber subscriber = createTestSubscriber()
+        assertTrue 'Subscriber is not added.', subscriberService.saveSubscriber(subscriber)
+        assertNotNull 'Subscriber id is not generated.', subscriber.id
+
+        subscriber.firstName = 'First'
+        subscriber.lastName = 'Last'
+        subscriber.email = 'email@mail.com'
+
+        def values = new DynamicFieldValues([], [])
+        assertTrue 'Subscriber is not changed.', subscriberService.saveSubscriber(subscriber, values)
 
         Subscriber found = subscriberService.getSubscriber(subscriber.id)
         assertNotNull 'Subscriber is not found.', found

@@ -6,7 +6,7 @@ create table DynamicFieldValue (
     SubscriberId char(40) not null,
 
     StringValue varchar(9999) null,
-    NumberValue decimal(8, 4) null,
+    NumberValue decimal(14, 4) null,
     BooleanValue boolean null,
     DynamicFieldItemId bigint null,
 
@@ -14,7 +14,11 @@ create table DynamicFieldValue (
 
     constraint FK_DynamicFieldValue_DynamicField
         foreign key(DynamicFieldId)
-        references DynamicField(DynamicFieldId)
+        references DynamicField(DynamicFieldId),
+
+    constraint FK_DynamicFieldValue_DynamicFieldItem
+        foreign key(DynamicFieldItemId)
+        references DynamicFieldItem(DynamicFieldItemId)
 );
 
 create index IX_DynamicFieldValue_SubscriberId on DynamicFieldValue(SubscriberId);

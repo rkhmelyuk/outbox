@@ -1,6 +1,7 @@
 package outbox.subscriber.field
 
 import grails.test.GrailsUnitTestCase
+import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.Subscriber
 
 /**
@@ -73,23 +74,71 @@ class DynamicFieldValueTests extends GrailsUnitTestCase {
         value.value = 'most'
         assertEquals 'most', value.stringValue
 
+        // ----------------------------------------------
+
         value.dynamicField.type = DynamicFieldType.String
         value.value = 123
         assertEquals '123', value.stringValue
+
+        // ----------------------------------------------
 
         value.dynamicField.type = DynamicFieldType.Number
         value.value = '12.22'
         assertEquals 12.22, value.numberValue
         assertNull value.stringValue
 
+        // ----------------------------------------------
+
         value.dynamicField.type = DynamicFieldType.Boolean
         value.value = true
         assertEquals true, value.booleanValue
         assertNull value.numberValue
 
+        // ----------------------------------------------
+
         value.dynamicField.type = DynamicFieldType.SingleSelect
         value.value = new DynamicFieldItem(id: 2)
         assertEquals 2, value.singleItem.id
         assertNull value.booleanValue
+
+        // ----------------------------------------------
+
+        def dynamicServiceControl = mockFor(DynamicFieldService)
+        dynamicServiceControl.demand.getDynamicFieldItem { id ->
+            assertEquals 3, id
+            return new DynamicFieldItem(id: id, field: value.dynamicField)
+        }
+        value.dynamicFieldService = dynamicServiceControl.createMock()
+
+        value.dynamicField.type = DynamicFieldType.SingleSelect
+        value.value = '3'
+        assertEquals 3, value.singleItem.id
+
+        dynamicServiceControl.verify()
+
+        // ----------------------------------------------
+
+        dynamicServiceControl = mockFor(DynamicFieldService)
+        dynamicServiceControl.demand.getDynamicFieldItem { id ->
+            assertEquals 3, id
+            return new DynamicFieldItem(id: id, field: new DynamicField(id: 1))
+        }
+        value.dynamicFieldService = dynamicServiceControl.createMock()
+
+        value.dynamicField.type = DynamicFieldType.SingleSelect
+        value.value = '3'
+        assertNull value.singleItem
+
+        dynamicServiceControl.verify()
+
+        // ----------------------------------------------
+
+        value.dynamicField.type = DynamicFieldType.SingleSelect
+        value.value = null
+        assertNull value.singleItem
+
+        value.dynamicField.type = DynamicFieldType.SingleSelect
+        value.value = true
+        assertNull value.singleItem
     }
 }

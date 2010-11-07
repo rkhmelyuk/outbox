@@ -1,5 +1,7 @@
 package outbox.subscriber.field
 
+import outbox.ValueUtil
+import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.Subscriber
 
 /**
@@ -18,6 +20,8 @@ class DynamicFieldValue {
     Boolean booleanValue
     BigDecimal numberValue
     DynamicFieldItem singleItem
+
+    DynamicFieldService dynamicFieldService
 
     static mapping = {
         table 'DynamicFieldValue'
@@ -46,7 +50,7 @@ class DynamicFieldValue {
         singleItem nullable: true
     }
 
-    static transients = ['value']
+    static transients = ['value', 'dynamicFieldService']
 
     /**
      * Gets correct value by dynamic field type.
@@ -108,7 +112,21 @@ class DynamicFieldValue {
                     booleanValue = value as Boolean
                     return
                 case DynamicFieldType.SingleSelect:
-                    singleItem = value
+                    if (value instanceof DynamicFieldItem) {
+                        singleItem = value
+                        return
+                    }
+                    else if (value) {
+                        def id = ValueUtil.getLong(value.toString())
+                        if (id) {
+                            def item = dynamicFieldService.getDynamicFieldItem(id)
+                            if (item.field.id == dynamicField.id) {
+                                singleItem = item
+                                return
+                            }
+                        }
+                    }
+                    singleItem = null
                     return
             }
         }

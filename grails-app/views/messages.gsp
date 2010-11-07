@@ -1,7 +1,9 @@
-Config = {
+
+var Config = {
     contextPath: "${request.contextPath}"
 }
-Message = {
+
+var Message = {
     "campaign.changed.successfully": "<g:message code="campaign.changed.successfully"/>",
     "campaign.description.maxSize.exceeded": "<g:message code="campaign.description.maxSize.exceeded"/>",
     "campaign.name.maxSize.exceeded": "<g:message code="campaign.name.maxSize.exceeded"/>",

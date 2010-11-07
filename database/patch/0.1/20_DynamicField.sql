@@ -10,8 +10,8 @@ create table DynamicField (
     Status smallint not null,
     Mandatory boolean not null,
 
-    MinValue decimal(8, 4) null,
-    MaxValue decimal(8, 4) null,
+    MinValue decimal(14, 4) null,
+    MaxValue decimal(14, 4) null,
     MaxLength int null,
 
     Sequence int not null,

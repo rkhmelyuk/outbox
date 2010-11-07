@@ -244,6 +244,9 @@ class DynamicFieldService {
      */
     @Transactional(readOnly = true)
     List<DynamicFieldValue> getDynamicFieldValues(Subscriber subscriber) {
-        DynamicFieldValue.findAllBySubscriber subscriber
+        if (subscriber && subscriber.id) {
+            return DynamicFieldValue.findAllBySubscriber(subscriber)
+        }
+        return []
     }
 }
