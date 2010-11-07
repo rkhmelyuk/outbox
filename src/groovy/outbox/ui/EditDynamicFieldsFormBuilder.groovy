@@ -54,7 +54,7 @@ class EditDynamicFieldsFormBuilder {
         element.name = field.name
         element.label = new UILabel(text: field.label, forId: field.name)
         element.mandatory = field.mandatory
-        element.value = value.value
+        element.value = value && value.stringValue ? value.stringValue : ''
         element.maxlength = field.maxlength
 
         if (field.maxlength) {
@@ -85,8 +85,8 @@ class EditDynamicFieldsFormBuilder {
 
     UIElement buildNumber(DynamicField field, DynamicFieldValue value) {
         def numberValue = null
-        if (value) {
-            numberValue = value.value?.toString()
+        if (value && value.numberValue) {
+            numberValue = value.numberValue.toPlainString()
         }
         if (!numberValue) {
             numberValue = ''
@@ -109,19 +109,18 @@ class EditDynamicFieldsFormBuilder {
                 id: field.name,
                 mandatory: field.mandatory,
                 label: label,
-                value: value?.value ?: false)
+                value: value?.booleanValue ?: false)
     }
 
     UIElement buildSelect(DynamicField field, List<DynamicFieldItem> items, DynamicFieldValue value) {
         def label = new UILabel(text: field.label, forId: field.name)
         def selectItems = items.collect { item ->
-            new SelectItem(key: item.id, value: item.name)
+            new SelectItem(value: item.id, label: item.name)
         }
 
         def selectValue
-        if (value) {
-            selectValue = value.value?.id
-            selectValue = selectValue ? Long.toString(selectValue) : ''
+        if (value && value.singleItem) {
+            selectValue = Long.toString(value.singleItem.id)
         }
         else {
             selectValue = ''

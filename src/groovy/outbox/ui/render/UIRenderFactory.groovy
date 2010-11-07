@@ -5,7 +5,7 @@ import outbox.ui.element.*
 /**
  * @author Ruslan Khmelyuk
  */
-interface UIRender {
+interface UIRenderFactory {
 
     String renderInputText(UIInputText element)
 

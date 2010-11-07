@@ -1,13 +1,13 @@
 package outbox.ui.render.basic
 
 import org.codehaus.groovy.grails.web.pages.TagLibraryLookup
-import outbox.ui.render.UIRender
+import outbox.ui.render.UIRenderFactory
 import outbox.ui.element.*
 
 /**
  * @author Ruslan Khmelyuk
  */
-class BasicUIRender implements UIRender {
+class BasicUIRender implements UIRenderFactory {
 
     TagLibraryLookup gspTagLibraryLookup
 
@@ -38,6 +38,5 @@ class BasicUIRender implements UIRender {
     String renderOutput(UIOutput element) {
         new UILabelRender().render(element)
     }
-
 
 }

@@ -11,7 +11,7 @@ import outbox.subscriber.field.*
 /**
  * @author Ruslan Khmelyuk
  */
-class EditDynamicFieldFormBuilderTests extends GrailsUnitTestCase {
+class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
 
     EditDynamicFieldsFormBuilder builder
 
@@ -83,6 +83,21 @@ class EditDynamicFieldFormBuilderTests extends GrailsUnitTestCase {
         assertEquals dynamicField.name, element.name
         assertEquals 'normal', element.styleClass
         assertEquals 'test string', element.value
+        assertTrue element.mandatory
+    }
+
+    void testBuildString_NoValue() {
+        def dynamicField = new DynamicField(name: 'name', label: 'Label',
+                mandatory: true, type: DynamicFieldType.String, maxlength: 200)
+        def element = builder.buildString(dynamicField, null)
+
+        assertTrue element instanceof UIInputText
+        assertEquals dynamicField.name, element.label.forId
+        assertEquals dynamicField.label, element.label.text
+        assertEquals dynamicField.name, element.id
+        assertEquals dynamicField.name, element.name
+        assertEquals 'large', element.styleClass
+        assertEquals '', element.value
         assertTrue element.mandatory
     }
 

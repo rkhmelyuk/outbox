@@ -9,8 +9,9 @@ class RenderFactoryTests extends GroovyTestCase {
 
     void testCreateRender() {
         def renderFactory = new RenderFactory()
+        renderFactory.basicUIRender = new BasicUIRender()
 
-        assertTrue renderFactory.createRender('basic') instanceof BasicUIRender
+        assertEquals renderFactory.basicUIRender, renderFactory.createRender('basic')
         assertNull renderFactory.createRender(null)
         assertNull renderFactory.createRender('not-existing')
     }
