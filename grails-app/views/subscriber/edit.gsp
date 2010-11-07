@@ -76,6 +76,12 @@
                         <g:message code="subscriber.enabled.hint"/>
                     </td>
                 </tr>
+                <g:each var="element" in ="${dynamicFieldsForm.elements}">
+                    <tr>
+                        <td><app:renderElement element="${element.label}"/></td>
+                        <td><app:renderElement element="${element}"/></td>
+                    </tr>
+                </g:each>
             </table>
             <a href="javascript:void(0);" id="editSubscriber"><g:message code="save.subscriber"/></a>
             &nbsp;&nbsp;

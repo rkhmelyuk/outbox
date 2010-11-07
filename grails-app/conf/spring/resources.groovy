@@ -87,4 +87,16 @@ beans = {
         reportsFactory = ref('reportsFactory')
     }
 
+    editDynamicFieldsFormBuilder(outbox.ui.EditDynamicFieldsFormBuilder) {
+        dynamicFieldService = ref('dynamicFieldService')
+    }
+
+    basicUIRender(outbox.ui.render.basic.BasicUIRender) {
+        gspTagLibraryLookup = ref('gspTagLibraryLookup')
+    }
+
+    renderFactory(outbox.ui.render.RenderFactory) {
+        basicUIRender = ref('basicUIRender')
+    }
+
 }

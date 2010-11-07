@@ -9,10 +9,12 @@ import outbox.dictionary.Language
 import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
+import outbox.subscriber.field.DynamicFieldValues
 import outbox.subscription.Subscription
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.subscription.SubscriptionStatus
+import outbox.ui.EditDynamicFieldsFormBuilder
 
 /**
  * @author Ruslan Khmelyuk
@@ -25,8 +27,10 @@ class SubscriberController {
             deleteSubscriberType: 'POST', update: 'POST', add: 'POST']
 
     SubscriberService subscriberService
+    DynamicFieldService dynamicFieldService
     SubscriptionListService subscriptionListService
     SpringSecurityService springSecurityService
+    EditDynamicFieldsFormBuilder editDynamicFieldsFormBuilder
 
     def show = {
         Subscriber subscriber = subscriberService.getSubscriber(params.id)
@@ -52,7 +56,9 @@ class SubscriberController {
         def memberId = springSecurityService.principal.id
         def subscriberTypes = subscriberService.getSubscriberTypes(Member.load(memberId))
 
-        [subscriber: subscriber, subscriberTypes: subscriberTypes]
+        def dynamicFieldValues = subscriberService.getSubscriberDynamicFields(subscriber)
+        def dynamicFieldsForm = editDynamicFieldsFormBuilder.build(dynamicFieldValues)
+        [subscriber: subscriber, subscriberTypes: subscriberTypes, dynamicFieldsForm: dynamicFieldsForm]
     }
 
     def update = {
@@ -85,10 +91,17 @@ class SubscriberController {
     }
 
     def create = {
-        def memberId = springSecurityService.principal.id
-        def subscriberTypes = subscriberService.getSubscriberTypes(Member.load(memberId))
-                                                                                            
-        [subscriber: new Subscriber(enabled: true), subscriberTypes: subscriberTypes, listId: params.list]
+        def member = Member.load(springSecurityService.principal.id)
+        def subscriberTypes = subscriberService.getSubscriberTypes(member)
+
+        def dynamicFields = dynamicFieldService.getDynamicFields(member)
+        def dynamicFieldsForm = editDynamicFieldsFormBuilder.build(new DynamicFieldValues(dynamicFields, []))
+
+        return [
+                subscriber: new Subscriber(enabled: true),
+                subscriberTypes: subscriberTypes,
+                listId: params.list,
+                dynamicFieldsForm: dynamicFieldsForm]
     }
 
     def add = {

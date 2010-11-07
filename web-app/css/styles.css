@@ -440,3 +440,11 @@ a:hover {
 #selectValues .editItem .itemName #itemNameLabel {
     width: 140px;
 }
+
+input[type=text].small { width: 150px; }
+input[type=text].normal { width: 250px; }
+input[type=text].large { width: 400px; }
+
+textarea.small { width: 400px; height: 75px; }
+textarea.normal { width: 400px; height: 125px; }
+textarea.large { width: 400px; height: 175px; }

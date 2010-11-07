@@ -44,7 +44,7 @@ class EditDynamicFieldsFormBuilder {
 
     UIElement buildString(DynamicField field, DynamicFieldValue value) {
         def element
-        if (field.maxlength && field.maxlength > 200) {
+        if (field.maxlength && field.maxlength > 500) {
             element = new UIInputTextArea()
         }
         else {
@@ -59,16 +59,16 @@ class EditDynamicFieldsFormBuilder {
 
         if (field.maxlength) {
             def styleClass
-            if (field.maxlength <= 50) {
+            if (field.maxlength <= 100) {
                 styleClass = 'small'
             }
-            else if (field.maxlength <= 100) {
+            else if (field.maxlength <= 250) {
                 styleClass = 'normal'
             }
-            else if (field.maxlength <= 200) {
+            else if (field.maxlength <= 500) {
                 styleClass = 'large'
             }
-            else if (field.maxlength <= 500) {
+            else if (field.maxlength <= 1000) {
                 styleClass = 'small'
             }
             else if (field.maxlength <= 2000) {
@@ -78,6 +78,9 @@ class EditDynamicFieldsFormBuilder {
                 styleClass = 'large'
             }
             element.styleClass = styleClass
+        }
+        else {
+            element.styleClass = 'normal'
         }
 
         return element
@@ -107,6 +110,7 @@ class EditDynamicFieldsFormBuilder {
         def label = new UILabel(text: field.label, forId: field.name)
         new UICheckbox(
                 id: field.name,
+                name: field.name,
                 mandatory: field.mandatory,
                 label: label,
                 value: value?.booleanValue ?: false)
@@ -128,6 +132,7 @@ class EditDynamicFieldsFormBuilder {
 
         new UISelectSingle(
                 id: field.name,
+                name: field.name,
                 mandatory: field.mandatory,
                 options: selectItems.size() <= 3,
                 label: label,

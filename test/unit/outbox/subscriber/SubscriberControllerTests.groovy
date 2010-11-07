@@ -9,9 +9,13 @@ import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
 import outbox.security.OutboxUser
+import outbox.subscriber.field.DynamicField
+import outbox.subscriber.field.DynamicFieldValues
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.subscription.SubscriptionStatus
+import outbox.ui.EditDynamicFieldsFormBuilder
+import outbox.ui.element.UIContainer
 
 /**
  * @author Ruslan Khmelyuk
@@ -84,17 +88,32 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         Member.class.metaClass.static.load = { id -> return member}
 
         def subscriberServiceControl = mockFor(SubscriberService)
-        def Subscriber subscriber = null
         subscriberServiceControl.demand.getSubscriberTypes { m -> [new SubscriberType(id: 1, member: m)]}
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicFields { m -> [new DynamicField(id: 2)] }
+
+        def elements = new UIContainer()
+        def editDynamicFieldsFormBuilderControl = mockFor(EditDynamicFieldsFormBuilder)
+        editDynamicFieldsFormBuilderControl.demand.build { f ->
+            return elements
+        }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
             return new OutboxUser('username', 'password', true, false, false, false, [], member) }
 
         controller.subscriberService = subscriberServiceControl.createMock()
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
         controller.springSecurityService = springSecurityServiceControl.createMock()
+        controller.editDynamicFieldsFormBuilder = editDynamicFieldsFormBuilderControl.createMock()
 
         def result = controller.create()
+
+        subscriberServiceControl.verify()
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+        editDynamicFieldsFormBuilderControl.verify()
 
         assertNotNull result
         assertNotNull result.subscriber
@@ -107,6 +126,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertEquals 1, result.subscriberTypes.size()
         assertEquals 1, result.subscriberTypes[0].id
         assertEquals member, result.subscriberTypes[0].member
+        assertEquals elements, result.dynamicFieldsForm
     }
 
     void testCreate_WithSubscription() {
@@ -114,18 +134,30 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         Member.class.metaClass.static.load = { id -> return member}
 
         def subscriberServiceControl = mockFor(SubscriberService)
-        def Subscriber subscriber = null
         subscriberServiceControl.demand.getSubscriberTypes { m -> [new SubscriberType(id: 1, member: m)]}
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicFields { m -> [new DynamicField(id: 2)] }
+
+        def editDynamicFieldsFormBuilderControl = mockFor(EditDynamicFieldsFormBuilder)
+        editDynamicFieldsFormBuilderControl.demand.build { f -> return new UIContainer() }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
             return new OutboxUser('username', 'password', true, false, false, false, [], member) }
 
         controller.subscriberService = subscriberServiceControl.createMock()
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
         controller.springSecurityService = springSecurityServiceControl.createMock()
+        controller.editDynamicFieldsFormBuilder = editDynamicFieldsFormBuilderControl.createMock()
 
         controller.params.list = '10'
         def result = controller.create()
+
+        subscriberServiceControl.verify()
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+        editDynamicFieldsFormBuilderControl.verify()
 
         assertNotNull result
         assertEquals '10', result.listId
@@ -325,10 +357,23 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         
         def subscriber = new Subscriber(id: '0000000', member: member)
 
+        def dynamicFieldValues = new DynamicFieldValues([], [])
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
         subscriberServiceControl.demand.getSubscriberTypes { m -> [new SubscriberType(id: 1, member: m)]}
+        subscriberServiceControl.demand.getSubscriberDynamicFields { s ->
+            assertEquals subscriber, s
+            return dynamicFieldValues
+        }
         controller.subscriberService = subscriberServiceControl.createMock()
+
+        def elements = new UIContainer()
+        def editDynamicFieldsFormBuilderControl = mockFor(EditDynamicFieldsFormBuilder)
+        editDynamicFieldsFormBuilderControl.demand.build { f ->
+            assertEquals dynamicFieldValues, f
+            return elements
+        }
+        controller.editDynamicFieldsFormBuilder = editDynamicFieldsFormBuilderControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -339,12 +384,17 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def result = controller.edit()
 
+        subscriberServiceControl.verify()
+        springSecurityServiceControl.verify()
+        editDynamicFieldsFormBuilderControl.verify()
+
         assertNotNull result
         assertEquals 'Subscriber is not found.', subscriber, result.subscriber
         assertNotNull result.subscriberTypes
         assertEquals 1, result.subscriberTypes.size()
         assertEquals 1, result.subscriberTypes[0].id
         assertEquals member, result.subscriberTypes[0].member
+        assertEquals elements, result.dynamicFieldsForm
     }
 
     void testEditAbsent() {

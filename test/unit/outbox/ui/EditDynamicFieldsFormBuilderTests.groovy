@@ -65,7 +65,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals dynamicField.label, element.label.text
         assertEquals dynamicField.name, element.id
         assertEquals dynamicField.name, element.name
-        assertEquals 'large', element.styleClass
+        assertEquals 'normal', element.styleClass
         assertEquals 'test string', element.value
         assertTrue element.mandatory
     }
@@ -88,7 +88,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
 
     void testBuildString_NoValue() {
         def dynamicField = new DynamicField(name: 'name', label: 'Label',
-                mandatory: true, type: DynamicFieldType.String, maxlength: 200)
+                mandatory: true, type: DynamicFieldType.String, maxlength: 400)
         def element = builder.buildString(dynamicField, null)
 
         assertTrue element instanceof UIInputText
@@ -128,6 +128,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals dynamicField.name, element.label.forId
         assertEquals dynamicField.label, element.label.text
         assertEquals dynamicField.name, element.id
+        assertEquals dynamicField.name, element.name
         assertTrue element.value
         assertTrue element.mandatory
     }
@@ -140,6 +141,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals dynamicField.name, element.label.forId
         assertEquals dynamicField.label, element.label.text
         assertEquals dynamicField.name, element.id
+        assertEquals dynamicField.name, element.name
         assertFalse element.value
     }
 
@@ -155,6 +157,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals dynamicField.name, element.label.forId
         assertEquals dynamicField.label, element.label.text
         assertEquals dynamicField.name, element.id
+        assertEquals dynamicField.name, element.name
         assertEquals '1', element.value
         assertEquals 2, element.selectItems.size()
         assertTrue element.mandatory
@@ -170,6 +173,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals dynamicField.name, element.label.forId
         assertEquals dynamicField.label, element.label.text
         assertEquals dynamicField.name, element.id
+        assertEquals dynamicField.name, element.name
         assertEquals '', element.value
         assertEquals 2, element.selectItems.size()
         assertTrue element.mandatory
