@@ -24,7 +24,7 @@ class BasicUIRender implements UIRender {
     }
 
     String renderInputCheckbox(UICheckbox element) {
-        throw new UnsupportedOperationException()
+        new UICheckboxRender(gspTagLibraryLookup: gspTagLibraryLookup).render(element)
     }
 
     String renderLabel(UILabel element) {
