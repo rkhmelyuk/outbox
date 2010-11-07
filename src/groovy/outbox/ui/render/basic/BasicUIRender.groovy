@@ -28,7 +28,7 @@ class BasicUIRender implements UIRender {
     }
 
     String renderLabel(UILabel element) {
-        throw new UnsupportedOperationException()
+        new UILabelRender().render(element)
     }
 
     String renderOutput(UIOutput element) {

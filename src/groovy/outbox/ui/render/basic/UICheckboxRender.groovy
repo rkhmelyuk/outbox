@@ -22,6 +22,9 @@ class UICheckboxRender implements Render {
         }
         model.value = 'true'
         model.checked = element.value
+        if (element.style) {
+            model.style = element.style
+        }
         if (element.styleClass) {
             model.'class' = element.styleClass
         }

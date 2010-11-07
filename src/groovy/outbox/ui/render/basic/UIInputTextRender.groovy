@@ -26,6 +26,9 @@ class UIInputTextRender implements Render {
         if (element.value) {
             model.value = element.value
         }
+        if (element.style) {
+            model.style = element.style
+        }
         if (element.styleClass) {
             model.'class' = element.styleClass
         }
