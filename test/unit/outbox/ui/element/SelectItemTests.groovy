@@ -7,10 +7,10 @@ class SelectItemTests extends GroovyTestCase {
 
     void testFields() {
         def item = new SelectItem()
-        item.key = 'test key'
         item.value = 'test value'
+        item.label = 'test label'
 
-        assertEquals 'test key', item.key
+        assertEquals 'test label', item.label
         assertEquals 'test value', item.value
     }
 }

@@ -20,6 +20,10 @@ class BasicUIRender implements UIRender {
     }
 
     String renderInputSelect(UISelectSingle element) {
+        new UISelectRender(gspTagLibraryLookup: gspTagLibraryLookup).render(element)
+    }
+
+    String renderRadioGroup(UISelectSingle element) {
         throw new UnsupportedOperationException()
     }
 

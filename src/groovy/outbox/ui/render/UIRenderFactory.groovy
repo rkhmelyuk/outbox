@@ -13,6 +13,8 @@ interface UIRender {
 
     String renderInputSelect(UISelectSingle element)
 
+    String renderRadioGroup(UISelectSingle element)
+
     String renderInputCheckbox(UICheckbox element)
 
     String renderLabel(UILabel element)

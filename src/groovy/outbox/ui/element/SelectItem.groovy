@@ -5,6 +5,6 @@ package outbox.ui.element
  */
 class SelectItem {
 
-    def key
-    String value
+    def value
+    String label
 }
