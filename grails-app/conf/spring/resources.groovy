@@ -91,6 +91,8 @@ beans = {
         dynamicFieldService = ref('dynamicFieldService')
     }
 
+    viewDynamicFieldsFormBuilder(outbox.ui.ViewDynamicFieldsFormBuilder)
+
     basicUIRender(outbox.ui.render.basic.BasicUIRender) {
         gspTagLibraryLookup = ref('gspTagLibraryLookup')
     }

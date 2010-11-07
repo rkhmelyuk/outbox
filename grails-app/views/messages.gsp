@@ -48,5 +48,7 @@ var Message = {
     "dynamicField.maxlength.min": "<g:message code="dynamicField.maxlength.min.notmet"/>",
     "dynamicField.maxlength.max": "<g:message code="dynamicField.maxlength.max.notmet"/>",
     "dynamicField.required": "<g:message code="dynamicField.required"/>",
+    "dynamicField.number.min": "<g:message code="dynamicField.number.min"/>",
+    "dynamicField.number.max": "<g:message code="dynamicField.number.max"/>",
     "dynamicField.number": "<g:message code="dynamicField.number"/>"
 }

@@ -32,21 +32,39 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         OutboxUser principal = new OutboxUser('username', 'password', true, false, false, false, [], member)
         Subscriber subscriber = new Subscriber(id: 'test123', member: member)
 
+        def dynamicFieldValues = new DynamicFieldValues([], [])
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber }
+        subscriberServiceControl.demand.getSubscriberDynamicFields { s ->
+            assertEquals subscriber, s
+            return dynamicFieldValues
+        }
+
+        def elements = new UIContainer()
+        def editDynamicFieldsFormBuilderControl = mockFor(EditDynamicFieldsFormBuilder)
+        editDynamicFieldsFormBuilderControl.demand.build { f ->
+            assertEquals dynamicFieldValues, f
+            return elements
+        }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {-> return principal }
 
         controller.subscriberService = subscriberServiceControl.createMock()
         controller.springSecurityService = springSecurityServiceControl.createMock()
+        controller.editDynamicFieldsFormBuilder = editDynamicFieldsFormBuilderControl.createMock()
 
         controller.params.id = 'test123'
 
         def result = controller.show()
 
+        subscriberServiceControl.verify()
+        springSecurityServiceControl.verify()
+        editDynamicFieldsFormBuilderControl.verify()
+
         assertNotNull result
         assertEquals subscriber, result.subscriber
+        assertEquals elements, result.dynamicFieldsForm
     }
 
     void testShow_NotFound() {

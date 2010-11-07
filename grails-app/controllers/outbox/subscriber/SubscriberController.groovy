@@ -16,6 +16,7 @@ import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.subscription.SubscriptionStatus
 import outbox.ui.EditDynamicFieldsFormBuilder
+import outbox.ui.ViewDynamicFieldsFormBuilder
 
 /**
  * @author Ruslan Khmelyuk
@@ -32,6 +33,7 @@ class SubscriberController {
     SubscriptionListService subscriptionListService
     SpringSecurityService springSecurityService
     EditDynamicFieldsFormBuilder editDynamicFieldsFormBuilder
+    ViewDynamicFieldsFormBuilder viewDynamicFieldsFormBuilder
 
     def show = {
         Subscriber subscriber = subscriberService.getSubscriber(params.id)
@@ -44,7 +46,10 @@ class SubscriberController {
             return
         }
 
-        [subscriber: subscriber]
+        def dynamicFieldValues = subscriberService.getSubscriberDynamicFields(subscriber)
+        def dynamicFieldsForm = viewDynamicFieldsFormBuilder.build(dynamicFieldValues)
+
+        [subscriber: subscriber, dynamicFieldsForm: dynamicFieldsForm]
     }
 
     def edit = {
@@ -78,6 +83,7 @@ class SubscriberController {
 
             def dynamicFieldValues = subscriberService.getSubscriberDynamicFields(subscriber)
             fillDynamicFieldValues(subscriber, dynamicFieldValues)
+            //def valid = validateDynamicFieldValues(subscriber, dynamicFieldValues)
 
             if (subscriberService.saveSubscriber(subscriber, dynamicFieldValues)) {
                 model << [success: true]
@@ -146,14 +152,51 @@ class SubscriberController {
 
     private void fillDynamicFieldValues(Subscriber subscriber, DynamicFieldValues values) {
         values.fields.each { field ->
-            def currentValue = values.get(field)
-            if (!currentValue) {
-                currentValue = new DynamicFieldValue(subscriber: subscriber, dynamicField: field)
-                values.addValue(currentValue)
+            def fieldValue = values.get(field)
+            if (!fieldValue) {
+                fieldValue = new DynamicFieldValue(subscriber: subscriber, dynamicField: field)
+                values.addValue(fieldValue)
             }
-            currentValue.value = params[EditDynamicFieldsFormBuilder    .DYNAMIC_FIELD_PREFIX + field.name]
+            fieldValue.value = params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + field.name]
         }
     }
+
+    /*private boolean validateDynamicFieldValues(Subscriber subscriber, DynamicFieldValues values) {
+        def result = true
+        values.fields.each { DynamicField field ->
+            def fieldValue = values.get(field)
+            def value = fieldValue.value
+            if (field.mandatory) {
+                if ((field.type == DynamicFieldType.Boolean && value == null) || !value) {
+                    subscriber.errors.rejectValue('dynamicField.x.required',
+                                [field.label] as Object[], null)
+                    result = false
+                }
+            }
+            else if (value) {
+                if (field.type == DynamicFieldType.String) {
+                    if (value.size() > field.maxlength) {
+                        subscriber.errors.reject('dynamicField.x.maxlength',
+                                [field.label, field.maxlength] as Object[], null)
+                        result = false
+                    }
+                }
+                else if (field.type == DynamicFieldType.Number) {
+                    if (field.min != null && value < min) {
+                        subscriber.errors.rejectValue('dynamicField.x.number.min',
+                                [field.label, field.min] as Object[], null)
+                        result = false
+                    }
+                    if (field.max != null && value > max) {
+                        subscriber.errors.rejectValue('dynamicField.x.number.min',
+                                [field.label, field.max] as Object[], null)
+                        result = false
+                    }
+                }
+            }
+        }
+        return result
+    }*/
 
     private void subscribe(Subscriber subscriber, Long listId) {
         if (!listId) {

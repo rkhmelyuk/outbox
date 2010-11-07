@@ -193,7 +193,9 @@ var App = {
 
         $.extend($.validator.messages, {
             required: Message['dynamicField.required'],
-            number: Message['dynamicField.number']
+            number: Message['dynamicField.number'],
+            min: $.validator.format(Message['dynamicField.number.min']),
+            max: $.validator.format(Message['dynamicField.number.max'])
         });
 
         var validator = $('#subscriberForm').validate({
@@ -236,7 +238,9 @@ var App = {
 
         $.extend($.validator.messages, {
             required: Message['dynamicField.required'],
-            number: Message['dynamicField.number']
+            number: Message['dynamicField.number'],
+            min: $.validator.format(Message['dynamicField.number.min']),
+            max: $.validator.format(Message['dynamicField.number.max'])
         });
 
         var validator = $('#subscriberForm').validate({

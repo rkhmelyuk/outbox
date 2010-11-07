@@ -62,7 +62,7 @@ class BasicUIRender implements UIRenderFactory {
     }
 
     String renderOutput(UIOutput element) {
-        new UILabelRender().render(element)
+        new UIOutputRender().render(element)
     }
 
 }

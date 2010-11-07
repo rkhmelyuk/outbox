@@ -41,6 +41,12 @@
                     <td><g:message code="enabled"/></td>
                     <td>${subscriber.enabled ? 'true' : 'false'}</td>
                 </tr>
+                <g:each var="element" in ="${dynamicFieldsForm.elements}">
+                    <tr>
+                        <td><app:renderElement element="${element.label}"/></td>
+                        <td><app:renderElement element="${element}"/></td>
+                    </tr>
+                </g:each>
             </table>
             <g:link controller="subscriber" action="edit" id="${subscriber.id}"><g:message code="edit.details"/></g:link>  
         </g:if>
