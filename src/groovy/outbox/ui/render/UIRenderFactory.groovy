@@ -7,6 +7,8 @@ import outbox.ui.element.*
  */
 interface UIRenderFactory {
 
+    String render(UIElement element)
+
     String renderInputText(UIInputText element)
 
     String renderInputTextArea(UIInputTextArea element)
