@@ -24,7 +24,7 @@ class BasicUIRender implements UIRender {
     }
 
     String renderRadioGroup(UISelectSingle element) {
-        throw new UnsupportedOperationException()
+        new UIRadioGroupRender(gspTagLibraryLookup: gspTagLibraryLookup).render(element)
     }
 
     String renderInputCheckbox(UICheckbox element) {
