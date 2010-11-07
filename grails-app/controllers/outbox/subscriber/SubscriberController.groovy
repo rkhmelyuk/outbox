@@ -151,7 +151,7 @@ class SubscriberController {
                 currentValue = new DynamicFieldValue(subscriber: subscriber, dynamicField: field)
                 values.addValue(currentValue)
             }
-            currentValue.value = params[field.name]
+            currentValue.value = params[EditDynamicFieldsFormBuilder    .DYNAMIC_FIELD_PREFIX + field.name]
         }
     }
 

@@ -1,6 +1,6 @@
 package outbox.ui
 
-import java.text.NumberFormat
+import java.text.DecimalFormat
 import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.field.*
 import outbox.ui.element.*
@@ -11,6 +11,8 @@ import outbox.ui.element.*
  * @author Ruslan Khmelyuk
  */
 class EditDynamicFieldsFormBuilder {
+    
+    static final String DYNAMIC_FIELD_PREFIX = 'df_'
 
     DynamicFieldService dynamicFieldService
 
@@ -51,9 +53,9 @@ class EditDynamicFieldsFormBuilder {
         else {
             element = new UIInputText()
         }
-        element.id = field.name
-        element.name = field.name
-        element.label = new UILabel(text: field.label, forId: field.name)
+        element.id = DYNAMIC_FIELD_PREFIX + field.name
+        element.name = DYNAMIC_FIELD_PREFIX + field.name
+        element.label = new UILabel(text: field.label, forId: DYNAMIC_FIELD_PREFIX + field.name)
         element.mandatory = field.mandatory
         element.value = value && value.stringValue ? value.stringValue : ''
         element.maxlength = field.maxlength
@@ -90,16 +92,16 @@ class EditDynamicFieldsFormBuilder {
     UIElement buildNumber(DynamicField field, DynamicFieldValue value) {
         def numberValue = null
         if (value && value.numberValue) {
-            numberValue = NumberFormat.instance.format(value.numberValue)
+            numberValue = new DecimalFormat('###########.####').format(value.numberValue)
         }
         if (!numberValue) {
             numberValue = ''
         }
 
         def element = new UIInputText()
-        element.id = field.name
-        element.name = field.name
-        element.label = new UILabel(text: field.label, forId: field.name)
+        element.id = DYNAMIC_FIELD_PREFIX + field.name
+        element.name = DYNAMIC_FIELD_PREFIX + field.name
+        element.label = new UILabel(text: field.label, forId: DYNAMIC_FIELD_PREFIX + field.name)
         element.mandatory = field.mandatory
         element.value = numberValue
         element.styleClass = 'number'
@@ -108,17 +110,17 @@ class EditDynamicFieldsFormBuilder {
     }
 
     UIElement buildBoolean(DynamicField field, DynamicFieldValue value) {
-        def label = new UILabel(text: field.label, forId: field.name)
+        def label = new UILabel(text: field.label, forId: DYNAMIC_FIELD_PREFIX + field.name)
         new UICheckbox(
-                id: field.name,
-                name: field.name,
+                id: DYNAMIC_FIELD_PREFIX + field.name,
+                name: DYNAMIC_FIELD_PREFIX + field.name,
                 mandatory: field.mandatory,
                 label: label,
                 value: value?.booleanValue ?: false)
     }
 
     UIElement buildSelect(DynamicField field, List<DynamicFieldItem> items, DynamicFieldValue value) {
-        def label = new UILabel(text: field.label, forId: field.name)
+        def label = new UILabel(text: field.label, forId: DYNAMIC_FIELD_PREFIX + field.name)
         def selectItems = items.collect { item ->
             new SelectItem(value: item.id, label: item.name)
         }
@@ -132,8 +134,8 @@ class EditDynamicFieldsFormBuilder {
         }
 
         new UISelectSingle(
-                id: field.name,
-                name: field.name,
+                id: DYNAMIC_FIELD_PREFIX + field.name,
+                name: DYNAMIC_FIELD_PREFIX + field.name,
                 mandatory: field.mandatory,
                 options: selectItems.size() <= 3,
                 label: label,
