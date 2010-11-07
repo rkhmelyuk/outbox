@@ -46,5 +46,7 @@ var Message = {
     "dynamicField.min.number": "<g:message code="dynamicField.min.java.math.BigDecimal"/>",
     "dynamicField.maxlength.integer": "<g:message code="dynamicField.maxlength.java.lang.Integer"/>",
     "dynamicField.maxlength.min": "<g:message code="dynamicField.maxlength.min.notmet"/>",
-    "dynamicField.maxlength.max": "<g:message code="dynamicField.maxlength.max.notmet"/>"
+    "dynamicField.maxlength.max": "<g:message code="dynamicField.maxlength.max.notmet"/>",
+    "dynamicField.required": "<g:message code="dynamicField.required"/>",
+    "dynamicField.number": "<g:message code="dynamicField.number"/>"
 }

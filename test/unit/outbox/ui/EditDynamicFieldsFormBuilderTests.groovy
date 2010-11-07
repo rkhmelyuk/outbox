@@ -67,7 +67,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.label.forId
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.id
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.name
-        assertEquals 'normal', element.styleClass
+        assertEquals ' required normal', element.styleClass
         assertEquals 'test string', element.value
         assertTrue element.mandatory
     }
@@ -83,7 +83,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.label.forId
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.id
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.name
-        assertEquals 'normal', element.styleClass
+        assertEquals ' required normal', element.styleClass
         assertEquals 'test string', element.value
         assertTrue element.mandatory
     }
@@ -98,14 +98,14 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.label.forId
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.id
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.name
-        assertEquals 'large', element.styleClass
+        assertEquals ' required large', element.styleClass
         assertEquals '', element.value
         assertTrue element.mandatory
     }
 
     void testBuildNumber() {
         def dynamicField = new DynamicField(name: 'name', label: 'Label',
-                mandatory: true, type: DynamicFieldType.Number, maxlength: 200)
+                mandatory: true, type: DynamicFieldType.Number, maxlength: 200, min: 0, max: 2000)
         def dynamicFieldValue = new DynamicFieldValue(dynamicField: dynamicField, value: 123)
         def element = builder.buildNumber(dynamicField, dynamicFieldValue)
 
@@ -115,8 +115,10 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.id
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.name
         assertEquals 14, element.maxlength
-        assertEquals 'number', element.styleClass
+        assertEquals ' required number min max', element.styleClass
         assertEquals '123', element.value
+        assertEquals '0', element.args.min
+        assertEquals '2000', element.args.max
         assertTrue element.mandatory
     }
 
@@ -131,6 +133,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.label.forId
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.id
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.name
+        assertEquals ' required', element.styleClass
         assertTrue element.value
         assertTrue element.mandatory
     }
@@ -160,6 +163,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.label.forId
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.id
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.name
+        assertEquals ' required', element.styleClass
         assertEquals '1', element.value
         assertEquals 2, element.selectItems.size()
         assertTrue element.mandatory
@@ -176,6 +180,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.label.forId
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.id
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.name
+        assertEquals ' required', element.styleClass
         assertEquals '', element.value
         assertEquals 2, element.selectItems.size()
         assertTrue element.mandatory

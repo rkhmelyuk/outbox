@@ -80,10 +80,10 @@ class EditDynamicFieldsFormBuilder {
             else {
                 styleClass = 'large'
             }
-            element.styleClass = styleClass
+            element.styleClass += ' required ' + styleClass
         }
         else {
-            element.styleClass = 'normal'
+            element.styleClass += ' normal'
         }
 
         return element
@@ -104,8 +104,17 @@ class EditDynamicFieldsFormBuilder {
         element.label = new UILabel(text: field.label, forId: DYNAMIC_FIELD_PREFIX + field.name)
         element.mandatory = field.mandatory
         element.value = numberValue
-        element.styleClass = 'number'
+        element.styleClass += (field.mandatory ? ' required' : '') + ' number'
         element.maxlength = 14
+        if (field.min != null) {
+            element.args.min = field.min.toPlainString()
+            element.styleClass += ' min'
+        }
+        if (field.max != null) {
+            element.args.max = field.max.toPlainString()
+            element.styleClass += ' max'
+        }
+
         return element
     }
 
@@ -116,6 +125,7 @@ class EditDynamicFieldsFormBuilder {
                 name: DYNAMIC_FIELD_PREFIX + field.name,
                 mandatory: field.mandatory,
                 label: label,
+                styleClass: (field.mandatory ? ' required' : ''),
                 value: value?.booleanValue ?: false)
     }
 
@@ -140,6 +150,7 @@ class EditDynamicFieldsFormBuilder {
                 options: selectItems.size() <= 3,
                 label: label,
                 value: selectValue,
+                styleClass: (field.mandatory ? ' required' : ''),
                 selectItems: selectItems)
     }
 }

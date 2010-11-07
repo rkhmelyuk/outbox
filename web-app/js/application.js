@@ -219,6 +219,12 @@ var App = {
 
     subscriberEdit: function() {
         $('#email').focus();
+
+         $.extend($.validator.messages, {
+             required: Message['dynamicField.required'],
+             number: Message['dynamicField.number']
+         });
+
         var validator = $('#subscriberForm').validate({
             rules: {
                 email: { required: true, email: true }
@@ -227,6 +233,11 @@ var App = {
                 email: { required: Message['subscriber.email.blank'], email: Message['subscriber.email.email.invalid'] }
             }
         });
+
+        $('.min').each(function () {$(this).rules('add', { min: $(this).attr('min') })});
+        $('.max').each(function () {$(this).rules('add', { max: $(this).attr('max') })});
+        //$('.max').rules('add', { min: $(this).attr('max') });
+
         $('#editSubscriber').click(function() {
             if (validator.form()) {
                 $('#subscriberForm').ajaxSubmit({
