@@ -22,6 +22,8 @@ class UILabelRender {
             model.'class' = element.styleClass?.encodeAsHTML()
         }
 
+        model += element.args
+
         def attrs = ''
         model.each { attrs += "$it.key=\"$it.value\" " }
 

@@ -33,6 +33,8 @@ class UIInputTextAreaRender implements Render {
             model.'class' = element.styleClass
         }
 
+        model += element.args
+
         g.textArea(model)
     }
 

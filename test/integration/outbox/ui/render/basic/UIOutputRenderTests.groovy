@@ -17,7 +17,8 @@ class UIOutputRenderTests extends GroovyTestCase {
 
     void testRender() {
         def element = new UIOutput(id: 'id', text: 'Label Text', styleClass: 'class')
-        assertEquals '<span id="id" class="class" >Label Text</span>', render.render(element)
+        element.args.test = '1'
+        assertEquals '<span id="id" class="class" test="1" >Label Text</span>', render.render(element)
     }
 
     void testRender_AttributesLess() {

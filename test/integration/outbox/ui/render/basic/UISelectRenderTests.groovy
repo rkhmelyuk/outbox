@@ -20,7 +20,8 @@ class UISelectRenderTests extends GroovyTestCase {
 
     void testRender_Empty() {
         def input = new UISelectSingle(id: 'id', name: 'name', value: 'value', styleClass: 'class', selectItems: [], mandatory: true)
-        assertEquals '<select name="name" id="id" class="class" >\r\n</select>', render.render(input)
+        input.args.test = '1'
+        assertEquals '<select name="name" id="id" class="class" test="1" >\r\n</select>', render.render(input)
     }
 
     void testRender_NotEmpty_Mandatory() {

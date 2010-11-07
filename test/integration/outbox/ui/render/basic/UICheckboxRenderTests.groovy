@@ -19,7 +19,8 @@ class UICheckboxRenderTests extends GroovyTestCase {
 
     void testRender_Checked() {
         def input = new UICheckbox(id: 'id', name: 'name', value: true, styleClass: 'class')
-        assertEquals '<input type="hidden" name="_name" /><input type="checkbox" name="name" checked="checked" value="true" id="id" class="class"  />',
+        input.args.test = '1'
+        assertEquals '<input type="hidden" name="_name" /><input type="checkbox" name="name" checked="checked" value="true" id="id" class="class" test="1"  />',
                 render.render(input)
     }
 

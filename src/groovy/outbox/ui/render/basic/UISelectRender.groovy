@@ -36,6 +36,8 @@ class UISelectRender implements Render {
         model.value = element.value
         model.from = element.selectItems
 
+        model += element.args
+
         gspTagLibraryLookup.lookupNamespaceDispatcher("g").select(model)
     }
 

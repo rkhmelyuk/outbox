@@ -29,6 +29,8 @@ class UICheckboxRender implements Render {
             model.'class' = element.styleClass
         }
 
+        model += element.args
+
         g.checkBox(model)
     }
 

@@ -7,7 +7,9 @@ class UIElement {
 
     String id
 
-    String style
-    String styleClass
+    String style = ''
+    String styleClass = ''
+
+    Map<String, String> args = [:]
 
 }

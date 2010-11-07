@@ -14,5 +14,6 @@ class UIElementTests extends GroovyTestCase {
         assertEquals 'test id', element.id
         assertEquals 'test style', element.style
         assertEquals 'test style class', element.styleClass
+        assertNotNull element.args
     }
 }

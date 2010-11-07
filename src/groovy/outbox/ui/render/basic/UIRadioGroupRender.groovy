@@ -24,6 +24,8 @@ class UIRadioGroupRender implements Render {
             model.'class' = element.styleClass
         }
 
+        model += element.args
+
         def out = ''
         def g = gspTagLibraryLookup.lookupNamespaceDispatcher("g")
         def id = element.id ?: model.name

@@ -33,6 +33,8 @@ class UIInputTextRender implements Render {
             model.'class' = element.styleClass
         }
 
+        model += element.args
+
         g.textField(model)
     }
 

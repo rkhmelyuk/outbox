@@ -20,17 +20,14 @@ class UIRadioGroupRenderTests extends GroovyTestCase {
 
     void testRender_Empty() {
         def input = new UISelectSingle(id: 'id', name: 'name', value: 'value', styleClass: 'class', selectItems: [])
-        def result = render.render(input)
-        println result
-        assertEquals '', result
+        assertEquals '', render.render(input)
     }
 
     void testRender_NotEmpty() {
         def input = new UISelectSingle(id: 'id', name: 'name', value: 'value', styleClass: 'class',
                 selectItems: [new SelectItem(value: 'key', label: 'value')])
-        def result = render.render(input)
-        println result
-        assertEquals '<input type="radio" name="name" value="key" class="class" id="id_0"  /><label for="id_0" >value</label>', result
+        input.args.test = '1'
+        assertEquals '<input type="radio" name="name" value="key" class="class" test="1" id="id_0"  /><label for="id_0" >value</label>', render.render(input)
     }
 
 }

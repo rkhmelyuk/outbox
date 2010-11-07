@@ -19,7 +19,8 @@ class UIInputTextAreaRenderTests extends GroovyTestCase  {
 
     void testRender() {
         def input = new UIInputTextArea(id: 'id', name: 'name', value: 'value', styleClass: 'class')
-        assertEquals '<textarea id="id" name="name" class="class" >value</textarea>', render.render(input)
+        input.args.test = '1'
+        assertEquals '<textarea id="id" name="name" class="class" test="1" >value</textarea>', render.render(input)
     }
 
     void testRender_NoParams() {
