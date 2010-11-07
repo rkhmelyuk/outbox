@@ -29,7 +29,7 @@
                             value="${dynamicField?.type?.id}"/>
                 </td>
             </tr>
-            <tr>
+            <tr class="constraint constraint_1 constraint_2 constraint_4">
                 <td><label for="mandatory"><g:message code="mandatory"/></label></td>
                 <td><g:checkBox name="mandatory" value="true" checked="${dynamicField?.mandatory}"/></td>
             </tr>

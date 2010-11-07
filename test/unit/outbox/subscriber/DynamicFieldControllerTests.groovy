@@ -245,7 +245,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
             assertNull field.max
             assertNull field.min
             assertNull field.maxlength
-            assertTrue field.mandatory
+            assertFalse field.mandatory
             return true
         }
         controller.dynamicFieldService = dynamicFieldServiceControl.createMock()

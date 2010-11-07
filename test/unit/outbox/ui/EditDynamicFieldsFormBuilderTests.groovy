@@ -133,9 +133,9 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.label.forId
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.id
         assertEquals DYNAMIC_FIELD_PREFIX + dynamicField.name, element.name
-        assertEquals ' required', element.styleClass
+        assertEquals '', element.styleClass
         assertTrue element.value
-        assertTrue element.mandatory
+        assertFalse element.mandatory
     }
 
     void testBuildBoolean_NoValue() {

@@ -76,18 +76,9 @@ class ViewDynamicFieldsFormBuilder {
 
     UIElement buildBoolean(DynamicField field, DynamicFieldValue value) {
         def label = new UILabel(text: field.label, forId: DYNAMIC_FIELD_PREFIX + field.name)
-        def result = new UIOutput(id: DYNAMIC_FIELD_PREFIX + field.name, label: label,
-                styleClass: (field.mandatory ? ' required' : ''))
-
-        if (value && value.booleanValue != null) {
-            if (value.booleanValue) {
-                result.text = 'Yes'
-            }
-            else {
-                result.text = 'No'
-            }
-        }
-        return result
+        new UIOutput(id: DYNAMIC_FIELD_PREFIX + field.name, label: label,
+                styleClass: (field.mandatory ? ' required' : ''),
+                text: value?.booleanValue ? 'Yes' : 'No')
     }
 
     UIElement buildSelect(DynamicField field, DynamicFieldValue value) {

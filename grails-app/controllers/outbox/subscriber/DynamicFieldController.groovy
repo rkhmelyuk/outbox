@@ -58,9 +58,11 @@ class DynamicFieldController {
         dynamicField.name = params.name
         dynamicField.type = DynamicFieldType.getById(params.int('type'))
         dynamicField.owner = Member.load(springSecurityService.principal.id)
-        dynamicField.mandatory = params.boolean('mandatory') ?: false
         dynamicField.status = DynamicFieldStatus.Active
 
+        if (dynamicField.type != DynamicFieldType.Boolean) {
+            dynamicField.mandatory = params.boolean('mandatory') ?: false
+        }
         if (dynamicField.type == DynamicFieldType.String) {
             dynamicField.maxlength = params.int('maxlength')
         }
@@ -117,11 +119,13 @@ class DynamicFieldController {
         dynamicField.name = params.name
         dynamicField.type = DynamicFieldType.getById(params.int('type'))
         dynamicField.owner = Member.load(memberId)
-        dynamicField.mandatory = params.boolean('mandatory') ?: false
 
         def visible = params.boolean('visible') ?: false
         dynamicField.status = visible ? DynamicFieldStatus.Active : DynamicFieldStatus.Hidden
 
+        if (dynamicField.type != DynamicFieldType.Boolean) {
+            dynamicField.mandatory = params.boolean('mandatory') ?: false
+        }
         if (dynamicField.type == DynamicFieldType.String) {
             dynamicField.maxlength = params.int('maxlength')
             dynamicField.min = null

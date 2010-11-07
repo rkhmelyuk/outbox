@@ -15,6 +15,7 @@ import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.subscription.SubscriptionStatus
 import outbox.ui.EditDynamicFieldsFormBuilder
+import outbox.ui.ViewDynamicFieldsFormBuilder
 import outbox.ui.element.UIContainer
 
 /**
@@ -41,8 +42,8 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         }
 
         def elements = new UIContainer()
-        def editDynamicFieldsFormBuilderControl = mockFor(EditDynamicFieldsFormBuilder)
-        editDynamicFieldsFormBuilderControl.demand.build { f ->
+        def viewDynamicFieldsFormBuilderControl = mockFor(ViewDynamicFieldsFormBuilder)
+        viewDynamicFieldsFormBuilderControl.demand.build { f ->
             assertEquals dynamicFieldValues, f
             return elements
         }
@@ -52,7 +53,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         controller.subscriberService = subscriberServiceControl.createMock()
         controller.springSecurityService = springSecurityServiceControl.createMock()
-        controller.editDynamicFieldsFormBuilder = editDynamicFieldsFormBuilderControl.createMock()
+        controller.viewDynamicFieldsFormBuilder = viewDynamicFieldsFormBuilderControl.createMock()
 
         controller.params.id = 'test123'
 
@@ -60,7 +61,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         subscriberServiceControl.verify()
         springSecurityServiceControl.verify()
-        editDynamicFieldsFormBuilderControl.verify()
+        viewDynamicFieldsFormBuilderControl.verify()
 
         assertNotNull result
         assertEquals subscriber, result.subscriber

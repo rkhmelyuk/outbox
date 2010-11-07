@@ -123,9 +123,8 @@ class EditDynamicFieldsFormBuilder {
         new UICheckbox(
                 id: DYNAMIC_FIELD_PREFIX + field.name,
                 name: DYNAMIC_FIELD_PREFIX + field.name,
-                mandatory: field.mandatory,
+                mandatory: false,
                 label: label,
-                styleClass: (field.mandatory ? ' required' : ''),
                 value: value?.booleanValue ?: false)
     }
 
