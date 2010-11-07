@@ -190,6 +190,12 @@ var App = {
 
     subscriberCreate: function() {
         $('#email').focus();
+
+        $.extend($.validator.messages, {
+            required: Message['dynamicField.required'],
+            number: Message['dynamicField.number']
+        });
+
         var validator = $('#subscriberForm').validate({
             rules: {
                 email: { required: true, email: true }
@@ -198,6 +204,14 @@ var App = {
                 email: { required: Message['subscriber.email.blank'], email: Message['subscriber.email.email.invalid'] }
             }
         });
+
+        $('.min').each(function () {
+            $(this).rules('add', { min: $(this).attr('min') })
+        });
+        $('.max').each(function () {
+            $(this).rules('add', { max: $(this).attr('max') })
+        });
+
         $('#addSubscriber').click(function() {
             if (validator.form()) {
                 $('#subscriberForm').ajaxSubmit({
@@ -220,10 +234,10 @@ var App = {
     subscriberEdit: function() {
         $('#email').focus();
 
-         $.extend($.validator.messages, {
-             required: Message['dynamicField.required'],
-             number: Message['dynamicField.number']
-         });
+        $.extend($.validator.messages, {
+            required: Message['dynamicField.required'],
+            number: Message['dynamicField.number']
+        });
 
         var validator = $('#subscriberForm').validate({
             rules: {
@@ -234,9 +248,12 @@ var App = {
             }
         });
 
-        $('.min').each(function () {$(this).rules('add', { min: $(this).attr('min') })});
-        $('.max').each(function () {$(this).rules('add', { max: $(this).attr('max') })});
-        //$('.max').rules('add', { min: $(this).attr('max') });
+        $('.min').each(function () {
+            $(this).rules('add', { min: $(this).attr('min') })
+        });
+        $('.max').each(function () {
+            $(this).rules('add', { max: $(this).attr('max') })
+        });
 
         $('#editSubscriber').click(function() {
             if (validator.form()) {
@@ -277,7 +294,7 @@ var App = {
             items: 'div.item',
             cursor: 'move',
             start: function(event, ui) {
-                over =  true
+                over = true
             },
             update: function(event, ui) {
                 if (over) {
@@ -294,7 +311,7 @@ var App = {
 
         var draggable = null;
         $(".trash").droppable({
-			drop: function(event, ui) {
+            drop: function(event, ui) {
                 draggable = ui.draggable;
                 $(draggable).hide();
                 if ($(draggable).hasClass('hiddenField')) {
@@ -304,14 +321,14 @@ var App = {
                     $('#hideField').show();
                 }
                 $("a#removeConfirm").trigger('click');
-			},
+            },
             out: function(event, ui) {
                 over = true;
             },
             over: function(event, ui) {
                 over = false;
             }
-		});
+        });
 
         $('#cancelRemove').click(function() {
             $(draggable).show();
