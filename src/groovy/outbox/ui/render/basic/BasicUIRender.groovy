@@ -16,7 +16,7 @@ class BasicUIRender implements UIRender {
     }
 
     String renderInputTextArea(UIInputTextArea element) {
-        throw new UnsupportedOperationException()
+        new UIInputTextAreaRender(gspTagLibraryLookup: gspTagLibraryLookup).render(element)
     }
 
     String renderInputSelect(UISelectSingle element) {
