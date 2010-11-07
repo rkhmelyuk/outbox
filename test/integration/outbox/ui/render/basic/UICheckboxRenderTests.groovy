@@ -18,28 +18,14 @@ class UICheckboxRenderTests extends GroovyTestCase {
     }
 
     void testRender_Checked() {
-        def input = new UICheckbox(
-                id: 'id',
-                name: 'name',
-                value: true,
-                styleClass: 'class')
-
+        def input = new UICheckbox(id: 'id', name: 'name', value: true, styleClass: 'class')
         assertEquals '<input type="hidden" name="_name" /><input type="checkbox" name="name" checked="checked" value="true" id="id" class="class"  />',
                 render.render(input)
     }
 
     void testRender_NotChecked() {
-        def input = new UICheckbox(
-                id: 'id',
-                name: 'name',
-                value: false,
-                styleClass: 'class')
-
-        def result = render.render(input)
-
-        println result
-
+        def input = new UICheckbox(id: 'id', name: 'name', value: false, styleClass: 'class')
         assertEquals '<input type="hidden" name="_name" /><input type="checkbox" name="name" value="true" id="id" class="class"  />',
-                result
+                render.render(input)
     }
 }

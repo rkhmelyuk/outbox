@@ -18,21 +18,12 @@ class UIInputTextRenderTests extends GroovyTestCase {
     }
 
     void testRender() {
-        def input = new UIInputText(
-                id: 'id',
-                name: 'name',
-                value: 'value',
-                styleClass: 'class')
-
+        def input = new UIInputText(id: 'id', name: 'name', value: 'value', styleClass: 'class')
         assertEquals '<input type="text" id="id" name="name" value="value" class="class" />', render.render(input)
     }
 
     void testRender_NoParams() {
         def input = new UIInputText(name: 'name')
-
-        def result = render.render(input)
-        println result
-
-        assertEquals '<input type="text" name="name" id="name" value="" />', result
+        assertEquals '<input type="text" name="name" id="name" value="" />', render.render(input)
     }
 }

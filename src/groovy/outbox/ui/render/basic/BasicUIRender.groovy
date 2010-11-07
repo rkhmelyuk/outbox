@@ -32,7 +32,7 @@ class BasicUIRender implements UIRender {
     }
 
     String renderOutput(UIOutput element) {
-        throw new UnsupportedOperationException()
+        new UILabelRender().render(element)
     }
 
 

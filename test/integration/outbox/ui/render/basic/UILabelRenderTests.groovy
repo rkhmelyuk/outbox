@@ -15,26 +15,12 @@ class UILabelRenderTests extends GroovyTestCase {
     }
 
     void testRender() {
-        def element = new UILabel(
-                id: 'id',
-                forId: 'forId',
-                text: 'Label Text',
-                styleClass: 'class')
-
-        def result = render.render(element)
-
-        println result
-
-        assertEquals '<label id="id" for="forId" class="class" >Label Text</label>', result
+        def element = new UILabel(id: 'id', forId: 'forId', text: 'Label Text', styleClass: 'class')
+        assertEquals '<label id="id" for="forId" class="class" >Label Text</label>', render.render(element)
     }
 
     void testRender_AttributesLess() {
         def element = new UILabel()
-
-        def result = render.render(element)
-
-        println result
-
-        assertEquals '<label ></label>', result
+        assertEquals '<label ></label>', render.render(element)
     }
 }
