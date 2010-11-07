@@ -55,15 +55,15 @@
             </tr>
             <tr class="constraint constraint_2">
                 <td><label for="min"><g:message code="minimal.value"/></label></td>
-                <td><g:textField name="min" value="${dynamicField.min}" maxlength="10"/></td>
+                <td><g:textField name="min" value="${formatNumber(number: dynamicField.min, format: '###########.##')}" maxlength="14"/></td>
             </tr>
             <tr class="constraint constraint_2">
                 <td><label for="max"><g:message code="maximal.value"/></label></td>
-                <td><g:textField name="max" value="${dynamicField.max}" maxlength="10"/></td>
+                <td><g:textField name="max" value="${formatNumber(number: dynamicField.max, format: '###########.##')}" maxlength="14"/></td>
             </tr>
             <tr class="constraint constraint_1">
                 <td><label for="maxlength"><g:message code="maxlength"/></label></td>
-                <td><g:textField name="maxlength" value="${dynamicField.maxlength}" maxlength="4"/></td>
+                <td><g:textField name="maxlength" value="${formatNumber(number: dynamicField.maxlength, format: '####')}" maxlength="4"/><</td>
             </tr>
             <tr class="constraint constraint_4">
                 <td><g:message code="values.list"/></td>

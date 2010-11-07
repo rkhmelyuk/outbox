@@ -6,7 +6,7 @@ create table DynamicFieldValue (
     SubscriberId char(40) not null,
 
     StringValue varchar(9999) null,
-    NumberValue decimal(14, 4) null,
+    NumberValue decimal(16, 4) null,
     BooleanValue boolean null,
     DynamicFieldItemId bigint null,
 
