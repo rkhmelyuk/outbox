@@ -28,8 +28,11 @@ class UISelectRender implements Render {
         if (element.styleClass) {
             model.'class' = element.styleClass
         }
-        model.optionKey='value'
-        model.optionValue='label'
+        if (!element.mandatory) {
+            model.noSelection = ['': '']
+        }
+        model.optionKey = 'value'
+        model.optionValue = 'label'
         model.value = element.value
         model.from = element.selectItems
 
