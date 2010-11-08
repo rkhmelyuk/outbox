@@ -163,22 +163,22 @@ class SubscriberController {
                 fieldValue = new DynamicFieldValue(subscriber: subscriber, dynamicField: field)
                 values.addValue(fieldValue)
             }
-            fieldValue.value = params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + field.name]
+            fieldValue.value = params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + field.name]?.trim()
         }
     }
 
     boolean validateDynamicFieldValues(Subscriber subscriber, DynamicFieldValues values) {
         def result = true
         values.fields.each { DynamicField field ->
-            def value = params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + field.name]
-            if (field.mandatory) {
-                if ((field.type == DynamicFieldType.Boolean && value == null) || !value) {
-                    subscriber.errors.reject('dynamicField.x.required',
-                            [field.label] as Object[], null)
+            def value = params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + field.name]?.trim()
+
+            if ((field.type == DynamicFieldType.Boolean && value == null) || !value) {
+                if (field.mandatory) {
+                    subscriber.errors.reject('dynamicField.x.required', [field.label] as Object[], null)
                     result = false
                 }
             }
-            else if (value) {
+            else {
                 if (field.type == DynamicFieldType.String) {
                     if (value.length() > field.maxlength) {
                         subscriber.errors.reject('dynamicField.x.maxlength',
@@ -186,19 +186,19 @@ class SubscriberController {
                         result = false
                     }
                 }
-                else if (field.type == DynamicFieldType.Number) {
+                else if (field.type == DynamicFieldType.Number && value != '') {
                     def numberValue = ValueUtil.getBigDecimal(value)
                     if (numberValue == null) {
                         subscriber.errors.reject('dynamicField.x.number',
                                 [field.label] as Object[], null)
                         result = false
                     }
-                    else if (field.min != null && value < min) {
+                    else if (field.min != null && numberValue < field.min) {
                         subscriber.errors.reject('dynamicField.x.number.min',
                                 [field.label, field.min] as Object[], null)
                         result = false
                     }
-                    else if (field.max != null && value > max) {
+                    else if (field.max != null && numberValue > field.max) {
                         subscriber.errors.reject('dynamicField.x.number.min',
                                 [field.label, field.max] as Object[], null)
                         result = false

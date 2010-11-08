@@ -9,14 +9,13 @@ import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
 import outbox.security.OutboxUser
-import outbox.subscriber.field.DynamicField
-import outbox.subscriber.field.DynamicFieldValues
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.subscription.SubscriptionStatus
 import outbox.ui.EditDynamicFieldsFormBuilder
 import outbox.ui.ViewDynamicFieldsFormBuilder
 import outbox.ui.element.UIContainer
+import outbox.subscriber.field.*
 
 /**
  * @author Ruslan Khmelyuk
@@ -466,7 +465,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
         subscriberServiceControl.demand.getActiveSubscriberDynamicFields { subscr -> values }
-        subscriberServiceControl.demand.saveSubscriber { subscr, _values->
+        subscriberServiceControl.demand.saveSubscriber { subscr, _values ->
             assertEquals values, _values
             return true
         }
@@ -804,5 +803,72 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.deleteSubscriberType()
         def result = JSON.parse(mockResponse.contentAsString)
         assertTrue result.error
+    }
+
+    void testValidateDynamicFieldValues() {
+        def subscriber = new Subscriber()
+
+        mockDomain(Subscriber, [subscriber])
+
+        def mandatoryString = new DynamicField(id: 1, name: 'string', mandatory: true, type: DynamicFieldType.String)
+        def longString = new DynamicField(id: 2, name: 'longString', mandatory: true, type: DynamicFieldType.String, maxlength: 10)
+        def number = new DynamicField(id: 3, name: 'number', mandatory: true, type: DynamicFieldType.Number)
+        def largeNumber = new DynamicField(id: 4, name: 'largeNumber', mandatory: true, type: DynamicFieldType.Number, max: 10)
+        def smallNumber = new DynamicField(id: 5, name: 'smallNumber', mandatory: false, type: DynamicFieldType.Number, min: 10)
+        def bool = new DynamicField(id: 6, name: 'bool', mandatory: true, type: DynamicFieldType.Boolean)
+        def bool2 = new DynamicField(id: 7, name: 'bool2', mandatory: true, type: DynamicFieldType.Boolean)
+        def correctNumber = new DynamicField(id: 8, name: 'correctNumber', mandatory: true, type: DynamicFieldType.Number, min: 10, max: 100)
+
+        def fields = [mandatoryString, longString, number, largeNumber, smallNumber, bool, bool2, correctNumber]
+
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'string'] = ''
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'longString'] = 'qwertysdfsdfdsfuasdfgh'
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'number'] = 'asdf'
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'largeNumber'] = '100'
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'smallNumber'] = '0'
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'correctNumber'] = '50'
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'bool'] = ''
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'bool2'] = 'true'
+
+        def result = controller.validateDynamicFieldValues(subscriber, new DynamicFieldValues(fields, []))
+
+        println subscriber.errors
+
+        assertFalse result
+        assertEquals 6, subscriber.errors.errorCount
+    }
+
+    void testFillDynamicFieldValues() {
+        def subscriber = new Subscriber()
+
+        def string = new DynamicField(id: 1, name: 'string', mandatory: true, type: DynamicFieldType.String)
+        def number = new DynamicField(id: 3, name: 'number', mandatory: true, type: DynamicFieldType.Number)
+        def bool = new DynamicField(id: 6, name: 'bool', mandatory: true, type: DynamicFieldType.Boolean)
+        def select = new DynamicField(id: 8, name: 'select', mandatory: true, type: DynamicFieldType.SingleSelect)
+
+        def fields = [string, number, bool, select]
+
+        def dynamicFieldValue = new DynamicFieldValue(id: 1, dynamicField: select)
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicFieldItem { id ->
+            assertEquals 1, id
+            return new DynamicFieldItem(id: id, field: select)
+        }
+        dynamicFieldValue.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'string'] = 'hello'
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'number'] = '123'
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'bool'] = 'true'
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'select'] = '1'
+
+        def values = new DynamicFieldValues(fields, [dynamicFieldValue])
+        controller.fillDynamicFieldValues(subscriber, values)
+        dynamicFieldServiceControl.verify()
+
+        assertEquals 'hello', values.value(string)
+        assertEquals 123, values.value(number)
+        assertEquals true, values.value(bool)
+        assertEquals 1, values.value(select).id
+
     }
 }
