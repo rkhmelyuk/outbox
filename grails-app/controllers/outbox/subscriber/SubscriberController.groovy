@@ -156,7 +156,7 @@ class SubscriberController {
         render model as JSON
     }
 
-    private void fillDynamicFieldValues(Subscriber subscriber, DynamicFieldValues values) {
+    void fillDynamicFieldValues(Subscriber subscriber, DynamicFieldValues values) {
         values.fields.each { field ->
             def fieldValue = values.get(field)
             if (!fieldValue) {
@@ -167,7 +167,7 @@ class SubscriberController {
         }
     }
 
-    private boolean validateDynamicFieldValues(Subscriber subscriber, DynamicFieldValues values) {
+    boolean validateDynamicFieldValues(Subscriber subscriber, DynamicFieldValues values) {
         def result = true
         values.fields.each { DynamicField field ->
             def value = params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + field.name]
