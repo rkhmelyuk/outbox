@@ -14,7 +14,7 @@ class ValueUtil {
             // skip it
         }
 
-        return result ?: defaultValue
+        result != null ? result : defaultValue
     }
 
     static Long getLong(String string, Long defaultValue = null) {
@@ -26,7 +26,7 @@ class ValueUtil {
             // skip it
         }
 
-        return result ?: defaultValue
+        result != null ? result : defaultValue
     }
 
     static BigDecimal getBigDecimal(String string, BigDecimal defaultValue = null) {
@@ -38,7 +38,7 @@ class ValueUtil {
             // skip it
         }
 
-        return result ?: defaultValue
+        result != null ? result : defaultValue
     }
 
     static Date beginDate(Date startDate) {

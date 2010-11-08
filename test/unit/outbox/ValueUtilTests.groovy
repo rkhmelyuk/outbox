@@ -34,4 +34,25 @@ class ValueUtilTests extends GroovyTestCase {
         assertEquals 11, date.month
         assertEquals 31, date.date
     }
+
+    void testGetBigDecimal() {
+        assertEquals 0, ValueUtil.getBigDecimal('0')
+        assertEquals 2.2, ValueUtil.getBigDecimal('2.2')
+        assertNull ValueUtil.getBigDecimal('')
+        assertNull ValueUtil.getBigDecimal('asf')
+    }
+
+    void testLong() {
+        assertEquals 0, ValueUtil.getLong('0')
+        assertEquals 2, ValueUtil.getLong('2')
+        assertNull ValueUtil.getLong('')
+        assertNull ValueUtil.getLong('asf')
+    }
+
+    void testInteger() {
+        assertEquals 0, ValueUtil.getInteger('0')
+        assertEquals 2, ValueUtil.getInteger('2')
+        assertNull ValueUtil.getInteger('')
+        assertNull ValueUtil.getInteger('asf')
+    }
 }
