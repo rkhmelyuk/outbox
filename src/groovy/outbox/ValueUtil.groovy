@@ -29,6 +29,18 @@ class ValueUtil {
         return result ?: defaultValue
     }
 
+    static BigDecimal getBigDecimal(String string, BigDecimal defaultValue = null) {
+        BigDecimal result = null
+        try {
+            result = new BigDecimal(string)
+        }
+        catch (Exception e) {
+            // skip it
+        }
+
+        return result ?: defaultValue
+    }
+
     static Date beginDate(Date startDate) {
         startDate ?: new Date(0, 0, 1)
     }

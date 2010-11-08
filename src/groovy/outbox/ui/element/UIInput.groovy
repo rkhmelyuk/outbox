@@ -10,6 +10,6 @@ class UIInput extends UIElement {
     String name
     UILabel label
 
-    Boolean mandatory
+    boolean mandatory
 
 }

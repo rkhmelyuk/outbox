@@ -56,9 +56,13 @@ class EditDynamicFieldsFormBuilder {
         element.id = DYNAMIC_FIELD_PREFIX + field.name
         element.name = DYNAMIC_FIELD_PREFIX + field.name
         element.label = new UILabel(text: field.label, forId: DYNAMIC_FIELD_PREFIX + field.name)
-        element.mandatory = field.mandatory
         element.value = value && value.stringValue ? value.stringValue : ''
         element.maxlength = field.maxlength
+
+        element.mandatory = field.mandatory
+        if (element.mandatory) {
+            element.styleClass += ' required'
+        }
 
         if (field.maxlength) {
             def styleClass
@@ -80,7 +84,7 @@ class EditDynamicFieldsFormBuilder {
             else {
                 styleClass = 'large'
             }
-            element.styleClass += ' required ' + styleClass
+            element.styleClass += ' ' + styleClass
         }
         else {
             element.styleClass += ' normal'

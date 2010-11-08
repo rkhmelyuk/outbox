@@ -8,6 +8,7 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.springframework.context.MessageSource
 import org.springframework.context.NoSuchMessageException
 import org.springframework.validation.FieldError
+import org.springframework.validation.ObjectError
 import org.springframework.web.servlet.support.RequestContextUtils
 
 /**
@@ -18,7 +19,7 @@ class MessageUtil {
 
     static void addErrors(HttpServletRequest req, Map model, def binding) {
         def errors = model.errors ? model.errors : [:]
-        binding.allErrors.each { FieldError error ->
+        binding.allErrors.eachWithIndex { ObjectError error, int index ->
             String message = null;
             for (String each : error.codes) {
                 try {
@@ -32,7 +33,12 @@ class MessageUtil {
             if (message == null && error.defaultMessage) {
                 message = new MessageFormat(error.defaultMessage).format(error.arguments);
             }
-            errors.put(error.field, message)
+            if (error instanceof FieldError) {
+                errors.put(error.field, message)
+            }
+            else {
+                errors.put(index, message)
+            }
         }
         model << [errors: errors]
     }

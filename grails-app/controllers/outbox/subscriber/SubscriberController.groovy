@@ -4,11 +4,14 @@ import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.MessageUtil
+import outbox.ValueUtil
 import outbox.dictionary.Gender
 import outbox.dictionary.Language
 import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
+import outbox.subscriber.field.DynamicField
+import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.field.DynamicFieldValue
 import outbox.subscriber.field.DynamicFieldValues
 import outbox.subscription.Subscription
@@ -82,13 +85,13 @@ class SubscriberController {
             subscriber.subscriberType = SubscriberType.load(params.long('subscriberType'))
 
             def dynamicFieldValues = subscriberService.getActiveSubscriberDynamicFields(subscriber)
-            fillDynamicFieldValues(subscriber, dynamicFieldValues)
-            //def valid = validateDynamicFieldValues(subscriber, dynamicFieldValues)
-
-            if (subscriberService.saveSubscriber(subscriber, dynamicFieldValues)) {
-                model << [success: true]
+            if (validateDynamicFieldValues(subscriber, dynamicFieldValues)) {
+                fillDynamicFieldValues(subscriber, dynamicFieldValues)
+                if (subscriberService.saveSubscriber(subscriber, dynamicFieldValues)) {
+                    model << [success: true]
+                }
             }
-            else {
+            if (!model.success) {
                 MessageUtil.addErrors(request, model, subscriber.errors);
             }
         }
@@ -127,22 +130,25 @@ class SubscriberController {
         subscriber.namePrefix = NamePrefix.load(params.int('namePrefix'))
         subscriber.subscriberType = SubscriberType.load(params.long('subscriberType'))
 
-        def dynamicFieldValues = subscriberService.getActiveSubscriberDynamicFields(subscriber)
-        fillDynamicFieldValues(subscriber, dynamicFieldValues)
-
         def model = [:]
-        if (subscriberService.saveSubscriber(subscriber, dynamicFieldValues)) {
-            def listId = params.long('listId')
-            model.success = true
-            if (listId) {
-                subscribe(subscriber, listId)
-                model.redirectTo = g.createLink(controller: 'subscriptionList', action: 'show', id: listId)
-            }
-            else {
-                model.redirectTo = g.createLink(controller: 'subscriptionList', action: 'freeSubscribers')
+
+        def dynamicFieldValues = subscriberService.getActiveSubscriberDynamicFields(subscriber)
+        if (validateDynamicFieldValues(subscriber, dynamicFieldValues)) {
+            fillDynamicFieldValues(subscriber, dynamicFieldValues)
+            if (subscriberService.saveSubscriber(subscriber, dynamicFieldValues)) {
+                def listId = params.long('listId')
+                model.success = true
+                if (listId) {
+                    subscribe(subscriber, listId)
+                    model.redirectTo = g.createLink(controller: 'subscriptionList', action: 'show', id: listId)
+                }
+                else {
+                    model.redirectTo = g.createLink(controller: 'subscriptionList', action: 'freeSubscribers')
+                }
             }
         }
-        else {
+
+        if (!model.success) {
             model.error = true
             MessageUtil.addErrors(request, model, subscriber.errors);
         }
@@ -161,34 +167,39 @@ class SubscriberController {
         }
     }
 
-    /*private boolean validateDynamicFieldValues(Subscriber subscriber, DynamicFieldValues values) {
+    private boolean validateDynamicFieldValues(Subscriber subscriber, DynamicFieldValues values) {
         def result = true
         values.fields.each { DynamicField field ->
-            def fieldValue = values.get(field)
-            def value = fieldValue.value
+            def value = params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + field.name]
             if (field.mandatory) {
                 if ((field.type == DynamicFieldType.Boolean && value == null) || !value) {
-                    subscriber.errors.rejectValue('dynamicField.x.required',
-                                [field.label] as Object[], null)
+                    subscriber.errors.reject('dynamicField.x.required',
+                            [field.label] as Object[], null)
                     result = false
                 }
             }
             else if (value) {
                 if (field.type == DynamicFieldType.String) {
-                    if (value.size() > field.maxlength) {
+                    if (value.length() > field.maxlength) {
                         subscriber.errors.reject('dynamicField.x.maxlength',
                                 [field.label, field.maxlength] as Object[], null)
                         result = false
                     }
                 }
                 else if (field.type == DynamicFieldType.Number) {
-                    if (field.min != null && value < min) {
-                        subscriber.errors.rejectValue('dynamicField.x.number.min',
+                    def numberValue = ValueUtil.getBigDecimal(value)
+                    if (numberValue == null) {
+                        subscriber.errors.reject('dynamicField.x.number',
+                                [field.label] as Object[], null)
+                        result = false
+                    }
+                    else if (field.min != null && value < min) {
+                        subscriber.errors.reject('dynamicField.x.number.min',
                                 [field.label, field.min] as Object[], null)
                         result = false
                     }
-                    if (field.max != null && value > max) {
-                        subscriber.errors.rejectValue('dynamicField.x.number.min',
+                    else if (field.max != null && value > max) {
+                        subscriber.errors.reject('dynamicField.x.number.min',
                                 [field.label, field.max] as Object[], null)
                         result = false
                     }
@@ -196,7 +207,7 @@ class SubscriberController {
             }
         }
         return result
-    }*/
+    }
 
     private void subscribe(Subscriber subscriber, Long listId) {
         if (!listId) {
