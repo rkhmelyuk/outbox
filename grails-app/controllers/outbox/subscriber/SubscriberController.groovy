@@ -46,7 +46,7 @@ class SubscriberController {
             return
         }
 
-        def dynamicFieldValues = subscriberService.getSubscriberDynamicFields(subscriber)
+        def dynamicFieldValues = subscriberService.getActiveSubscriberDynamicFields(subscriber)
         def dynamicFieldsForm = viewDynamicFieldsFormBuilder.build(dynamicFieldValues)
 
         [subscriber: subscriber, dynamicFieldsForm: dynamicFieldsForm]
@@ -62,7 +62,7 @@ class SubscriberController {
         def memberId = springSecurityService.principal.id
         def subscriberTypes = subscriberService.getSubscriberTypes(Member.load(memberId))
 
-        def dynamicFieldValues = subscriberService.getSubscriberDynamicFields(subscriber)
+        def dynamicFieldValues = subscriberService.getActiveSubscriberDynamicFields(subscriber)
         def dynamicFieldsForm = editDynamicFieldsFormBuilder.build(dynamicFieldValues)
         [subscriber: subscriber, subscriberTypes: subscriberTypes, dynamicFieldsForm: dynamicFieldsForm]
     }
@@ -81,7 +81,7 @@ class SubscriberController {
             subscriber.namePrefix = NamePrefix.load(params.int('namePrefix'))
             subscriber.subscriberType = SubscriberType.load(params.long('subscriberType'))
 
-            def dynamicFieldValues = subscriberService.getSubscriberDynamicFields(subscriber)
+            def dynamicFieldValues = subscriberService.getActiveSubscriberDynamicFields(subscriber)
             fillDynamicFieldValues(subscriber, dynamicFieldValues)
             //def valid = validateDynamicFieldValues(subscriber, dynamicFieldValues)
 
@@ -127,7 +127,7 @@ class SubscriberController {
         subscriber.namePrefix = NamePrefix.load(params.int('namePrefix'))
         subscriber.subscriberType = SubscriberType.load(params.long('subscriberType'))
 
-        def dynamicFieldValues = subscriberService.getSubscriberDynamicFields(subscriber)
+        def dynamicFieldValues = subscriberService.getActiveSubscriberDynamicFields(subscriber)
         fillDynamicFieldValues(subscriber, dynamicFieldValues)
 
         def model = [:]

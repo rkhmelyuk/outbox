@@ -36,7 +36,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         def dynamicFieldValues = new DynamicFieldValues([], [])
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber }
-        subscriberServiceControl.demand.getSubscriberDynamicFields { s ->
+        subscriberServiceControl.demand.getActiveSubscriberDynamicFields { s ->
             assertEquals subscriber, s
             return dynamicFieldValues
         }
@@ -197,7 +197,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         def values = new DynamicFieldValues([], [])
         def subscriberServiceControl = mockFor(SubscriberService)
         def Subscriber subscriber = null
-        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> return values}
+        subscriberServiceControl.demand.getActiveSubscriberDynamicFields { subscr -> return values}
         subscriberServiceControl.demand.saveSubscriber { subscr, _values ->
             subscriber = subscr;
             assertEquals values, _values
@@ -256,7 +256,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def Subscriber subscriber = null
         def subscriberServiceControl = mockFor(SubscriberService)
-        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
+        subscriberServiceControl.demand.getActiveSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
         subscriberServiceControl.demand.saveSubscriber { subscr, values ->
             subscriber = subscr;
             subscriber.id = '123';
@@ -314,7 +314,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def Subscriber subscriber = null
         def subscriberServiceControl = mockFor(SubscriberService)
-        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], [])}
+        subscriberServiceControl.demand.getActiveSubscriberDynamicFields { subscr -> new DynamicFieldValues([], [])}
         subscriberServiceControl.demand.saveSubscriber { subscr, values ->
             subscriber = subscr;
             subscriber.id = 123;
@@ -364,7 +364,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         Member.class.metaClass.static.load = { id -> return member }
 
         def subscriberServiceControl = mockFor(SubscriberService)
-        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
+        subscriberServiceControl.demand.getActiveSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
         subscriberServiceControl.demand.saveSubscriber { subscr, values -> return false }
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
@@ -399,7 +399,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
         subscriberServiceControl.demand.getSubscriberTypes { m -> [new SubscriberType(id: 1, member: m)]}
-        subscriberServiceControl.demand.getSubscriberDynamicFields { s ->
+        subscriberServiceControl.demand.getActiveSubscriberDynamicFields { s ->
             assertEquals subscriber, s
             return dynamicFieldValues
         }
@@ -465,7 +465,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         def values = new DynamicFieldValues([], [])
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
-        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> values }
+        subscriberServiceControl.demand.getActiveSubscriberDynamicFields { subscr -> values }
         subscriberServiceControl.demand.saveSubscriber { subscr, _values->
             assertEquals values, _values
             return true
@@ -513,7 +513,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
-        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
+        subscriberServiceControl.demand.getActiveSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
         subscriberServiceControl.demand.saveSubscriber { subscr, values -> return true}
         controller.subscriberService = subscriberServiceControl.createMock()
 
@@ -543,7 +543,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
-        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
+        subscriberServiceControl.demand.getActiveSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
         subscriberServiceControl.demand.saveSubscriber { subscr, values -> return true}
         controller.subscriberService = subscriberServiceControl.createMock()
 
@@ -572,7 +572,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def subscriberServiceControl = mockFor(SubscriberService)
         subscriberServiceControl.demand.getSubscriber { id -> return subscriber}
-        subscriberServiceControl.demand.getSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
+        subscriberServiceControl.demand.getActiveSubscriberDynamicFields { subscr -> new DynamicFieldValues([], []) }
         subscriberServiceControl.demand.saveSubscriber { subscr, values -> return false}
         controller.subscriberService = subscriberServiceControl.createMock()
 
