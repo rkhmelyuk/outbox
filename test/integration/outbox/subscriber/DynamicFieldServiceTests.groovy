@@ -1,7 +1,9 @@
 package outbox.subscriber
 
+import grails.test.GrailsUnitTestCase
 import org.hibernate.Session
 import outbox.member.Member
+import outbox.task.TaskService
 import outbox.subscriber.field.*
 
 /**
@@ -9,7 +11,7 @@ import outbox.subscriber.field.*
  *
  * @author Ruslan Khmelyuk
  */
-class DynamicFieldServiceTests extends GroovyTestCase {
+class DynamicFieldServiceTests extends GrailsUnitTestCase {
 
     Session session
     DynamicFieldService dynamicFieldService
@@ -65,16 +67,17 @@ class DynamicFieldServiceTests extends GroovyTestCase {
         def field1 = createDynamicField(1)
         def field2 = createDynamicField(2)
         def field3 = createDynamicField(3)
+        field3.status = DynamicFieldStatus.Removed
 
         assertTrue dynamicFieldService.addDynamicField(field1)
         assertTrue dynamicFieldService.addDynamicField(field2)
         assertTrue dynamicFieldService.addDynamicField(field3)
 
         def fields = dynamicFieldService.getDynamicFields(member)
-        assertEquals 3, fields.size()
+        assertEquals 2, fields.size()
         assertTrue fields.contains(field1)
         assertTrue fields.contains(field2)
-        assertTrue fields.contains(field3)
+        assertFalse fields.contains(field3)
     }
 
     void testSaveDynamicFieldItem() {
@@ -193,10 +196,47 @@ class DynamicFieldServiceTests extends GroovyTestCase {
     }
 
     void testDeleteDynamicField() {
+        def originalTaskService = dynamicFieldService.taskService
+        try {
+            def field = createDynamicField(1)
+            assertTrue dynamicFieldService.saveDynamicField(field)
+
+            def taskServiceControl = mockFor(TaskService)
+            taskServiceControl.demand.enqueueTask { task ->
+                assertEquals 'RemoveDynamicField', task.name
+                assertEquals field.id, task.params.dynamicFieldId
+                return true
+            }
+            dynamicFieldService.taskService = taskServiceControl.createMock()
+            assertTrue dynamicFieldService.deleteDynamicField(field)
+            taskServiceControl.verify()
+
+            def found = dynamicFieldService.getDynamicField(field.id)
+            assertNotNull found
+            assertEquals DynamicFieldStatus.Removed, found.status
+        }
+        finally {
+            dynamicFieldService.taskService = originalTaskService
+        }
+    }
+
+    void testDeleteRemovedDynamicField() {
+        def field = createDynamicField(1)
+        field.status = DynamicFieldStatus.Removed
+        assertTrue dynamicFieldService.saveDynamicField(field)
+        assertTrue dynamicFieldService.deleteRemovedDynamicField(field)
+        assertNull dynamicFieldService.getDynamicField(field.id)
+    }
+
+    void testDeleteRemovedDynamicField_NotRemoved() {
         def field = createDynamicField(1)
         assertTrue dynamicFieldService.saveDynamicField(field)
-        assertTrue dynamicFieldService.deleteDynamicField(field)
-        assertNull dynamicFieldService.getDynamicField(field.id)
+        assertFalse dynamicFieldService.deleteRemovedDynamicField(field)
+        assertNotNull dynamicFieldService.getDynamicField(field.id)
+    }
+
+    void testDeleteRemovedDynamicField_Null() {
+        assertFalse dynamicFieldService.deleteRemovedDynamicField(null)
     }
 
     void testHideDynamicField() {
@@ -268,6 +308,33 @@ class DynamicFieldServiceTests extends GroovyTestCase {
         assertEquals 0, found.size()
     }
 
+    void testRemoveDynamicFieldValues() {
+        def field = createDynamicField(1)
+        assertTrue dynamicFieldService.addDynamicField(field)
+
+        def subscriber1 = createTestSubscriber(1)
+        def subscriber2 = createTestSubscriber(2)
+        def subscriber3 = createTestSubscriber(3)
+
+        assertTrue subscriberService.saveSubscriber(subscriber1)
+        assertTrue subscriberService.saveSubscriber(subscriber2)
+        assertTrue subscriberService.saveSubscriber(subscriber3)
+
+        def value1 = new DynamicFieldValue(subscriber: subscriber1, dynamicField: field, value: '123')
+        def value2 = new DynamicFieldValue(subscriber: subscriber2, dynamicField: field, value: '123')
+        def value3 = new DynamicFieldValue(subscriber: subscriber3, dynamicField: field, value: '123')
+
+        assertTrue dynamicFieldService.saveDynamicFieldValue(value1)
+        assertTrue dynamicFieldService.saveDynamicFieldValue(value2)
+        assertTrue dynamicFieldService.saveDynamicFieldValue(value3)
+
+        dynamicFieldService.deleteDynamicFieldValues(field)
+
+        // assertNull dynamicFieldService.getDynamicFieldValue(value1.id)
+        // assertNull dynamicFieldService.getDynamicFieldValue(value2.id)
+        // assertNull dynamicFieldService.getDynamicFieldValue(value3.id)
+    }
+
     void assertEquals(DynamicField left, DynamicField right) {
         assertNotNull right
         assertEquals left.id, right.id
@@ -311,11 +378,11 @@ class DynamicFieldServiceTests extends GroovyTestCase {
         return new DynamicFieldItem(field: dynamicField, name: 'Item')
     }
 
-    Subscriber createTestSubscriber() {
+    Subscriber createTestSubscriber(i) {
         Subscriber subscriber = new Subscriber()
         subscriber.firstName = 'John'
         subscriber.lastName = 'Doe'
-        subscriber.email = 'john.doe@nowhere.com'
+        subscriber.email = "john.doe$i@nowhere.com"
         subscriber.gender = null
         subscriber.timezone = null
         subscriber.language = null

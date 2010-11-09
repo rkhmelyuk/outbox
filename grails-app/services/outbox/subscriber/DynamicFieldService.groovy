@@ -3,6 +3,7 @@ package outbox.subscriber
 import org.springframework.transaction.annotation.Transactional
 import outbox.ServiceUtil
 import outbox.member.Member
+import outbox.task.TaskFactory
 import outbox.subscriber.field.*
 
 /**
@@ -13,6 +14,8 @@ import outbox.subscriber.field.*
 class DynamicFieldService {
 
     static transactional = true
+
+    def taskService
 
     /**
      * Add dynamic field.
@@ -43,15 +46,35 @@ class DynamicFieldService {
     }
 
     /**
-     * Deletes dynamic field.
+     * Use to remove dynamic field. Not remove field on call, but marks it as removed,
+     * so not available for search/view/edit, and will be removed asynchronously in TPS.
+     *
      * @param dynamicField the dynamic field to delete.
-     * @return true if dynamic field was deleted, otherwise false.
+     * @return true if dynamic field was marked as deleted, otherwise false.
      */
     @Transactional
     boolean deleteDynamicField(DynamicField dynamicField) {
         if (dynamicField) {
-            deleteDynamicFieldItems dynamicField
-            dynamicField.delete flush: true
+            dynamicField.status = DynamicFieldStatus.Removed
+            if (saveDynamicField(dynamicField)) {
+                def task = TaskFactory.createRemoveDynamicFieldTask(dynamicField)
+                taskService.enqueueTask(task)
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Removes from storage already removed dynamic field.
+     * If field is not removed, then no removing will be run and result will be false.
+     * @param dynamicField the removed dynamic field to remove from storage.
+     * @return true if dynamic field was removed, otherwise false.
+     */
+    @Transactional
+    boolean deleteRemovedDynamicField(DynamicField dynamicField) {
+        if (dynamicField && dynamicField.status == DynamicFieldStatus.Removed) {
+            dynamicField.delete(flush: true)
             return true
         }
         return false
@@ -73,12 +96,14 @@ class DynamicFieldService {
 
     /**               `
      * Gets the list of dynamic fields for member.
-     * @param dynamicField the dynamic field to save.
-     * @return true if dynamic field was saved, otherwise false.
+     * Doesn't return removed dynamic fields, only active and hidden.
+     * @param member the member to get dynamic fields for.
+     * @return the list of found dynamic fields.
      */
     @Transactional(readOnly = true)
     List<DynamicField> getDynamicFields(Member member) {
-        DynamicField.findAllByOwner member
+        def statuses = [DynamicFieldStatus.Active, DynamicFieldStatus.Hidden]
+        DynamicField.findAllByOwnerAndStatusInList member, statuses
     }
 
     /**
@@ -157,7 +182,12 @@ class DynamicFieldService {
         return true
     }
 
-    private void deleteDynamicFieldItems(DynamicField field) {
+    /**
+     * Removes all dynamic field items.
+     * @param dynamicField the dynamic field to remove items for.
+     */
+    @Transactional
+    void deleteDynamicFieldItems(DynamicField field) {
         DynamicFieldItem.executeUpdate('delete DynamicFieldItem where field = :field', [field: field])
     }
 
@@ -225,6 +255,17 @@ class DynamicFieldService {
     @Transactional
     boolean saveDynamicFieldValue(DynamicFieldValue value) {
         ServiceUtil.saveOrRollback(value)
+    }
+
+    /**
+     * Removes all values for all subscribers for specified dynamic field.
+     * @param dynamicField the dynamic field to remove values for.
+     */
+    @Transactional
+    void deleteDynamicFieldValues(DynamicField dynamicField) {
+        DynamicFieldValue.executeUpdate(
+                'delete from DynamicFieldValue where dynamicField = :dynamicField',
+                [dynamicField: dynamicField])
     }
 
     /**

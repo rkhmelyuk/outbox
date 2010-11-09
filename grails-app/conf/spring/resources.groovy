@@ -60,6 +60,10 @@ beans = {
         templateFilterChain = ref('templateFilterChain')
     }
 
+    removeDynamicFieldTaskProcessor(outbox.task.RemoveDynamicFieldTaskProcessor) {
+        dynamicFieldService = ref('dynamicFieldService')
+    }
+
     lookupService(com.maxmind.geoip.LookupService, '/usr/local/share/GeoIP/GeoLiteCity.dat')
 
     maxMindLookupService(outbox.tracking.geolocation.MaxMindLookupService) {

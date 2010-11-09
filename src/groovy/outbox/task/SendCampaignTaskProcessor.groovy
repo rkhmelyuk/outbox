@@ -22,7 +22,7 @@ import outbox.tracking.TrackingService
  */
 class SendCampaignTaskProcessor implements TaskProcessor {
 
-    static final Logger log = Logger.getLogger(SendCampaignTaskProcessor.class)
+    static final Logger log = Logger.getLogger(SendCampaignTaskProcessor)
 
     EmailService emailService
     CampaignService campaignService
