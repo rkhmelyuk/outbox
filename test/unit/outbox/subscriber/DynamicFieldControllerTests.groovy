@@ -575,6 +575,7 @@ class DynamicFieldControllerTests extends ControllerUnitTestCase {
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue 'Must be successful.', result.success
+        assertEquals 'link', result.dynamicFieldsLink
     }
 
     void testHide_NotFound() {

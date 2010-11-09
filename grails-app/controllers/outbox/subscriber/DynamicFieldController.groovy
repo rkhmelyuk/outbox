@@ -231,6 +231,7 @@ class DynamicFieldController {
         }
         else {
             model.success = dynamicFieldService.hideDynamicField(field)
+            model.dynamicFieldsLink = g.createLink(controller: 'dynamicField', action: 'dynamicFields')
         }
 
         render(model as JSON)

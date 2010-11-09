@@ -350,7 +350,8 @@ var App = {
                 success: function(response, status) {
                     if (response && status == 'success') {
                         if (response.success) {
-                            $(draggable).addClass('hiddenField');
+                            $('#dynamicFieldsBody').load(response.dynamicFieldsLink);
+                            //$(draggable).addClass('hiddenField');
                         }
                     }
                 },
