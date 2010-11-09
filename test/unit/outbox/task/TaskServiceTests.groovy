@@ -4,6 +4,7 @@ import grails.test.GrailsUnitTestCase
 import grails.test.MockUtils
 import outbox.campaign.Campaign
 import outbox.subscriber.field.DynamicField
+import outbox.subscriber.field.DynamicFieldItem
 
 /**
  * @author Ruslan Khmelyuk
@@ -54,6 +55,24 @@ class TaskServiceTests extends GrailsUnitTestCase {
         Thread.sleep(1500)
 
         removeDynamicFieldTaskProcessorControl.verify()
+    }
+
+
+    void testEnqueue_RemoveDynamicFieldItem() {
+        Task task = TaskFactory.createRemoveDynamicFieldItemTask(new DynamicFieldItem(id: 1))
+
+        def removeDynamicFieldItemTaskProcessorControl = mockFor(TaskProcessor)
+        removeDynamicFieldItemTaskProcessorControl.demand.process { aTask ->
+            assertEquals 'RemoveDynamicFieldItem', aTask.name
+            assertEquals 1, aTask.params.dynamicFieldItemId
+        }
+        taskService.removeDynamicFieldItemTaskProcessor = removeDynamicFieldItemTaskProcessorControl.createMock()
+
+        assertTrue taskService.enqueueTask(task)
+
+        Thread.sleep(1500)
+
+        removeDynamicFieldItemTaskProcessorControl.verify()
     }
 
     void testEnqueue_Unexpected() {

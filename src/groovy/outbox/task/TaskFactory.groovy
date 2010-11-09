@@ -2,6 +2,7 @@ package outbox.task
 
 import outbox.campaign.Campaign
 import outbox.subscriber.field.DynamicField
+import outbox.subscriber.field.DynamicFieldItem
 
 /**
  * The factory for main tasks.
@@ -22,7 +23,8 @@ class TaskFactory {
         if (campaign == null) {
             return null
         }
-        return new Task(name: 'SendCampaign', version: 1, params: [campaignId: campaign.id])
+        return new Task(name: 'SendCampaign', version: 1,
+                params: [campaignId: campaign.id])
     }
 
     /**
@@ -35,6 +37,21 @@ class TaskFactory {
             return null
         }
 
-        return new Task(name: 'RemoveDynamicField', version: 1, params: [dynamicFieldId: dynamicField.id])
+        return new Task(name: 'RemoveDynamicField', version: 1,
+                params: [dynamicFieldId: dynamicField.id])
+    }
+
+    /**
+     * Creates the task to remove dynamic field item with all related data.
+     * @param dynamicFieldItem the dynamic field item to remove.
+     * @return the new task to remove dynamic field item or null if dynamic field item is not specified.
+     */
+    public static Task createRemoveDynamicFieldItemTask(DynamicFieldItem dynamicFieldItem) {
+        if (dynamicFieldItem == null) {
+            return null
+        }
+
+        return new Task(name: 'RemoveDynamicFieldItem', version: 1,
+                params: [dynamicFieldItemId: dynamicFieldItem.id])
     }
 }

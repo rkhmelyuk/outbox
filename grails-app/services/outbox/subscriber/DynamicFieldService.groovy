@@ -159,12 +159,17 @@ class DynamicFieldService {
     boolean updateDynamicFieldItems(DynamicField field, List<DynamicFieldItem> items) {
         if (!field) return false
 
+        def currentItems = getDynamicFieldItems(field)
+
         if (!items) {
-            deleteDynamicFieldItems(field)
+            for (DynamicFieldItem item : currentItems) {
+                if (!deleteDynamicFieldItem(item)) {
+                    return false
+                }
+            }
             return true
         }
 
-        def currentItems = getDynamicFieldItems(field)
         for (DynamicFieldItem item : items) {
             def found = currentItems.find { it.id == item.id } != null
             if (item.id == null || found) {
@@ -176,10 +181,53 @@ class DynamicFieldService {
         }
         for (DynamicFieldItem item : currentItems) {
             def notFound = items.find({ it.id != null && it.id == item.id }) == null
-            if (notFound) item.delete()
+            if (notFound) {
+                if (!deleteDynamicFieldItem(item)) {
+                    return  false
+                }
+            }
         }
 
         return true
+    }
+
+    /**
+     * Marks dynamic field item to be removed.
+     *
+     * @param dynamicFieldItem the dynamic field item to remove.
+     * @return true if marked successfully, otherwise false.
+     */
+    @Transactional
+    boolean deleteDynamicFieldItem(DynamicFieldItem dynamicFieldItem) {
+        if (dynamicFieldItem) {
+            dynamicFieldItem.removed = true
+            if (saveDynamicFieldItem(dynamicFieldItem)) {
+                def task = TaskFactory.createRemoveDynamicFieldItemTask(dynamicFieldItem)
+                taskService.enqueueTask(task)
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Remove dynamic field item.
+     *
+     * @param dynamicFieldItem the dynamic field item to remove.
+     * @return true if removed successfully, otherwise false.
+     */
+    @Transactional
+    boolean deleteRemovedDynamicFieldItem(DynamicFieldItem dynamicFieldItem) {
+        if (dynamicFieldItem && dynamicFieldItem.removed) {
+            DynamicFieldValue.executeUpdate(
+                    'update DynamicFieldValue set singleItem = null where singleItem = :dynamicFieldItem',
+                    [dynamicFieldItem: dynamicFieldItem])
+
+            dynamicFieldItem.delete(flush: true)
+
+            return true
+        }
+        return false
     }
 
     /**
@@ -210,7 +258,7 @@ class DynamicFieldService {
     @Transactional(readOnly = true)
     List<DynamicFieldItem> getDynamicFieldItems(DynamicField dynamicField) {
         if (dynamicField && dynamicField.type == DynamicFieldType.SingleSelect) {
-            return DynamicFieldItem.findAllByField(dynamicField)
+            return DynamicFieldItem.findAllByFieldAndRemoved(dynamicField, false)
         }
         return []
     }

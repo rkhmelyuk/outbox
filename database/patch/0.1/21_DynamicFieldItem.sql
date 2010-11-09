@@ -4,6 +4,7 @@ create table DynamicFieldItem (
     DynamicFieldItemId bigserial,
     DynamicFieldId bigint not null,
     Name varchar(500) not null,
+    Removed boolean not null,
 
     primary key(DynamicFieldItemId),
 
@@ -12,4 +13,4 @@ create table DynamicFieldItem (
         references DynamicField(DynamicFieldId)
 );
 
-create index IX_DynamicFieldItem_DynamicFieldId on DynamicField(DynamicFieldId);
+create index IX_DynamicFieldItem_DynamicFieldId_Removed on DynamicFieldItem(DynamicFieldId, Removed);

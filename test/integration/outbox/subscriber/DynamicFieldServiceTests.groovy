@@ -133,14 +133,15 @@ class DynamicFieldServiceTests extends GrailsUnitTestCase {
         def item1 = createDynamicFieldItem(field)
         def item2 = createDynamicFieldItem(field)
         def item3 = createDynamicFieldItem(field)
+        item3.removed = true
         assertTrue dynamicFieldService.addDynamicFieldItems(field, [item1, item2, item3])
 
         def found = dynamicFieldService.getDynamicFieldItems(field)
 
-        assertEquals 3, found.size()
+        assertEquals 2, found.size()
         assertTrue found.contains(item1)
         assertTrue found.contains(item2)
-        assertTrue found.contains(item3)
+        assertFalse found.contains(item3)
     }
 
     void testGetDynamicFieldItems_NotSequence() {
@@ -153,46 +154,128 @@ class DynamicFieldServiceTests extends GrailsUnitTestCase {
     }
 
     void testUpdateDynamicFieldItems_Update() {
-        def field = createDynamicField(1)
-        field.type = DynamicFieldType.SingleSelect
-        assertTrue dynamicFieldService.saveDynamicField(field)
+        def originalTaskService = dynamicFieldService.taskService
+        try {
+            def field = createDynamicField(1)
+            field.type = DynamicFieldType.SingleSelect
+            assertTrue dynamicFieldService.saveDynamicField(field)
 
-        def item1 = createDynamicFieldItem(field)
-        def item2 = createDynamicFieldItem(field)
-        def item3 = createDynamicFieldItem(field)
-        assertTrue dynamicFieldService.addDynamicFieldItems(field, [item1, item2, item3])
-        dynamicFieldService.getDynamicFieldItems(field)
+            def item1 = createDynamicFieldItem(field)
+            def item2 = createDynamicFieldItem(field)
+            def item3 = createDynamicFieldItem(field)
+            assertTrue dynamicFieldService.addDynamicFieldItems(field, [item1, item2, item3])
+            dynamicFieldService.getDynamicFieldItems(field)
 
-        item1.name = 'Changed Name'
-        def item4 = createDynamicFieldItem(field)
-        def item5 = createDynamicFieldItem(field)
+            item1.name = 'Changed Name'
+            def item4 = createDynamicFieldItem(field)
+            def item5 = createDynamicFieldItem(field)
 
-        assertTrue dynamicFieldService.updateDynamicFieldItems(field, [item1, item4, item5])
+            def taskServiceControl = mockFor(TaskService)
+            taskServiceControl.demand.enqueueTask(2..2) { task ->
+                assertEquals 'RemoveDynamicFieldItem', task.name
+                return true
+            }
+            dynamicFieldService.taskService = taskServiceControl.createMock()
+            assertTrue dynamicFieldService.updateDynamicFieldItems(field, [item1, item4, item5])
+            taskServiceControl.verify()
 
-        def found = dynamicFieldService.getDynamicFieldItems(field)
+            def found = dynamicFieldService.getDynamicFieldItems(field)
 
-        assertEquals 3, found.size()
-        assertTrue found.contains(item1)
-        assertTrue found.contains(item4)
-        assertTrue found.contains(item5)
+            assertEquals 3, found.size()
+            assertTrue found.contains(item1)
+            assertTrue found.contains(item4)
+            assertTrue found.contains(item5)
 
-        assertEquals item1.name, dynamicFieldService.getDynamicFieldItem(item1.id).name
+            assertEquals item1.name, dynamicFieldService.getDynamicFieldItem(item1.id).name
+        }
+        finally {
+            dynamicFieldService.taskService = originalTaskService
+        }
     }
 
     void testUpdateDynamicFieldItems_Cleanup() {
+        def originalTaskService = dynamicFieldService.taskService
+        try {
+            def field = createDynamicField(1)
+            field.type = DynamicFieldType.SingleSelect
+            assertTrue dynamicFieldService.saveDynamicField(field)
+
+            def item1 = createDynamicFieldItem(field)
+            def item2 = createDynamicFieldItem(field)
+            def item3 = createDynamicFieldItem(field)
+
+            assertTrue dynamicFieldService.addDynamicFieldItems(field, [item1, item2, item3])
+            assertEquals 3, dynamicFieldService.getDynamicFieldItems(field).size()
+
+            def taskServiceControl = mockFor(TaskService)
+            taskServiceControl.demand.enqueueTask(3..3) { task ->
+                assertEquals 'RemoveDynamicFieldItem', task.name
+                return true
+            }
+            dynamicFieldService.taskService = taskServiceControl.createMock()
+            assertTrue dynamicFieldService.updateDynamicFieldItems(field, [])
+            taskServiceControl.verify()
+
+            assertEquals 0, dynamicFieldService.getDynamicFieldItems(field).size()
+        }
+        finally {
+            dynamicFieldService.taskService = originalTaskService
+        }
+    }
+
+    void testDeleteDynamicFieldItem() {
+        def originalTaskService = dynamicFieldService.taskService
+        try {
+            def field = createDynamicField(1)
+            field.type = DynamicFieldType.SingleSelect
+            assertTrue dynamicFieldService.saveDynamicField(field)
+
+            def item = createDynamicFieldItem(field)
+            assertTrue dynamicFieldService.addDynamicFieldItems(field, [item])
+
+            def taskServiceControl = mockFor(TaskService)
+            taskServiceControl.demand.enqueueTask { task ->
+                assertEquals 'RemoveDynamicFieldItem', task.name
+                assertEquals item.id, task.params.dynamicFieldItemId
+                return true
+            }
+            dynamicFieldService.taskService = taskServiceControl.createMock()
+            assertTrue dynamicFieldService.deleteDynamicFieldItem(item)
+            taskServiceControl.verify()
+
+            def found = dynamicFieldService.getDynamicFieldItem(item.id)
+            assertNotNull found
+            assertTrue found.removed
+        }
+        finally {
+            dynamicFieldService.taskService = originalTaskService
+        }
+    }
+
+    void testDeleteRemovedDynamicFieldItem() {
         def field = createDynamicField(1)
         field.type = DynamicFieldType.SingleSelect
         assertTrue dynamicFieldService.saveDynamicField(field)
 
-        def item1 = createDynamicFieldItem(field)
-        def item2 = createDynamicFieldItem(field)
-        def item3 = createDynamicFieldItem(field)
+        def item = createDynamicFieldItem(field)
+        item.removed = true
+        assertTrue dynamicFieldService.addDynamicFieldItems(field, [item])
+        assertTrue dynamicFieldService.deleteRemovedDynamicFieldItem(item)
+    }
 
-        assertTrue dynamicFieldService.addDynamicFieldItems(field, [item1, item2, item3])
-        assertEquals 3, dynamicFieldService.getDynamicFieldItems(field).size()
+    void testDeleteRemovedDynamicFieldItem_NotRemoved() {
+        def field = createDynamicField(1)
+        field.type = DynamicFieldType.SingleSelect
+        assertTrue dynamicFieldService.saveDynamicField(field)
 
-        assertTrue dynamicFieldService.updateDynamicFieldItems(field, [])
-        assertEquals 0, dynamicFieldService.getDynamicFieldItems(field).size()
+        def item = createDynamicFieldItem(field)
+        item.removed = false
+        assertTrue dynamicFieldService.addDynamicFieldItems(field, [item])
+        assertFalse dynamicFieldService.deleteRemovedDynamicFieldItem(item)
+    }
+
+    void testDeleteRemovedDynamicFieldItem_Null() {
+        assertFalse dynamicFieldService.deleteRemovedDynamicFieldItem(null)
     }
 
     void testDeleteDynamicField() {

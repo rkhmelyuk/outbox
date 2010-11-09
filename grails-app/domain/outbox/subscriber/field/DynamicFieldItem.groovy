@@ -12,12 +12,15 @@ class DynamicFieldItem implements Comparable<DynamicFieldItem> {
     DynamicField field
     String name
 
+    boolean removed
+
     static mapping = {
         table 'DynamicFieldItem'
 
         id column: 'DynamicFieldItemId'
         field column: 'DynamicFieldId'
         name column: 'Name'
+        removed column: 'Removed'
 
         version false
         cache true

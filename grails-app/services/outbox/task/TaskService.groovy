@@ -9,6 +9,7 @@ class TaskService {
 
     TaskProcessor sendCampaignTaskProcessor
     TaskProcessor removeDynamicFieldTaskProcessor
+    TaskProcessor removeDynamicFieldItemTaskProcessor
 
     boolean enqueueTask(Task task) {
         if (!task) {
@@ -16,7 +17,7 @@ class TaskService {
         }
 
         try {
-            Thread.start { handler(task) }
+            Thread.start { handle(task) }
             log.info("Enqueued task $task")
             return true
         }
@@ -26,13 +27,16 @@ class TaskService {
         }
     }
 
-    void handler(Task task) {
+    void handle(Task task) {
         switch (task.name) {
             case 'SendCampaign':
                 sendCampaignTaskProcessor.process(task)
                 break;
             case 'RemoveDynamicField':
                 removeDynamicFieldTaskProcessor.process(task)
+                break;
+            case 'RemoveDynamicFieldItem':
+                removeDynamicFieldItemTaskProcessor.process(task)
                 break;
             default:
                 log.error("Unexpected task $task");
