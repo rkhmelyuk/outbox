@@ -150,7 +150,7 @@ class EditDynamicFieldsFormBuilder {
                 id: DYNAMIC_FIELD_PREFIX + field.name,
                 name: DYNAMIC_FIELD_PREFIX + field.name,
                 mandatory: field.mandatory,
-                options: selectItems.size() <= 3,
+                options: false,
                 label: label,
                 value: selectValue,
                 styleClass: (field.mandatory ? ' required' : ''),

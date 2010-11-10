@@ -36,7 +36,7 @@ class UIRadioGroupRender implements Render {
             model.value = it.value
             model.checked = it.value == element.value
 
-            out += g.radio(model)
+            out += g.radio(new LinkedHashMap(model))
 
             def label = new UILabel(forId: itemId, text: it.label)
             out += labelRender.render(label)
