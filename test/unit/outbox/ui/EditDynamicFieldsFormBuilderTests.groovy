@@ -167,7 +167,7 @@ class EditDynamicFieldsFormBuilderTests extends GrailsUnitTestCase {
         assertEquals '1', element.value
         assertEquals 2, element.selectItems.size()
         assertTrue element.mandatory
-        assertTrue element.options
+        assertFalse element.options
     }
 
     void testBuildSelect_NoValue() {
