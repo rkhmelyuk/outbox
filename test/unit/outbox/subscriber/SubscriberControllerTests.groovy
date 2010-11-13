@@ -812,6 +812,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         def mandatoryString = new DynamicField(id: 1, name: 'string', mandatory: true, type: DynamicFieldType.String)
         def longString = new DynamicField(id: 2, name: 'longString', mandatory: true, type: DynamicFieldType.String, maxlength: 10)
+        def someString = new DynamicField(id: 2, name: 'longString', mandatory: true, type: DynamicFieldType.String)
         def number = new DynamicField(id: 3, name: 'number', mandatory: true, type: DynamicFieldType.Number)
         def largeNumber = new DynamicField(id: 4, name: 'largeNumber', mandatory: true, type: DynamicFieldType.Number, max: 10)
         def smallNumber = new DynamicField(id: 5, name: 'smallNumber', mandatory: false, type: DynamicFieldType.Number, min: 10)
@@ -819,10 +820,11 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         def bool2 = new DynamicField(id: 7, name: 'bool2', mandatory: true, type: DynamicFieldType.Boolean)
         def correctNumber = new DynamicField(id: 8, name: 'correctNumber', mandatory: true, type: DynamicFieldType.Number, min: 10, max: 100)
 
-        def fields = [mandatoryString, longString, number, largeNumber, smallNumber, bool, bool2, correctNumber]
+        def fields = [mandatoryString, longString, someString, number, largeNumber, smallNumber, bool, bool2, correctNumber]
 
         controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'string'] = ''
         controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'longString'] = 'qwertysdfsdfdsfuasdfgh'
+        controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'someString'] = 'qwertysdfsdfdsfuasdfgh'
         controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'number'] = 'asdf'
         controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'largeNumber'] = '100'
         controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'smallNumber'] = '0'

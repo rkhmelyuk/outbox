@@ -117,6 +117,9 @@ class SubscriberController {
                 dynamicFieldsForm: dynamicFieldsForm]
     }
 
+    /**
+     * Process submit and saves new subscriber.
+     */
     def add = {
         final Subscriber subscriber = new Subscriber()
         subscriber.firstName = params.firstName
@@ -180,7 +183,7 @@ class SubscriberController {
             }
             else {
                 if (field.type == DynamicFieldType.String) {
-                    if (value.length() > field.maxlength) {
+                    if (field.maxlength != null && value.length() > field.maxlength) {
                         subscriber.errors.reject('dynamicField.x.maxlength',
                                 [field.label, field.maxlength] as Object[], null)
                         result = false
