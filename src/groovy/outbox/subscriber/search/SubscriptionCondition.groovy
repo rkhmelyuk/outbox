@@ -5,7 +5,7 @@ package outbox.subscriber.search
  * 
  * @author Ruslan Khmelyuk
  */
-class SubscriptionCondition implements VisitableCondition {
+class SubscriptionCondition extends Condition {
 
     static SubscriptionCondition subscribed(List<Long> listIds) {
         new SubscriptionCondition(true, listIds)

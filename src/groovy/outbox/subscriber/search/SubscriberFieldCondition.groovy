@@ -5,7 +5,7 @@ package outbox.subscriber.search
  * 
  * @author Ruslan Khmelyuk
  */
-class SubscriberFieldCondition implements VisitableCondition {
+class SubscriberFieldCondition extends Condition {
 
     final String field
     final ValueCondition value

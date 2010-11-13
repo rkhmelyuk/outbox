@@ -10,9 +10,11 @@ class SubscriptionConditionTests extends GrailsUnitTestCase {
     void testSubscribed() {
         def ids = [1, 2, 3]
         def condition = SubscriptionCondition.subscribed(ids)
+        condition.concatenation = Concatenation.And
 
         assertTrue condition.subscribed
         assertEquals ids, condition.subscriptionListIds
+        assertEquals Concatenation.And, condition.concatenation
     }
 
     void testNotSubscribed() {

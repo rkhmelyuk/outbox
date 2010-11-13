@@ -9,10 +9,12 @@ class SubscriberFieldConditionTests extends GrailsUnitTestCase {
 
     void testFields() {
         def condition = new SubscriberFieldCondition('language', ValueCondition.filled())
+        condition.concatenation = Concatenation.And
 
         assertEquals 'language', condition.field
         assertNull condition.value.value
         assertEquals ValueConditionType.Filled, condition.value.type
+        assertEquals Concatenation.And, condition.concatenation
     }
 
     void testVisit() {

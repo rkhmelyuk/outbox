@@ -7,7 +7,7 @@ import outbox.subscriber.field.DynamicField
  * 
  * @author Ruslan Khmelyuk
  */
-class DynamicFieldCondition implements VisitableCondition {
+class DynamicFieldCondition extends Condition {
 
     final DynamicField field
     final ValueCondition value
