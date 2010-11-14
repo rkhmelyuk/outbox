@@ -3,6 +3,7 @@ package outbox.subscriber.search.query
 import outbox.subscriber.search.criteria.ComparisonCriterion
 import outbox.subscriber.search.criteria.CriterionNode
 import outbox.subscriber.search.criteria.CriterionNodeType
+import outbox.subscriber.search.criteria.SubqueryCriterion
 
 /**
  * @author Ruslan Khmelyuk
@@ -119,5 +120,17 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addCriterion(node)
 
         assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = 2343.34', query.toSQL()
+    }
+
+    void testSQL_Subquery() {
+        def criterion = new SubqueryCriterion(left: 'FirstName', subquery: 'subquery', not: false)
+        def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
+        def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
+        assertTrue query.addColumn('FirstName')
+        assertTrue query.addColumn('LastName', 'lastName')
+        assertTrue query.addTable('Person', 'p')
+        assertTrue query.addCriterion(node)
+
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName in (subquery)', query.toSQL()
     }
 }

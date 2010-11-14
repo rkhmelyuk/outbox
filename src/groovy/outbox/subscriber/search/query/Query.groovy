@@ -1,10 +1,7 @@
 package outbox.subscriber.search.query
 
 import java.text.DecimalFormat
-import outbox.subscriber.search.criteria.ComparisonCriterion
-import outbox.subscriber.search.criteria.CriteriaTree
-import outbox.subscriber.search.criteria.CriterionNode
-import outbox.subscriber.search.criteria.CriterionNodeType
+import outbox.subscriber.search.criteria.*
 
 /**
  * Represents single query, that can be built and translated to SQL.
@@ -106,6 +103,9 @@ class Query {
                 if (criterion instanceof ComparisonCriterion) {
                     builder << comparisonCriterionSQL(criterion)
                 }
+                else if (criterion instanceof SubqueryCriterion) {
+                    builder << subqueryCriterionSQL(criterion)
+                }
             }
             else {
                 if (node.left) {
@@ -134,5 +134,10 @@ class Query {
             value = new DecimalFormat('#############.#####').format(value)
         }
         "$criterion.left$criterion.comparisonOp$value"
+    }
+
+    String subqueryCriterionSQL(SubqueryCriterion criterion) {
+        def op = criterion.not ? ' not in ' : ' in '
+        "$criterion.left$op($criterion.subquery)"
     }
 }

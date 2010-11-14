@@ -4,6 +4,9 @@ import org.apache.log4j.Logger
 import org.hibernate.SessionFactory
 import outbox.subscriber.Subscriber
 import outbox.subscriber.search.Subscribers
+import outbox.subscriber.search.criteria.CriterionNode
+import outbox.subscriber.search.criteria.CriterionNodeType
+import outbox.subscriber.search.criteria.SubqueryCriterion
 import outbox.subscriber.search.query.Queries
 
 /**
@@ -18,10 +21,24 @@ class SingleQueryRunner implements QueryRunner {
     SessionFactory sessionFactory
 
     Subscribers run(Queries queries) {
-        def sql = queries.subscriberFieldQuery.toSQL()
-        log.info sql
+
+        if (queries.dynamicFieldQuery) {
+            def subquery = queries.dynamicFieldQuery.toSQL()
+            def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
+                    criterion: new SubqueryCriterion(left: 'SubscriberId', subquery: subquery))
+
+            def node = new CriterionNode()
+            node.type = CriterionNodeType.And
+            node.left = subqueryNode
+
+            queries.subscriberFieldQuery.criteria.addNode(node)
+        }
 
         def session = sessionFactory.currentSession
+
+        def sql = queries.subscriberFieldQuery.toSQL()
+        println sql
+
         def query = session.createSQLQuery(sql)
         query.addEntity(Subscriber)
 
