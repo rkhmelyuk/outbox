@@ -1,10 +1,12 @@
 package outbox.subscriber.search
 
+import grails.test.GrailsUnitTestCase
+
 /**
  * @author Ruslan Khmelyuk
  * @created 2010-11-13
  */
-class ConditionsTests extends GroovyTestCase {
+class ConditionsTests extends GrailsUnitTestCase {
 
     def conditions
 
@@ -60,5 +62,29 @@ class ConditionsTests extends GroovyTestCase {
 
         conditions.and(new SubscriberFieldCondition(null, null))
         assertFalse conditions.empty
+    }
+
+    void visit() {
+        def condition1 = new SubscriberFieldCondition(null, null)
+        conditions.and(condition1)
+        def condition2 = new DynamicFieldCondition(null, null)
+        conditions.and(condition2)
+        def condition3 = new SubscriptionCondition(false, null)
+        conditions.and(condition3)
+
+        def visitorControl = mockFor(ConditionVisitor)
+        visitorControl.demand.visitSubscriberFieldCondition { it ->
+            assertEquals condition1, it
+        }
+        visitorControl.demand.visitDynamicFieldCondition { it ->
+            assertEquals condition2, it
+        }
+        visitorControl.demand.visitSubscriptionCondition { it ->
+            assertEquals condition3, it
+        }
+
+        conditions.visit visitorControl.createMock()
+
+        visitorControl.verify()
     }
 }

@@ -36,4 +36,10 @@ class Conditions {
         conditions.empty
     }
 
+    void visit(ConditionVisitor visitor) {
+        if (visitor) {
+            conditions*.visit(visitor)
+        }
+    }
+
 }
