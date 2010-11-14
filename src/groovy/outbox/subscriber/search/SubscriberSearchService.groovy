@@ -6,8 +6,9 @@ import outbox.subscriber.search.query.QueriesBuilder
 import outbox.subscriber.search.runner.QueryRunnerDetector
 
 /**
+ * Search used to search for subscribers.
+ *
  * @author Ruslan Khmelyuk
- * @created 2010-11-14
  */
 class SubscriberSearchService {
 
