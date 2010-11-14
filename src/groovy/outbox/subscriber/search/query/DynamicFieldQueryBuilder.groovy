@@ -9,6 +9,10 @@ import outbox.subscriber.search.criteria.CriteriaTree
 class DynamicFieldQueryBuilder implements QueryBuilder {
 
     Query build(CriteriaTree criteria) {
+        if (criteria.empty) {
+            return null
+        }
+
         def query = new Query()
 
         query.distinct = true
