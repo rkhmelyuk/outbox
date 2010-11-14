@@ -19,23 +19,33 @@ class Query {
 
     CriteriaTree criteria
 
+    boolean distinct = false
+
     boolean addColumn(String column, String alias = null) {
         if (column) {
-            return columns.add("$column as ${alias ?: column}")
+            def value = column
+            if (alias) {
+                value += " as $alias"
+            }
+            return columns.add(value)
         }
         return false
     }
 
     boolean addTable(String table, String alias = null) {
         if (table) {
-            return tables.add("$table as ${alias ?: table}")
+            def value = table
+            if (alias) {
+                value += " as $alias"
+            }
+            return tables.add(value)
         }
         return false
     }
 
     boolean addJoin(String table, String alias, String condition) {
-        if (table && condition) {
-            return joins.add(" join $table as ${alias ?: table} on $condition")
+        if (table && alias && condition) {
+            return joins.add(" join $table as $alias on $condition")
         }
         return false
     }
@@ -53,6 +63,10 @@ class Query {
     String toSQL() {
         def builder = new StringBuilder()
         builder << 'select '
+
+        if (distinct) {
+            builder << 'distinct '
+        }
 
         columns.eachWithIndex { column, index ->
             if (index != 0) {

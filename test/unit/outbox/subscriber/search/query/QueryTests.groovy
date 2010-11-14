@@ -22,7 +22,16 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addColumn('LastName', 'lastName')
         assertTrue query.addTable('Person', 'p')
 
-        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p', query.toSQL()
+    }
+
+    void testSQL_Distinct() {
+        assertTrue query.addColumn('FirstName')
+        assertTrue query.addColumn('LastName', 'lastName')
+        assertTrue query.addTable('Person', 'p')
+        query.distinct = true
+
+        assertEquals 'select distinct FirstName, LastName as lastName from Person as p', query.toSQL()
     }
 
     void testSQL_Conditions() {
@@ -37,7 +46,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = \'John\'\'\' or LastName <> \'Doe\'', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'John\'\'\' or LastName <> \'Doe\'', query.toSQL()
     }
 
     void testSQL_Injection1() {
@@ -49,7 +58,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'', query.toSQL()
     }
 
     void testSQL_Injection2() {
@@ -61,7 +70,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'', query.toSQL()
     }
 
     void testSQL_Injection3() {
@@ -73,7 +82,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'\'\'', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'\'\'', query.toSQL()
     }
 
     void testSQL_Number() {
@@ -85,7 +94,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = 234334', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = 234334', query.toSQL()
     }
 
     void testSQL_Long() {
@@ -97,7 +106,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = 234334', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = 234334', query.toSQL()
     }
 
     void testSQL_BigDecimal() {
@@ -109,6 +118,6 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = 2343.34', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = 2343.34', query.toSQL()
     }
 }
