@@ -1,4 +1,4 @@
-package outbox.subscriber.search
+package outbox.subscriber.search.condition
 
 import grails.test.GrailsUnitTestCase
 import outbox.subscriber.field.DynamicField

@@ -1,4 +1,4 @@
-package outbox.subscriber.search
+package outbox.subscriber.search.condition
 
 /**
  * The condition by subscriber field, like email, name or language.

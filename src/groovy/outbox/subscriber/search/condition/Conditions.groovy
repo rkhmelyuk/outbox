@@ -1,4 +1,4 @@
-package outbox.subscriber.search
+package outbox.subscriber.search.condition
 
 /**
  * Used to gather a set of conditions into one object.

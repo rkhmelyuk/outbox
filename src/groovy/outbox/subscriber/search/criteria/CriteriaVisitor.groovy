@@ -1,6 +1,6 @@
 package outbox.subscriber.search.criteria
 
-import outbox.subscriber.search.*
+import outbox.subscriber.search.condition.*
 
 /**
  * @author Ruslan Khmelyuk

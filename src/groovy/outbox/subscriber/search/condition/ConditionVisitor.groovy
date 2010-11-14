@@ -1,4 +1,4 @@
-package outbox.subscriber.search
+package outbox.subscriber.search.condition
 
 /**
  * The interface for the visitor.
@@ -8,19 +8,19 @@ package outbox.subscriber.search
 interface ConditionVisitor {
 
     /**
-     * Handle {@link SubscriberFieldCondition} conditions.
+     * Handle {@link outbox.subscriber.search.condition.SubscriberFieldCondition} conditions.
      * @param condition the condition to visit.
      */
     void visitSubscriberFieldCondition(SubscriberFieldCondition condition)
 
     /**
-     * Handle {@link DynamicFieldCondition} conditions.
+     * Handle {@link outbox.subscriber.search.condition.DynamicFieldCondition} conditions.
      * @param condition the condition to visit.
      */
     void visitDynamicFieldCondition(DynamicFieldCondition condition)
 
     /**
-     * Handle {@link SubscriptionCondition} conditions.
+     * Handle {@link outbox.subscriber.search.condition.SubscriptionCondition} conditions.
      * @param condition the condition to visit.
      */
     void visitSubscriptionCondition(SubscriptionCondition condition)

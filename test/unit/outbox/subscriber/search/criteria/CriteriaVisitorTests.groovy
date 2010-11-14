@@ -1,8 +1,8 @@
 package outbox.subscriber.search.criteria
 
-import outbox.subscriber.search.SubscriberFieldCondition
-import outbox.subscriber.search.ValueCondition
-import outbox.subscriber.search.ValueConditionType
+import outbox.subscriber.search.condition.SubscriberFieldCondition
+import outbox.subscriber.search.condition.ValueCondition
+import outbox.subscriber.search.condition.ValueConditionType
 
 /**
  * @author Ruslan Khmelyuk

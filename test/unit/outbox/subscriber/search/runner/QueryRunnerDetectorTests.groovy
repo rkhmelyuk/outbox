@@ -12,8 +12,8 @@ class QueryRunnerDetectorTests extends GrailsUnitTestCase {
         def queryRunner = mockFor(QueryRunner)
 
         def detector = new QueryRunnerDetector()
-        detector.simpleQueryRunner = queryRunner.createMock()
+        detector.singleQueryRunner = queryRunner.createMock()
 
-        assertEquals detector.simpleQueryRunner, detector.detect(new Queries())
+        assertEquals detector.singleQueryRunner, detector.detect(new Queries())
     }
 }
