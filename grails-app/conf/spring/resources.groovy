@@ -109,4 +109,8 @@ beans = {
         basicUIRender = ref('basicUIRender')
     }
 
+    singleQueryRunner(outbox.subscriber.search.runner.SingleQueryRunner) {
+        sessionFactory = ref('sessionFactory')
+    }
+
 }

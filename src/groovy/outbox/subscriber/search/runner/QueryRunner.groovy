@@ -1,5 +1,6 @@
 package outbox.subscriber.search.runner
 
+import outbox.subscriber.search.Subscribers
 import outbox.subscriber.search.query.Queries
 
 /**
@@ -7,6 +8,12 @@ import outbox.subscriber.search.query.Queries
  */
 interface QueryRunner {
 
-    void run(Queries queries)
+    /**
+     * Search for subscribers using specified queries.
+     *
+     * @param queries the queries used to search subscribers.
+     * @return the result of subscribers search.
+     */
+    Subscribers run(Queries queries)
 
 }

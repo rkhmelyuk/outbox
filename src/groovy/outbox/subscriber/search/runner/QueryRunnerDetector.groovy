@@ -9,9 +9,9 @@ import outbox.subscriber.search.query.Queries
  */
 class QueryRunnerDetector {
 
-    QueryRunner simpleQueryRunner
+    QueryRunner singleQueryRunner
 
     QueryRunner detect(Queries queries) {
-        simpleQueryRunner
+        singleQueryRunner
     }
 }
