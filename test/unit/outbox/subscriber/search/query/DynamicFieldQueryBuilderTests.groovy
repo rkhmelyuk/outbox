@@ -6,18 +6,18 @@ import outbox.subscriber.search.criteria.CriteriaTree
 /**
  * @author Ruslan Khmelyuk
  */
-class SubscriberQueryBuilderTests extends GrailsUnitTestCase {
+class DynamicFieldQueryBuilderTests extends GrailsUnitTestCase {
 
     void testBuild() {
         def criteriaTree = new CriteriaTree()
 
-        def queryBuilder = new SubscriberQueryBuilder()
+        def queryBuilder = new DynamicFieldQueryBuilder()
         def query = queryBuilder.build(criteriaTree)
 
         assertEquals criteriaTree, query.criteria
         assertFalse query.columns.empty
         assertFalse query.tables.empty
-        assertTrue query.joins.empty
+        assertFalse query.joins.empty
         assertTrue query.distinct
     }
 
