@@ -113,4 +113,12 @@ beans = {
         sessionFactory = ref('sessionFactory')
     }
 
+    queryRunnerDetector(outbox.subscriber.search.runner.QueryRunnerDetector) {
+        singleQueryRunner = ref('singleQueryRunner')
+    }
+
+    subscriberSearchService(outbox.subscriber.search.SubscriberSearchService) {
+        queryRunnerDetector = ref('queryRunnerDetector')
+    }
+
 }
