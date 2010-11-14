@@ -25,7 +25,7 @@ class SubscriberQueryBuilderTests extends GrailsUnitTestCase {
 
     void testBuild_Empty() {
         def queryBuilder = new SubscriberQueryBuilder()
-        assertNull queryBuilder.build(new CriteriaTree())
+        assertNotNull queryBuilder.build(new CriteriaTree())
     }
 
 }
