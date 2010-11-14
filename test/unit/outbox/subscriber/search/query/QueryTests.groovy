@@ -1,9 +1,8 @@
-package outbox.subscriber.search.Query
+package outbox.subscriber.search.query
 
 import outbox.subscriber.search.criteria.ComparisonCriterion
 import outbox.subscriber.search.criteria.CriterionNode
 import outbox.subscriber.search.criteria.CriterionNodeType
-import outbox.subscriber.search.query.Query
 
 /**
  * @author Ruslan Khmelyuk
