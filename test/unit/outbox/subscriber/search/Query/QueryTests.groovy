@@ -41,6 +41,42 @@ class QueryTests extends GroovyTestCase {
         assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = \'John\'\'\' or LastName <> \'Doe\'', query.toSQL()
     }
 
+    void testSQL_Injection1() {
+        def criterion = new ComparisonCriterion(left: 'FirstName', right: "Join'", comparisonOp: ' = ')
+        def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
+        def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
+        assertTrue query.addColumn('FirstName')
+        assertTrue query.addColumn('LastName', 'lastName')
+        assertTrue query.addTable('Person', 'p')
+        assertTrue query.addCriterion(node)
+
+        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'', query.toSQL()
+    }
+
+    void testSQL_Injection2() {
+        def criterion = new ComparisonCriterion(left: 'FirstName', right: "Join\'", comparisonOp: ' = ')
+        def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
+        def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
+        assertTrue query.addColumn('FirstName')
+        assertTrue query.addColumn('LastName', 'lastName')
+        assertTrue query.addTable('Person', 'p')
+        assertTrue query.addCriterion(node)
+
+        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'', query.toSQL()
+    }
+
+    void testSQL_Injection3() {
+        def criterion = new ComparisonCriterion(left: 'FirstName', right: "Join\''", comparisonOp: ' = ')
+        def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
+        def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
+        assertTrue query.addColumn('FirstName')
+        assertTrue query.addColumn('LastName', 'lastName')
+        assertTrue query.addTable('Person', 'p')
+        assertTrue query.addCriterion(node)
+
+        assertEquals 'select FirstName as FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'\'\'', query.toSQL()
+    }
+
     void testSQL_Number() {
         def criterion = new ComparisonCriterion(left: 'FirstName', right: 234334, comparisonOp: ' = ')
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
