@@ -3,6 +3,9 @@ package outbox.subscriber.search
 import outbox.member.Member
 import outbox.subscriber.Subscriber
 import outbox.subscriber.SubscriberService
+import outbox.subscriber.search.condition.Conditions
+import outbox.subscriber.search.condition.SubscriberFieldCondition
+import outbox.subscriber.search.condition.ValueCondition
 
 /**
  * @author Ruslan Khmelyuk
@@ -44,7 +47,7 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
         assertTrue subscriberService.saveSubscriber(subscriber3)
 
         def conditions = new Conditions()
-        conditions.and(new SubscriberFieldCondition('FirstName', ValueCondition.equals('John')))
+        conditions.and(new SubscriberFieldCondition('FirstName', ValueCondition.equal('John')))
 
         def subscribers = subscriberSearchService.search(conditions)
 
