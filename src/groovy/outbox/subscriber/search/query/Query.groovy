@@ -103,7 +103,7 @@ class Query {
                 if (criterion instanceof ComparisonCriterion) {
                     builder << comparisonCriterionSQL(criterion)
                 }
-                else if (criterion instanceof SubqueryCriterion) {
+                else if (criterion instanceof InSubqueryCriterion) {
                     builder << subqueryCriterionSQL(criterion)
                 }
             }
@@ -136,7 +136,7 @@ class Query {
         "$criterion.left$criterion.comparisonOp$value"
     }
 
-    String subqueryCriterionSQL(SubqueryCriterion criterion) {
+    String subqueryCriterionSQL(InSubqueryCriterion criterion) {
         def op = criterion.not ? ' not in ' : ' in '
         "$criterion.left$op($criterion.subquery)"
     }

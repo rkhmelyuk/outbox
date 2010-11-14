@@ -3,10 +3,9 @@ package outbox.subscriber.search.criteria
 /**
  * @author Ruslan Khmelyuk
  */
-class InCriterion implements Criterion {
+class InSubqueryCriterion implements Criterion {
 
     String left
-    List values
+    String subquery
     boolean not
-
 }

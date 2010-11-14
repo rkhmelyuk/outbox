@@ -6,7 +6,7 @@ import outbox.subscriber.Subscriber
 import outbox.subscriber.search.Subscribers
 import outbox.subscriber.search.criteria.CriterionNode
 import outbox.subscriber.search.criteria.CriterionNodeType
-import outbox.subscriber.search.criteria.SubqueryCriterion
+import outbox.subscriber.search.criteria.InSubqueryCriterion
 import outbox.subscriber.search.query.Queries
 
 /**
@@ -25,7 +25,7 @@ class SingleQueryRunner implements QueryRunner {
         if (queries.dynamicFieldQuery) {
             def subquery = queries.dynamicFieldQuery.toSQL()
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
-                    criterion: new SubqueryCriterion(left: 'SubscriberId', subquery: subquery))
+                    criterion: new InSubqueryCriterion(left: 'SubscriberId', subquery: subquery))
 
             def node = new CriterionNode()
             node.type = CriterionNodeType.And

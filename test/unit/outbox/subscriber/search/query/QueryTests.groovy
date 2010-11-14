@@ -3,7 +3,7 @@ package outbox.subscriber.search.query
 import outbox.subscriber.search.criteria.ComparisonCriterion
 import outbox.subscriber.search.criteria.CriterionNode
 import outbox.subscriber.search.criteria.CriterionNodeType
-import outbox.subscriber.search.criteria.SubqueryCriterion
+import outbox.subscriber.search.criteria.InSubqueryCriterion
 
 /**
  * @author Ruslan Khmelyuk
@@ -123,7 +123,7 @@ class QueryTests extends GroovyTestCase {
     }
 
     void testSQL_Subquery() {
-        def criterion = new SubqueryCriterion(left: 'FirstName', subquery: 'subquery', not: false)
+        def criterion = new InSubqueryCriterion(left: 'FirstName', subquery: 'subquery', not: false)
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
         def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
         assertTrue query.addColumn('FirstName')

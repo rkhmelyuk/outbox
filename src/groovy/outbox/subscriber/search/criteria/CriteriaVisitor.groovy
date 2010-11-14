@@ -16,7 +16,7 @@ class CriteriaVisitor implements ConditionVisitor {
         def criterion
         def type = condition.value.type
         if (type == ValueConditionType.InList || type == ValueConditionType.NotInList) {
-            criterion = new InCriterion()
+            criterion = new InListCriterion()
             criterion.not = (type == ValueConditionType.NotInList)
             criterion.values = condition.value.value
         }
@@ -47,7 +47,7 @@ class CriteriaVisitor implements ConditionVisitor {
         def criterion
         def type = condition.value.type
         if (type == ValueConditionType.InList || type == ValueConditionType.NotInList) {
-            criterion = new InCriterion()
+            criterion = new InListCriterion()
             criterion.not = (type == ValueConditionType.NotInList)
             criterion.values = condition.value.value
         }
