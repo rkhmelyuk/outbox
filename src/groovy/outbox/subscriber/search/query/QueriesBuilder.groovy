@@ -7,9 +7,9 @@ import outbox.subscriber.search.criteria.CriteriaVisitor
  */
 class QueriesBuilder {
 
-    QueryBuilder dynamicFieldQueryBuilder
-    QueryBuilder subscriptionQueryBuilder
-    QueryBuilder subscriberFieldQueryBuilder
+    def subscriptionQueryBuilder = new SubscriptionQueryBuilder()
+    def dynamicFieldQueryBuilder = new DynamicFieldQueryBuilder()
+    def subscriberFieldQueryBuilder = new SubscriberQueryBuilder()
 
     Queries build(CriteriaVisitor criteria) {
         def queries = new Queries()
