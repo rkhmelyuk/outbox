@@ -2,10 +2,7 @@ package outbox.subscriber.search.criteria
 
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldType
-import outbox.subscriber.search.condition.DynamicFieldCondition
-import outbox.subscriber.search.condition.SubscriberFieldCondition
-import outbox.subscriber.search.condition.ValueCondition
-import outbox.subscriber.search.condition.ValueConditionType
+import outbox.subscriber.search.condition.*
 
 /**
  * @author Ruslan Khmelyuk
@@ -144,5 +141,16 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals ' > ', visitor.comparisonOperation(ValueConditionType.Greater)
         assertEquals ' >= ', visitor.comparisonOperation(ValueConditionType.GreaterOrEqual)
         assertNull visitor.comparisonOperation(ValueConditionType.InList)
+    }
+
+    void testMakeNode() {
+        def condition = new SubscriberFieldCondition(null, null)
+        condition.concatenation = Concatenation.AndNot
+
+        def testNode = new CriterionNode()
+        def node = visitor.makeNode(condition, testNode)
+
+        assertEquals CriterionNodeType.Not, node.left.type
+        assertEquals testNode, node.left.left
     }
 }

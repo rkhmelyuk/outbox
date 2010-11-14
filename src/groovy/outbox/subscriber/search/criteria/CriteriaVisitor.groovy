@@ -31,11 +31,7 @@ class CriteriaVisitor implements ConditionVisitor {
         criterionNode.type = CriterionNodeType.Criterion
         criterionNode.criterion = criterion
 
-        def node = new CriterionNode()
-        node.type = CriterionNodeType.And
-        node.left = criterionNode
-
-        subscriberFieldTree.addNode(node)
+        subscriberFieldTree.addNode(makeNode(condition, criterionNode))
     }
 
     void visitDynamicFieldCondition(DynamicFieldCondition condition) {
@@ -76,11 +72,7 @@ class CriteriaVisitor implements ConditionVisitor {
         criterionNode.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: idCriterion)
         criterionNode.right = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
 
-        def node = new CriterionNode()
-        node.type = CriterionNodeType.And
-        node.left = criterionNode
-
-        dynamicFieldTree.addNode(node)
+        dynamicFieldTree.addNode(makeNode(condition, criterionNode))
     }
 
     void visitSubscriptionCondition(SubscriptionCondition condition) {
@@ -106,6 +98,34 @@ class CriteriaVisitor implements ConditionVisitor {
         }
 
         return null
+    }
+
+    CriterionNode makeNode(Condition condition, CriterionNode criterionNode) {
+        def node = new CriterionNode()
+        if (condition.concatenation == Concatenation.And ||
+                condition.concatenation == Concatenation.AndNot) {
+            node.type = CriterionNodeType.And
+        }
+        else if (condition.concatenation == Concatenation.Or ||
+                condition.concatenation == Concatenation.OrNot) {
+            node.type = CriterionNodeType.Or
+        }
+        else {
+            throw new IllegalStateException('Unexpected Concatenation')
+        }
+
+        if (condition.concatenation == Concatenation.AndNot ||
+                condition.concatenation == Concatenation.OrNot) {
+            def notNode = new CriterionNode()
+            notNode.type = CriterionNodeType.Not
+            notNode.left = criterionNode
+            node.left = notNode
+        }
+        else {
+            node.left = criterionNode
+        }
+
+        return node
     }
 
 }
