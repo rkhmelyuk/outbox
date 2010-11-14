@@ -27,7 +27,6 @@ class CriteriaTree {
     }
 
     boolean isEmpty() {
-        println root
         root == null
     }
 

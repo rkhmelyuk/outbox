@@ -9,10 +9,6 @@ import outbox.subscriber.search.criteria.CriteriaTree
 class SubscriberQueryBuilder implements QueryBuilder {
 
     Query build(CriteriaTree criteria) {
-        if (criteria.empty) {
-            return null
-        }
-
         def query = new Query()
 
         query.distinct = true

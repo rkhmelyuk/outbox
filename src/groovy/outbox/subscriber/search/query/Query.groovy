@@ -90,7 +90,7 @@ class Query {
             builder << join
         }
 
-        if (criteria) {
+        if (criteria && criteria.root) {
             // include criteria
             builder << ' where '
             buildCriteria(builder, criteria.root)
@@ -100,24 +100,26 @@ class Query {
     }
 
     void buildCriteria(StringBuilder builder, CriterionNode node) {
-        if (node.type == CriterionNodeType.Criterion) {
-            def criterion = node.criterion
-            if (criterion instanceof ComparisonCriterion) {
-                builder << comparisonCriterionSQL(criterion)
-            }
-        }
-        else {
-            if (node.left) {
-                buildCriteria(builder, node.left)
-            }
-            if (node.right) {
-                if (node.type == CriterionNodeType.And) {
-                    builder << ' and '
+        if (node) {
+            if (node.type == CriterionNodeType.Criterion) {
+                def criterion = node.criterion
+                if (criterion instanceof ComparisonCriterion) {
+                    builder << comparisonCriterionSQL(criterion)
                 }
-                else if (node.type == CriterionNodeType.Or) {
-                    builder << ' or '
+            }
+            else {
+                if (node.left) {
+                    buildCriteria(builder, node.left)
                 }
-                buildCriteria(builder, node.right)
+                if (node.right) {
+                    if (node.type == CriterionNodeType.And) {
+                        builder << ' and '
+                    }
+                    else if (node.type == CriterionNodeType.Or) {
+                        builder << ' or '
+                    }
+                    buildCriteria(builder, node.right)
+                }
             }
         }
     }
