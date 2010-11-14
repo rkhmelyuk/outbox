@@ -52,12 +52,37 @@ class SingleQueryRunnerTests extends GroovyTestCase {
         conditions.visit(visitor)
 
         def queriesBuilder = new QueriesBuilder()
-        def queries = queriesBuilder.build(visitor)
+        def queries = queriesBuilder.build(conditions, visitor)
 
         def subscribers = singleQueryRunner.run(queries)
 
         assertNotNull subscribers
         assertEquals 2, subscribers.total
+    }
+
+    void testRun_WithPagination() {
+
+        def subscriber1 = createTestSubscriber(1)
+        def subscriber2 = createTestSubscriber(2)
+
+        assertTrue subscriberService.saveSubscriber(subscriber1)
+        assertTrue subscriberService.saveSubscriber(subscriber2)
+
+        def conditions = new Conditions()
+        conditions.perPage = 1
+        conditions.page = 2
+        conditions.and(new SubscriberFieldCondition('FirstName', ValueCondition.equal('John')))
+        def visitor = new CriteriaVisitor()
+        conditions.visit(visitor)
+
+        def queriesBuilder = new QueriesBuilder()
+        def queries = queriesBuilder.build(conditions, visitor)
+
+        def subscribers = singleQueryRunner.run(queries)
+
+        assertNotNull subscribers
+        assertEquals 1, subscribers.total
+        assertTrue subscribers.list.contains(subscriber2)
     }
 
     Subscriber createTestSubscriber(id) {

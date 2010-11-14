@@ -22,6 +22,8 @@ class SingleQueryRunner implements QueryRunner {
 
     Subscribers run(Queries queries) {
 
+        def subscriberQuery = queries.subscriberFieldQuery
+
         if (queries.dynamicFieldQuery) {
             def subquery = queries.dynamicFieldQuery.toSQL()
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
@@ -31,15 +33,19 @@ class SingleQueryRunner implements QueryRunner {
             node.type = CriterionNodeType.And
             node.left = subqueryNode
 
-            queries.subscriberFieldQuery.criteria.addNode(node)
+            subscriberQuery.criteria.addNode(node)
         }
 
         def session = sessionFactory.currentSession
 
-        def sql = queries.subscriberFieldQuery.toSQL()
+        def sql = subscriberQuery.toSQL()
         println sql
 
         def query = session.createSQLQuery(sql)
+        if (subscriberQuery.page && subscriberQuery.perPage) {
+            query.firstResult = (subscriberQuery.page - 1) * subscriberQuery.perPage
+            query.maxResults = subscriberQuery.perPage
+        }
         query.addEntity(Subscriber)
 
         def subscribers = new Subscribers()

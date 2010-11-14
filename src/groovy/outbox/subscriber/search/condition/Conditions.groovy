@@ -9,6 +9,9 @@ class Conditions {
 
     final List<Condition> conditions = []
 
+    int page
+    int perPage
+
     void add(Concatenation concatenation, Condition condition) {
         if (condition && concatenation) {
             condition.concatenation = concatenation

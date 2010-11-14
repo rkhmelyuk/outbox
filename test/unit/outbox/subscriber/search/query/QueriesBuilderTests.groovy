@@ -1,6 +1,7 @@
 package outbox.subscriber.search.query
 
 import grails.test.GrailsUnitTestCase
+import outbox.subscriber.search.condition.Conditions
 import outbox.subscriber.search.criteria.CriteriaTree
 import outbox.subscriber.search.criteria.CriteriaVisitor
 
@@ -41,11 +42,14 @@ class QueriesBuilderTests extends GrailsUnitTestCase {
         builder.dynamicFieldQueryBuilder = dynamicFieldQueryBuilderControl.createMock()
         builder.subscriberFieldQueryBuilder = subscriberFieldQueryBuilderControl.createMock()
 
-        def queries = builder.build(visitor)
+        def conditions = new Conditions(page: 1, perPage: 10)
+        def queries = builder.build(conditions, visitor)
 
         assertNotNull queries.subscriptionQuery
         assertNotNull queries.dynamicFieldQuery
         assertNotNull queries.subscriberFieldQuery
+        assertEquals 1, conditions.page
+        assertEquals 10, conditions.perPage
 
         subscriptionQueryBuilderControl.verify()
         dynamicFieldQueryBuilderControl.verify()

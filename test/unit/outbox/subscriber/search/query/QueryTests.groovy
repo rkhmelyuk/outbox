@@ -18,6 +18,14 @@ class QueryTests extends GroovyTestCase {
         query = new Query()
     }
 
+    void testFields() {
+        query.page = 10
+        query.perPage = 15
+
+        assertEquals 10, query.page
+        assertEquals 15, query.perPage
+    }
+
     void testSQL_Simple() {
         assertTrue query.addColumn('FirstName')
         assertTrue query.addColumn('LastName', 'lastName')

@@ -10,6 +10,9 @@ import outbox.subscriber.search.criteria.*
  */
 class Query {
 
+    int page
+    int perPage
+
     List<String> columns = []
     List<String> tables = []
     List<String> joins = []

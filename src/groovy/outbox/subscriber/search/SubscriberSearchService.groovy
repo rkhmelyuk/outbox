@@ -20,7 +20,7 @@ class SubscriberSearchService {
         def visitor = new CriteriaVisitor()
         conditions.visit(visitor)
 
-        def queries = queriesBuilder.build(visitor)
+        def queries = queriesBuilder.build(conditions, visitor)
         def runner = queryRunnerDetector.detect(queries)
 
         runner.run(queries)
