@@ -44,7 +44,7 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
         assertTrue subscriberService.saveSubscriber(subscriber3)
 
         def conditions = new Conditions()
-        conditions.and(new SubscriberFieldCondition('firstName', ValueCondition.equals('John')))
+        conditions.and(new SubscriberFieldCondition('FirstName', ValueCondition.equals('John')))
 
         def subscribers = subscriberSearchService.search(conditions)
 

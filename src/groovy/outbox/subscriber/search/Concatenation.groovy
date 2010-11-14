@@ -6,8 +6,11 @@ package outbox.subscriber.search
 public enum Concatenation {
 
     And,
+
     Or,
+
     AndNot,
+
     OrNot,
 
 }
