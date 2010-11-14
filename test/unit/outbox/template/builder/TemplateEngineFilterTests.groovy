@@ -35,15 +35,15 @@ class TemplateEngineFilterTests extends GrailsUnitTestCase {
                 message: new CampaignMessage(id: '2'),
                 subscriber: new Subscriber(id: '3'))
 
-        context.model.var1 = 'Вам'
-        context.model.var2 = 'сюрприз'
-        context.template = 'Привіт ${var1}, подивіться на ${var2}'
+        context.model.var1 = 'пїЅпїЅпїЅ'
+        context.model.var2 = 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ'
+        context.template = 'пїЅпїЅпїЅпїЅпїЅ ${var1}, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ ${var2}'
 
         def filter = new TemplateEngineFilter()
         filter.freemarkerTemplateService = new FreemarkerTemplateService()
         filter.filter context
 
-        assertEquals 'Привіт Вам, подивіться на сюрприз', context.template
+        assertEquals 'пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ', context.template
     }
 
     void testFilter_Syntax() {

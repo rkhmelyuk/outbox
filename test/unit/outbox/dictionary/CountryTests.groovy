@@ -1,6 +1,6 @@
 package outbox.dictionary
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class CountryTests extends GrailsUnitTestCase {
 

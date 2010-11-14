@@ -1,6 +1,6 @@
 package outbox
 
-import grails.test.*
+import grails.test.ControllerUnitTestCase
 
 class DashboardControllerTests extends ControllerUnitTestCase {
     protected void setUp() {
