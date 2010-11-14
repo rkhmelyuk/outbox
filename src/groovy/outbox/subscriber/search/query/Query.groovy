@@ -104,7 +104,10 @@ class Query {
                     builder << comparisonCriterionSQL(criterion)
                 }
                 else if (criterion instanceof InSubqueryCriterion) {
-                    builder << subqueryCriterionSQL(criterion)
+                    builder << inSubqueryCriterionSQL(criterion)
+                }
+                else if (criterion instanceof InListCriterion) {
+                    builder << inListCriterionSQL(criterion)
                 }
             }
             else {
@@ -125,7 +128,28 @@ class Query {
     }
 
     String comparisonCriterionSQL(ComparisonCriterion criterion) {
-        def value = criterion.right
+        def value = prepareValue(criterion.right)
+        "$criterion.left$criterion.comparisonOp$value"
+    }
+
+    String inSubqueryCriterionSQL(InSubqueryCriterion criterion) {
+        def op = criterion.not ? ' not in ' : ' in '
+        "$criterion.left$op($criterion.subquery)"
+    }
+
+    String inListCriterionSQL(InListCriterion criterion) {
+        def op = criterion.not ? ' not in ' : ' in '
+        def list = ''
+        criterion.values.eachWithIndex { value, index ->
+            if (index != 0) {
+                list += ', '
+            }
+            list += prepareValue(value)
+        }
+        "$criterion.left$op($list)"
+    }
+
+    private String prepareValue(Serializable value) {
         if (value instanceof String) {
             value = value.replaceAll(/\\?'/, "''")
             value = "'" + value + "'"
@@ -133,11 +157,6 @@ class Query {
         else if (value instanceof BigDecimal) {
             value = new DecimalFormat('#############.#####').format(value)
         }
-        "$criterion.left$criterion.comparisonOp$value"
-    }
-
-    String subqueryCriterionSQL(InSubqueryCriterion criterion) {
-        def op = criterion.not ? ' not in ' : ' in '
-        "$criterion.left$op($criterion.subquery)"
+        return value
     }
 }
