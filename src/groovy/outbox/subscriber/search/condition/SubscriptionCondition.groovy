@@ -1,5 +1,7 @@
 package outbox.subscriber.search.condition
 
+import outbox.subscriber.search.ConditionVisitor
+
 /**
  * Subscription related condition, like within specified SL or not.
  * 

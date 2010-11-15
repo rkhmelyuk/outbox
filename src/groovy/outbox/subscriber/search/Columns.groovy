@@ -20,4 +20,10 @@ public interface Columns {
     String SubscriberTypeId = 'SubscriberTypeId'
     String Email = 'Email'
 
+
+    String StringValue = 'StringValue'
+    String NumberValue = 'NumberValue'
+    String BooleanValue = 'BooleanValue'
+    String DynamicFieldItemId = 'DynamicFieldItemId'
+
 }

@@ -1,6 +1,7 @@
 package outbox.subscriber.search.condition
 
 import outbox.subscriber.field.DynamicField
+import outbox.subscriber.search.ConditionVisitor
 
 /**
  * Condition used to search by dynamic field values.

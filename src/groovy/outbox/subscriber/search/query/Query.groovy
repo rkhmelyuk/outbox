@@ -160,6 +160,9 @@ class Query {
         else if (value instanceof BigDecimal) {
             value = new DecimalFormat('#############.#####').format(value)
         }
+        else if (value == null) {
+            value = ' NULL '
+        }
         return value
     }
 }

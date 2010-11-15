@@ -1,5 +1,7 @@
 package outbox.subscriber.search.condition
 
+import outbox.subscriber.search.ConditionVisitor
+
 /**
  * Defines method used by visitors to fetch conditions.
  * 

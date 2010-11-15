@@ -1,9 +1,9 @@
 package outbox.subscriber.search.query
 
 import grails.test.GrailsUnitTestCase
+import outbox.subscriber.search.CriteriaVisitor
 import outbox.subscriber.search.condition.Conditions
 import outbox.subscriber.search.criteria.CriteriaTree
-import outbox.subscriber.search.criteria.CriteriaVisitor
 
 /**
  * @author Ruslan Khmelyuk

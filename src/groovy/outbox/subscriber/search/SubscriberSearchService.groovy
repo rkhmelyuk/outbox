@@ -1,7 +1,6 @@
 package outbox.subscriber.search
 
 import outbox.subscriber.search.condition.Conditions
-import outbox.subscriber.search.criteria.CriteriaVisitor
 import outbox.subscriber.search.query.QueriesBuilder
 import outbox.subscriber.search.runner.QueryRunnerDetector
 

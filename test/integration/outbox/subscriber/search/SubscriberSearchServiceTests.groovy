@@ -92,6 +92,72 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
         assertFalse subscribers.list.contains(subscriber2)
     }
 
+    void testSearchByDynamicFields_Empty() {
+        def subscriber1 = createTestSubscriber(1)
+        def subscriber2 = createTestSubscriber(2)
+
+        subscriber1.lastName = ''
+        subscriber2.firstName = null
+
+        assertTrue subscriberService.saveSubscriber(subscriber1)
+        assertTrue subscriberService.saveSubscriber(subscriber2)
+
+        // null
+        def conditions = new Conditions()
+        conditions.and(new SubscriberFieldCondition('FirstName', ValueCondition.empty()))
+
+        def subscribers = subscriberSearchService.search(conditions)
+
+        assertNotNull subscribers
+        assertEquals 1, subscribers.total
+        assertTrue subscribers.list.contains(subscriber2)
+        assertFalse subscribers.list.contains(subscriber1)
+
+        // empty line
+        conditions = new Conditions()
+        conditions.and(new SubscriberFieldCondition('LastName', ValueCondition.empty()))
+
+        subscribers = subscriberSearchService.search(conditions)
+
+        assertNotNull subscribers
+        assertEquals 1, subscribers.total
+        assertTrue subscribers.list.contains(subscriber1)
+        assertFalse subscribers.list.contains(subscriber2)
+    }
+
+    void testSearchByDynamicFields_Filled() {
+        def subscriber1 = createTestSubscriber(1)
+        def subscriber2 = createTestSubscriber(2)
+
+        subscriber1.lastName = ''
+        subscriber2.firstName = null
+
+        assertTrue subscriberService.saveSubscriber(subscriber1)
+        assertTrue subscriberService.saveSubscriber(subscriber2)
+
+        // null
+        def conditions = new Conditions()
+        conditions.and(new SubscriberFieldCondition('FirstName', ValueCondition.filled()))
+
+        def subscribers = subscriberSearchService.search(conditions)
+
+        assertNotNull subscribers
+        assertEquals 1, subscribers.total
+        assertTrue subscribers.list.contains(subscriber1)
+        assertFalse subscribers.list.contains(subscriber2)
+
+        // empty line
+        conditions = new Conditions()
+        conditions.and(new SubscriberFieldCondition('LastName', ValueCondition.filled()))
+
+        subscribers = subscriberSearchService.search(conditions)
+
+        assertNotNull subscribers
+        assertEquals 1, subscribers.total
+        assertTrue subscribers.list.contains(subscriber2)
+        assertFalse subscribers.list.contains(subscriber1)
+    }
+
     Subscriber createTestSubscriber(id) {
         def subscriber = new Subscriber()
         subscriber.firstName = 'John'

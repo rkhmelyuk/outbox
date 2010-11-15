@@ -1,5 +1,7 @@
 package outbox.subscriber.search.condition
 
+import outbox.subscriber.search.ConditionVisitor
+
 /**
  * Used to gather a set of conditions into one object.
  * 

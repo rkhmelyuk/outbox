@@ -3,6 +3,7 @@ package outbox.subscriber.field
 import outbox.ValueUtil
 import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.Subscriber
+import outbox.subscriber.search.Columns
 
 /**
  * The value for dynamic field for specified subscriber.
@@ -30,10 +31,10 @@ class DynamicFieldValue {
         subscriber column: 'SubscriberId'
         dynamicField column: 'DynamicFieldId'
 
-        stringValue column: 'StringValue'
-        numberValue column: 'NumberValue'
-        booleanValue column: 'BooleanValue'
-        singleItem column: 'DynamicFieldItemId'
+        stringValue column: Columns.StringValue
+        numberValue column: Columns.NumberValue
+        booleanValue column: Columns.BooleanValue
+        singleItem column: Columns.DynamicFieldItemId
 
         version false
         cache true

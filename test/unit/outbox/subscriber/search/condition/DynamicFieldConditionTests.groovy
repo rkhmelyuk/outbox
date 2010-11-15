@@ -2,6 +2,7 @@ package outbox.subscriber.search.condition
 
 import grails.test.GrailsUnitTestCase
 import outbox.subscriber.field.DynamicField
+import outbox.subscriber.search.ConditionVisitor
 
 /**
  * @author Ruslan Khmelyuk

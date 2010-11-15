@@ -1,5 +1,7 @@
 package outbox.subscriber.search.condition
 
+import outbox.subscriber.search.ConditionVisitor
+
 /**
  * The condition by subscriber field, like email, name or language.
  * 

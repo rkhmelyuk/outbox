@@ -1,7 +1,7 @@
 package outbox.subscriber.search.query
 
+import outbox.subscriber.search.CriteriaVisitor
 import outbox.subscriber.search.condition.Conditions
-import outbox.subscriber.search.criteria.CriteriaVisitor
 
 /**
  * @author Ruslan Khmelyuk

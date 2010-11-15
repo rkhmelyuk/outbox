@@ -1,4 +1,8 @@
-package outbox.subscriber.search.condition
+package outbox.subscriber.search
+
+import outbox.subscriber.search.condition.DynamicFieldCondition
+import outbox.subscriber.search.condition.SubscriberFieldCondition
+import outbox.subscriber.search.condition.SubscriptionCondition
 
 /**
  * The interface for the visitor.

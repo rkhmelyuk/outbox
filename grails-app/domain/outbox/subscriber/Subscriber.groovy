@@ -40,7 +40,7 @@ class Subscriber {
         columns {
             firstName column: Columns.FirstName
             lastName column: Columns.LastName
-            email column: Columsn.Email
+            email column: Columns.Email
             gender column: Columns.GenderId, lazy: false
             language column: Columns.LanguageId, lazy: false
             timezone column: Columns.TimezoneId, lazy: false
