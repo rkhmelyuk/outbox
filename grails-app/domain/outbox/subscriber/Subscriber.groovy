@@ -7,6 +7,7 @@ import outbox.dictionary.Language
 import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
+import outbox.subscriber.search.Columns
 
 /**
  * The subscriber for newsletter or used as recipient for emails.
@@ -35,19 +36,19 @@ class Subscriber {
 
     static mapping = {
         table 'Subscriber'
-        id column: 'SubscriberId', generator: 'assigned'
+        id column: Columns.SubscriberId , generator: 'assigned'
         columns {
-            firstName column: 'FirstName'
-            lastName column: 'LastName'
-            email column: 'Email'
-            gender column: 'GenderId', lazy: false
-            language column: 'LanguageId', lazy: false
-            timezone column: 'TimezoneId', lazy: false
-            dateCreated column: 'CreateDate'
-            member column: 'MemberId', lazy: true
-            enabled column: 'Enabled'
-            namePrefix column: 'NamePrefixId', lazy: false
-            subscriberType column: 'SubscriberTypeId', lazy: false
+            firstName column: Columns.FirstName
+            lastName column: Columns.LastName
+            email column: Columsn.Email
+            gender column: Columns.GenderId, lazy: false
+            language column: Columns.LanguageId, lazy: false
+            timezone column: Columns.TimezoneId, lazy: false
+            dateCreated column: Columns.CreateDate
+            member column: Columns.MemberId, lazy: true
+            enabled column: Columns.Enabled
+            namePrefix column: Columns.NamePrefixId, lazy: false
+            subscriberType column: Columns.SubscriberTypeId, lazy: false
         }
         version false
         cache true

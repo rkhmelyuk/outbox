@@ -3,6 +3,7 @@ package outbox.subscriber.search.runner
 import org.apache.log4j.Logger
 import org.hibernate.SessionFactory
 import outbox.subscriber.Subscriber
+import outbox.subscriber.search.Columns
 import outbox.subscriber.search.Subscribers
 import outbox.subscriber.search.criteria.CriterionNode
 import outbox.subscriber.search.criteria.CriterionNodeType
@@ -27,7 +28,7 @@ class SingleQueryRunner implements QueryRunner {
         if (queries.dynamicFieldQuery) {
             def subquery = queries.dynamicFieldQuery.toSQL()
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
-                    criterion: new InSubqueryCriterion(left: 'SubscriberId', subquery: subquery))
+                    criterion: new InSubqueryCriterion(left: Columns.SubscriberId, subquery: subquery))
 
             def node = new CriterionNode()
             node.type = CriterionNodeType.And

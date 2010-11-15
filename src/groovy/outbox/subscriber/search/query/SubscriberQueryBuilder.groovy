@@ -1,5 +1,6 @@
 package outbox.subscriber.search.query
 
+import outbox.subscriber.search.Columns
 import outbox.subscriber.search.criteria.CriteriaTree
 
 /**
@@ -13,17 +14,18 @@ class SubscriberQueryBuilder implements QueryBuilder {
 
         query.distinct = true
 
-        query.addColumn 'SubscriberId'
-        query.addColumn 'FirstName'
-        query.addColumn 'LastName'
-        query.addColumn 'GenderId'
-        query.addColumn 'LanguageId'
-        query.addColumn 'TimezoneId'
-        query.addColumn 'MemberId'
-        query.addColumn 'Enabled'
-        query.addColumn 'NamePrefixId'
-        query.addColumn 'SubscriberTypeId'
-        query.addColumn 'CreateDate'
+        query.addColumn Columns.SubscriberId
+        query.addColumn Columns.Email
+        query.addColumn Columns.FirstName
+        query.addColumn Columns.LastName
+        query.addColumn Columns.GenderId
+        query.addColumn Columns.LanguageId
+        query.addColumn Columns.TimezoneId
+        query.addColumn Columns.MemberId
+        query.addColumn Columns.Enabled
+        query.addColumn Columns.NamePrefixId
+        query.addColumn Columns.SubscriberTypeId
+        query.addColumn Columns.CreateDate
 
         query.addTable 'Subscriber'
 

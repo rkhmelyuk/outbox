@@ -1,5 +1,6 @@
 package outbox.subscriber.search.query
 
+import outbox.subscriber.search.Columns
 import outbox.subscriber.search.criteria.CriteriaTree
 
 /**
@@ -17,7 +18,7 @@ class DynamicFieldQueryBuilder implements QueryBuilder {
 
         query.distinct = true
 
-        query.addColumn 'SubscriberId'
+        query.addColumn Columns.SubscriberId
         query.addTable 'DynamicFieldValue'
         query.addJoin 'DynamicField', 'DF', 'DF.DynamicFieldId = DynamicFieldValue.DynamicFieldId'
 
