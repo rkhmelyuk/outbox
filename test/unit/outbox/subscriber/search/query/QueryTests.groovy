@@ -33,7 +33,15 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addColumn('LastName', 'lastName')
         assertTrue query.addTable('Person', 'p')
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p', query.toSelectSQL()
+    }
+
+    void testSQL_Count() {
+        assertTrue query.addColumn('FirstName')
+        assertTrue query.addColumn('LastName', 'lastName')
+        assertTrue query.addTable('Person', 'p')
+
+        assertEquals 'select count(*) as RowCount from Person as p', query.toCountSQL()
     }
 
     void testSQL_Distinct() {
@@ -42,7 +50,16 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         query.distinct = true
 
-        assertEquals 'select distinct FirstName, LastName as lastName from Person as p', query.toSQL()
+        assertEquals 'select distinct FirstName, LastName as lastName from Person as p', query.toSelectSQL()
+    }
+
+    void testSQL_DistinctCount() {
+        assertTrue query.addColumn('FirstName')
+        assertTrue query.addColumn('LastName', 'lastName')
+        assertTrue query.addTable('Person', 'p')
+        query.distinct = true
+
+        assertEquals 'select distinct count(*) as RowCount from Person as p', query.toCountSQL()
     }
 
     void testSQL_Order() {
@@ -51,7 +68,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         query.orders << new Order(column: 'FirstName', sort: Sort.Asc)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p order by FirstName asc', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p order by FirstName asc', query.toSelectSQL()
     }
 
     void testSQL_Orders() {
@@ -61,7 +78,7 @@ class QueryTests extends GroovyTestCase {
         query.orders << new Order(column: 'FirstName', sort: Sort.Asc)
         query.orders << new Order(column: 'LastName', sort: Sort.Desc)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p order by FirstName asc, LastName desc', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p order by FirstName asc, LastName desc', query.toSelectSQL()
     }
 
     void testSQL_Conditions() {
@@ -76,7 +93,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p where (FirstName = \'John\'\'\' or LastName <> \'Doe\')', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where (FirstName = \'John\'\'\' or LastName <> \'Doe\')', query.toSelectSQL()
     }
 
     void testSQL_Injection1() {
@@ -88,7 +105,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'', query.toSelectSQL()
     }
 
     void testSQL_Injection2() {
@@ -100,7 +117,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'', query.toSelectSQL()
     }
 
     void testSQL_Injection3() {
@@ -112,7 +129,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'\'\'', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'Join\'\'\'\'\'', query.toSelectSQL()
     }
 
     void testSQL_Number() {
@@ -124,7 +141,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = 234334', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = 234334', query.toSelectSQL()
     }
 
     void testSQL_Long() {
@@ -136,7 +153,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = 234334', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = 234334', query.toSelectSQL()
     }
 
     void testSQL_BigDecimal() {
@@ -148,7 +165,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = 2343.34', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = 2343.34', query.toSelectSQL()
     }
 
     void testSQL_Subquery() {
@@ -160,6 +177,6 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName in (subquery)', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName in (subquery)', query.toSelectSQL()
     }
 }

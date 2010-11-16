@@ -1,6 +1,7 @@
 package outbox.subscriber.search.runner
 
 import org.apache.log4j.Logger
+import org.hibernate.Hibernate
 import org.hibernate.SessionFactory
 import outbox.subscriber.Subscriber
 import outbox.subscriber.search.Columns
@@ -26,7 +27,7 @@ class SingleQueryRunner implements QueryRunner {
         def subscriberQuery = queries.subscriberFieldQuery
 
         if (queries.dynamicFieldQuery) {
-            def subquery = queries.dynamicFieldQuery.toSQL()
+            def subquery = queries.dynamicFieldQuery.toSelectSQL()
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
                     criterion: new InSubqueryCriterion(left: Columns.SubscriberId, subquery: subquery))
 
@@ -39,19 +40,22 @@ class SingleQueryRunner implements QueryRunner {
 
         def session = sessionFactory.currentSession
 
-        def sql = subscriberQuery.toSQL()
-        println sql
-
-        def query = session.createSQLQuery(sql)
-        if (subscriberQuery.page && subscriberQuery.perPage) {
-            query.firstResult = (subscriberQuery.page - 1) * subscriberQuery.perPage
-            query.maxResults = subscriberQuery.perPage
-        }
-        query.addEntity(Subscriber)
-
         def subscribers = new Subscribers()
-        subscribers.list = query.list()
-        subscribers.total = subscribers.list.size()
+
+        def countSql = subscriberQuery.toCountSQL()
+        def countQuery = session.createSQLQuery(countSql)
+        countQuery.addScalar('RowCount', Hibernate.LONG)
+        subscribers.total = countQuery.uniqueResult()
+
+        def selectSql = subscriberQuery.toSelectSQL()
+        println selectSql
+        def selectQuery = session.createSQLQuery(selectSql)
+        if (subscriberQuery.page && subscriberQuery.perPage) {
+            selectQuery.firstResult = (subscriberQuery.page - 1) * subscriberQuery.perPage
+            selectQuery.maxResults = subscriberQuery.perPage
+        }
+        selectQuery.addEntity(Subscriber)
+        subscribers.list = selectQuery.list()
 
         return subscribers
     }

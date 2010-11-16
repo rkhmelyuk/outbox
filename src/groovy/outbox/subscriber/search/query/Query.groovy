@@ -62,7 +62,7 @@ class Query {
         return false
     }
 
-    String toSQL() {
+    String toSelectSQL() {
         def builder = new StringBuilder()
         builder << 'select '
 
@@ -110,6 +110,41 @@ class Query {
 
         return builder.toString()
     }
+
+    String toCountSQL() {
+        def builder = new StringBuilder()
+        builder << 'select '
+
+        if (distinct) {
+            builder << 'distinct '
+        }
+
+        builder << 'count(*) as RowCount'
+
+        builder << ' from '
+        tables.eachWithIndex { table, index ->
+            if (index != 0) {
+                builder << ', '
+            }
+            builder << table
+        }
+
+        joins.eachWithIndex { join, index ->
+            if (index != 0) {
+                builder << ', '
+            }
+            builder << join
+        }
+
+        if (criteria && criteria.root) {
+            // include criteria
+            builder << ' where '
+            buildCriteria(builder, criteria.root)
+        }
+
+        return builder.toString()
+    }
+
 
     void buildCriteria(StringBuilder builder, CriterionNode node) {
         if (node) {

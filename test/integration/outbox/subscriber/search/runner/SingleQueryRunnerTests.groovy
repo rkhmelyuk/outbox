@@ -81,7 +81,7 @@ class SingleQueryRunnerTests extends GroovyTestCase {
         def subscribers = singleQueryRunner.run(queries)
 
         assertNotNull subscribers
-        assertEquals 1, subscribers.total
+        assertEquals 2, subscribers.total
         assertTrue subscribers.list.contains(subscriber2)
     }
 
