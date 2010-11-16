@@ -55,7 +55,7 @@ class QueryTests extends GroovyTestCase {
         assertTrue query.addTable('Person', 'p')
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select FirstName, LastName as lastName from Person as p where FirstName = \'John\'\'\' or LastName <> \'Doe\'', query.toSQL()
+        assertEquals 'select FirstName, LastName as lastName from Person as p where (FirstName = \'John\'\'\' or LastName <> \'Doe\')', query.toSQL()
     }
 
     void testSQL_Injection1() {

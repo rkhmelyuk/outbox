@@ -114,6 +114,10 @@ class Query {
                 }
             }
             else {
+                def parens = node.left && node.right
+                if (parens) {
+                    builder << '('
+                }
                 if (node.left) {
                     buildCriteria(builder, node.left)
                 }
@@ -125,6 +129,9 @@ class Query {
                         builder << ' or '
                     }
                     buildCriteria(builder, node.right)
+                }
+                if (parens) {
+                    builder << ')'
                 }
             }
         }
