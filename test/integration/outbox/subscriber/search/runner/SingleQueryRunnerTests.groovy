@@ -3,8 +3,8 @@ package outbox.subscriber.search.runner
 import outbox.member.Member
 import outbox.subscriber.Subscriber
 import outbox.subscriber.SubscriberService
+import outbox.subscriber.search.Conditions
 import outbox.subscriber.search.CriteriaVisitor
-import outbox.subscriber.search.condition.Conditions
 import outbox.subscriber.search.condition.SubscriberFieldCondition
 import outbox.subscriber.search.condition.ValueCondition
 import outbox.subscriber.search.query.QueriesBuilder

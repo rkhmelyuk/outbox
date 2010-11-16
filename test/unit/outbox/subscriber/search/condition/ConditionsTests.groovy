@@ -2,6 +2,8 @@ package outbox.subscriber.search.condition
 
 import grails.test.GrailsUnitTestCase
 import outbox.subscriber.search.ConditionVisitor
+import outbox.subscriber.search.Conditions
+import outbox.subscriber.search.Sort
 
 /**
  * @author Ruslan Khmelyuk
@@ -65,7 +67,7 @@ class ConditionsTests extends GrailsUnitTestCase {
         assertFalse conditions.empty
     }
 
-    void visit() {
+    void testVisit() {
         def condition1 = new SubscriberFieldCondition(null, null)
         conditions.and(condition1)
         def condition2 = new DynamicFieldCondition(null, null)
@@ -87,5 +89,31 @@ class ConditionsTests extends GrailsUnitTestCase {
         conditions.visit visitorControl.createMock()
 
         visitorControl.verify()
+    }
+
+    void testOrderBy() {
+        def conditions = new Conditions()
+
+        conditions.orderBy('FirstName')
+
+        assertFalse conditions.orders.empty
+        assertEquals 'FirstName', conditions.orders.first().column
+        assertEquals Sort.Asc, conditions.orders.first().sort
+    }
+
+    void testOrderBy_Desc() {
+        def conditions = new Conditions()
+
+        conditions.orderBy('FirstName', Sort.Desc)
+
+        assertFalse conditions.orders.empty
+        assertEquals 'FirstName', conditions.orders.first().column
+        assertEquals Sort.Desc, conditions.orders.first().sort
+    }
+
+    void testOrderBy_Null() {
+        def conditions = new Conditions()
+        conditions.orderBy(null, Sort.Desc)
+        assertTrue conditions.orders.empty
     }
 }

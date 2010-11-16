@@ -1,6 +1,7 @@
-package outbox.subscriber.search.condition
+package outbox.subscriber.search
 
-import outbox.subscriber.search.ConditionVisitor
+import outbox.subscriber.search.condition.Concatenation
+import outbox.subscriber.search.condition.Condition
 
 /**
  * Used to gather a set of conditions into one object.
@@ -9,6 +10,7 @@ import outbox.subscriber.search.ConditionVisitor
  */
 class Conditions {
 
+    final List<Order> orders = []
     final List<Condition> conditions = []
 
     int page
@@ -35,6 +37,12 @@ class Conditions {
 
     void orNot(Condition condition) {
         add(Concatenation.OrNot, condition)
+    }
+
+    void orderBy(String column, Sort sort = null) {
+        if (column) {
+            orders << new Order(column: column, sort: sort ?: Sort.Asc)
+        }
     }
 
     boolean isEmpty() {

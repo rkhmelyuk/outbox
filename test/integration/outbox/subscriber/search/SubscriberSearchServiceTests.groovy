@@ -8,7 +8,6 @@ import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldStatus
 import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.field.DynamicFieldValue
-import outbox.subscriber.search.condition.Conditions
 import outbox.subscriber.search.condition.DynamicFieldCondition
 import outbox.subscriber.search.condition.SubscriberFieldCondition
 import outbox.subscriber.search.condition.ValueCondition
@@ -156,6 +155,32 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
         assertEquals 1, subscribers.total
         assertTrue subscribers.list.contains(subscriber2)
         assertFalse subscribers.list.contains(subscriber1)
+    }
+
+    void testSearchBySubscribersFields_Order() {
+        def subscriber1 = createTestSubscriber(1)
+        def subscriber2 = createTestSubscriber(2)
+        def subscriber3 = createTestSubscriber(3)
+
+        subscriber1.firstName = 'John'
+        subscriber2.firstName = 'Mark'
+        subscriber3.firstName = 'Don'
+
+        assertTrue subscriberService.saveSubscriber(subscriber1)
+        assertTrue subscriberService.saveSubscriber(subscriber2)
+        assertTrue subscriberService.saveSubscriber(subscriber3)
+
+        def conditions = new Conditions()
+        conditions.and(new SubscriberFieldCondition('LastName', ValueCondition.equal('Doe')))
+        conditions.orderBy('FirstName', Sort.Asc)
+
+        def subscribers = subscriberSearchService.search(conditions)
+
+        assertNotNull subscribers
+        assertEquals 3, subscribers.total
+        assertEquals subscriber3, subscribers.list[0]
+        assertEquals subscriber1, subscribers.list[1]
+        assertEquals subscriber2, subscribers.list[2]
     }
 
     Subscriber createTestSubscriber(id) {

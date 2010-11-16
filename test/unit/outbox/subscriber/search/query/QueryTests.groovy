@@ -1,5 +1,7 @@
 package outbox.subscriber.search.query
 
+import outbox.subscriber.search.Order
+import outbox.subscriber.search.Sort
 import outbox.subscriber.search.criteria.ComparisonCriterion
 import outbox.subscriber.search.criteria.CriterionNode
 import outbox.subscriber.search.criteria.CriterionNodeType
@@ -41,6 +43,25 @@ class QueryTests extends GroovyTestCase {
         query.distinct = true
 
         assertEquals 'select distinct FirstName, LastName as lastName from Person as p', query.toSQL()
+    }
+
+    void testSQL_Order() {
+        assertTrue query.addColumn('FirstName')
+        assertTrue query.addColumn('LastName', 'lastName')
+        assertTrue query.addTable('Person', 'p')
+        query.orders << new Order(column: 'FirstName', sort: Sort.Asc)
+
+        assertEquals 'select FirstName, LastName as lastName from Person as p order by FirstName asc', query.toSQL()
+    }
+
+    void testSQL_Orders() {
+        assertTrue query.addColumn('FirstName')
+        assertTrue query.addColumn('LastName', 'lastName')
+        assertTrue query.addTable('Person', 'p')
+        query.orders << new Order(column: 'FirstName', sort: Sort.Asc)
+        query.orders << new Order(column: 'LastName', sort: Sort.Desc)
+
+        assertEquals 'select FirstName, LastName as lastName from Person as p order by FirstName asc, LastName desc', query.toSQL()
     }
 
     void testSQL_Conditions() {

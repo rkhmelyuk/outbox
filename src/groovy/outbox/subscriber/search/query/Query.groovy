@@ -1,6 +1,7 @@
 package outbox.subscriber.search.query
 
 import java.text.DecimalFormat
+import outbox.subscriber.search.Order
 import outbox.subscriber.search.criteria.*
 
 /**
@@ -18,6 +19,7 @@ class Query {
     List<String> joins = []
 
     CriteriaTree criteria
+    List<Order> orders = []
 
     boolean distinct = false
 
@@ -94,6 +96,16 @@ class Query {
             // include criteria
             builder << ' where '
             buildCriteria(builder, criteria.root)
+        }
+
+        orders.eachWithIndex { order, index ->
+            if (index != 0) {
+                builder << ', '
+            }
+            else {
+                builder << ' order by '
+            }
+            builder << "$order.column $order.sort.keyword"
         }
 
         return builder.toString()

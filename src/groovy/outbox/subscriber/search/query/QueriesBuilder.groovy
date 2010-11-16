@@ -1,7 +1,7 @@
 package outbox.subscriber.search.query
 
+import outbox.subscriber.search.Conditions
 import outbox.subscriber.search.CriteriaVisitor
-import outbox.subscriber.search.condition.Conditions
 
 /**
  * @author Ruslan Khmelyuk
@@ -20,6 +20,7 @@ class QueriesBuilder {
         queries.subscriberFieldQuery = subscriberFieldQueryBuilder.build(criteria.subscriberFieldTree)
         queries.subscriberFieldQuery.page = conditions.page
         queries.subscriberFieldQuery.perPage = conditions.perPage
+        queries.subscriberFieldQuery.orders = conditions.orders
 
         return queries
     }
