@@ -37,6 +37,8 @@ class CriteriaVisitor implements ConditionVisitor {
     }
 
     void visitSubscriptionCondition(SubscriptionCondition condition) {
+        // exists (select null from Subscriber as s where s.SubscriptionListId = 10 and s.SubscriberId = SubscriberId and s.status = Active)
+        // not exists (select null from Subscriber as s where s.SubscriptionListId = 20 and s.SubscriberId = xxx and s.Status = Active)
 
     }
 

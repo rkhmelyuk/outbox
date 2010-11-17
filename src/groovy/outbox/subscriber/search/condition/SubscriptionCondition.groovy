@@ -19,11 +19,11 @@ class SubscriptionCondition extends Condition {
 
     // -----------------------------------------------------
 
-    final boolean subscribed
+    final boolean subscribedTo
     final List<Long> subscriptionListIds
 
     SubscriptionCondition(boolean subscribed, List<Long> subscriptionListIds) {
-        this.subscribed = subscribed
+        this.subscribedTo = subscribed
         this.subscriptionListIds = subscriptionListIds
     }
 
