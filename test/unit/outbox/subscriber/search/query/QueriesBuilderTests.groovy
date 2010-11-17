@@ -18,8 +18,8 @@ class QueriesBuilderTests extends GrailsUnitTestCase {
         def subscriberFieldTree = new CriteriaTree()
         def visitor = new CriteriaVisitor()
 
-        visitor.subscriptionTree = subscriptionTree
-        visitor.dynamicFieldTree = dynamicFieldTree
+        visitor.subscriptionTrees = [subscriptionTree]
+        visitor.dynamicFieldTrees = [dynamicFieldTree]
         visitor.subscriberFieldTree = subscriberFieldTree
 
         def subscriptionQueryBuilderControl = mockFor(QueryBuilder)
@@ -46,8 +46,8 @@ class QueriesBuilderTests extends GrailsUnitTestCase {
         conditions.orderBy 'FirstName'
         def queries = builder.build(conditions, visitor)
 
-        assertNotNull queries.subscriptionQuery
-        assertNotNull queries.dynamicFieldQuery
+        assertNotNull queries.subscriptionQueries
+        assertNotNull queries.dynamicFieldQueries
         assertNotNull queries.subscriberFieldQuery
         assertEquals 1, queries.subscriberFieldQuery.page
         assertEquals 10, queries.subscriberFieldQuery.perPage

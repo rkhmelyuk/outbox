@@ -26,8 +26,8 @@ class SingleQueryRunner implements QueryRunner {
 
         def subscriberQuery = queries.subscriberFieldQuery
 
-        if (queries.dynamicFieldQuery) {
-            def subquery = queries.dynamicFieldQuery.toSelectSQL()
+        queries.dynamicFieldQueries.each { dynamicFieldQuery ->
+            def subquery = dynamicFieldQuery.toSelectSQL()
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
                     criterion: new InSubqueryCriterion(left: Columns.SubscriberId, subquery: subquery))
 

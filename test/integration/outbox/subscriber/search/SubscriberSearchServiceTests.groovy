@@ -91,7 +91,7 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
         assertFalse subscribers.list.contains(subscriber2)
     }
 
-    void testSearchByDynamicFields_Empty() {
+    void testSearchBySubscriberFields_Empty() {
         def subscriber1 = createTestSubscriber(1)
         def subscriber2 = createTestSubscriber(2)
 
@@ -124,7 +124,7 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
         assertFalse subscribers.list.contains(subscriber2)
     }
 
-    void testSearchByDynamicFields_Filled() {
+    void testSearchBySubscriberFields_Filled() {
         def subscriber1 = createTestSubscriber(1)
         def subscriber2 = createTestSubscriber(2)
 
@@ -181,6 +181,41 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
         assertEquals subscriber3, subscribers.list[0]
         assertEquals subscriber1, subscribers.list[1]
         assertEquals subscriber2, subscribers.list[2]
+    }
+
+    void testSearchByMultipleDynamicFields() {
+        def subscriber1 = createTestSubscriber(1)
+        def subscriber2 = createTestSubscriber(2)
+
+        assertTrue subscriberService.saveSubscriber(subscriber1)
+        assertTrue subscriberService.saveSubscriber(subscriber2)
+
+        def field1 = createDynamicField(1)
+        def field2 = createDynamicField(2)
+
+        assertTrue dynamicFieldService.addDynamicField(field1)
+        assertTrue dynamicFieldService.addDynamicField(field2)
+
+        assertTrue dynamicFieldService.saveDynamicFieldValue(new DynamicFieldValue(
+                subscriber: subscriber1, dynamicField: field1, value: 'jack'))
+        assertTrue dynamicFieldService.saveDynamicFieldValue(new DynamicFieldValue(
+                subscriber: subscriber2, dynamicField: field1, value: 'john'))
+
+        assertTrue dynamicFieldService.saveDynamicFieldValue(new DynamicFieldValue(
+                subscriber: subscriber1, dynamicField: field2, value: 'rabit'))
+        assertTrue dynamicFieldService.saveDynamicFieldValue(new DynamicFieldValue(
+                subscriber: subscriber2, dynamicField: field2, value: 'smith'))
+
+        def conditions = new Conditions()
+        conditions.and(new DynamicFieldCondition(field1, ValueCondition.notEqual('john')))
+        conditions.and(new DynamicFieldCondition(field2, ValueCondition.notEqual('smith')))
+
+        def subscribers = subscriberSearchService.search(conditions)
+
+        assertNotNull subscribers
+        assertEquals 1, subscribers.total
+        assertTrue subscribers.list.contains(subscriber1)
+        assertFalse subscribers.list.contains(subscriber2)
     }
 
     Subscriber createTestSubscriber(id) {

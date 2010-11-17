@@ -6,17 +6,17 @@ package outbox.subscriber.search.query
 class QueriesTests extends GroovyTestCase {
 
     void testFields() {
-        def dynamicFieldQuery = new Query()
-        def subscriptionQuery = new Query()
+        def dynamicFieldQueries = []
+        def subscriptionQueries = []
         def subscriberFieldQuery = new Query()
 
         def queries = new Queries()
-        queries.subscriptionQuery = subscriptionQuery
-        queries.dynamicFieldQuery = dynamicFieldQuery
+        queries.subscriptionQueries = subscriptionQueries
+        queries.dynamicFieldQueries = dynamicFieldQueries
         queries.subscriberFieldQuery = subscriberFieldQuery
 
-        assertEquals subscriptionQuery, queries.subscriptionQuery
-        assertEquals dynamicFieldQuery, queries.dynamicFieldQuery
+        assertEquals subscriptionQueries, queries.subscriptionQueries
+        assertEquals dynamicFieldQueries, queries.dynamicFieldQueries
         assertEquals subscriberFieldQuery, queries.subscriberFieldQuery
     }
 

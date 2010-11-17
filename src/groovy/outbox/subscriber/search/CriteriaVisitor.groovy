@@ -9,9 +9,9 @@ import outbox.subscriber.search.criteria.*
  */
 class CriteriaVisitor implements ConditionVisitor {
 
-    CriteriaTree subscriptionTree = new CriteriaTree()
-    CriteriaTree dynamicFieldTree = new CriteriaTree()
     CriteriaTree subscriberFieldTree = new CriteriaTree()
+    List<CriteriaTree> dynamicFieldTrees = []
+    List<CriteriaTree> subscriptionTrees = []
 
     void visitSubscriberFieldCondition(SubscriberFieldCondition condition) {
         def criterionNode = builderFieldsCriterionNode(condition, condition.field)
@@ -31,7 +31,9 @@ class CriteriaVisitor implements ConditionVisitor {
         criterionNode.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: idCriterion)
         criterionNode.right = builderFieldsCriterionNode(condition, column)
 
+        def dynamicFieldTree = new CriteriaTree()
         dynamicFieldTree.addNode(makeNode(condition, criterionNode))
+        dynamicFieldTrees << dynamicFieldTree
     }
 
     void visitSubscriptionCondition(SubscriptionCondition condition) {

@@ -40,7 +40,7 @@ class CriteriaVisitorTests extends GroovyTestCase {
                 ValueCondition.equal('John'))
         visitor.visitDynamicFieldCondition condition
 
-        def node = visitor.dynamicFieldTree.root
+        def node = visitor.dynamicFieldTrees[0].root
 
         assertNotNull node
         assertEquals CriterionNodeType.And, node.type
@@ -65,7 +65,7 @@ class CriteriaVisitorTests extends GroovyTestCase {
                 ValueCondition.equal(20))
         visitor.visitDynamicFieldCondition condition
 
-        def node = visitor.dynamicFieldTree.root
+        def node = visitor.dynamicFieldTrees[0].root
 
         assertNotNull node
         assertEquals CriterionNodeType.And, node.type
@@ -90,7 +90,7 @@ class CriteriaVisitorTests extends GroovyTestCase {
                 ValueCondition.equal(false))
         visitor.visitDynamicFieldCondition condition
 
-        def node = visitor.dynamicFieldTree.root
+        def node = visitor.dynamicFieldTrees[0].root
 
         assertNotNull node
         assertEquals CriterionNodeType.And, node.type
@@ -115,7 +115,7 @@ class CriteriaVisitorTests extends GroovyTestCase {
                 ValueCondition.equal(1))
         visitor.visitDynamicFieldCondition condition
 
-        def node = visitor.dynamicFieldTree.root
+        def node = visitor.dynamicFieldTrees[0].root
 
         assertNotNull node
         assertEquals CriterionNodeType.And, node.type

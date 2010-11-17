@@ -5,8 +5,8 @@ package outbox.subscriber.search.query
  */
 class Queries {
 
-    Query subscriptionQuery
-    Query dynamicFieldQuery
     Query subscriberFieldQuery
+    List<Query> dynamicFieldQueries
+    List<Query> subscriptionQueries
 
 }
