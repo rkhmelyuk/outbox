@@ -49,7 +49,7 @@ class SingleQueryRunner implements QueryRunner {
         return subscribers
     }
 
-    private def dynamicFieldConditions(Queries queries) {
+    void dynamicFieldConditions(Queries queries) {
         queries.dynamicFieldQueries.each { dynamicFieldQuery ->
             def subquery = dynamicFieldQuery.toSelectSQL()
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
@@ -63,7 +63,7 @@ class SingleQueryRunner implements QueryRunner {
         }
     }
 
-    private def subscriptionConditions(Queries queries) {
+    void subscriptionConditions(Queries queries) {
         queries.subscriptionQueries.each { subscriptionQuery ->
             def subqueryNode, keyword
             if (subscriptionQuery.criteria.root.type == CriterionNodeType.Not) {

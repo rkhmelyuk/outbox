@@ -18,18 +18,18 @@ class QueriesBuilderTests extends GrailsUnitTestCase {
         def subscriberFieldTree = new CriteriaTree()
         def visitor = new CriteriaVisitor()
 
-        visitor.subscriptionTrees = [subscriptionTree]
-        visitor.dynamicFieldTrees = [dynamicFieldTree]
+        visitor.subscriptionTrees = [subscriptionTree, subscriptionTree]
+        visitor.dynamicFieldTrees = [dynamicFieldTree, dynamicFieldTree, dynamicFieldTree]
         visitor.subscriberFieldTree = subscriberFieldTree
 
         def subscriptionQueryBuilderControl = mockFor(QueryBuilder)
         def dynamicFieldQueryBuilderControl = mockFor(QueryBuilder)
         def subscriberFieldQueryBuilderControl = mockFor(QueryBuilder)
-        subscriptionQueryBuilderControl.demand.build { it ->
+        subscriptionQueryBuilderControl.demand.build(2) { it ->
             assertEquals subscriptionTree, it
             return new Query()
         }
-        dynamicFieldQueryBuilderControl.demand.build { it ->
+        dynamicFieldQueryBuilderControl.demand.build(3) { it ->
             assertEquals dynamicFieldTree, it
             return new Query()
         }
@@ -56,6 +56,5 @@ class QueriesBuilderTests extends GrailsUnitTestCase {
         subscriptionQueryBuilderControl.verify()
         dynamicFieldQueryBuilderControl.verify()
         subscriberFieldQueryBuilderControl.verify()
-
     }
 }
