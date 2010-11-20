@@ -233,6 +233,10 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
 
         def subscriptionStatus = new SubscriptionStatus(id: 1, name: 'test').save()
 
+        SubscriptionStatus.metaClass.static.subscribed = {
+            return subscriptionStatus
+        }
+
         def sl1 = createTestSubscriptionList(1)
         def sl2 = createTestSubscriptionList(2)
         assertTrue subscriptionListService.saveSubscriptionList(sl1)
@@ -261,11 +265,58 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
         conditions.and(SubscriptionCondition.notSubscribed([sl2.id]))
 
         def subscribers = subscriberSearchService.search(conditions)
-        println subscribers.list
+
         assertNotNull subscribers
         assertEquals 1, subscribers.total
         assertTrue subscribers.list.contains(subscriber1)
         assertFalse subscribers.list.contains(subscriber2)
+    }
+
+    void testSearchBySubscription_SubscribedOnly() {
+        def subscriber1 = createTestSubscriber(1)
+        def subscriber2 = createTestSubscriber(2)
+
+        assertTrue subscriberService.saveSubscriber(subscriber1)
+        assertTrue subscriberService.saveSubscriber(subscriber2)
+
+        def subscriptionStatus = new SubscriptionStatus(id: 1, name: 'test').save()
+
+        SubscriptionStatus.metaClass.static.subscribed = {
+            return subscriptionStatus
+        }
+
+        def sl1 = createTestSubscriptionList(1)
+        def sl2 = createTestSubscriptionList(2)
+        assertTrue subscriptionListService.saveSubscriptionList(sl1)
+        assertTrue subscriptionListService.saveSubscriptionList(sl2)
+
+        def subscription11 = new Subscription(
+                subscriber: subscriber1,
+                subscriptionList: sl1,
+                status: subscriptionStatus)
+
+        def subscription21 = new Subscription(
+                subscriber: subscriber2,
+                subscriptionList: sl1,
+                status: subscriptionStatus)
+        def subscription22 = new Subscription(
+                subscriber: subscriber2,
+                subscriptionList: sl2,
+                status: subscriptionStatus)
+
+        assertTrue subscriptionListService.addSubscription(subscription11)
+        assertTrue subscriptionListService.addSubscription(subscription21)
+        assertTrue subscriptionListService.addSubscription(subscription22)
+
+        def conditions = new Conditions()
+        conditions.and(SubscriptionCondition.subscribed([sl1.id, sl2.id]))
+
+        def subscribers = subscriberSearchService.search(conditions)
+
+        assertNotNull subscribers
+        assertEquals 1, subscribers.total
+        assertTrue subscribers.list.contains(subscriber2)
+        assertFalse subscribers.list.contains(subscriber1)
     }
 
     Subscriber createTestSubscriber(id) {

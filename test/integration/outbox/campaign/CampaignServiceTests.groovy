@@ -232,13 +232,14 @@ class CampaignServiceTests extends GrailsUnitTestCase {
         assertTrue campaignService.addCampaignSubscription(campaignSubscription1)
         assertTrue campaignService.addCampaignSubscription(campaignSubscription2)
 
-        def subscribed = SubscriptionStatus.findById(1)
-        if (!subscribed) {
-            subscribed = new SubscriptionStatus(id: 1, name: 'subscribed').save()
+        def subscribed = new SubscriptionStatus(id: 1, name: 'subscribed').save()
+        def unsubscribed = new SubscriptionStatus(id: 2, name: 'unsubscribed').save()
+
+        SubscriptionStatus.metaClass.static.subscribed = {
+            return subscribed
         }
-        def unsubscribed = SubscriptionStatus.findById(2)
-        if (!unsubscribed) {
-            unsubscribed = new SubscriptionStatus(id: 2, name: 'unsubscribed').save()
+        SubscriptionStatus.metaClass.static.ussubscribed = {
+            return unsubscribed
         }
 
         def subscriber1 = createTestSubscriber(1)

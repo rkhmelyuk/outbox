@@ -65,9 +65,12 @@ class SingleQueryRunner implements QueryRunner {
 
     void subscriptionConditions(Queries queries) {
         queries.subscriptionQueries.each { subscriptionQuery ->
-            def subqueryNode, keyword
-            if (subscriptionQuery.criteria.root.type == CriterionNodeType.Not) {
-                subscriptionQuery.criteria.root = subscriptionQuery.criteria.root.left
+            println subscriptionQuery
+
+            def keyword
+            def root = subscriptionQuery.criteria.root
+            if (root.type == CriterionNodeType.Not) {
+                subscriptionQuery.criteria.root = root.left
                 keyword = SubqueryConditionType.NotExists
             }
             else {
@@ -75,7 +78,7 @@ class SingleQueryRunner implements QueryRunner {
             }
 
             def criterion = new SubqueryCriterion(condition: keyword, subquery: subscriptionQuery)
-            subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
+            def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
 
             def node = new CriterionNode()
             node.type = CriterionNodeType.And
