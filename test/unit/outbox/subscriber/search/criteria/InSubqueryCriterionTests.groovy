@@ -3,18 +3,18 @@ package outbox.subscriber.search.criteria
 /**
  * @author Ruslan Khmelyuk
  */
-class InCriterionTests extends GroovyTestCase {
+class InSubqueryCriterionTests extends GroovyTestCase {
 
     void testFields() {
-        def values = [10, 20, 30]
+        def subquery = 'subquery'
 
-        def criterion = new InListCriterion()
+        def criterion = new InSubqueryCriterion()
         criterion.left = 'Language'
-        criterion.values = values
+        criterion.subquery = subquery
         criterion.not = true
 
         assertEquals 'Language', criterion.left
-        assertEquals  values, criterion.values
+        assertEquals  subquery, criterion.subquery
         assertTrue criterion.not
     }
 }
