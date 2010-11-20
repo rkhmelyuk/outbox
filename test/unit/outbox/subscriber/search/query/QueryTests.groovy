@@ -36,6 +36,14 @@ class QueryTests extends GroovyTestCase {
         assertEquals 'select FirstName, LastName as lastName from Person as p', query.toSelectSQL()
     }
 
+    void testSQL_TableColumn() {
+        assertTrue query.addTableColumn('p', 'FirstName')
+        assertTrue query.addTableColumn('p', 'LastName', 'lastName')
+        assertTrue query.addTable('Person', 'p')
+
+        assertEquals 'select p.FirstName, p.LastName as lastName from Person as p', query.toSelectSQL()
+    }
+
     void testSQL_Count() {
         assertTrue query.addColumn('FirstName')
         assertTrue query.addColumn('LastName', 'lastName')

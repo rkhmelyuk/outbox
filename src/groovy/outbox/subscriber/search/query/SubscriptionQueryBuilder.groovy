@@ -8,7 +8,18 @@ import outbox.subscriber.search.criteria.CriteriaTree
 class SubscriptionQueryBuilder implements QueryBuilder {
 
     Query build(CriteriaTree criteria) {
-        return null
+        if (criteria.empty) {
+            return null
+        }
+
+        def query = new Query()
+
+        query.addColumn 'null'
+        query.addTable 'Subscription', 'SS'
+
+        query.criteria = criteria
+
+        return query
     }
 
 }

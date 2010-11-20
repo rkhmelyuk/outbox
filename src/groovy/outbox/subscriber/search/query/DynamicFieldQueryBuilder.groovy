@@ -18,9 +18,9 @@ class DynamicFieldQueryBuilder implements QueryBuilder {
 
         query.distinct = true
 
-        query.addColumn Columns.SubscriberId
-        query.addTable 'DynamicFieldValue'
-        query.addJoin 'DynamicField', 'DF', 'DF.DynamicFieldId = DynamicFieldValue.DynamicFieldId'
+        query.addTableColumn 'DFV', Columns.SubscriberId
+        query.addTable 'DynamicFieldValue', 'DFV'
+        query.addJoin 'DynamicField', 'DF', 'DF.DynamicFieldId = DFV.DynamicFieldId'
 
         query.criteria = criteria
 

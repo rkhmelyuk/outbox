@@ -14,20 +14,21 @@ class SubscriberQueryBuilder implements QueryBuilder {
 
         query.distinct = true
 
-        query.addColumn Columns.SubscriberId
-        query.addColumn Columns.Email
-        query.addColumn Columns.FirstName
-        query.addColumn Columns.LastName
-        query.addColumn Columns.GenderId
-        query.addColumn Columns.LanguageId
-        query.addColumn Columns.TimezoneId
-        query.addColumn Columns.MemberId
-        query.addColumn Columns.Enabled
-        query.addColumn Columns.NamePrefixId
-        query.addColumn Columns.SubscriberTypeId
-        query.addColumn Columns.CreateDate
+        def subscriberAlias = 'S'
+        query.addTableColumn subscriberAlias, Columns.SubscriberId
+        query.addTableColumn subscriberAlias, Columns.Email
+        query.addTableColumn subscriberAlias, Columns.FirstName
+        query.addTableColumn subscriberAlias, Columns.LastName
+        query.addTableColumn subscriberAlias, Columns.GenderId
+        query.addTableColumn subscriberAlias, Columns.LanguageId
+        query.addTableColumn subscriberAlias, Columns.TimezoneId
+        query.addTableColumn subscriberAlias, Columns.MemberId
+        query.addTableColumn subscriberAlias, Columns.Enabled
+        query.addTableColumn subscriberAlias, Columns.NamePrefixId
+        query.addTableColumn subscriberAlias, Columns.SubscriberTypeId
+        query.addTableColumn subscriberAlias, Columns.CreateDate
 
-        query.addTable 'Subscriber'
+        query.addTable 'Subscriber', subscriberAlias
 
         query.criteria = criteria
 

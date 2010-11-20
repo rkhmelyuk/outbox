@@ -257,11 +257,11 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
         assertTrue subscriptionListService.addSubscription(subscription22)
 
         def conditions = new Conditions()
-        conditions.and(SubscriptionCondition.subscribed([sl1]))
-        conditions.and(SubscriptionCondition.notSubscribed([sl2]))
+        conditions.and(SubscriptionCondition.subscribed([sl1.id]))
+        conditions.and(SubscriptionCondition.notSubscribed([sl2.id]))
 
         def subscribers = subscriberSearchService.search(conditions)
-
+        println subscribers.list
         assertNotNull subscribers
         assertEquals 1, subscribers.total
         assertTrue subscribers.list.contains(subscriber1)

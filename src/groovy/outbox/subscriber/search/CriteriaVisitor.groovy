@@ -1,6 +1,7 @@
 package outbox.subscriber.search
 
 import outbox.subscriber.field.DynamicFieldType
+import outbox.subscription.SubscriptionStatus
 import outbox.subscriber.search.condition.*
 import outbox.subscriber.search.criteria.*
 
@@ -37,9 +38,43 @@ class CriteriaVisitor implements ConditionVisitor {
     }
 
     void visitSubscriptionCondition(SubscriptionCondition condition) {
-        // exists (select null from Subscriber as s where s.SubscriptionListId = 10 and s.SubscriberId = SubscriberId and s.status = Active)
-        // not exists (select null from Subscriber as s where s.SubscriptionListId = 20 and s.SubscriberId = xxx and s.Status = Active)
+        def subscriberCriterion = new ComparisonCriterion()
+        subscriberCriterion.left = 'SS.SubscriberId'
+        subscriberCriterion.right = new Column('S', Columns.SubscriberId)
+        subscriberCriterion.comparisonOp = ' = '
 
+        def statusCriterion = new ComparisonCriterion()
+        statusCriterion.left = 'SS.SubscriptionStatusId'
+        statusCriterion.right = SubscriptionStatus.subscribed().id
+        statusCriterion.comparisonOp = ' = '
+
+        def node = new CriterionNode()
+        node.type = CriterionNodeType.And
+        node.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: subscriberCriterion)
+        node.right = new CriterionNode(type: CriterionNodeType.Criterion, criterion: statusCriterion)
+
+        condition.subscriptionListIds.each {
+            def idCriterion = new ComparisonCriterion()
+            idCriterion.left = 'SS.SubscriptionListId'
+            idCriterion.right = it
+            idCriterion.comparisonOp = ' = '
+
+            def criterionNode = new CriterionNode()
+            criterionNode.right = node
+            criterionNode.type = CriterionNodeType.And
+            criterionNode.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: idCriterion)
+
+            if (!condition.subscribedTo) {
+                def notNode = new CriterionNode()
+                notNode.type = CriterionNodeType.Not
+                notNode.left = criterionNode
+                criterionNode = notNode
+            }
+
+            def tree = new CriteriaTree()
+            tree.addNode(criterionNode)
+            subscriptionTrees << tree
+        }
     }
 
     String comparisonOperation(ValueConditionType type) {

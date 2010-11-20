@@ -1,6 +1,7 @@
 package outbox.subscriber.search.query
 
 import java.text.DecimalFormat
+import outbox.subscriber.search.Column
 import outbox.subscriber.search.Order
 import outbox.subscriber.search.criteria.*
 
@@ -26,6 +27,17 @@ class Query {
     boolean addColumn(String column, String alias = null) {
         if (column) {
             def value = column
+            if (alias) {
+                value += " as $alias"
+            }
+            return columns.add(value)
+        }
+        return false
+    }
+
+    boolean addTableColumn(String table, String column, String alias = null) {
+        if (column) {
+            def value = table + '.' + column
             if (alias) {
                 value += " as $alias"
             }
@@ -159,6 +171,9 @@ class Query {
                 else if (criterion instanceof InListCriterion) {
                     builder << inListCriterionSQL(criterion)
                 }
+                else if (criterion instanceof SubqueryCriterion) {
+                    builder << subqueryCriterionSQL(criterion)
+                }
             }
             else {
                 def parens = node.left && node.right
@@ -166,6 +181,9 @@ class Query {
                     builder << '('
                 }
                 if (node.left) {
+                    if (node.type == CriterionNodeType.Not) {
+                        builder << ' not '
+                    }
                     buildCriteria(builder, node.left)
                 }
                 if (node.right) {
@@ -185,8 +203,8 @@ class Query {
     }
 
     String comparisonCriterionSQL(ComparisonCriterion criterion) {
-        def value = prepareValue(criterion.right)
-        "$criterion.left$criterion.comparisonOp$value"
+        def rightValue = prepareValue(criterion.right)
+        "$criterion.left$criterion.comparisonOp$rightValue"
     }
 
     String inSubqueryCriterionSQL(InSubqueryCriterion criterion) {
@@ -206,6 +224,11 @@ class Query {
         "$criterion.left$op($list)"
     }
 
+    String subqueryCriterionSQL(SubqueryCriterion criterion) {
+        def subquery = criterion.subquery.toSelectSQL()
+        " $criterion.condition.keyword ($subquery) "
+    }
+
     private String prepareValue(Serializable value) {
         if (value instanceof String) {
             value = value.replaceAll(/\\?'/, "''")
@@ -213,6 +236,9 @@ class Query {
         }
         else if (value instanceof BigDecimal) {
             value = new DecimalFormat('#############.#####').format(value)
+        }
+        else if (value instanceof Column) {
+            value = value.toSQL()
         }
         else if (value == null) {
             value = ' NULL '
