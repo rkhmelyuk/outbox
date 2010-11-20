@@ -7,6 +7,8 @@ import outbox.subscriber.Subscriber
 import outbox.subscriber.search.Columns
 import outbox.subscriber.search.Subscribers
 import outbox.subscriber.search.query.Queries
+import outbox.subscriber.search.sql.CountSqlQueryBuilder
+import outbox.subscriber.search.sql.SelectSqlQueryBuilder
 import outbox.subscriber.search.criteria.*
 
 /**
@@ -20,6 +22,9 @@ class SingleQueryRunner implements QueryRunner {
 
     SessionFactory sessionFactory
 
+    def countQueryBuilder = new CountSqlQueryBuilder()
+    def selectQueryBuilder = new SelectSqlQueryBuilder()
+
     Subscribers run(Queries queries) {
 
         final def subscribers = new Subscribers()
@@ -31,13 +36,12 @@ class SingleQueryRunner implements QueryRunner {
 
         def session = sessionFactory.currentSession
 
-        def countSql = subscriberQuery.toCountSQL()
+        def countSql = countQueryBuilder.build(subscriberQuery)
         def countQuery = session.createSQLQuery(countSql)
         countQuery.addScalar('RowCount', Hibernate.LONG)
         subscribers.total = countQuery.uniqueResult()
 
-        def selectSql = subscriberQuery.toSelectSQL()
-        println selectSql
+        def selectSql = selectQueryBuilder.build(subscriberQuery)
         def selectQuery = session.createSQLQuery(selectSql)
         if (subscriberQuery.page && subscriberQuery.perPage) {
             selectQuery.firstResult = (subscriberQuery.page - 1) * subscriberQuery.perPage
@@ -51,7 +55,7 @@ class SingleQueryRunner implements QueryRunner {
 
     void dynamicFieldConditions(Queries queries) {
         queries.dynamicFieldQueries.each { dynamicFieldQuery ->
-            def subquery = dynamicFieldQuery.toSelectSQL()
+            def subquery = selectQueryBuilder.build(dynamicFieldQuery)
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
                     criterion: new InSubqueryCriterion(left: Columns.SubscriberId, subquery: subquery))
 
