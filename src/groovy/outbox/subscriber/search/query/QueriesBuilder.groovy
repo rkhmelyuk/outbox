@@ -19,6 +19,7 @@ class QueriesBuilder {
 
         queries.subscriptionQueries = criteria.subscriptionTrees.collect { subscriptionQueryBuilder.build(it)}
         queries.dynamicFieldQueries = criteria.dynamicFieldTrees.collect { dynamicFieldQueryBuilder.build(it)}
+
         queries.subscriberFieldQuery = subscriberFieldQueryBuilder.build(criteria.subscriberFieldTree)
         queries.subscriberFieldQuery.page = conditions.page
         queries.subscriberFieldQuery.perPage = conditions.perPage

@@ -16,13 +16,14 @@ class CriteriaVisitor implements ConditionVisitor {
     List<CriteriaTree> subscriptionTrees = []
 
     void visitSubscriberFieldCondition(SubscriberFieldCondition condition) {
-        def criterionNode = builderFieldsCriterionNode(condition, new Column('S', condition.field))
+        def criterionNode = builderFieldsCriterionNode(condition,
+                new Column(Names.SubscriberAlias, condition.field))
         subscriberFieldTree.addNode(makeNode(condition, criterionNode))
     }
 
     void visitDynamicFieldCondition(DynamicFieldCondition condition) {
         def idCriterion = new ComparisonCriterion()
-        idCriterion.left = new Column('DF', 'DynamicFieldId')
+        idCriterion.left = new Column(Names.DynamicFieldAlias, Names.DynamicFieldId)
         idCriterion.right = condition.field.id
         idCriterion.comparisonOp = ' = '
 
@@ -31,7 +32,8 @@ class CriteriaVisitor implements ConditionVisitor {
         def criterionNode = new CriterionNode()
         criterionNode.type = CriterionNodeType.And
         criterionNode.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: idCriterion)
-        criterionNode.right = builderFieldsCriterionNode(condition, new Column('DFV', column))
+        criterionNode.right = builderFieldsCriterionNode(condition,
+                new Column(Names.DynamicFieldValueAlias, column))
 
         def dynamicFieldTree = new CriteriaTree()
         dynamicFieldTree.addNode(makeNode(condition, criterionNode))
@@ -40,12 +42,12 @@ class CriteriaVisitor implements ConditionVisitor {
 
     void visitSubscriptionCondition(SubscriptionCondition condition) {
         def subscriberCriterion = new ComparisonCriterion()
-        subscriberCriterion.left = new Column('SS', 'SubscriberId')
-        subscriberCriterion.right = new Column('S', Columns.SubscriberId)
+        subscriberCriterion.left = new Column(Names.SubscriptionAlias, Names.SubscriberId)
+        subscriberCriterion.right = new Column(Names.SubscriberAlias, Names.SubscriberId)
         subscriberCriterion.comparisonOp = ' = '
 
         def statusCriterion = new ComparisonCriterion()
-        statusCriterion.left = new Column('SS', 'SubscriptionStatusId')
+        statusCriterion.left = new Column(Names.SubscriptionAlias, Names.SubscriptionStatusId)
         statusCriterion.right = SubscriptionStatus.subscribed().id
         statusCriterion.comparisonOp = ' = '
 
@@ -56,7 +58,7 @@ class CriteriaVisitor implements ConditionVisitor {
 
         condition.subscriptionListIds.each {
             def idCriterion = new ComparisonCriterion()
-            idCriterion.left = new Column('SS', 'SubscriptionListId')
+            idCriterion.left = new Column(Names.SubscriptionAlias, Names.SubscriptionListId)
             idCriterion.right = it
             idCriterion.comparisonOp = ' = '
 
@@ -130,16 +132,16 @@ class CriteriaVisitor implements ConditionVisitor {
     String getDynamicFieldColumn(DynamicFieldCondition condition) {
         def fieldType = condition.field.type
         if (fieldType == DynamicFieldType.String) {
-            return Columns.StringValue
+            return Names.StringValue
         }
         else if (fieldType == DynamicFieldType.Number) {
-            return Columns.NumberValue
+            return Names.NumberValue
         }
         else if (fieldType == DynamicFieldType.Boolean) {
-            return Columns.BooleanValue
+            return Names.BooleanValue
         }
         else if (fieldType == DynamicFieldType.SingleSelect) {
-            return Columns.DynamicFieldItemId
+            return Names.DynamicFieldItemId
         }
         return null
     }

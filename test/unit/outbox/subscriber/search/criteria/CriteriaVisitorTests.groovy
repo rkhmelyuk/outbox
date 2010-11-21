@@ -2,8 +2,8 @@ package outbox.subscriber.search.criteria
 
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldType
-import outbox.subscriber.search.Columns
 import outbox.subscriber.search.CriteriaVisitor
+import outbox.subscriber.search.Names
 import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.condition.*
 
@@ -55,7 +55,7 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals ' = ', criterion.comparisonOp
 
         criterion = left.right.criterion
-        assertEquals 'DFV.' + Columns.StringValue, criterion.left.toSQL()
+        assertEquals 'DFV.' + Names.StringValue, criterion.left.toSQL()
         assertEquals 'John', criterion.right
         assertEquals ' = ', criterion.comparisonOp
     }
@@ -80,7 +80,7 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals ' = ', criterion.comparisonOp
 
         criterion = left.right.criterion
-        assertEquals 'DFV.' + Columns.NumberValue, criterion.left.toSQL()
+        assertEquals 'DFV.' + Names.NumberValue, criterion.left.toSQL()
         assertEquals 20, criterion.right
         assertEquals ' = ', criterion.comparisonOp
     }
@@ -105,7 +105,7 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals ' = ', criterion.comparisonOp
 
         criterion = left.right.criterion
-        assertEquals 'DFV.' + Columns.BooleanValue, criterion.left.toSQL()
+        assertEquals 'DFV.' + Names.BooleanValue, criterion.left.toSQL()
         assertEquals false, criterion.right
         assertEquals ' = ', criterion.comparisonOp
     }
@@ -130,7 +130,7 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals ' = ', criterion.comparisonOp
 
         criterion = left.right.criterion
-        assertEquals 'DFV.' + Columns.DynamicFieldItemId, criterion.left.toSQL()
+        assertEquals 'DFV.' + Names.DynamicFieldItemId, criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
     }
@@ -159,16 +159,16 @@ class CriteriaVisitorTests extends GroovyTestCase {
 
     void testGetDynamicFieldColumn() {
         def condition = new DynamicFieldCondition(new DynamicField(type: DynamicFieldType.String), null)
-        assertEquals Columns.StringValue, visitor.getDynamicFieldColumn(condition)
+        assertEquals Names.StringValue, visitor.getDynamicFieldColumn(condition)
 
         condition = new DynamicFieldCondition(new DynamicField(type: DynamicFieldType.Number), null)
-        assertEquals Columns.NumberValue, visitor.getDynamicFieldColumn(condition)
+        assertEquals Names.NumberValue, visitor.getDynamicFieldColumn(condition)
 
         condition = new DynamicFieldCondition(new DynamicField(type: DynamicFieldType.Boolean), null)
-        assertEquals Columns.BooleanValue, visitor.getDynamicFieldColumn(condition)
+        assertEquals Names.BooleanValue, visitor.getDynamicFieldColumn(condition)
 
         condition = new DynamicFieldCondition(new DynamicField(type: DynamicFieldType.SingleSelect), null)
-        assertEquals Columns.DynamicFieldItemId, visitor.getDynamicFieldColumn(condition)
+        assertEquals Names.DynamicFieldItemId, visitor.getDynamicFieldColumn(condition)
     }
 
     void testEmptyNode() {

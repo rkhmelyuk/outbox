@@ -7,10 +7,22 @@ package outbox.subscriber.search
  */
 public interface Names {
 
+    // -----------------------------------------------------------------
+    // Table Names and Aliases
+
     String SubscriberTable = 'Subscriber'
     String SubscriberAlias = 'S'
     String SubscriptionTable = 'Subscription'
     String SubscriptionAlias = 'SS'
+
+    String DynamicFieldTable = 'DynamicField'
+    String DynamicFieldAlias = 'DF'
+    String DynamicFieldValueTable = 'DynamicFieldValue'
+    String DynamicFieldValueAlias = 'DFV'
+
+
+    // -----------------------------------------------------------------
+    // Column Names
 
     String SubscriberId = 'SubscriberId'
     String FirstName = 'FirstName'
@@ -25,10 +37,14 @@ public interface Names {
     String SubscriberTypeId = 'SubscriberTypeId'
     String Email = 'Email'
 
+    String SubscriptionListId = 'SubscriptionListId'
+    String SubscriptionStatusId = 'SubscriptionStatusId'
 
     String StringValue = 'StringValue'
     String NumberValue = 'NumberValue'
     String BooleanValue = 'BooleanValue'
+
+    String DynamicFieldId = 'DynamicFieldId'
     String DynamicFieldItemId = 'DynamicFieldItemId'
 
     String RowCount = 'RowCount'

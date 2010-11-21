@@ -1,6 +1,6 @@
 package outbox.subscriber.search.query
 
-import outbox.subscriber.search.Columns
+import outbox.subscriber.search.Names
 import outbox.subscriber.search.criteria.CriteriaTree
 import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.query.elems.Table
@@ -16,22 +16,22 @@ class SubscriberQueryBuilder implements QueryBuilder {
 
         query.distinct = true
 
-        def subscriberTable = new Table('Subscriber', 'S')
+        def subscriberTable = new Table(Names.SubscriberTable, Names.SubscriberAlias)
 
         query.addTable subscriberTable
 
-        query.addColumn new Column(subscriberTable, Columns.SubscriberId)
-        query.addColumn new Column(subscriberTable, Columns.Email)
-        query.addColumn new Column(subscriberTable, Columns.FirstName)
-        query.addColumn new Column(subscriberTable, Columns.LastName)
-        query.addColumn new Column(subscriberTable, Columns.GenderId)
-        query.addColumn new Column(subscriberTable, Columns.LanguageId)
-        query.addColumn new Column(subscriberTable, Columns.TimezoneId)
-        query.addColumn new Column(subscriberTable, Columns.MemberId)
-        query.addColumn new Column(subscriberTable, Columns.Enabled)
-        query.addColumn new Column(subscriberTable, Columns.NamePrefixId)
-        query.addColumn new Column(subscriberTable, Columns.SubscriberTypeId)
-        query.addColumn new Column(subscriberTable, Columns.CreateDate)
+        query.addColumn new Column(subscriberTable, Names.SubscriberId)
+        query.addColumn new Column(subscriberTable, Names.Email)
+        query.addColumn new Column(subscriberTable, Names.FirstName)
+        query.addColumn new Column(subscriberTable, Names.LastName)
+        query.addColumn new Column(subscriberTable, Names.GenderId)
+        query.addColumn new Column(subscriberTable, Names.LanguageId)
+        query.addColumn new Column(subscriberTable, Names.TimezoneId)
+        query.addColumn new Column(subscriberTable, Names.MemberId)
+        query.addColumn new Column(subscriberTable, Names.Enabled)
+        query.addColumn new Column(subscriberTable, Names.NamePrefixId)
+        query.addColumn new Column(subscriberTable, Names.SubscriberTypeId)
+        query.addColumn new Column(subscriberTable, Names.CreateDate)
 
         query.criteria = criteria
 

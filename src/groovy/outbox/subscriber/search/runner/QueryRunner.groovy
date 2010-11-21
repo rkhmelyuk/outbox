@@ -4,6 +4,9 @@ import outbox.subscriber.search.Subscribers
 import outbox.subscriber.search.query.Queries
 
 /**
+ * The query runner interface.
+ * There will be used one of few query runners in depend on conditions.
+ *
  * @author Ruslan Khmelyuk
  */
 interface QueryRunner {

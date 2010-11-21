@@ -4,7 +4,7 @@ import org.apache.log4j.Logger
 import org.hibernate.Hibernate
 import org.hibernate.SessionFactory
 import outbox.subscriber.Subscriber
-import outbox.subscriber.search.Columns
+import outbox.subscriber.search.Names
 import outbox.subscriber.search.Subscribers
 import outbox.subscriber.search.query.Queries
 import outbox.subscriber.search.query.elems.Column
@@ -39,7 +39,7 @@ class SingleQueryRunner implements QueryRunner {
 
         def countSql = countQueryBuilder.build(subscriberQuery)
         def countQuery = session.createSQLQuery(countSql)
-        countQuery.addScalar(Columns.RowCount, Hibernate.LONG)
+        countQuery.addScalar(Names.RowCount, Hibernate.LONG)
         subscribers.total = countQuery.uniqueResult()
 
         def selectSql = selectQueryBuilder.build(subscriberQuery)
@@ -59,7 +59,7 @@ class SingleQueryRunner implements QueryRunner {
             def subquery = selectQueryBuilder.build(dynamicFieldQuery)
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
                     criterion: new InSubqueryCriterion(
-                            left: new Column('S', Columns.SubscriberId),
+                            left: new Column(Names.SubscriberAlias, Names.SubscriberId),
                             subquery: subquery))
 
             def node = new CriterionNode()

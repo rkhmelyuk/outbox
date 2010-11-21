@@ -1,6 +1,7 @@
 package outbox.subscriber.field
 
 import outbox.member.Member
+import outbox.subscriber.search.Names
 
 /**
  * The information about dynamic field.
@@ -25,7 +26,7 @@ class DynamicField implements Comparable<DynamicField> {
     Integer maxlength
 
     static mapping = {
-        table 'DynamicField'
+        table Names.DynamicFieldTable
 
         id column: 'DynamicFieldId'
         owner column: 'MemberId'

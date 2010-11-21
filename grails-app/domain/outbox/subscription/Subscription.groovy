@@ -1,6 +1,7 @@
 package outbox.subscription
 
 import outbox.subscriber.Subscriber
+import outbox.subscriber.search.Names
 
 /**
  * The relationship between Subscriber and SubscriptionList.
@@ -17,7 +18,7 @@ class Subscription {
     Date dateCreated
 
     static mapping = {
-        table 'Subscription'
+        table Names.SubscriptionTable
         id column: 'SubscriptionId'
         columns {
             subscriber column: 'SubscriberId'
