@@ -5,7 +5,7 @@ package outbox.subscriber.search.criteria
  */
 class InSubqueryCriterion implements Criterion {
 
-    String left
+    def left
     String subquery
     boolean not
 }

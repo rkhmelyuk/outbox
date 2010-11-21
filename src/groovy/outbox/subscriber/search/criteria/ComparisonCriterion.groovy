@@ -7,8 +7,8 @@ package outbox.subscriber.search.criteria
  */
 class ComparisonCriterion implements Criterion {
 
-    String left
-    String comparisonOp
+    def left
     def right
+    String comparisonOp
 
 }

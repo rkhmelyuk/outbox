@@ -56,13 +56,15 @@ abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
     }
 
     String comparisonCriterionSQL(ComparisonCriterion criterion) {
+        def leftValue = prepareValue(criterion.left)
         def rightValue = prepareValue(criterion.right)
-        "$criterion.left$criterion.comparisonOp$rightValue"
+        "$leftValue$criterion.comparisonOp$rightValue"
     }
 
     String inSubqueryCriterionSQL(InSubqueryCriterion criterion) {
         def op = criterion.not ? ' not in ' : ' in '
-        "$criterion.left$op($criterion.subquery)"
+        def leftValue = prepareValue(criterion.left)
+        "$leftValue$op($criterion.subquery)"
     }
 
     String inListCriterionSQL(InListCriterion criterion) {
@@ -74,7 +76,8 @@ abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
             }
             list += prepareValue(value)
         }
-        "$criterion.left$op($list)"
+        def leftValue = prepareValue(criterion.left)
+        "$leftValue$op($list)"
     }
 
     String subqueryCriterionSQL(SubqueryCriterion criterion) {

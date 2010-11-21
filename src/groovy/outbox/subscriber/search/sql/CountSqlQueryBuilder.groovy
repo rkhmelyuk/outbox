@@ -1,5 +1,6 @@
 package outbox.subscriber.search.sql
 
+import outbox.subscriber.search.Columns
 import outbox.subscriber.search.query.Query
 
 /**
@@ -17,7 +18,7 @@ class CountSqlQueryBuilder extends BaseSqlQueryBuilder {
             builder << 'distinct '
         }
 
-        builder << 'count(*) as RowCount'
+        builder << 'count(*) as ' + Columns.RowCount
 
         builder << ' from '
         query.tables.eachWithIndex { table, index ->

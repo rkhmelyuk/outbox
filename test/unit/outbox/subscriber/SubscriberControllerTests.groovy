@@ -683,8 +683,6 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.params.name = 'Software Developer'
         controller.addSubscriberType()
 
-        println mockResponse.contentAsString
-
         def result = JSON.parse(mockResponse.contentAsString)
 
         assertTrue result.error
@@ -833,8 +831,6 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.params[EditDynamicFieldsFormBuilder.DYNAMIC_FIELD_PREFIX + 'bool2'] = 'true'
 
         def result = controller.validateDynamicFieldValues(subscriber, new DynamicFieldValues(fields, []))
-
-        println subscriber.errors
 
         assertFalse result
         assertEquals 6, subscriber.errors.errorCount

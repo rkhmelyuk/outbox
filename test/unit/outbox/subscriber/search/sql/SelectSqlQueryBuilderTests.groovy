@@ -77,8 +77,8 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
     }
 
     void testSQL_Conditions() {
-        def criterion1 = new ComparisonCriterion(left: 'FirstName', right: 'John\'', comparisonOp: ' = ')
-        def criterion2 = new ComparisonCriterion(left: 'LastName', right: 'Doe', comparisonOp: ' <> ')
+        def criterion1 = new ComparisonCriterion(left: new Column('', 'FirstName'), right: 'John\'', comparisonOp: ' = ')
+        def criterion2 = new ComparisonCriterion(left: new Column('', 'LastName'), right: 'Doe', comparisonOp: ' <> ')
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion1)
         def leftNode2 = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion2)
         def rightNode = new CriterionNode(type: CriterionNodeType.And, left: leftNode2)
@@ -93,7 +93,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
     }
 
     void testSQL_Injection1() {
-        def criterion = new ComparisonCriterion(left: 'FirstName', right: "Join'", comparisonOp: ' = ')
+        def criterion = new ComparisonCriterion(left: new Column('', 'FirstName'), right: "Join'", comparisonOp: ' = ')
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
         def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
         def table = new Table('Person', 'p')
@@ -106,7 +106,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
     }
 
     void testSQL_Injection2() {
-        def criterion = new ComparisonCriterion(left: 'FirstName', right: "Join\'", comparisonOp: ' = ')
+        def criterion = new ComparisonCriterion(left: new Column('', 'FirstName'), right: "Join\'", comparisonOp: ' = ')
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
         def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
         def table = new Table('Person', 'p')
@@ -119,7 +119,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
     }
 
     void testSQL_Injection3() {
-        def criterion = new ComparisonCriterion(left: 'FirstName', right: "Join\''", comparisonOp: ' = ')
+        def criterion = new ComparisonCriterion(left: new Column('', 'FirstName'), right: "Join\''", comparisonOp: ' = ')
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
         def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
         def table = new Table('Person', 'p')
@@ -132,7 +132,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
     }
 
     void testSQL_Number() {
-        def criterion = new ComparisonCriterion(left: 'FirstName', right: 234334, comparisonOp: ' = ')
+        def criterion = new ComparisonCriterion(left: new Column('', 'FirstName'), right: 234334, comparisonOp: ' = ')
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
         def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
         def table = new Table('Person', 'p')
@@ -145,7 +145,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
     }
 
     void testSQL_Long() {
-        def criterion = new ComparisonCriterion(left: 'FirstName', right: 234334l, comparisonOp: ' = ')
+        def criterion = new ComparisonCriterion(left: new Column('', 'FirstName'), right: 234334l, comparisonOp: ' = ')
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
         def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
         def table = new Table('Person', 'p')
@@ -158,7 +158,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
     }
 
     void testSQL_BigDecimal() {
-        def criterion = new ComparisonCriterion(left: 'FirstName', right: new BigDecimal(2343.34), comparisonOp: ' = ')
+        def criterion = new ComparisonCriterion(left: new Column('', 'FirstName'), right: new BigDecimal(2343.34), comparisonOp: ' = ')
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
         def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
         def table = new Table('Person', 'p')
@@ -171,7 +171,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
     }
 
     void testSQL_Subquery() {
-        def criterion = new InSubqueryCriterion(left: 'FirstName', subquery: 'subquery', not: false)
+        def criterion = new InSubqueryCriterion(left: new Column('', 'FirstName'), subquery: 'subquery', not: false)
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
         def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode)
         def table = new Table('Person', 'p')

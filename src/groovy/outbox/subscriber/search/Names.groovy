@@ -5,7 +5,12 @@ package outbox.subscriber.search
  * 
  * @author Ruslan Khmelyuk
  */
-public interface Columns {
+public interface Names {
+
+    String SubscriberTable = 'Subscriber'
+    String SubscriberAlias = 'S'
+    String SubscriptionTable = 'Subscription'
+    String SubscriptionAlias = 'SS'
 
     String SubscriberId = 'SubscriberId'
     String FirstName = 'FirstName'

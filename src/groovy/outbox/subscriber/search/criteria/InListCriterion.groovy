@@ -5,7 +5,7 @@ package outbox.subscriber.search.criteria
  */
 class InListCriterion implements Criterion {
 
-    String left
+    def left
     List values
     boolean not
 

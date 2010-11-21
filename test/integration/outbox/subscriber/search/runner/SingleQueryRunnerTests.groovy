@@ -5,6 +5,7 @@ import outbox.subscriber.Subscriber
 import outbox.subscriber.SubscriberService
 import outbox.subscriber.search.Conditions
 import outbox.subscriber.search.CriteriaVisitor
+import outbox.subscriber.search.Sort
 import outbox.subscriber.search.condition.SubscriberFieldCondition
 import outbox.subscriber.search.condition.SubscriptionCondition
 import outbox.subscriber.search.condition.ValueCondition
@@ -78,6 +79,7 @@ class SingleQueryRunnerTests extends GroovyTestCase {
         conditions.perPage = 1
         conditions.page = 2
         conditions.and(new SubscriberFieldCondition('FirstName', ValueCondition.equal('John')))
+        conditions.orderBy('SubscriberId', Sort.Desc)
         def visitor = new CriteriaVisitor()
         conditions.visit(visitor)
 
@@ -88,6 +90,7 @@ class SingleQueryRunnerTests extends GroovyTestCase {
 
         assertNotNull subscribers
         assertEquals 2, subscribers.total
+        assertEquals 1, subscribers.list.size()
         assertTrue subscribers.list.contains(subscriber2)
     }
 

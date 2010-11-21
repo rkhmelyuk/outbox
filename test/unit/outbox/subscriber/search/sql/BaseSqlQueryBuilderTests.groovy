@@ -33,7 +33,7 @@ class BaseSqlQueryBuilderTests extends GroovyTestCase {
 
     void testComparisonCriterionSQL() {
         def criterion = new ComparisonCriterion()
-        criterion.left = 'left'
+        criterion.left = new Column((String) null, 'left')
         criterion.right = 'right'
         criterion.comparisonOp = '='
 
@@ -45,7 +45,7 @@ class BaseSqlQueryBuilderTests extends GroovyTestCase {
 
     void testInSubqueryCriterionSQL() {
         def criterion = new InSubqueryCriterion()
-        criterion.left = 'left'
+        criterion.left = new Column((String) null, 'left')
         criterion.subquery = 'subquery'
         criterion.not = false
 
@@ -57,7 +57,7 @@ class BaseSqlQueryBuilderTests extends GroovyTestCase {
 
     void testNotInSubqueryCriterionSQL() {
         def criterion = new InSubqueryCriterion()
-        criterion.left = 'left'
+        criterion.left = new Column((String) null, 'left')
         criterion.subquery = 'subquery'
         criterion.not = true
 
@@ -69,7 +69,7 @@ class BaseSqlQueryBuilderTests extends GroovyTestCase {
 
     void testInListCriterionSQL() {
         def criterion = new InListCriterion()
-        criterion.left = 'left'
+        criterion.left = new Column((String) null, 'left')
         criterion.values = [10, 20, 30]
         criterion.not = false
 
@@ -81,7 +81,7 @@ class BaseSqlQueryBuilderTests extends GroovyTestCase {
 
     void testNotInListCriterionSQL() {
         def criterion = new InListCriterion()
-        criterion.left = 'left'
+        criterion.left = new Column((String) null, 'left')
         criterion.values = ['10', '20', '30']
         criterion.not = true
 

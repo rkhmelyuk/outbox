@@ -4,6 +4,7 @@ import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.search.Columns
 import outbox.subscriber.search.CriteriaVisitor
+import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.condition.*
 
 /**
@@ -29,7 +30,7 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals CriterionNodeType.And, node.type
 
         def criterion = node.left.criterion
-        assertEquals 'FirstName', criterion.left
+        assertEquals 'S.FirstName', criterion.left.toSQL()
         assertEquals 'John', criterion.right
         assertEquals ' = ', criterion.comparisonOp
     }
@@ -49,12 +50,12 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals CriterionNodeType.And, left.type
 
         def criterion = left.left.criterion
-        assertEquals 'DF.DynamicFieldId', criterion.left
+        assertEquals 'DF.DynamicFieldId', criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
 
         criterion = left.right.criterion
-        assertEquals Columns.StringValue, criterion.left
+        assertEquals 'DFV.' + Columns.StringValue, criterion.left.toSQL()
         assertEquals 'John', criterion.right
         assertEquals ' = ', criterion.comparisonOp
     }
@@ -74,12 +75,12 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals CriterionNodeType.And, left.type
 
         def criterion = left.left.criterion
-        assertEquals 'DF.DynamicFieldId', criterion.left
+        assertEquals 'DF.DynamicFieldId', criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
 
         criterion = left.right.criterion
-        assertEquals Columns.NumberValue, criterion.left
+        assertEquals 'DFV.' + Columns.NumberValue, criterion.left.toSQL()
         assertEquals 20, criterion.right
         assertEquals ' = ', criterion.comparisonOp
     }
@@ -99,12 +100,12 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals CriterionNodeType.And, left.type
 
         def criterion = left.left.criterion
-        assertEquals 'DF.DynamicFieldId', criterion.left
+        assertEquals 'DF.DynamicFieldId', criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
 
         criterion = left.right.criterion
-        assertEquals Columns.BooleanValue, criterion.left
+        assertEquals 'DFV.' + Columns.BooleanValue, criterion.left.toSQL()
         assertEquals false, criterion.right
         assertEquals ' = ', criterion.comparisonOp
     }
@@ -124,12 +125,12 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals CriterionNodeType.And, left.type
 
         def criterion = left.left.criterion
-        assertEquals 'DF.DynamicFieldId', criterion.left
+        assertEquals 'DF.DynamicFieldId', criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
 
         criterion = left.right.criterion
-        assertEquals Columns.DynamicFieldItemId, criterion.left
+        assertEquals 'DFV.' + Columns.DynamicFieldItemId, criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
     }
@@ -173,7 +174,8 @@ class CriteriaVisitorTests extends GroovyTestCase {
     void testEmptyNode() {
         def condition = new SubscriberFieldCondition('FirstName', ValueCondition.empty())
 
-        def node = visitor.emptyNode(condition, 'FirstName')
+        def column = new Column('S', 'FirstName')
+        def node = visitor.emptyNode(condition, column)
 
         assertNotNull node
         assertEquals CriterionNodeType.Or, node.type
@@ -181,14 +183,14 @@ class CriteriaVisitorTests extends GroovyTestCase {
         def left = node.left
         assertNotNull left
         assertEquals CriterionNodeType.Criterion, left.type
-        assertEquals 'FirstName', left.criterion.left
+        assertEquals column, left.criterion.left
         assertEquals ' is ', left.criterion.comparisonOp
         assertNull left.criterion.right
 
         def right = node.right
         assertNotNull right
         assertEquals CriterionNodeType.Criterion, right.type
-        assertEquals 'FirstName', right.criterion.left
+        assertEquals column, right.criterion.left
         assertEquals ' = ', right.criterion.comparisonOp
         assertEquals '', right.criterion.right
     }
@@ -196,7 +198,8 @@ class CriteriaVisitorTests extends GroovyTestCase {
     void testFilledNode() {
         def condition = new SubscriberFieldCondition('FirstName', ValueCondition.empty())
 
-        def node = visitor.filledNode(condition, 'FirstName')
+        def column = new Column('S', 'FirstName')
+        def node = visitor.filledNode(condition, column)
 
         assertNotNull node
         assertEquals CriterionNodeType.And, node.type
@@ -204,14 +207,14 @@ class CriteriaVisitorTests extends GroovyTestCase {
         def left = node.left
         assertNotNull left
         assertEquals CriterionNodeType.Criterion, left.type
-        assertEquals 'FirstName', left.criterion.left
+        assertEquals column, left.criterion.left
         assertEquals ' is not ', left.criterion.comparisonOp
         assertNull left.criterion.right
 
         def right = node.right
         assertNotNull right
         assertEquals CriterionNodeType.Criterion, right.type
-        assertEquals 'FirstName', right.criterion.left
+        assertEquals column, right.criterion.left
         assertEquals ' <> ', right.criterion.comparisonOp
         assertEquals '', right.criterion.right
     }
@@ -240,11 +243,12 @@ class CriteriaVisitorTests extends GroovyTestCase {
 
     void testComparisonNode() {
         def condition = new SubscriberFieldCondition('Age', ValueCondition.equal(23))
-        def node = visitor.comparisonNode(condition, 'Age')
+        def column = new Column('S', 'Age')
+        def node = visitor.comparisonNode(condition, column)
 
         assertNotNull node
         assertEquals CriterionNodeType.Criterion, node.type
-        assertEquals 'Age', node.criterion.left
+        assertEquals column, node.criterion.left
         assertEquals ' = ', node.criterion.comparisonOp
         assertEquals 23, node.criterion.right
     }

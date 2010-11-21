@@ -7,6 +7,7 @@ import outbox.subscriber.Subscriber
 import outbox.subscriber.search.Columns
 import outbox.subscriber.search.Subscribers
 import outbox.subscriber.search.query.Queries
+import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.sql.CountSqlQueryBuilder
 import outbox.subscriber.search.sql.SelectSqlQueryBuilder
 import outbox.subscriber.search.criteria.*
@@ -38,7 +39,7 @@ class SingleQueryRunner implements QueryRunner {
 
         def countSql = countQueryBuilder.build(subscriberQuery)
         def countQuery = session.createSQLQuery(countSql)
-        countQuery.addScalar('RowCount', Hibernate.LONG)
+        countQuery.addScalar(Columns.RowCount, Hibernate.LONG)
         subscribers.total = countQuery.uniqueResult()
 
         def selectSql = selectQueryBuilder.build(subscriberQuery)
@@ -57,7 +58,9 @@ class SingleQueryRunner implements QueryRunner {
         queries.dynamicFieldQueries.each { dynamicFieldQuery ->
             def subquery = selectQueryBuilder.build(dynamicFieldQuery)
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
-                    criterion: new InSubqueryCriterion(left: Columns.SubscriberId, subquery: subquery))
+                    criterion: new InSubqueryCriterion(
+                            left: new Column('S', Columns.SubscriberId),
+                            subquery: subquery))
 
             def node = new CriterionNode()
             node.type = CriterionNodeType.And
@@ -69,8 +72,6 @@ class SingleQueryRunner implements QueryRunner {
 
     void subscriptionConditions(Queries queries) {
         queries.subscriptionQueries.each { subscriptionQuery ->
-            println subscriptionQuery
-
             def keyword
             def root = subscriptionQuery.criteria.root
             if (root.type == CriterionNodeType.Not) {

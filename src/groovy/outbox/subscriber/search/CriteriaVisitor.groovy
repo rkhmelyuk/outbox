@@ -16,13 +16,13 @@ class CriteriaVisitor implements ConditionVisitor {
     List<CriteriaTree> subscriptionTrees = []
 
     void visitSubscriberFieldCondition(SubscriberFieldCondition condition) {
-        def criterionNode = builderFieldsCriterionNode(condition, condition.field)
+        def criterionNode = builderFieldsCriterionNode(condition, new Column('S', condition.field))
         subscriberFieldTree.addNode(makeNode(condition, criterionNode))
     }
 
     void visitDynamicFieldCondition(DynamicFieldCondition condition) {
         def idCriterion = new ComparisonCriterion()
-        idCriterion.left = 'DF.DynamicFieldId'
+        idCriterion.left = new Column('DF', 'DynamicFieldId')
         idCriterion.right = condition.field.id
         idCriterion.comparisonOp = ' = '
 
@@ -31,7 +31,7 @@ class CriteriaVisitor implements ConditionVisitor {
         def criterionNode = new CriterionNode()
         criterionNode.type = CriterionNodeType.And
         criterionNode.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: idCriterion)
-        criterionNode.right = builderFieldsCriterionNode(condition, column)
+        criterionNode.right = builderFieldsCriterionNode(condition, new Column('DFV', column))
 
         def dynamicFieldTree = new CriteriaTree()
         dynamicFieldTree.addNode(makeNode(condition, criterionNode))
@@ -40,12 +40,12 @@ class CriteriaVisitor implements ConditionVisitor {
 
     void visitSubscriptionCondition(SubscriptionCondition condition) {
         def subscriberCriterion = new ComparisonCriterion()
-        subscriberCriterion.left = 'SS.SubscriberId'
+        subscriberCriterion.left = new Column('SS', 'SubscriberId')
         subscriberCriterion.right = new Column('S', Columns.SubscriberId)
         subscriberCriterion.comparisonOp = ' = '
 
         def statusCriterion = new ComparisonCriterion()
-        statusCriterion.left = 'SS.SubscriptionStatusId'
+        statusCriterion.left = new Column('SS', 'SubscriptionStatusId')
         statusCriterion.right = SubscriptionStatus.subscribed().id
         statusCriterion.comparisonOp = ' = '
 
@@ -56,7 +56,7 @@ class CriteriaVisitor implements ConditionVisitor {
 
         condition.subscriptionListIds.each {
             def idCriterion = new ComparisonCriterion()
-            idCriterion.left = 'SS.SubscriptionListId'
+            idCriterion.left = new Column('SS', 'SubscriptionListId')
             idCriterion.right = it
             idCriterion.comparisonOp = ' = '
 
@@ -144,7 +144,7 @@ class CriteriaVisitor implements ConditionVisitor {
         return null
     }
 
-    CriterionNode builderFieldsCriterionNode(def condition, String column) {
+    CriterionNode builderFieldsCriterionNode(def condition, Column column) {
         def type = condition.value.type
 
         CriterionNode criterionNode
@@ -164,7 +164,7 @@ class CriteriaVisitor implements ConditionVisitor {
         return criterionNode
     }
 
-    CriterionNode comparisonNode(def condition, String column) {
+    CriterionNode comparisonNode(def condition, Column column) {
         def criterion = new ComparisonCriterion()
         criterion.left = column
         criterion.right = condition.value.value
@@ -188,7 +188,7 @@ class CriteriaVisitor implements ConditionVisitor {
         return criterionNode
     }
 
-    CriterionNode emptyNode(def condition, String column) {
+    CriterionNode emptyNode(def condition, Column column) {
         def leftCriterion = new ComparisonCriterion()
         leftCriterion.left = column
         leftCriterion.comparisonOp = ' is '
@@ -211,7 +211,7 @@ class CriteriaVisitor implements ConditionVisitor {
                 left: leftNode, right: rightNode)
     }
 
-    CriterionNode filledNode(def condition, String column) {
+    CriterionNode filledNode(def condition, Column column) {
         def leftCriterion = new ComparisonCriterion()
         leftCriterion.left = column
         leftCriterion.comparisonOp = ' is not '
