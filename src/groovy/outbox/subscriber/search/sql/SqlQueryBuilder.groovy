@@ -6,9 +6,14 @@ import outbox.subscriber.search.query.Query
  * Builds SQL query for {@link outbox.subscriber.search.query.Query} object and return as string.
  *
  * @author Ruslan Khmelyuk
- * @created 2010-11-21
  */
 interface SqlQueryBuilder {
 
+    /**
+     * Builds SQL query.
+     * @param query the query to build SQL for.
+     * @return the SQL query as string.
+     */
     String build(Query query)
+
 }

@@ -1,12 +1,25 @@
 package outbox.subscriber.search.query.elems
 
 /**
+ * Represents table column or select result column name.
+ *
  * @author Ruslan Khmelyuk
  */
 class Column implements Serializable {
 
+    /**
+     * Table, not required.
+     */
     final String table
+
+    /**
+     * Column name, required.
+     */
     final String name
+
+    /**
+     * Column alias, not required.
+     */
     final String alias
 
     Column(String table, String name, String alias = null) {
@@ -29,6 +42,10 @@ class Column implements Serializable {
         }
     }
 
+    /**
+     * Returns SQL column name.
+     * @return the sql column name as string.
+     */
     String toSQL() {
         def out = new StringBuilder()
         if (table) {

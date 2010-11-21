@@ -1,6 +1,9 @@
 package outbox.subscriber.search.criteria
 
 /**
+ * Subquery condition types.
+ * Currently supported only Exists and Not Exists
+ *
  * @author Ruslan Khmelyuk
  */
 enum SubqueryConditionType {

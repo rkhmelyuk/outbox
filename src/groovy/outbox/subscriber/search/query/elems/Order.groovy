@@ -17,6 +17,10 @@ class Order {
         this.sort = sort
     }
 
+    /**
+     * SQL of order statement.
+     * @return the sql of order statement as string.
+     */
     String toSQL() {
         "${column.toSQL()} $sort.keyword"
     }

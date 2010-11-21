@@ -14,7 +14,8 @@ import outbox.subscriber.search.criteria.*
 
 /**
  * Build single query and run it.
- * 
+ * <strong>Can search only by subscriber fields, dynamic fields and subscription.</strong>
+ *
  * @author Ruslan Khmelyuk
  */
 class SingleQueryRunner implements QueryRunner {
@@ -73,6 +74,7 @@ class SingleQueryRunner implements QueryRunner {
     void subscriptionConditions(Queries queries) {
         queries.subscriptionQueries.each { subscriptionQuery ->
             def keyword
+            // TODO - this should be done by some query analyzer as part.
             def root = subscriptionQuery.criteria.root
             if (root.type == CriterionNodeType.Not) {
                 subscriptionQuery.criteria.root = root.left

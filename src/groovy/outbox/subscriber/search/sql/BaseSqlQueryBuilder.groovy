@@ -11,6 +11,12 @@ import outbox.subscriber.search.criteria.*
  */
 abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
 
+    /**
+     * Builds SQL for specified criterion node and append to the builder.
+     *
+     * @param builder the SQL query string builder.
+     * @param node the node to build criteria for.
+     */
     void buildCriteria(StringBuilder builder, CriterionNode node) {
         if (node) {
             if (node.type == CriterionNodeType.Criterion) {
@@ -55,18 +61,36 @@ abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
         }
     }
 
+    /**
+     * Builds simple comparison criterion as SQL string.
+     *
+     * @param criterion the criterion to build.
+     * @return the result as string
+     */
     String comparisonCriterionSQL(ComparisonCriterion criterion) {
         def leftValue = prepareValue(criterion.left)
         def rightValue = prepareValue(criterion.right)
         "$leftValue$criterion.comparisonOp$rightValue"
     }
 
+    /**
+     * Builds simple in-subquery criterion as SQL string.
+     *
+     * @param criterion the criterion to build.
+     * @return the result as string
+     */
     String inSubqueryCriterionSQL(InSubqueryCriterion criterion) {
         def op = criterion.not ? ' not in ' : ' in '
         def leftValue = prepareValue(criterion.left)
         "$leftValue$op($criterion.subquery)"
     }
 
+    /**
+     * Builds simple in-list criterion as SQL string.
+     *
+     * @param criterion the criterion to build.
+     * @return the result as string
+     */
     String inListCriterionSQL(InListCriterion criterion) {
         def op = criterion.not ? ' not in ' : ' in '
         def list = ''
@@ -80,12 +104,25 @@ abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
         "$leftValue$op($list)"
     }
 
+    /**
+     * Builds simple subquery criterion as SQL string.
+     *
+     * @param criterion the criterion to build.
+     * @return the result as string
+     */
     String subqueryCriterionSQL(SubqueryCriterion criterion) {
         def subquery = new SelectSqlQueryBuilder().build(criterion.subquery)
         " $criterion.condition.keyword ($subquery) "
     }
 
-    String prepareValue(Serializable value) {
+    /**
+     * Represents value as query part. Also adds anti-sql-inject check and replacements.
+     * NOTE: contains PostgreSQL specific sql code.
+     *
+     * @param value the value to prepare.
+     * @return the ready to insert into sql string.
+     */
+    String prepareValue(def value) {
         if (value instanceof String) {
             value = value.replaceAll(/\\?'/, "''")
             value = "'" + value + "'"
@@ -94,7 +131,7 @@ abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
             value = new DecimalFormat('#############.#####').format(value)
         }
         else if (value instanceof Boolean) {
-            value = value ? 1 : 0
+            value = value ? 'true' : 'false'
         }
         else if (value instanceof Column) {
             value = value.toSQL()

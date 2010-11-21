@@ -6,6 +6,10 @@ import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.query.elems.Order
 
 /**
+ * Builds the {@link Queries} object. Use a set of {@link QueryBuilder} implementations
+ * to build query for each {@link outbox.subscriber.search.criteria.CriteriaTree} returned
+ * by {@link CriteriaVisitor}.
+ *
  * @author Ruslan Khmelyuk
  */
 class QueriesBuilder {

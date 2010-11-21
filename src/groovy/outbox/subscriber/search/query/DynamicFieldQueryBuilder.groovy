@@ -8,8 +8,10 @@ import outbox.subscriber.search.query.elems.Table
 
 /**
  * The builder for query to search over dynamic field values.
+ *
  * @author Ruslan Khmelyuk
  */
+// TODO - think to use exists rather than IN
 class DynamicFieldQueryBuilder implements QueryBuilder {
 
     Query build(CriteriaTree criteria) {

@@ -7,6 +7,7 @@ import outbox.subscriber.search.query.elems.Table
 
 /**
  * The builder of query to search over subscribers.
+ *
  * @author Ruslan Khmelyuk
  */
 class SubscriberQueryBuilder implements QueryBuilder {

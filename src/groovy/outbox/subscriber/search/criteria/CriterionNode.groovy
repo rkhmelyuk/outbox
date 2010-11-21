@@ -1,8 +1,15 @@
 package outbox.subscriber.search.criteria
 
 /**
+ * The node of {@link CriteriaTree}.
+ *
+ * Can have left or right part or be a criteria node and contain criterion.
+ *
+ * @see Criterion
+ * @see CriterionNodeType
+ *
+ *
  * @author Ruslan Khmelyuk
- * @created 2010-11-14
  */
 class CriterionNode {
 

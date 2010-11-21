@@ -1,7 +1,8 @@
 package outbox.subscriber.search.criteria
 
 /**
- * To compare column with value.
+ * To compare left and right parts.
+ * Left and right parts can be rather {@link outbox.subscriber.search.query.elems.Column} or scalar value.
  * 
  * @author Ruslan Khmelyuk
  */

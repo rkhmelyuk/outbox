@@ -6,6 +6,8 @@ import outbox.subscriber.search.query.elems.NullColumn
 import outbox.subscriber.search.query.elems.Table
 
 /**
+ * The builder for subscription query used as subquery.
+ *
  * @author Ruslan Khmelyuk
  */
 class SubscriptionQueryBuilder implements QueryBuilder {
