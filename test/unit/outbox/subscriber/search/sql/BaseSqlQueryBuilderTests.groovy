@@ -1,7 +1,8 @@
 package outbox.subscriber.search.sql
 
-import outbox.subscriber.search.Column
 import outbox.subscriber.search.query.Query
+import outbox.subscriber.search.query.elems.Column
+import outbox.subscriber.search.query.elems.Table
 import outbox.subscriber.search.criteria.*
 
 /**
@@ -92,8 +93,8 @@ class BaseSqlQueryBuilderTests extends GroovyTestCase {
 
     void testSubqueryCriterionSQL() {
         def subquery = new Query()
-        subquery.addColumn('column')
-        subquery.addTable('table')
+        subquery.addColumn(new Column('table', 'column'))
+        subquery.addTable(new Table('table'))
 
         def criterion = new SubqueryCriterion()
         criterion.subquery = subquery
@@ -102,6 +103,6 @@ class BaseSqlQueryBuilderTests extends GroovyTestCase {
         def builder = new CountSqlQueryBuilder()
         def result = builder.subqueryCriterionSQL(criterion)
 
-        assertEquals " exists (select column from table) ", result
+        assertEquals " exists (select table.column from table) ", result
     }
 }

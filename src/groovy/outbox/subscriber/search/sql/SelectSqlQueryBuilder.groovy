@@ -21,22 +21,23 @@ class SelectSqlQueryBuilder extends BaseSqlQueryBuilder {
             if (index != 0) {
                 builder << ', '
             }
-            builder << column
+            builder << column.toSQL()
         }
 
-        builder << ' from '
-        query.tables.eachWithIndex { table, index ->
-            if (index != 0) {
-                builder << ', '
+        if (query.tables) {
+            builder << ' from '
+            query.tables.eachWithIndex { table, index ->
+                if (index != 0) {
+                    builder << ', '
+                }
+                builder << table.toSQL()
             }
-            builder << table
-        }
-
-        query.joins.eachWithIndex { join, index ->
-            if (index != 0) {
-                builder << ', '
+            query.joins.eachWithIndex { join, index ->
+                if (index != 0) {
+                    builder << ', '
+                }
+                builder << join.toSQL()
             }
-            builder << join
         }
 
         def criteria = query.criteria
@@ -46,14 +47,14 @@ class SelectSqlQueryBuilder extends BaseSqlQueryBuilder {
             buildCriteria(builder, criteria.root)
         }
 
-        query.orders.eachWithIndex { order, index ->
-            if (index != 0) {
-                builder << ', '
+        if (query.orders) {
+            builder << ' order by '
+            query.orders.eachWithIndex { order, index ->
+                if (index != 0) {
+                    builder << ', '
+                }
+                builder << order.toSQL()
             }
-            else {
-                builder << ' order by '
-            }
-            builder << "$order.column $order.sort.keyword"
         }
 
         return builder.toString()

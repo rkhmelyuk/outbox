@@ -1,7 +1,7 @@
 package outbox.subscriber.search.sql
 
 import java.text.DecimalFormat
-import outbox.subscriber.search.Column
+import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.criteria.*
 
 /**
@@ -89,6 +89,9 @@ abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
         }
         else if (value instanceof BigDecimal) {
             value = new DecimalFormat('#############.#####').format(value)
+        }
+        else if (value instanceof Boolean) {
+            value = value ? 1 : 0
         }
         else if (value instanceof Column) {
             value = value.toSQL()

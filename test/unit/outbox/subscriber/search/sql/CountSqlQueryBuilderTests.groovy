@@ -1,6 +1,8 @@
 package outbox.subscriber.search.sql
 
 import outbox.subscriber.search.query.Query
+import outbox.subscriber.search.query.elems.Column
+import outbox.subscriber.search.query.elems.Table
 
 /**
  * @author Ruslan Khmelyuk
@@ -18,17 +20,19 @@ class CountSqlQueryBuilderTests extends GroovyTestCase {
     }
 
     void testCount() {
-        assertTrue query.addColumn('FirstName')
-        assertTrue query.addColumn('LastName', 'lastName')
-        assertTrue query.addTable('Person', 'p')
+        def table = new Table('Person', 'p')
+        assertTrue query.addTable(table)
+        assertTrue query.addColumn(new Column(table, 'FirstName'))
+        assertTrue query.addColumn(new Column(table, 'LastName', 'lastName'))
 
         assertEquals 'select count(*) as RowCount from Person as p', builder.build(query)
     }
 
     void testDistinctCount() {
-        assertTrue query.addColumn('FirstName')
-        assertTrue query.addColumn('LastName', 'lastName')
-        assertTrue query.addTable('Person', 'p')
+        def table = new Table('Person', 'p')
+        assertTrue query.addTable(table)
+        assertTrue query.addColumn(new Column(table, 'FirstName'))
+        assertTrue query.addColumn(new Column(table, 'LastName', 'lastName'))
         query.distinct = true
 
         assertEquals 'select distinct count(*) as RowCount from Person as p', builder.build(query)

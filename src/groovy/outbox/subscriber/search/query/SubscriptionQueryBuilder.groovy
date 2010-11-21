@@ -1,6 +1,8 @@
 package outbox.subscriber.search.query
 
 import outbox.subscriber.search.criteria.CriteriaTree
+import outbox.subscriber.search.query.elems.NullColumn
+import outbox.subscriber.search.query.elems.Table
 
 /**
  * @author Ruslan Khmelyuk
@@ -14,8 +16,8 @@ class SubscriptionQueryBuilder implements QueryBuilder {
 
         def query = new Query()
 
-        query.addColumn 'null'
-        query.addTable 'Subscription', 'SS'
+        query.addColumn new NullColumn()
+        query.addTable new Table('Subscription', 'SS')
 
         query.criteria = criteria
 

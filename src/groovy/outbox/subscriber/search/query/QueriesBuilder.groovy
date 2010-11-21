@@ -2,6 +2,8 @@ package outbox.subscriber.search.query
 
 import outbox.subscriber.search.Conditions
 import outbox.subscriber.search.CriteriaVisitor
+import outbox.subscriber.search.query.elems.Column
+import outbox.subscriber.search.query.elems.Order
 
 /**
  * @author Ruslan Khmelyuk
@@ -20,7 +22,13 @@ class QueriesBuilder {
         queries.subscriberFieldQuery = subscriberFieldQueryBuilder.build(criteria.subscriberFieldTree)
         queries.subscriberFieldQuery.page = conditions.page
         queries.subscriberFieldQuery.perPage = conditions.perPage
-        queries.subscriberFieldQuery.orders = conditions.orders
+        queries.subscriberFieldQuery.orders = conditions.orders.collect { fieldOrder ->
+            def columnName = fieldOrder.column
+            def column = queries.subscriberFieldQuery.columns.find { it.name == columnName }
+            if (!column) { column = new Column((String) null, columnName) }
+
+            return new Order(column, fieldOrder.sort)
+        }
 
         return queries
     }

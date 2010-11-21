@@ -10,7 +10,7 @@ import outbox.subscriber.search.condition.Condition
  */
 class Conditions {
 
-    final List<Order> orders = []
+    final List<FieldOrder> orders = []
     final List<Condition> conditions = []
 
     int page
@@ -41,7 +41,7 @@ class Conditions {
 
     void orderBy(String column, Sort sort = null) {
         if (column) {
-            orders << new Order(column: column, sort: sort ?: Sort.Asc)
+            orders << new FieldOrder(column, sort ?: Sort.Asc)
         }
     }
 

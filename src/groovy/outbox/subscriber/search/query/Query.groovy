@@ -1,8 +1,11 @@
 package outbox.subscriber.search.query
 
-import outbox.subscriber.search.Order
 import outbox.subscriber.search.criteria.CriteriaTree
 import outbox.subscriber.search.criteria.CriterionNode
+import outbox.subscriber.search.query.elems.Column
+import outbox.subscriber.search.query.elems.Join
+import outbox.subscriber.search.query.elems.Order
+import outbox.subscriber.search.query.elems.Table
 
 /**
  * Represents single query, that can be built and translated to SQL.
@@ -14,51 +17,39 @@ class Query {
     int page
     int perPage
 
-    List<String> columns = []
-    List<String> tables = []
-    List<String> joins = []
+    List<Column> columns = []
+    List<Table> tables = []
+    List<Join> joins = []
+    List<Order> orders = []
 
     CriteriaTree criteria
-    List<Order> orders = []
 
     boolean distinct = false
 
-    boolean addColumn(String column, String alias = null) {
+    boolean addColumn(Column column) {
         if (column) {
-            def value = column
-            if (alias) {
-                value += " as $alias"
-            }
-            return columns.add(value)
+            return columns.add(column)
         }
         return false
     }
 
-    boolean addTableColumn(String table, String column, String alias = null) {
-        if (column) {
-            def value = table + '.' + column
-            if (alias) {
-                value += " as $alias"
-            }
-            return columns.add(value)
-        }
-        return false
-    }
-
-    boolean addTable(String table, String alias = null) {
+    boolean addTable(Table table) {
         if (table) {
-            def value = table
-            if (alias) {
-                value += " as $alias"
-            }
-            return tables.add(value)
+            return tables.add(table)
         }
         return false
     }
 
-    boolean addJoin(String table, String alias, String condition) {
-        if (table && alias && condition) {
-            return joins.add(" join $table as $alias on $condition")
+    boolean addJoin(Join join) {
+        if (join) {
+            return joins.add(join)
+        }
+        return false
+    }
+
+    boolean addOrder(Order order) {
+        if (order) {
+            return orders.add(order)
         }
         return false
     }

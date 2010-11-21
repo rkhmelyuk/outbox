@@ -1,6 +1,7 @@
 package outbox.subscriber.search
 
 import outbox.subscriber.field.DynamicFieldType
+import outbox.subscriber.search.query.elems.Column
 import outbox.subscription.SubscriptionStatus
 import outbox.subscriber.search.condition.*
 import outbox.subscriber.search.criteria.*

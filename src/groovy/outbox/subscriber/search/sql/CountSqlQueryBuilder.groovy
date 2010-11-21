@@ -24,7 +24,7 @@ class CountSqlQueryBuilder extends BaseSqlQueryBuilder {
             if (index != 0) {
                 builder << ', '
             }
-            builder << table
+            builder << table.toSQL()
         }
 
         query.joins.eachWithIndex { join, index ->

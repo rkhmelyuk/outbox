@@ -51,7 +51,10 @@ class QueriesBuilderTests extends GrailsUnitTestCase {
         assertNotNull queries.subscriberFieldQuery
         assertEquals 1, queries.subscriberFieldQuery.page
         assertEquals 10, queries.subscriberFieldQuery.perPage
-        assertEquals conditions.orders, queries.subscriberFieldQuery.orders
+
+        def orders = queries.subscriberFieldQuery.orders
+        assertEquals 1, orders.size()
+        assertEquals 'FirstName', orders.first().column.name
 
         subscriptionQueryBuilderControl.verify()
         dynamicFieldQueryBuilderControl.verify()
