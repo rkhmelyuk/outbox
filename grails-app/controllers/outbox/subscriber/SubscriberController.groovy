@@ -289,4 +289,8 @@ class SubscriberController {
 
         render model as JSON
     }
+
+    def search = {
+
+    }
 }

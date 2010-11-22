@@ -12,6 +12,8 @@
 
         <g:link controller="subscriptionList" action="create"><g:message code="create.subscriptionList"/></g:link>
         |
+        <g:link controller="subscriber" action="search"><g:message code="search.subscribers"/></g:link>
+        |
         <g:link controller="subscriber" action="create"><g:message code="create.subscriber"/></g:link>
         |
         <g:link controller="subscriptionList" action="archived"><g:message code="archived"/></g:link>
