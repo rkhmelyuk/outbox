@@ -6,26 +6,33 @@ package outbox.subscriber.search.condition
  */
 public enum ValueConditionType {
 
-    Equal,
+    Equal(1, 'valueConditionType.equal'),
 
-    NotEqual,
+    NotEqual(2, 'valueConditionType.notEqual'),
 
-    Greater,
+    Greater(3, 'valueConditionType.greater'),
 
-    Less,
+    Less(4, 'valueConditionType.less'),
 
-    GreaterOrEqual,
+    GreaterOrEqual(5, 'valueConditionType.greaterOrEqual'),
 
-    LessOrEqual,
+    LessOrEqual(6, 'valueConditionType.lessOrEqual'),
 
-    Like,
+    Like(7, 'valueConditionType.like'),
 
-    InList,
+    InList(8, 'valueConditionType.inList'),
 
-    NotInList,
+    NotInList(9, 'valueConditionType.notInList'),
 
-    Empty,
+    Empty(10, 'valueConditionType.empty'),
 
-    Filled
+    Filled(11, 'valueConditionType.filled')
 
+    final int id
+    final String message
+
+    ValueConditionType(int id, String message) {
+        this.id = id
+        this.message = message
+    }
 }

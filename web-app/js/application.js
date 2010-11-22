@@ -938,6 +938,25 @@ var App = {
 
     campaignReports: function() {
 
+    },
+
+    subscriberSearch: function () {
+        $('#addCondition').live('click', function() {
+            var lastType = $('select[name$=".type"]').last().val();
+            if (lastType == undefined) lastType = '';
+
+            var lastRow = $('input[name=row]').last().val();
+            if (lastRow == undefined) lastRow = '';
+
+            var url = $(this).attr('rel');
+            $.get(url, { id: lastType, row: lastRow}, function(data) {
+                $('#conditions').append(data);
+            });
+
+        });
+        $('.removeCondition').live('click', function() {
+            $(this).parent().remove();
+        });
     }
 };
 
