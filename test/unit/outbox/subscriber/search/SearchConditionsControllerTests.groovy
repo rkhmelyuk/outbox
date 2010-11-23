@@ -17,8 +17,9 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         controller.class.metaClass.message = { 'message' }
     }
 
-    void testAddRow_First() {
-        controller.addRow()
+    void testRenderRow_First() {
+        controller.params.row = 1
+        controller.renderRow()
 
         assertEquals 'subscriberCondition', controller.renderArgs.template
         assertEquals 1, controller.renderArgs.model.row
@@ -28,10 +29,11 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertEquals ConditionType.Subscriber.id, controller.renderArgs.model.type
     }
 
-    void testAddRow_Subscriber() {
-        controller.params.id = 1
+    void testRenderRow_Subscriber() {
+        controller.params.row = 1
+        controller.params.type = 1
 
-        controller.addRow()
+        controller.renderRow()
 
         assertEquals 'subscriberCondition', controller.renderArgs.template
         assertEquals 1, controller.renderArgs.model.row
@@ -41,7 +43,7 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertEquals ConditionType.Subscriber.id, controller.renderArgs.model.type
     }
 
-    void testAddRow_DynamicField() {
+    void testRenderRow_DynamicField() {
         Member.class.metaClass.static.load = { id -> new Member(id: 1) }
 
         def dynamicFields = []
@@ -57,8 +59,9 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
-        controller.params.id = 2
-        controller.addRow()
+        controller.params.row = 1
+        controller.params.type = 2
+        controller.renderRow()
 
         dynamicFieldServiceControl.verify()
         springSecurityServiceControl.verify()
@@ -71,7 +74,7 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertEquals ConditionType.DynamicField.id, controller.renderArgs.model.type
     }
 
-    void testAddRow_SubscriptionField() {
+    void testRenderRow_SubscriptionField() {
         Member.class.metaClass.static.load = { id -> new Member(id: 1) }
 
         def subscriptionLists = []
@@ -87,8 +90,9 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         }
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
-        controller.params.id = 3
-        controller.addRow()
+        controller.params.row = 1
+        controller.params.type = 3
+        controller.renderRow()
 
         springSecurityServiceControl.verify()
         subscriptionListServiceControl.verify()

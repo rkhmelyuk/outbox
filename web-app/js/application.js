@@ -945,17 +945,51 @@ var App = {
             var lastType = $('select[name$=".type"]').last().val();
             if (lastType == undefined) lastType = '';
 
-            var lastRow = $('input[name=row]').last().val();
-            if (lastRow == undefined) lastRow = '';
+            var nextRow = $('input[name=row]').last().val();
+            if (nextRow == undefined) nextRow = 0;
+            nextRow++;
 
-            var url = $(this).attr('rel');
-            $.get(url, { id: lastType, row: lastRow}, function(data) {
+            var url = $('#url').val();
+            $.get(url, { type: lastType, row: nextRow}, function(data) {
                 $('#conditions').append(data);
             });
 
         });
         $('.removeCondition').live('click', function() {
             $(this).parent().remove();
+        });
+
+        $('select[name$=type]').live('change', function() {
+            var url = $('#url').val();
+            var row = $(this).parent();
+            var rowId = $(row).children('input[name=row]').val();
+            var type = $('#row\\['+rowId+'\\]\\.type').val();
+
+            $.get(url, { type: type, row: rowId }, function(data) {
+                $(row).after(data);
+                $(row).remove();
+            });
+        });
+        $('select[name$=field]').live('change', function() {
+            var url = $('#url').val();
+            var row = $(this).parent();
+            var rowId = $(row).children('input[name=row]').val();
+            var type = $('#row\\['+rowId+'\\]\\.type').val();
+            var field = $('#row\\['+rowId+'\\]\\.field').val();
+            //var comparison = $('#row\\['+rowId+'\\]\\.comparison').val();
+            //var value = $('#row\\['+rowId+'\\]\\.value').val();
+
+            var data =  {
+                type: type,
+                row: rowId,
+                field: field//,
+                //comparison: comparison,
+                //value: value
+            };
+            $.get(url, data, function(data) {
+                $(row).after(data);
+                $(row).remove();
+            });
         });
     }
 };

@@ -9,12 +9,11 @@
     </head>
     <body>
         <div class="status" style="display: none;"> </div>
+        <g:hiddenField name="url" value="${createLink(controller: 'searchConditions', action:'renderRow')}"/>
 
-        <div id="conditions">
+        <div id="conditions"> </div>
 
-        </div>
-
-        <a href="javascript:void(0)" id="addCondition" rel="${createLink(controller: 'searchConditions', action:'addRow')}"><g:message code="add"/></a>
+        <a href="javascript:void(0)" id="addCondition"><g:message code="add"/></a>
 
     </body>
 </html>
