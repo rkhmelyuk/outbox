@@ -5,6 +5,8 @@ import grails.test.ControllerUnitTestCase
 import outbox.member.Member
 import outbox.security.OutboxUser
 import outbox.subscriber.DynamicFieldService
+import outbox.subscriber.field.DynamicField
+import outbox.subscriber.search.condition.ValueConditionType
 import outbox.subscription.SubscriptionListService
 
 /**
@@ -43,7 +45,40 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertEquals ConditionType.Subscriber.id, controller.renderArgs.model.type
     }
 
-    void testRenderRow_DynamicField() {
+    void testRenderRow_DynamicFields() {
+        Member.class.metaClass.static.load = { id -> new Member(id: 1) }
+
+        def dynamicFields = [new DynamicField(id: 1)]
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicFields { _member ->
+            return dynamicFields
+        }
+        controller.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.params.row = 1
+        controller.params.type = 2
+        controller.params.value = '1'
+        controller.renderRow()
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertEquals 'dynamicFieldCondition', controller.renderArgs.template
+        assertEquals 1, controller.renderArgs.model.row
+        assertNotNull controller.renderArgs.model.types
+        assertEquals dynamicFields, controller.renderArgs.model.dynamicFields
+        assertNotNull controller.renderArgs.model.comparisons
+        assertEquals '1', controller.renderArgs.model.value
+        assertEquals ConditionType.DynamicField.id, controller.renderArgs.model.type
+    }
+
+    void testRenderRow_DynamicFieldsEmpty() {
         Member.class.metaClass.static.load = { id -> new Member(id: 1) }
 
         def dynamicFields = []
@@ -69,8 +104,10 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertEquals 'dynamicFieldCondition', controller.renderArgs.template
         assertEquals 1, controller.renderArgs.model.row
         assertNotNull controller.renderArgs.model.types
-        assertNotNull controller.renderArgs.model.comparisons
-        assertNotNull controller.renderArgs.model.dynamicFields
+        assertNull controller.renderArgs.model.dynamicFields
+        assertNull controller.renderArgs.model.comparisons
+        assertNull controller.renderArgs.model.values
+        assertNull controller.renderArgs.model.value
         assertEquals ConditionType.DynamicField.id, controller.renderArgs.model.type
     }
 
@@ -103,5 +140,19 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertNull controller.renderArgs.model.comparisons
         assertNotNull controller.renderArgs.model.subscriptionLists
         assertEquals ConditionType.Subscription.id, controller.renderArgs.model.type
+    }
+
+    void testShowValue() {
+        controller.params.comparison = null
+        assertFalse controller.showValue()
+
+        controller.params.comparison = ValueConditionType.Empty.id
+        assertFalse controller.showValue()
+
+        controller.params.comparison = ValueConditionType.Filled.id
+        assertFalse controller.showValue()
+
+        controller.params.comparison = ValueConditionType.Equal.id
+        assertTrue controller.showValue()
     }
 }

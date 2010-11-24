@@ -35,4 +35,11 @@ public enum ValueConditionType {
         this.id = id
         this.message = message
     }
+
+    static ValueConditionType getById(Integer id) {
+        for (ValueConditionType type in values()) {
+            if (type.id == id) return type
+        }
+        return null
+    }
 }

@@ -976,15 +976,26 @@ var App = {
             var rowId = $(row).children('input[name=row]').val();
             var type = $('#row\\['+rowId+'\\]\\.type').val();
             var field = $('#row\\['+rowId+'\\]\\.field').val();
-            //var comparison = $('#row\\['+rowId+'\\]\\.comparison').val();
-            //var value = $('#row\\['+rowId+'\\]\\.value').val();
+
+            var data =  { type: type, row: rowId, field: field };
+            $.get(url, data, function(data) {
+                $(row).after(data);
+                $(row).remove();
+            });
+        });
+        $('select[name$=comparison]').live('change', function() {
+            var url = $('#url').val();
+            var row = $(this).parent();
+            var rowId = $(row).children('input[name=row]').val();
+            var type = $('#row\\['+rowId+'\\]\\.type').val();
+            var field = $('#row\\['+rowId+'\\]\\.field').val();
+            var comparison = $('#row\\['+rowId+'\\]\\.comparison').val();
 
             var data =  {
                 type: type,
                 row: rowId,
-                field: field//,
-                //comparison: comparison,
-                //value: value
+                field: field,
+                comparison: comparison
             };
             $.get(url, data, function(data) {
                 $(row).after(data);

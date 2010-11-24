@@ -1,12 +1,12 @@
 package outbox.subscriber.search
 
-import outbox.member.Member
-import outbox.subscriber.search.condition.ValueConditionType
-import outbox.subscription.SubscriptionListConditionsBuilder
 import outbox.dictionary.Gender
 import outbox.dictionary.Language
 import outbox.dictionary.Timezone
+import outbox.member.Member
 import outbox.subscriber.field.DynamicFieldType
+import outbox.subscriber.search.condition.ValueConditionType
+import outbox.subscription.SubscriptionListConditionsBuilder
 
 /**
  * This controller only responsibility is to build conditions view
@@ -100,6 +100,7 @@ class SearchConditionsController {
         model['values'] = values
         model.value = value
         model.comparisons = comparisonsList
+        model.showValue = showValue()
 
         render template: 'subscriberCondition', model: model
     }
@@ -136,6 +137,7 @@ class SearchConditionsController {
             model.value = params.value
             model['values'] = values
             model.comparisons = comparisonsList
+            model.showValue = showValue()
         }
 
         render template: 'dynamicFieldCondition', model: model
@@ -149,8 +151,7 @@ class SearchConditionsController {
         }
         def subscriptionLists = subscriptionListService.search(conditions)
 
-        def row = params.int('row') ?: 0
-        def model = [type: ConditionType.Subscription.id, row: row + 1,
+        def model = [type: ConditionType.Subscription.id, row: params.int('row'),
                 subscriptionLists: subscriptionLists, types: types()]
         render template: 'subscriptionCondition', model: model
     }
@@ -186,5 +187,12 @@ class SearchConditionsController {
                 ValueConditionType.NotInList]
 
         types.collectAll { [key: it.id, value: message(code: it.message)] }
+    }
+
+    boolean showValue() {
+        def comparison = ValueConditionType.getById(params.int('comparison'))
+        return (comparison != null
+                && comparison != ValueConditionType.Empty
+                && comparison != ValueConditionType.Filled)
     }
 }
