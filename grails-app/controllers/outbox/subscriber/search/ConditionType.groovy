@@ -19,7 +19,11 @@ enum ConditionType {
         this.message = message
     }
 
-    static ConditionType getById(int id) {
+    static ConditionType getById(Integer id) {
+        if (id == null) {
+            return null
+        }
+
         values().find { it.id == id }
     }
 }

@@ -11,9 +11,15 @@
         <div class="status" style="display: none;"> </div>
         <g:hiddenField name="url" value="${createLink(controller: 'searchConditions', action:'renderRow')}"/>
 
-        <div id="conditions"> </div>
+        <g:form action="search">
 
-        <a href="javascript:void(0)" id="addCondition"><g:message code="add"/></a>
+            <div id="conditions"> </div>
+
+            <a href="javascript:void(0)" id="addCondition"><g:message code="add"/></a>
+
+            <input type="submit" value="Search"/>
+
+        </g:form>
 
     </body>
 </html>

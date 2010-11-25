@@ -14,6 +14,7 @@ import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.field.DynamicFieldValue
 import outbox.subscriber.field.DynamicFieldValues
+import outbox.subscriber.search.SearchConditionsFetcher
 import outbox.subscription.Subscription
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
@@ -291,6 +292,9 @@ class SubscriberController {
     }
 
     def search = {
-
+        if (request.method == 'POST') {
+            def fetcher = new SearchConditionsFetcher()
+            def conditions = fetcher.fetch(params)
+        }
     }
 }
