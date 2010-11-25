@@ -89,7 +89,7 @@ class ValueCondition {
     final def value
     final ValueConditionType type
 
-    protected ValueCondition(def value, ValueConditionType type) {
+    ValueCondition(def value, ValueConditionType type) {
         this.value = value
         this.type = type
     }

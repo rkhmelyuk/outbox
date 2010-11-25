@@ -50,9 +50,9 @@ class ValueUtilTests extends GroovyTestCase {
     }
 
     void testInteger() {
-        assertEquals 0, ValueUtil.getInteger('0')
-        assertEquals 2, ValueUtil.getInteger('2')
-        assertNull ValueUtil.getInteger('')
-        assertNull ValueUtil.getInteger('asf')
+        assertEquals 0, ValueUtil.integer('0')
+        assertEquals 2, ValueUtil.integer('2')
+        assertNull ValueUtil.integer('')
+        assertNull ValueUtil.integer('asf')
     }
 }

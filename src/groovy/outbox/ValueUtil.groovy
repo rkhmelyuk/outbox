@@ -5,7 +5,7 @@ package outbox
  */
 class ValueUtil {
 
-    static Integer getInteger(String string, Integer defaultValue = null) {
+    static Integer integer(String string, Integer defaultValue = null) {
         Integer result = null
         try {
             result = Integer.valueOf(string)
