@@ -43,6 +43,18 @@ class BaseSqlQueryBuilderTests extends GroovyTestCase {
         assertEquals "left='right'", result
     }
 
+    void testLikeComparisonCriterionSQL() {
+        def criterion = new ComparisonCriterion()
+        criterion.left = new Column((String) null, 'left')
+        criterion.right = '%right%'
+        criterion.comparisonOp = ' like '
+
+        def builder = new CountSqlQueryBuilder()
+        def result = builder.comparisonCriterionSQL(criterion)
+
+        assertEquals "left like '%right%'", result
+    }
+
     void testInSubqueryCriterionSQL() {
         def criterion = new InSubqueryCriterion()
         criterion.left = new Column((String) null, 'left')
