@@ -10,6 +10,8 @@ import outbox.subscriber.Subscriber
  */
 class Subscribers {
 
+    int page
+    int perPage
     long total
 
     List<Subscriber> list

@@ -16,11 +16,19 @@ class SearchConditionsFetcher {
     DynamicFieldService dynamicFieldService
     SpringSecurityService springSecurityService
 
+    /**
+     * Fetches conditions from the map of parameters.
+     * @param params the map of parameters.
+     * @return the fetched subscribers search conditions.
+     */
     Conditions fetch(Map params) {
         def conditions = new Conditions()
+        conditions.page = ValueUtil.integer(params.page)
+        conditions.perPage = ValueUtil.integer(params.perPage)
+
         def rows = params.row
         if (rows != null) {
-            if (!(rows instanceof Collection)) {
+            if (rows instanceof String) {
                 rows = [rows]
             }
 
@@ -48,6 +56,12 @@ class SearchConditionsFetcher {
         return conditions
     }
 
+    /**
+     * Fetches subscriber field conditions for specified row.
+     * @param params the parameters map.
+     * @param rowId the conditions row id.
+     * @return the fetched conditions or null if not found or not complete.
+     */
     SubscriberFieldCondition subscriberCondition(Map params, String rowId) {
         def field = params["row[$rowId].field"]
         def comparisonId = ValueUtil.integer(params["row[$rowId].comparison"])
@@ -59,6 +73,11 @@ class SearchConditionsFetcher {
             if (comparison != ValueConditionType.Empty
                     && comparison != ValueConditionType.Filled) {
                 value = params["row[$rowId].value"]
+
+                // for like condition we add sql wild cards
+                if (comparison == ValueConditionType.Like) {
+                    value = "%$value%".toString()
+                }
             }
 
             value = new ValueCondition(value, comparison)
@@ -67,6 +86,12 @@ class SearchConditionsFetcher {
         return null
     }
 
+    /**
+     * Fetches dynamic field conditions for specified row.
+     * @param params the parameters map.
+     * @param rowId the conditions row id.
+     * @return the fetched conditions or null if not found or not complete.
+     */
     DynamicFieldCondition dynamicFieldCondition(Map params, String rowId) {
         def field = ValueUtil.integer(params["row[$rowId].field"])
         def comparisonId = ValueUtil.integer(params["row[$rowId].comparison"])

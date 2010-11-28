@@ -15,6 +15,9 @@ import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.field.DynamicFieldValue
 import outbox.subscriber.field.DynamicFieldValues
 import outbox.subscriber.search.SearchConditionsFetcher
+import outbox.subscriber.search.SubscriberSearchService
+import outbox.subscriber.search.condition.SubscriberFieldCondition
+import outbox.subscriber.search.condition.ValueCondition
 import outbox.subscription.Subscription
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
@@ -34,8 +37,9 @@ class SubscriberController {
 
     SubscriberService subscriberService
     DynamicFieldService dynamicFieldService
-    SubscriptionListService subscriptionListService
     SpringSecurityService springSecurityService
+    SubscriptionListService subscriptionListService
+    SubscriberSearchService subscriberSearchService
     EditDynamicFieldsFormBuilder editDynamicFieldsFormBuilder
     ViewDynamicFieldsFormBuilder viewDynamicFieldsFormBuilder
 
@@ -292,9 +296,22 @@ class SubscriberController {
     }
 
     def search = {
+        def model = [:]
+
         if (request.method == 'POST') {
             def fetcher = new SearchConditionsFetcher()
             def conditions = fetcher.fetch(params)
+            conditions.page = conditions.page ?: 1
+            conditions.perPage = conditions.perPage ?: 10
+
+            def memberId = springSecurityService.principal.id
+            conditions.and new SubscriberFieldCondition('MemberId', ValueCondition.equal(memberId))
+
+            def subscribers = subscriberSearchService.search(conditions)
+
+            model.subscribers = subscribers
         }
+
+        return model
     }
 }

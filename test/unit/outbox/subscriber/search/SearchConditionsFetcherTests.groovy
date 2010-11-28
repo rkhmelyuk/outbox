@@ -22,6 +22,14 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertTrue conditions.empty
     }
 
+    void testFetch_Pagination() {
+        def conditions = fetcher.fetch([page: '1', perPage: '5'])
+
+        assertTrue conditions.empty
+        assertEquals 1, conditions.page
+        assertEquals 5, conditions.perPage
+    }
+
     void testFetch_MultipleRows() {
 
     }
@@ -40,6 +48,22 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertEquals 'FirstName', condition.field
         assertEquals 'John', condition.value.value
         assertEquals ValueConditionType.Equal, condition.value.type
+    }
+
+    void testSubscriberConditions_Like() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.Subscriber.id"
+        params."row[1].field" = "FirstName"
+        params."row[1].comparison" = "$ValueConditionType.Like.id"
+        params."row[1].value" = 'John'
+
+        def condition = fetcher.subscriberCondition(params, '1')
+
+        assertNotNull condition
+
+        assertEquals 'FirstName', condition.field
+        assertEquals '%John%', condition.value.value
+        assertEquals ValueConditionType.Like, condition.value.type
     }
 
     void testSubscriberConditions_NoValue() {

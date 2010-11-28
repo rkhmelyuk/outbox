@@ -52,6 +52,9 @@ class SingleQueryRunner implements QueryRunner {
         selectQuery.addEntity(Subscriber)
         subscribers.list = selectQuery.list()
 
+        subscribers.page = queries.subscriberFieldQuery.page
+        subscribers.perPage = queries.subscriberFieldQuery.perPage
+
         return subscribers
     }
 
