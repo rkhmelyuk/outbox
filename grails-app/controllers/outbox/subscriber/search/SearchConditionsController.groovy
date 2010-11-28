@@ -1,10 +1,14 @@
 package outbox.subscriber.search
 
+import outbox.ValueUtil
 import outbox.dictionary.Gender
 import outbox.dictionary.Language
 import outbox.dictionary.Timezone
 import outbox.member.Member
 import outbox.subscriber.field.DynamicFieldType
+import outbox.subscriber.search.condition.DynamicFieldCondition
+import outbox.subscriber.search.condition.SubscriberFieldCondition
+import outbox.subscriber.search.condition.SubscriptionCondition
 import outbox.subscriber.search.condition.ValueConditionType
 import outbox.subscription.SubscriptionListConditionsBuilder
 
@@ -20,6 +24,34 @@ class SearchConditionsController {
     def dynamicFieldService
     def springSecurityService
     def subscriptionListService
+
+    def renderConditions = {
+        Conditions conditions = request.getAttribute('conditions')
+        if (conditions && !conditions.empty) {
+            conditions.conditions.eachWithIndex { condition, index ->
+                if (condition.visible) {
+                    if (condition instanceof SubscriberFieldCondition) {
+                        renderSubscriberRow(
+                                index, condition.field,
+                                condition.value.type.id,
+                                condition.value.value)
+                    }
+                    else if (condition instanceof DynamicFieldCondition) {
+                        renderDynamicFieldRow(
+                                index, condition.field.id,
+                                condition.value.type.id,
+                                condition.value.value)
+                    }
+                    else if (condition instanceof SubscriptionCondition) {
+                        //renderSubscriptionRow()
+                    }
+                }
+            }
+        }
+        else {
+            render ''
+        }
+    }
 
     /**
      * Add new conditions row.
@@ -47,11 +79,20 @@ class SearchConditionsController {
     }
 
     void renderSubscriberRow() {
+        def row = params.int('row')
+        def field = params.field
+        def comparison = params.int('comparison')
+        def value = params.value
+
+        renderSubscriberRow(row, field, comparison, value)
+    }
+
+    void renderSubscriberRow(row, field, comparison, value) {
         def model = [type: ConditionType.Subscriber.id]
+        model.row = row
         model.types = types()
-        model.comparison = params.comparison
-        model.row = params.int('row')
-        model.field = params.field
+        model.field = field
+        model.comparison = comparison
 
         // -----------------------------
         // fields
@@ -68,76 +109,81 @@ class SearchConditionsController {
 
         // -----------------------------
         // value and values if any
-        def value, values, comparisonsList
-        switch (model.field) {
+        def values, comparisonsList
+        switch (field) {
             case Names.GenderId:
                 values = Gender.list()
-                value = params.int('value')
+                value = ValueUtil.integer(value)
                 comparisonsList = selectComparisons()
                 break
             case Names.LanguageId:
                 values = Language.list()
-                value = params.int('value')
+                value = ValueUtil.integer(value)
                 comparisonsList = selectComparisons()
                 break
             case Names.TimezoneId:
                 values = Timezone.list()
-                value = params.int('value')
+                value = ValueUtil.integer(value)
                 comparisonsList = selectComparisons()
                 break
             case Names.SubscriberTypeId:
                 def member = Member.load(springSecurityService.principal.id)
                 values = subscriberService.getSubscriberTypes(member)
-                value = params.long('value')
+                value = ValueUtil.integer(value)
                 comparisonsList = selectComparisons()
                 break
             default:
                 values = null
-                value = params.value
                 comparisonsList = comparisons()
         }
 
         model['values'] = values
         model.value = value
         model.comparisons = comparisonsList
-        model.showValue = showValue()
+        model.showValue = showValue(comparison)
 
         render template: 'subscriberCondition', model: model
     }
 
     void renderDynamicFieldRow() {
-        def model = [type: ConditionType.DynamicField.id]
-        model.types = types()
-        model.comparison = params.comparison
-        model.row = params.int('row')
-
+        def row = params.int('row')
         def field = params.long('field')
+        def comparison = params.int('comparison')
+        def value = params.value
+
+        renderDynamicFieldRow row, field, comparison, value
+    }
+
+    void renderDynamicFieldRow(row, field, comparison, value) {
+        def model = [type: ConditionType.DynamicField.id]
+        model.row = row
         model.field = field
+        model.types = types()
+        model.comparison = comparison
 
         def member = Member.load(springSecurityService.principal.id)
         def dynamicFields = dynamicFieldService.getDynamicFields(member)
         if (dynamicFields) {
             model.dynamicFields = dynamicFields
 
-            def value, values, comparisonsList
+            def values, comparisonsList
             def dynamicField = dynamicFields.find { it.id == field }
             dynamicField = dynamicField ?: dynamicFields.first()
 
             if (dynamicField && dynamicField.type == DynamicFieldType.SingleSelect) {
-                value = params.long('value')
+                value = ValueUtil.getLong('value')
                 comparisonsList = selectComparisons()
                 values = dynamicFieldService.getDynamicFieldItems(dynamicField)
             }
             else {
-                value = params.value
                 values = null
                 comparisonsList = comparisons()
             }
 
-            model.value = params.value
+            model.value = value
             model['values'] = values
             model.comparisons = comparisonsList
-            model.showValue = showValue()
+            model.showValue = showValue(comparison)
         }
 
         render template: 'dynamicFieldCondition', model: model
@@ -189,9 +235,9 @@ class SearchConditionsController {
         types.collectAll { [key: it.id, value: message(code: it.message)] }
     }
 
-    boolean showValue() {
-        def comparison = ValueConditionType.getById(params.int('comparison'))
-        return (comparison != null
+    boolean showValue(def comparisonId) {
+        def comparison = ValueConditionType.getById(comparisonId)
+        (comparison != null
                 && comparison != ValueConditionType.Empty
                 && comparison != ValueConditionType.Filled)
     }

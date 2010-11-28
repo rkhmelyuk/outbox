@@ -143,16 +143,9 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
     }
 
     void testShowValue() {
-        controller.params.comparison = null
-        assertFalse controller.showValue()
-
-        controller.params.comparison = ValueConditionType.Empty.id
-        assertFalse controller.showValue()
-
-        controller.params.comparison = ValueConditionType.Filled.id
-        assertFalse controller.showValue()
-
-        controller.params.comparison = ValueConditionType.Equal.id
-        assertTrue controller.showValue()
+        assertFalse controller.showValue(null)
+        assertFalse controller.showValue(ValueConditionType.Empty.id)
+        assertFalse controller.showValue(ValueConditionType.Filled.id)
+        assertTrue controller.showValue(ValueConditionType.Equal.id)
     }
 }

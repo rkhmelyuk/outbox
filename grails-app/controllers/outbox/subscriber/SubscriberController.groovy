@@ -305,11 +305,14 @@ class SubscriberController {
             conditions.perPage = conditions.perPage ?: 10
 
             def memberId = springSecurityService.principal.id
-            conditions.and new SubscriberFieldCondition('MemberId', ValueCondition.equal(memberId))
 
-            def subscribers = subscriberSearchService.search(conditions)
+            def ownershipCondition = new SubscriberFieldCondition('MemberId', ValueCondition.equal(memberId))
+            ownershipCondition.visible = false
+            ownershipCondition.readOnly = false
+            conditions.and ownershipCondition
 
-            model.subscribers = subscribers
+            model.conditions = conditions
+            model.subscribers = subscriberSearchService.search(conditions)
         }
 
         return model

@@ -5,10 +5,14 @@ package outbox
  */
 class ValueUtil {
 
-    static Integer integer(String string, Integer defaultValue = null) {
+    static Integer integer(def value, Integer defaultValue = null) {
+        if (value instanceof Integer) {
+            return value
+        }
+
         Integer result = null
         try {
-            result = Integer.valueOf(string)
+            result = Integer.valueOf(value)
         }
         catch (Exception e) {
             // skip it
@@ -17,10 +21,14 @@ class ValueUtil {
         result != null ? result : defaultValue
     }
 
-    static Long getLong(String string, Long defaultValue = null) {
+    static Long getLong(def value, Long defaultValue = null) {
+        if (value instanceof Integer) {
+            return value
+        }
+
         Long result = null
         try {
-            result = Long.valueOf(string)
+            result = Long.valueOf(value)
         }
         catch (Exception e) {
             // skip it

@@ -30,7 +30,9 @@
 
             <div class="left_side">
                 %{-- Search conditions --}%
-                <div id="conditions"> </div>
+                <div id="conditions">
+                    <g:include controller="searchConditions" action="renderConditions"/>
+                </div>
                 <div class="c"></div>
                 <a href="javascript:void(0);" id="addCondition"><g:message code="add"/></a>  |
                 <a href="javascript:void(0);" id="search"><g:message code="search"/></a>
