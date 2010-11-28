@@ -941,6 +941,9 @@ var App = {
     },
 
     subscriberSearch: function () {
+        $('#search, .page_callback').live('click', function() {
+            $('#searchForm').submit();
+        });
         $('#addCondition').live('click', function() {
             var lastType = $('select[name$=".type"]').last().val();
             if (lastType == undefined) lastType = '';
@@ -952,27 +955,29 @@ var App = {
             var url = $('#url').val();
             $.get(url, { type: lastType, row: nextRow}, function(data) {
                 $('#conditions').append(data);
+                $('#row\\['+nextRow+'\\]\\.type').focus();
             });
 
         });
         $('.removeCondition').live('click', function() {
-            $(this).parent().remove();
+            $(this).parent().parent().remove();
         });
 
         $('select[name$=type]').live('change', function() {
             var url = $('#url').val();
-            var row = $(this).parent();
+            var row = $(this).parent().parent();
             var rowId = $(row).children('input[name=row]').val();
             var type = $('#row\\['+rowId+'\\]\\.type').val();
 
             $.get(url, { type: type, row: rowId }, function(data) {
                 $(row).after(data);
                 $(row).remove();
+                $('#row\\['+rowId+'\\]\\.field').focus();
             });
         });
         $('select[name$=field]').live('change', function() {
             var url = $('#url').val();
-            var row = $(this).parent();
+            var row = $(this).parent().parent().parent();
             var rowId = $(row).children('input[name=row]').val();
             var type = $('#row\\['+rowId+'\\]\\.type').val();
             var field = $('#row\\['+rowId+'\\]\\.field').val();
@@ -981,11 +986,12 @@ var App = {
             $.get(url, data, function(data) {
                 $(row).after(data);
                 $(row).remove();
+                $('#row\\['+rowId+'\\]\\.comparison').focus();
             });
         });
         $('select[name$=comparison]').live('change', function() {
             var url = $('#url').val();
-            var row = $(this).parent();
+            var row = $(this).parent().parent().parent();
             var rowId = $(row).children('input[name=row]').val();
             var type = $('#row\\['+rowId+'\\]\\.type').val();
             var field = $('#row\\['+rowId+'\\]\\.field').val();
@@ -1000,6 +1006,7 @@ var App = {
             $.get(url, data, function(data) {
                 $(row).after(data);
                 $(row).remove();
+                $('#row\\['+rowId+'\\]\\.value').focus();
             });
         });
     }

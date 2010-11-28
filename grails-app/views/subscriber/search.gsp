@@ -6,18 +6,59 @@
         <script type="text/javascript">
             $(document).ready(function() { App.subscriberSearch() })
         </script>
+        <style type="text/css">
+            .left_side { float: left; width: 350px; }
+            .center { float: left; }
+
+            .condition { padding: 3px; }
+            .condition .header { height: 20px; background-color: #cccccc; padding: 7px; }
+            .condition .header select { float: left; width: 200px; }
+            .condition .header a { float: right; line-height: 25px; }
+            .condition .row  { height: 20px; background-color: #efefef; padding: 5px;}
+            .condition .row .title { float: left; width: 80px; font-weight: bold; line-height: 25px; text-align: right; margin: 0 5px;}
+            .condition .row .value { float: left; margin: 0 5px;}
+            .condition .row .value select { width: 200px; }
+            .condition .row .value input { width: 190px; }
+        </style>
     </head>
     <body>
         <div class="status" style="display: none;"> </div>
         <g:hiddenField name="url" value="${createLink(controller: 'searchConditions', action:'renderRow')}"/>
 
-        <g:form action="search">
+        <g:form name="searchForm" action="search">
+            <g:hiddenField name="perPage" value="5"/>
 
-            <div id="conditions"> </div>
+            <div class="left_side">
+                %{-- Search conditions --}%
+                <div id="conditions"> </div>
+                <div class="c"></div>
+                <a href="javascript:void(0);" id="addCondition"><g:message code="add"/></a>  |
+                <a href="javascript:void(0);" id="search"><g:message code="search"/></a>
+            </div>
+            <div class="center">
+                %{-- Search results --}%
+                <g:if test="${subscribers && subscribers.list}">
+                    <table>
+                        <tr>
+                            <th><g:message code="email"/></th>
+                            <th><g:message code="name"/></th>
+                            <th><g:message code="create.date"/></th>
+                        </tr>
+                        <g:each in="${subscribers.list}" var="subscriber">
+                            <tr>
+                                <td><g:link controller="subscriber" action="show" id="${subscriber?.id}">
+                                    <g:fieldValue bean="${subscriber}" field="email" /></g:link></td>
+                                <td><g:fieldValue bean="${subscriber}" field="fullName"/></td>
+                                <td><g:formatDate date="${subscriber?.dateCreated}" format="d MMMMM yyyy"/></td>
+                            </tr>
+                        </g:each>
+                    </table>
 
-            <a href="javascript:void(0)" id="addCondition"><g:message code="add"/></a>
-
-            <input type="submit" value="Search"/>
+                    <g:formPagination name="page" total="${subscribers.total}" max="${subscribers.perPage}"
+                            page="${subscribers.page}" maxsteps="10"
+                            callbackClass="page_callback" currentClass="current"/>
+                </g:if>
+            </div>
 
         </g:form>
 

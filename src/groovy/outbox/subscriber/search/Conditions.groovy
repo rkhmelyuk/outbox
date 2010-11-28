@@ -13,8 +13,8 @@ class Conditions {
     final List<FieldOrder> orders = []
     final List<Condition> conditions = []
 
-    int page
-    int perPage
+    Integer page
+    Integer perPage
 
     void add(Concatenation concatenation, Condition condition) {
         if (condition && concatenation) {
