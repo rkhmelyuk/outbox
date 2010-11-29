@@ -40,6 +40,7 @@ class SubscriberController {
     SpringSecurityService springSecurityService
     SubscriptionListService subscriptionListService
     SubscriberSearchService subscriberSearchService
+    SearchConditionsFetcher searchConditionsFetcher
     EditDynamicFieldsFormBuilder editDynamicFieldsFormBuilder
     ViewDynamicFieldsFormBuilder viewDynamicFieldsFormBuilder
 
@@ -299,8 +300,7 @@ class SubscriberController {
         def model = [:]
 
         if (request.method == 'POST') {
-            def fetcher = new SearchConditionsFetcher()
-            def conditions = fetcher.fetch(params)
+            def conditions = searchConditionsFetcher.fetch(params)
             conditions.page = conditions.page ?: 1
             conditions.perPage = conditions.perPage ?: 10
 

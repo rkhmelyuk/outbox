@@ -5,7 +5,7 @@ package outbox
  */
 class ValueUtil {
 
-    static Integer integer(def value, Integer defaultValue = null) {
+    static Integer getInteger(def value, Integer defaultValue = null) {
         if (value instanceof Integer) {
             return value
         }

@@ -23,8 +23,8 @@ class SearchConditionsFetcher {
      */
     Conditions fetch(Map params) {
         def conditions = new Conditions()
-        conditions.page = ValueUtil.integer(params.page)
-        conditions.perPage = ValueUtil.integer(params.perPage)
+        conditions.page = ValueUtil.getInteger(params.page)
+        conditions.perPage = ValueUtil.getInteger(params.perPage)
 
         def rows = params.row
         if (rows != null) {
@@ -33,7 +33,7 @@ class SearchConditionsFetcher {
             }
 
             rows.each { String rowId ->
-                def typeId = ValueUtil.integer(params["row[$rowId].type"])
+                def typeId = ValueUtil.getInteger(params["row[$rowId].type"])
                 def type = ConditionType.getById(typeId)
                 def condition = null
                 switch (type) {
@@ -64,7 +64,7 @@ class SearchConditionsFetcher {
      */
     SubscriberFieldCondition subscriberCondition(Map params, String rowId) {
         def field = params["row[$rowId].field"]
-        def comparisonId = ValueUtil.integer(params["row[$rowId].comparison"])
+        def comparisonId = ValueUtil.getInteger(params["row[$rowId].comparison"])
         def comparison = ValueConditionType.getById(comparisonId)
 
         if (field && comparison && Names.isSubscriberField(field)) {
@@ -93,8 +93,8 @@ class SearchConditionsFetcher {
      * @return the fetched conditions or null if not found or not complete.
      */
     DynamicFieldCondition dynamicFieldCondition(Map params, String rowId) {
-        def field = ValueUtil.integer(params["row[$rowId].field"])
-        def comparisonId = ValueUtil.integer(params["row[$rowId].comparison"])
+        def field = ValueUtil.getInteger(params["row[$rowId].field"])
+        def comparisonId = ValueUtil.getInteger(params["row[$rowId].comparison"])
         def comparison = ValueConditionType.getById(comparisonId)
 
         if (field && comparison) {
@@ -105,7 +105,7 @@ class SearchConditionsFetcher {
             if (dynamicField && dynamicField.ownedBy(memberId)) {
                 if (comparison != ValueConditionType.Empty
                         && comparison != ValueConditionType.Filled) {
-                    value = params["row[$rowId].value"]
+                    value = ValueUtil.getInteger(params["row[$rowId].value"])
                 }
 
                 value = new ValueCondition(value, comparison)

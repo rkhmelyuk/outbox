@@ -6,6 +6,8 @@ import outbox.member.Member
 import outbox.security.OutboxUser
 import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.field.DynamicField
+import outbox.subscriber.search.condition.SubscriberFieldCondition
+import outbox.subscriber.search.condition.ValueCondition
 import outbox.subscriber.search.condition.ValueConditionType
 import outbox.subscription.SubscriptionListService
 
@@ -30,6 +32,27 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertNotNull controller.renderArgs.model.comparisons
         assertEquals ConditionType.Subscriber.id, controller.renderArgs.model.type
     }
+
+    void testRenderConditions() {
+
+        def conditions = new Conditions()
+        conditions.and(new SubscriberFieldCondition('field', ValueCondition.equal('test')))
+        mockRequest.conditions = conditions
+        controller.renderConditions()
+
+        assertEquals 'subscriberCondition', controller.renderArgs.template
+        assertEquals 1, controller.renderArgs.model.row
+        assertNotNull controller.renderArgs.model.types
+        assertNotNull controller.renderArgs.model.comparisons
+        assertNotNull controller.renderArgs.model.fields
+        assertEquals ConditionType.Subscriber.id, controller.renderArgs.model.type
+    }
+
+    void testRenderConditionsNull() {
+        controller.renderConditions()
+        assertEquals '', mockResponse.contentAsString
+    }
+
 
     void testRenderRow_Subscriber() {
         controller.params.row = 1

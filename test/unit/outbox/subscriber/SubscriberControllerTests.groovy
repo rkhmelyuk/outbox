@@ -10,6 +10,7 @@ import outbox.dictionary.Timezone
 import outbox.member.Member
 import outbox.security.OutboxUser
 import outbox.subscriber.search.Conditions
+import outbox.subscriber.search.SearchConditionsFetcher
 import outbox.subscriber.search.SubscriberSearchService
 import outbox.subscriber.search.Subscribers
 import outbox.subscription.SubscriptionList
@@ -873,6 +874,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
     }
 
     void testSearch_Get() {
+        controller.searchConditionsFetcher = new SearchConditionsFetcher()
         Map model = controller.search()
         assertNotNull model
         assertTrue model.isEmpty()
@@ -888,6 +890,7 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
             return subscribers
         }
         controller.subscriberSearchService = subscriberSearchServiceControl.createMock()
+        controller.searchConditionsFetcher = new SearchConditionsFetcher()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal {->

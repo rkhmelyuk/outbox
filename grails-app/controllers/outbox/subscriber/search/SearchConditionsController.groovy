@@ -32,13 +32,13 @@ class SearchConditionsController {
                 if (condition.visible) {
                     if (condition instanceof SubscriberFieldCondition) {
                         renderSubscriberRow(
-                                index, condition.field,
+                                index + 1, condition.field,
                                 condition.value.type.id,
                                 condition.value.value)
                     }
                     else if (condition instanceof DynamicFieldCondition) {
                         renderDynamicFieldRow(
-                                index, condition.field.id,
+                                index + 1, condition.field.id,
                                 condition.value.type.id,
                                 condition.value.value)
                     }
@@ -113,23 +113,23 @@ class SearchConditionsController {
         switch (field) {
             case Names.GenderId:
                 values = Gender.list()
-                value = ValueUtil.integer(value)
+                value = ValueUtil.getInteger(value)
                 comparisonsList = selectComparisons()
                 break
             case Names.LanguageId:
                 values = Language.list()
-                value = ValueUtil.integer(value)
+                value = ValueUtil.getInteger(value)
                 comparisonsList = selectComparisons()
                 break
             case Names.TimezoneId:
                 values = Timezone.list()
-                value = ValueUtil.integer(value)
+                value = ValueUtil.getInteger(value)
                 comparisonsList = selectComparisons()
                 break
             case Names.SubscriberTypeId:
                 def member = Member.load(springSecurityService.principal.id)
                 values = subscriberService.getSubscriberTypes(member)
-                value = ValueUtil.integer(value)
+                value = ValueUtil.getInteger(value)
                 comparisonsList = selectComparisons()
                 break
             default:
@@ -171,7 +171,7 @@ class SearchConditionsController {
             dynamicField = dynamicField ?: dynamicFields.first()
 
             if (dynamicField && dynamicField.type == DynamicFieldType.SingleSelect) {
-                value = ValueUtil.getLong('value')
+                value = ValueUtil.getLong(value)
                 comparisonsList = selectComparisons()
                 values = dynamicFieldService.getDynamicFieldItems(dynamicField)
             }
