@@ -14,4 +14,14 @@ public enum Sort {
         this.keyword = keyword
     }
 
+    static Sort getByKeyword(String keyword) {
+        if (keyword == 'asc') {
+            return Asc
+        }
+        else if (keyword == 'desc') {
+            return Desc
+        }
+        return null
+    }
+
 }

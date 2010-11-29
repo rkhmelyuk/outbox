@@ -48,9 +48,7 @@ class SearchConditionsController {
                 }
             }
         }
-        else {
-            render ''
-        }
+        render text: ''
     }
 
     /**

@@ -30,6 +30,22 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertEquals 5, conditions.perPage
     }
 
+    void testFetch_Orders() {
+        def conditions = fetcher.fetch([column: 'ColumnName', sort: 'asc'])
+
+        assertTrue conditions.empty
+        assertTrue conditions.orders.size() == 1
+        assertEquals 'ColumnName', conditions.orders.first().column
+        assertEquals Sort.Asc, conditions.orders.first().sort
+
+        conditions = fetcher.fetch([column: 'ColumnName', sort: 'desc'])
+
+        assertTrue conditions.empty
+        assertTrue conditions.orders.size() == 1
+        assertEquals 'ColumnName', conditions.orders.first().column
+        assertEquals Sort.Desc, conditions.orders.first().sort
+    }
+
     void testFetch_MultipleRows() {
 
     }

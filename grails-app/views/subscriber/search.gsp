@@ -27,6 +27,15 @@
 
         <g:form name="searchForm" action="search">
             <g:hiddenField name="perPage" value="5"/>
+            <g:if test="${conditions.orders?.size()}">
+                <g:set var="order" value="${conditions.orders.first()}"/>
+                <g:hiddenField name="column" value="${order?.column}"/>
+                <g:hiddenField name="sort" value="${order?.sort?.keyword}"/>
+            </g:if>
+            <g:else>
+                <g:hiddenField name="column" value=""/>
+                <g:hiddenField name="sort" value=""/>
+            </g:else>
 
             <div class="left_side">
                 %{-- Search conditions --}%
@@ -42,9 +51,9 @@
                 <g:if test="${subscribers && subscribers.list}">
                     <table>
                         <tr>
-                            <th><g:message code="email"/></th>
-                            <th><g:message code="name"/></th>
-                            <th><g:message code="create.date"/></th>
+                            <th><g:sortColumn field="Email" class="page_callback"><g:message code="email"/></g:sortColumn></th>
+                            <th><g:sortColumn field="LastName" class="page_callback"><g:message code="name"/></g:sortColumn></th>
+                            <th><g:sortColumn field="CreateDate" class="page_callback"><g:message code="create.date"/></g:sortColumn></th>
                         </tr>
                         <g:each in="${subscribers.list}" var="subscriber">
                             <tr>

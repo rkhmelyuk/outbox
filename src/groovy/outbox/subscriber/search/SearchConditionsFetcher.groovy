@@ -3,6 +3,7 @@ package outbox.subscriber.search
 import grails.plugins.springsecurity.SpringSecurityService
 import outbox.ValueUtil
 import outbox.subscriber.DynamicFieldService
+import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.search.condition.*
 
 /**
@@ -25,6 +26,12 @@ class SearchConditionsFetcher {
         def conditions = new Conditions()
         conditions.page = ValueUtil.getInteger(params.page)
         conditions.perPage = ValueUtil.getInteger(params.perPage)
+
+        def column = params.column
+        if (column) {
+            def sort = Sort.getByKeyword(params.sort) ?: Sort.Asc
+            conditions.orderBy(column, sort)
+        }
 
         def rows = params.row
         if (rows != null) {
@@ -105,7 +112,11 @@ class SearchConditionsFetcher {
             if (dynamicField && dynamicField.ownedBy(memberId)) {
                 if (comparison != ValueConditionType.Empty
                         && comparison != ValueConditionType.Filled) {
-                    value = ValueUtil.getInteger(params["row[$rowId].value"])
+                    value = params["row[$rowId].value"]
+                    if (dynamicField.type == DynamicFieldType.Number ||
+                            dynamicField.type == DynamicFieldType.SingleSelect) {
+                        value = ValueUtil.getInteger(value)
+                    }
                 }
 
                 value = new ValueCondition(value, comparison)
