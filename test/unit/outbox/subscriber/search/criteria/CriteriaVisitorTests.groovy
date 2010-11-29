@@ -5,6 +5,7 @@ import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.search.CriteriaVisitor
 import outbox.subscriber.search.Names
 import outbox.subscriber.search.query.elems.Column
+import outbox.subscriber.search.query.elems.ColumnType
 import outbox.subscriber.search.condition.*
 
 /**
@@ -159,16 +160,28 @@ class CriteriaVisitorTests extends GroovyTestCase {
 
     void testGetDynamicFieldColumn() {
         def condition = new DynamicFieldCondition(new DynamicField(type: DynamicFieldType.String), null)
-        assertEquals Names.StringValue, visitor.getDynamicFieldColumn(condition)
+        def column = visitor.getDynamicFieldColumn(Names.DynamicFieldValueAlias, condition)
+        assertEquals Names.StringValue, column.name
+        assertEquals ColumnType.String, column.type
+        assertEquals Names.DynamicFieldValueAlias, column.table
 
         condition = new DynamicFieldCondition(new DynamicField(type: DynamicFieldType.Number), null)
-        assertEquals Names.NumberValue, visitor.getDynamicFieldColumn(condition)
+        column = visitor.getDynamicFieldColumn(Names.DynamicFieldValueAlias, condition)
+        assertEquals Names.NumberValue, column.name
+        assertEquals ColumnType.Number, column.type
+        assertEquals Names.DynamicFieldValueAlias, column.table
 
         condition = new DynamicFieldCondition(new DynamicField(type: DynamicFieldType.Boolean), null)
-        assertEquals Names.BooleanValue, visitor.getDynamicFieldColumn(condition)
+        column = visitor.getDynamicFieldColumn(Names.DynamicFieldValueAlias, condition)
+        assertEquals Names.BooleanValue, column.name
+        assertEquals ColumnType.Boolean, column.type
+        assertEquals Names.DynamicFieldValueAlias, column.table
 
         condition = new DynamicFieldCondition(new DynamicField(type: DynamicFieldType.SingleSelect), null)
-        assertEquals Names.DynamicFieldItemId, visitor.getDynamicFieldColumn(condition)
+        column = visitor.getDynamicFieldColumn(Names.DynamicFieldValueAlias, condition)
+        assertEquals Names.DynamicFieldItemId, column.name
+        assertEquals ColumnType.Number, column.type
+        assertEquals Names.DynamicFieldValueAlias, column.table
     }
 
     void testEmptyNode() {
@@ -195,6 +208,19 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals '', right.criterion.right
     }
 
+    void testEmptyNode_Number() {
+        def condition = new SubscriberFieldCondition('FirstName', ValueCondition.empty())
+
+        def column = new Column('S', 'FirstName', null, ColumnType.Number)
+        def node = visitor.emptyNode(condition, column)
+
+        assertNotNull node
+        assertEquals CriterionNodeType.Criterion, node.type
+        assertEquals column, node.criterion.left
+        assertEquals ' is ', node.criterion.comparisonOp
+        assertNull node.criterion.right
+    }
+
     void testFilledNode() {
         def condition = new SubscriberFieldCondition('FirstName', ValueCondition.empty())
 
@@ -217,6 +243,19 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals column, right.criterion.left
         assertEquals ' <> ', right.criterion.comparisonOp
         assertEquals '', right.criterion.right
+    }
+
+    void testFilledNode_Number() {
+        def condition = new SubscriberFieldCondition('FirstName', ValueCondition.empty())
+
+        def column = new Column('S', 'FirstName', null, ColumnType.Number)
+        def node = visitor.filledNode(condition, column)
+
+        assertNotNull node
+        assertEquals CriterionNodeType.Criterion, node.type
+        assertEquals column, node.criterion.left
+        assertEquals ' is not ', node.criterion.comparisonOp
+        assertNull node.criterion.right
     }
 
     void testInListNode() {

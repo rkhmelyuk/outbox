@@ -2,6 +2,7 @@ package outbox.subscriber.search
 
 import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.search.query.elems.Column
+import outbox.subscriber.search.query.elems.ColumnType
 import outbox.subscription.SubscriptionStatus
 import outbox.subscriber.search.condition.*
 import outbox.subscriber.search.criteria.*
@@ -27,13 +28,12 @@ class CriteriaVisitor implements ConditionVisitor {
         idCriterion.right = condition.field.id
         idCriterion.comparisonOp = ' = '
 
-        def column = getDynamicFieldColumn(condition)
+        def column = getDynamicFieldColumn(Names.DynamicFieldValueAlias, condition)
 
         def criterionNode = new CriterionNode()
         criterionNode.type = CriterionNodeType.And
         criterionNode.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: idCriterion)
-        criterionNode.right = builderFieldsCriterionNode(condition,
-                new Column(Names.DynamicFieldValueAlias, column))
+        criterionNode.right = builderFieldsCriterionNode(condition, column)
 
         def dynamicFieldTree = new CriteriaTree()
         dynamicFieldTree.addNode(makeNode(condition, criterionNode))
@@ -129,19 +129,19 @@ class CriteriaVisitor implements ConditionVisitor {
         return node
     }
 
-    String getDynamicFieldColumn(DynamicFieldCondition condition) {
+    Column getDynamicFieldColumn(String table, DynamicFieldCondition condition) {
         def fieldType = condition.field.type
         if (fieldType == DynamicFieldType.String) {
-            return Names.StringValue
+            return new Column(table, Names.StringValue, null, ColumnType.String)
         }
         else if (fieldType == DynamicFieldType.Number) {
-            return Names.NumberValue
+            return new Column(table, Names.NumberValue, null, ColumnType.Number)
         }
         else if (fieldType == DynamicFieldType.Boolean) {
-            return Names.BooleanValue
+            return new Column(table, Names.BooleanValue, null, ColumnType.Boolean)
         }
         else if (fieldType == DynamicFieldType.SingleSelect) {
-            return Names.DynamicFieldItemId
+            return new Column(table, Names.DynamicFieldItemId, null, ColumnType.Number)
         }
         return null
     }
@@ -196,14 +196,18 @@ class CriteriaVisitor implements ConditionVisitor {
         leftCriterion.comparisonOp = ' is '
         leftCriterion.right = null
 
+        def leftNode = new CriterionNode(
+                type: CriterionNodeType.Criterion,
+                criterion: leftCriterion)
+
+        if (column.type == ColumnType.Number || column.type == ColumnType.Boolean) {
+            return leftNode
+        }
+
         def rightCriterion = new ComparisonCriterion()
         rightCriterion.left = column
         rightCriterion.comparisonOp = ' = '
         rightCriterion.right = ''
-
-        def leftNode = new CriterionNode(
-                type: CriterionNodeType.Criterion,
-                criterion: leftCriterion)
 
         def rightNode = new CriterionNode(
                 type: CriterionNodeType.Criterion,
@@ -227,6 +231,10 @@ class CriteriaVisitor implements ConditionVisitor {
         def leftNode = new CriterionNode(
                 type: CriterionNodeType.Criterion,
                 criterion: leftCriterion)
+
+        if (column.type == ColumnType.Number || column.type == ColumnType.Boolean) {
+            return leftNode
+        }
 
         def rightNode = new CriterionNode(
                 type: CriterionNodeType.Criterion,
