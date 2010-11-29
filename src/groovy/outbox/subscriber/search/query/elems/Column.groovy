@@ -22,15 +22,22 @@ class Column implements Serializable {
      */
     final String alias
 
-    Column(String table, String name, String alias = null) {
+    /**
+     * The column type.
+     */
+    final ColumnType type
+
+    Column(String table, String name, String alias = null, ColumnType type = null) {
         this.table = table
         this.name = name
         this.alias = alias
+        this.type = type
     }
 
-    Column(Table table, String name, String alias = null) {
+    Column(Table table, String name, String alias = null, ColumnType type = null) {
         this.name = name
         this.alias = alias
+        this.type = type
 
         if (table) {
             if (table.alias) {

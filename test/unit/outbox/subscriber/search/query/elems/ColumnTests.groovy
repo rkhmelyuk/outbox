@@ -6,15 +6,17 @@ package outbox.subscriber.search.query.elems
 class ColumnTests extends GroovyTestCase {
 
     void testFields() {
-        def column = new Column('Table', 'Column', 'Alias')
+        def column = new Column('Table', 'Column', 'Alias', ColumnType.Number)
         assertEquals 'Table', column.table
         assertEquals 'Column', column.name
         assertEquals 'Alias', column.alias
+        assertEquals ColumnType.Number, column.type
 
         column = new Column('Table', 'Column')
         assertEquals 'Table', column.table
         assertEquals 'Column', column.name
         assertNull column.alias
+        assertNull column.type
     }
 
     void testToSQL() {
