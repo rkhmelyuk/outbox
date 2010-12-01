@@ -1,9 +1,9 @@
-package outbox.subscriber.search.criteria
+package outbox.subscriber.search
 
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldType
-import outbox.subscriber.search.CriteriaVisitor
-import outbox.subscriber.search.Names
+import outbox.subscriber.search.criteria.CriterionNode
+import outbox.subscriber.search.criteria.CriterionNodeType
 import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.query.elems.ColumnType
 import outbox.subscriber.search.condition.*

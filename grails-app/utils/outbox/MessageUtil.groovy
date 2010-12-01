@@ -43,7 +43,14 @@ class MessageUtil {
         model << [errors: errors]
     }
 
-    public static String getMessage(String messageCode, Object[] params, HttpServletRequest request) {
+    /**
+     * Gets i18n message.
+     * @param messageCode the message code.
+     * @param params the message arguments.
+     * @param request the HTTP servlet request.
+     * @return the message by code
+     */
+    public static String getMessage(String messageCode, Object[] params = null, HttpServletRequest request = null) {
         request = request ?: SRH.request
         def locale = RequestContextUtils.getLocale(request)
         def messageSource = (MessageSource) ApplicationHolder.application.mainContext.getBean("messageSource");

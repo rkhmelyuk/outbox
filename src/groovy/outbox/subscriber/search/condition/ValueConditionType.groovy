@@ -36,6 +36,10 @@ public enum ValueConditionType {
         this.message = message
     }
 
+    String getDescriptionMessage() {
+        message + '.desc'
+    }
+
     static ValueConditionType getById(Integer id) {
         for (ValueConditionType type in values()) {
             if (type.id == id) return type
