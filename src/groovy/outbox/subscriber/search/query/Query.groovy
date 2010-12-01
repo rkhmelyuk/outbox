@@ -14,8 +14,8 @@ import outbox.subscriber.search.query.elems.Table
  */
 class Query {
 
-    int page
-    int perPage
+    Integer page
+    Integer perPage
 
     /**
      * List of columns to return by select.
