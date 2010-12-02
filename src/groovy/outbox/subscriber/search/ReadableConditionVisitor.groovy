@@ -2,6 +2,9 @@ package outbox.subscriber.search
 
 import outbox.MessageUtil
 import outbox.subscriber.search.condition.*
+import java.text.DecimalFormat
+import outbox.subscriber.field.DynamicFieldItem
+import outbox.subscriber.DynamicFieldService
 
 /**
  * Prepares a human readable representation of query.
@@ -12,12 +15,18 @@ import outbox.subscriber.search.condition.*
  */
 class ReadableConditionVisitor implements ConditionVisitor {
 
+    final DynamicFieldService dynamicFieldService
     def subscriberDescription = new StringBuilder()
+    def dynamicFieldDescription = new StringBuilder()
+
+    ReadableConditionVisitor(DynamicFieldService dynamicFieldService) {
+        this.dynamicFieldService = dynamicFieldService
+    }
 
     void visitSubscriberFieldCondition(SubscriberFieldCondition condition) {
         if (condition.visible) {
             def description  = new StringBuilder()
-            description << 'Subscriber field '
+            description << 'Field '
             description << "'${subscriberFieldName(condition.field)}'"
             description << " " << valueType(condition.value)
             description << " " << valueName(condition.value)
@@ -26,7 +35,14 @@ class ReadableConditionVisitor implements ConditionVisitor {
     }
 
     void visitDynamicFieldCondition(DynamicFieldCondition condition) {
-
+        if (condition.visible) {
+            def description  = new StringBuilder()
+            description << 'Field '
+            description << "'${condition.field.label}'"
+            description << " " << valueType(condition.value)
+            description << " " << valueName(condition.value)
+            dynamicFieldDescription << description.toString().trim()
+        }
     }
 
     void visitSubscriptionCondition(SubscriptionCondition condition) {
@@ -35,6 +51,7 @@ class ReadableConditionVisitor implements ConditionVisitor {
 
     String subscriberFieldName(String field) {
         switch (field) {
+
             case Names.Email:
                 return MessageUtil.getMessage('searchFields.email')
             case Names.FirstName:
@@ -60,13 +77,30 @@ class ReadableConditionVisitor implements ConditionVisitor {
     String valueName(ValueCondition value) {
         if (value.type == ValueConditionType.InList ||
                 value.type == ValueConditionType.NotInList) {
-            return value.value.toString()
+            def values = value.value.collect {prepareValue(it)}
+            return values.toString()
         }
         else if (value.type != ValueConditionType.Filled &&
                 value.type != ValueConditionType.Empty) {
-            return "'$value.value'"
+            return "'${prepareValue(value.value)}'"
         }
         return ''
+    }
+
+    String prepareValue(def value) {
+        if (value instanceof BigDecimal) {
+            value = new DecimalFormat('#############.#####').format(value)
+        }
+        else if (value instanceof Boolean) {
+            value = value ? 'True' : 'False'
+        }
+        else if (value instanceof DynamicFieldItem) {
+            value = value.name
+        }
+        else if (value == null) {
+            value = ''
+        }
+        return value
     }
 
 }
