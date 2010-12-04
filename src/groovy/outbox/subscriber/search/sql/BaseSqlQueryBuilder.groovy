@@ -1,6 +1,7 @@
 package outbox.subscriber.search.sql
 
 import java.text.DecimalFormat
+import outbox.subscriber.field.DynamicFieldItem
 import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.criteria.*
 
@@ -132,6 +133,9 @@ abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
         }
         else if (value instanceof Boolean) {
             value = value ? 'true' : 'false'
+        }
+        else if (value instanceof DynamicFieldItem) {
+            value = Long.toString(value.id)
         }
         else if (value instanceof Column) {
             value = value.toSQL()

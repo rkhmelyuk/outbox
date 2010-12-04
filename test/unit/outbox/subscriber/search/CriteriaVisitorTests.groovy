@@ -291,4 +291,16 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals ' = ', node.criterion.comparisonOp
         assertEquals 23, node.criterion.right
     }
+
+    void testComparisonNode_Like() {
+        def condition = new SubscriberFieldCondition('Age', ValueCondition.like('test'))
+        def column = new Column('S', 'Age')
+        def node = visitor.comparisonNode(condition, column)
+
+        assertNotNull node
+        assertEquals CriterionNodeType.Criterion, node.type
+        assertEquals column, node.criterion.left
+        assertEquals ' like ', node.criterion.comparisonOp
+        assertEquals '%test%', node.criterion.right
+    }
 }

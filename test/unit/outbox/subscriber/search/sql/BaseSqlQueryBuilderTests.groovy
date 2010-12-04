@@ -1,5 +1,6 @@
 package outbox.subscriber.search.sql
 
+import outbox.subscriber.field.DynamicFieldItem
 import outbox.subscriber.search.query.Query
 import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.query.elems.Table
@@ -29,6 +30,8 @@ class BaseSqlQueryBuilderTests extends GroovyTestCase {
         assertEquals '1023.12', builder.prepareValue(1023.1200)
         assertEquals 'T.C', builder.prepareValue(new Column('T', 'C'))
         assertEquals 'NULL', builder.prepareValue(null)
+        assertEquals '23', builder.prepareValue(new DynamicFieldItem(id: 23))
+        assertEquals '12323', builder.prepareValue(new DynamicFieldItem(id: 12323))
     }
 
     void testComparisonCriterionSQL() {

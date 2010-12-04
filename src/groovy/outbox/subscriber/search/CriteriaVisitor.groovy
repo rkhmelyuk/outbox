@@ -170,7 +170,12 @@ class CriteriaVisitor implements ConditionVisitor {
         def criterion = new ComparisonCriterion()
         criterion.left = column
         criterion.right = condition.value.value
-        criterion.comparisonOp = comparisonOperation(condition.value.type)
+
+        def type = condition.value.type
+        criterion.comparisonOp = comparisonOperation(type)
+        if (type == ValueConditionType.Like) {
+            criterion.right = "%$criterion.right%"
+        }
 
         def criterionNode = new CriterionNode()
         criterionNode.type = CriterionNodeType.Criterion

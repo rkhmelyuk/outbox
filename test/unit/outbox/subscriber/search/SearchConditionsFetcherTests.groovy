@@ -6,6 +6,8 @@ import outbox.member.Member
 import outbox.security.OutboxUser
 import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.field.DynamicField
+import outbox.subscriber.field.DynamicFieldItem
+import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.search.condition.ValueConditionType
 
 /**
@@ -78,7 +80,7 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertNotNull condition
 
         assertEquals 'FirstName', condition.field
-        assertEquals '%John%', condition.value.value
+        assertEquals 'John', condition.value.value
         assertEquals ValueConditionType.Like, condition.value.type
     }
 
@@ -141,6 +143,111 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertEquals dynamicField, condition.field
         assertEquals 'John', condition.value.value
         assertEquals ValueConditionType.Equal, condition.value.type
+    }
+
+    void testDynamicFieldConditions_SingleSelect() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.DynamicField.id"
+        params."row[1].field" = "1"
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = '2'
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        def dynamicField = new DynamicField(id: 1, owner: new Member(id: 1), type: DynamicFieldType.SingleSelect)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            return dynamicField
+        }
+        def dynamicFieldItem = new DynamicFieldItem(field: dynamicField)
+        dynamicFieldServiceControl.demand.getDynamicFieldItem { id ->
+            assertEquals 2, id
+            return dynamicFieldItem
+        }
+        fetcher.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        fetcher.springSecurityService = springSecurityServiceControl.createMock()
+
+        def condition = fetcher.dynamicFieldCondition(params, '1')
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertNotNull condition
+
+        assertEquals dynamicField, condition.field
+        assertEquals dynamicFieldItem, condition.value.value
+        assertEquals ValueConditionType.Equal, condition.value.type
+    }
+
+    void testDynamicFieldConditions_DynamicFieldItemDenied() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.DynamicField.id"
+        params."row[1].field" = "1"
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = '2'
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        def dynamicField = new DynamicField(id: 1, owner: new Member(id: 1), type: DynamicFieldType.SingleSelect)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            return dynamicField
+        }
+        def dynamicFieldItem = new DynamicFieldItem()
+        dynamicFieldServiceControl.demand.getDynamicFieldItem { id ->
+            assertEquals 2, id
+            return dynamicFieldItem
+        }
+        fetcher.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        fetcher.springSecurityService = springSecurityServiceControl.createMock()
+
+        def condition = fetcher.dynamicFieldCondition(params, '1')
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertNull condition
+    }
+
+    void testDynamicFieldConditions_DynamicFieldItemNotFound() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.DynamicField.id"
+        params."row[1].field" = "1"
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = '2'
+
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        def dynamicField = new DynamicField(id: 1, owner: new Member(id: 1), type: DynamicFieldType.SingleSelect)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            return dynamicField
+        }
+        dynamicFieldServiceControl.demand.getDynamicFieldItem { id ->
+            assertEquals 2, id
+            return null
+        }
+        fetcher.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        fetcher.springSecurityService = springSecurityServiceControl.createMock()
+
+        def condition = fetcher.dynamicFieldCondition(params, '1')
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertNull condition
     }
 
     void testDynamicFieldConditions_DeniedDynamicField() {

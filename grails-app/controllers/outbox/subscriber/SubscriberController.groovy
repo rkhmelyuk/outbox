@@ -14,6 +14,7 @@ import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.field.DynamicFieldValue
 import outbox.subscriber.field.DynamicFieldValues
+import outbox.subscriber.search.Conditions
 import outbox.subscriber.search.SearchConditionsFetcher
 import outbox.subscriber.search.SubscriberSearchService
 import outbox.subscriber.search.condition.SubscriberFieldCondition
@@ -299,8 +300,9 @@ class SubscriberController {
     def search = {
         def model = [:]
 
+        def conditions = null
         if (request.method == 'POST') {
-            def conditions = searchConditionsFetcher.fetch(params)
+            conditions = searchConditionsFetcher.fetch(params)
             conditions.page = conditions.page ?: 1
             conditions.perPage = conditions.perPage ?: 10
 
@@ -311,9 +313,15 @@ class SubscriberController {
             ownershipCondition.readOnly = false
             conditions.and ownershipCondition
 
-            model.conditions = conditions
             model.subscribers = subscriberSearchService.search(conditions)
         }
+        else {
+            conditions = new Conditions()
+            conditions.page = 1
+            conditions.perPage = 10
+        }
+
+        model.conditions = conditions
 
         return model
     }

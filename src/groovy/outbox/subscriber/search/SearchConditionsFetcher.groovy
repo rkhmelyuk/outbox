@@ -80,11 +80,6 @@ class SearchConditionsFetcher {
             if (comparison != ValueConditionType.Empty
                     && comparison != ValueConditionType.Filled) {
                 value = params["row[$rowId].value"]
-
-                // for like condition we add sql wild cards
-                if (comparison == ValueConditionType.Like) {
-                    value = "%$value%".toString()
-                }
             }
 
             value = new ValueCondition(value, comparison)
@@ -113,9 +108,17 @@ class SearchConditionsFetcher {
                 if (comparison != ValueConditionType.Empty
                         && comparison != ValueConditionType.Filled) {
                     value = params["row[$rowId].value"]
-                    if (dynamicField.type == DynamicFieldType.Number ||
-                            dynamicField.type == DynamicFieldType.SingleSelect) {
+                    if (dynamicField.type == DynamicFieldType.Number) {
                         value = ValueUtil.getInteger(value)
+                    }
+                    else if (dynamicField.type == DynamicFieldType.SingleSelect) {
+                        def id = ValueUtil.getLong(value)
+                        def item = dynamicFieldService.getDynamicFieldItem(id)
+                        if (!item || item.field?.id != dynamicField.id) {
+                            // didn't find item or item is not usable for us, so no condition
+                            return null
+                        }
+                        value = item
                     }
                 }
 
