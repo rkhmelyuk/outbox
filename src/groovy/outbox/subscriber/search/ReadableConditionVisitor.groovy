@@ -1,10 +1,10 @@
 package outbox.subscriber.search
 
-import outbox.MessageUtil
-import outbox.subscriber.search.condition.*
 import java.text.DecimalFormat
-import outbox.subscriber.field.DynamicFieldItem
+import outbox.MessageUtil
 import outbox.subscriber.DynamicFieldService
+import outbox.subscriber.field.DynamicFieldItem
+import outbox.subscriber.search.condition.*
 
 /**
  * Prepares a human readable representation of query.
@@ -26,7 +26,8 @@ class ReadableConditionVisitor implements ConditionVisitor {
     void visitSubscriberFieldCondition(SubscriberFieldCondition condition) {
         if (condition.visible) {
             def description  = new StringBuilder()
-            description << 'Field '
+            description << concatenation(condition)
+            description << ' Field '
             description << "'${subscriberFieldName(condition.field)}'"
             description << " " << valueType(condition.value)
             description << " " << valueName(condition.value)
@@ -37,7 +38,8 @@ class ReadableConditionVisitor implements ConditionVisitor {
     void visitDynamicFieldCondition(DynamicFieldCondition condition) {
         if (condition.visible) {
             def description  = new StringBuilder()
-            description << 'Field '
+            description << concatenation(condition)
+            description << ' Field '
             description << "'${condition.field.label}'"
             description << " " << valueType(condition.value)
             description << " " << valueName(condition.value)
@@ -101,6 +103,10 @@ class ReadableConditionVisitor implements ConditionVisitor {
             value = ''
         }
         return value
+    }
+
+    String concatenation(Condition condition) {
+        MessageUtil.getMessage(condition.concatenation.messageCode)
     }
 
 }

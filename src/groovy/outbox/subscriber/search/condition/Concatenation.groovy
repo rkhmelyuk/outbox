@@ -7,12 +7,17 @@ package outbox.subscriber.search.condition
  */
 public enum Concatenation {
 
-    And,
+    And('concatenation.and'),
 
-    Or,
+    Or('concatenation.or'),
 
-    AndNot,
+    AndNot('concatenation.and.not'),
 
-    OrNot,
+    OrNot('concatenation.or.not')
 
+    final String messageCode
+
+    Concatenation(String messageCode) {
+        this.messageCode = messageCode
+    }
 }
