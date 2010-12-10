@@ -1,5 +1,8 @@
 package outbox.subscriber.search
 
+import org.codehaus.groovy.grails.plugins.springsecurity.SecurityRequestHolder
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.mock.web.MockHttpServletResponse
 import outbox.member.Member
 import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.Subscriber
@@ -40,6 +43,11 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
                 password: 'password')
 
         member.save()
+
+        def request = new MockHttpServletRequest()
+        def response = new MockHttpServletResponse()
+        request.addPreferredLocale Locale.ENGLISH
+        SecurityRequestHolder.set request, response
     }
 
     protected void tearDown() {
@@ -317,6 +325,13 @@ class SubscriberSearchServiceTests extends GroovyTestCase {
         assertEquals 1, subscribers.total
         assertTrue subscribers.list.contains(subscriber2)
         assertFalse subscribers.list.contains(subscriber1)
+    }
+
+    void testDescribe() {
+        def conditions = new Conditions()
+        conditions.and(new SubscriberFieldCondition('FirstName', ValueCondition.empty()))
+        def description = subscriberSearchService.describe(conditions)
+        assertEquals "Field 'First Name' is empty", description
     }
 
     Subscriber createTestSubscriber(id) {

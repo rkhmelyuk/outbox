@@ -877,7 +877,8 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         controller.searchConditionsFetcher = new SearchConditionsFetcher()
         Map model = controller.search()
         assertNotNull model
-        assertTrue model.isEmpty()
+        assertNull model.subscribers
+        assertNull model.readableConditions
     }
 
     void testSearch_PostEmpty() {
@@ -888,6 +889,10 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         subscriberSearchServiceControl.demand.search { Conditions conditions ->
             assertFalse conditions.empty
             return subscribers
+        }
+        subscriberSearchServiceControl.demand.describe { Conditions conditions ->
+            assertFalse conditions.empty
+            return 'description'
         }
         controller.subscriberSearchService = subscriberSearchServiceControl.createMock()
         controller.searchConditionsFetcher = new SearchConditionsFetcher()
@@ -904,5 +909,6 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
 
         assertNotNull model
         assertEquals subscribers, model.subscribers
+        assertEquals 'description', model.readableConditions
     }
 }
