@@ -119,6 +119,7 @@ beans = {
 
     subscriberSearchService(outbox.subscriber.search.SubscriberSearchService) {
         queryRunnerDetector = ref('queryRunnerDetector')
+        dynamicFieldService = ref('dynamicFieldService')
     }
 
     searchConditionsFetcher(outbox.subscriber.search.SearchConditionsFetcher) {

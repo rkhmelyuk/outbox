@@ -169,7 +169,7 @@ class SearchConditionsController {
             dynamicField = dynamicField ?: dynamicFields.first()
 
             if (dynamicField && dynamicField.type == DynamicFieldType.SingleSelect) {
-                value = value.id
+                value = value?.id
                 comparisonsList = selectComparisons()
                 values = dynamicFieldService.getDynamicFieldItems(dynamicField)
             }

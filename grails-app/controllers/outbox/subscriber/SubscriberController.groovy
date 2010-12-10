@@ -298,9 +298,10 @@ class SubscriberController {
     }
 
     def search = {
-        def model = [:]
-
         def conditions = null
+        def subscribers = null
+        def readableConditions = null
+
         if (request.method == 'POST') {
             conditions = searchConditionsFetcher.fetch(params)
             conditions.page = conditions.page ?: 1
@@ -313,7 +314,8 @@ class SubscriberController {
             ownershipCondition.readOnly = false
             conditions.and ownershipCondition
 
-            model.subscribers = subscriberSearchService.search(conditions)
+            subscribers = subscriberSearchService.search(conditions)
+            readableConditions = subscriberSearchService.describe(conditions)
         }
         else {
             conditions = new Conditions()
@@ -321,8 +323,6 @@ class SubscriberController {
             conditions.perPage = 10
         }
 
-        model.conditions = conditions
-
-        return model
+        [conditions: conditions, subscribers: subscribers, readableConditions: readableConditions]
     }
 }

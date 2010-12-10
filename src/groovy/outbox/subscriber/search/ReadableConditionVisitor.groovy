@@ -16,8 +16,9 @@ import outbox.subscriber.search.condition.*
 class ReadableConditionVisitor implements ConditionVisitor {
 
     final DynamicFieldService dynamicFieldService
-    def subscriberDescription = new StringBuilder()
-    def dynamicFieldDescription = new StringBuilder()
+
+    def subscriberDescriptions = []
+    def dynamicFieldDescriptions = []
 
     ReadableConditionVisitor(DynamicFieldService dynamicFieldService) {
         this.dynamicFieldService = dynamicFieldService
@@ -31,7 +32,7 @@ class ReadableConditionVisitor implements ConditionVisitor {
             description << "'${subscriberFieldName(condition.field)}'"
             description << " " << valueType(condition.value)
             description << " " << valueName(condition.value)
-            subscriberDescription << description.toString().trim()
+            subscriberDescriptions << description.toString().trim()
         }
     }
 
@@ -43,7 +44,7 @@ class ReadableConditionVisitor implements ConditionVisitor {
             description << "'${condition.field.label}'"
             description << " " << valueType(condition.value)
             description << " " << valueName(condition.value)
-            dynamicFieldDescription << description.toString().trim()
+            dynamicFieldDescriptions << description.toString().trim()
         }
     }
 
@@ -107,6 +108,25 @@ class ReadableConditionVisitor implements ConditionVisitor {
 
     String concatenation(Condition condition) {
         MessageUtil.getMessage(condition.concatenation.messageCode)
+    }
+
+    String getReadableString() {
+        def result = new StringBuilder()
+        subscriberDescriptions.each { record ->
+            result << record
+            result << ' '
+        }
+        dynamicFieldDescriptions.each { record ->
+            result << record
+            result << ' '
+        }
+
+        def string = result.toString().trim()
+        def strings = string.split(' ', 2)
+        if (strings.size() > 1) {
+            return strings[1]
+        }
+        return string
     }
 
 }

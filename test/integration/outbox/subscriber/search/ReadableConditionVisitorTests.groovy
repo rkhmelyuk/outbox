@@ -31,47 +31,47 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
     void testSubscribeField_WithValue() {
         def condition = new SubscriberFieldCondition(Names.Email, ValueCondition.equal('test'))
         visitor.visitSubscriberFieldCondition condition
-        assertEquals "AND Field 'Email' equals to 'test'", visitor.subscriberDescription.toString()
+        assertEquals "AND Field 'Email' equals to 'test'", visitor.subscriberDescriptions.first()
     }
 
     void testSubscriberField_EmptyWithoutValue() {
         def condition = new SubscriberFieldCondition(Names.Email, ValueCondition.empty())
         visitor.visitSubscriberFieldCondition condition
-        assertEquals "AND Field 'Email' is empty", visitor.subscriberDescription.toString()
+        assertEquals "AND Field 'Email' is empty", visitor.subscriberDescriptions.first()
     }
 
     void testSubscriberField_FilledWithoutValue() {
         def condition = new SubscriberFieldCondition(Names.Email, ValueCondition.filled())
         visitor.visitSubscriberFieldCondition condition
-        assertEquals "AND Field 'Email' is filled", visitor.subscriberDescription.toString()
+        assertEquals "AND Field 'Email' is filled", visitor.subscriberDescriptions.first()
     }
 
     void testSubscriberField_Invisible() {
         def condition = new SubscriberFieldCondition(Names.Email, ValueCondition.equal('test'))
         condition.visible = false
         visitor.visitSubscriberFieldCondition condition
-        assertEquals '', visitor.subscriberDescription.toString()
+        assertTrue visitor.subscriberDescriptions.empty
     }
 
     void testDynamicField_String() {
         def dynamicField = new DynamicField(label: 'Test', type: DynamicFieldType.String)
         def condition = new DynamicFieldCondition(dynamicField, ValueCondition.equal('test'))
         visitor.visitDynamicFieldCondition condition
-        assertEquals "AND Field 'Test' equals to 'test'", visitor.dynamicFieldDescription.toString()
+        assertEquals "AND Field 'Test' equals to 'test'", visitor.dynamicFieldDescriptions.first()
     }
 
     void testDynamicField_Number() {
         def dynamicField = new DynamicField(label: 'Test', type: DynamicFieldType.Number)
         def condition = new DynamicFieldCondition(dynamicField, ValueCondition.equal(12.33))
         visitor.visitDynamicFieldCondition condition
-        assertEquals "AND Field 'Test' equals to '12.33'", visitor.dynamicFieldDescription.toString()
+        assertEquals "AND Field 'Test' equals to '12.33'", visitor.dynamicFieldDescriptions.first()
     }
 
     void testDynamicField_Boolean() {
         def dynamicField = new DynamicField(label: 'Test', type: DynamicFieldType.Boolean)
         def condition = new DynamicFieldCondition(dynamicField, ValueCondition.equal(true))
         visitor.visitDynamicFieldCondition condition
-        assertEquals "AND Field 'Test' equals to 'True'", visitor.dynamicFieldDescription.toString()
+        assertEquals "AND Field 'Test' equals to 'True'", visitor.dynamicFieldDescriptions.first()
     }
 
     void testDynamicField_SingleSelect() {
@@ -79,21 +79,21 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
         def condition = new DynamicFieldCondition(dynamicField,
                 ValueCondition.equal(new DynamicFieldItem(name: 'Item')))
         visitor.visitDynamicFieldCondition condition
-        assertEquals "AND Field 'Test' equals to 'Item'", visitor.dynamicFieldDescription.toString()
+        assertEquals "AND Field 'Test' equals to 'Item'", visitor.dynamicFieldDescriptions.first()
     }
 
     void testDynamicField_EmptyWithoutValue() {
         def dynamicField = new DynamicField(label: 'Test')
         def condition = new DynamicFieldCondition(dynamicField, ValueCondition.empty())
         visitor.visitDynamicFieldCondition condition
-        assertEquals "AND Field 'Test' is empty", visitor.dynamicFieldDescription.toString()
+        assertEquals "AND Field 'Test' is empty", visitor.dynamicFieldDescriptions.first()
     }
 
     void testDynamicField_FilledWithoutValue() {
         def dynamicField = new DynamicField(label: 'Test')
         def condition = new DynamicFieldCondition(dynamicField, ValueCondition.filled())
         visitor.visitDynamicFieldCondition condition
-        assertEquals "AND Field 'Test' is filled", visitor.dynamicFieldDescription.toString()
+        assertEquals "AND Field 'Test' is filled", visitor.dynamicFieldDescriptions.first()
     }
 
     void testDynamicField_Invisible() {
@@ -101,7 +101,7 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
         def condition = new DynamicFieldCondition(dynamicField, ValueCondition.equal('test'))
         condition.visible = false
         visitor.visitDynamicFieldCondition condition
-        assertEquals '', visitor.dynamicFieldDescription.toString()
+        assertTrue visitor.dynamicFieldDescriptions.empty
     }
 
     void testSubscriberFieldName() {
@@ -137,5 +137,16 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
 
         condition.concatenation = Concatenation.OrNot
         assertEquals 'OR NOT', visitor.concatenation(condition)
+    }
+
+    void testMultipleConditions() {
+        def condition = new SubscriberFieldCondition(Names.Email, ValueCondition.equal('test'))
+        visitor.visitSubscriberFieldCondition condition
+
+        def dynamicField = new DynamicField(label: 'Test', type: DynamicFieldType.String)
+        condition = new DynamicFieldCondition(dynamicField, ValueCondition.equal('test'))
+        visitor.visitDynamicFieldCondition condition
+
+        assertEquals "Field 'Email' equals to 'test' AND Field 'Test' equals to 'test'", visitor.readableString
     }
 }

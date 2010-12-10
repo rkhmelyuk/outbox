@@ -49,6 +49,7 @@
             <div class="center">
                 %{-- Search results --}%
                 <g:if test="${subscribers && subscribers.list}">
+                    <p>${readableConditions}</p>
                     <table>
                         <tr>
                             <th><g:sortColumn field="Email" class="page_callback"><g:message code="email"/></g:sortColumn></th>

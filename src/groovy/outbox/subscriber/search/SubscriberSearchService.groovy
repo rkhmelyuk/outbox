@@ -1,5 +1,6 @@
 package outbox.subscriber.search
 
+import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.search.query.QueriesBuilder
 import outbox.subscriber.search.runner.QueryRunnerDetector
 
@@ -10,6 +11,7 @@ import outbox.subscriber.search.runner.QueryRunnerDetector
  */
 class SubscriberSearchService {
 
+    DynamicFieldService dynamicFieldService
     QueryRunnerDetector queryRunnerDetector
     QueriesBuilder queriesBuilder = new QueriesBuilder()
 
@@ -22,5 +24,11 @@ class SubscriberSearchService {
         def runner = queryRunnerDetector.detect(queries)
 
         runner.run(queries)
+    }
+
+    String describe(Conditions conditions) {
+        def visitor = new ReadableConditionVisitor()
+        conditions.visit(visitor)
+        visitor.readableString
     }
 }
