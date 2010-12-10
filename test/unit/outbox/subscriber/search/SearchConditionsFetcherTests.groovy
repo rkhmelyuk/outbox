@@ -326,4 +326,13 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertTrue condition.subscribedTo
         assertTrue condition.subscriptionListIds.contains(2)
     }
+
+    void testSubscriptionConditions_Empty() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.Subscription.id"
+        params."row[1].comparison" = ''
+        params."row[1].subscriptionList" = '2'
+
+        assertNull fetcher.subscriptionCondition(params, '1')
+    }
 }
