@@ -51,6 +51,7 @@ class SearchConditionsFetcher {
                         condition = dynamicFieldCondition(params, rowId)
                         break
                     case ConditionType.Subscription:
+                        condition = subscriptionCondition(params, rowId)
                         break
                 }
 
@@ -125,6 +126,22 @@ class SearchConditionsFetcher {
                 value = new ValueCondition(value, comparison)
                 return new DynamicFieldCondition(dynamicField, value)
             }
+        }
+        return null
+    }
+
+    /**
+     * Fetches subscription condition for specified row.
+     * @param params the parameters map.
+     * @param rowId the conditions row id.
+     * @return the fetched conditions or null if not found or not complete.
+     */
+    SubscriptionCondition subscriptionCondition(Map params, String rowId) {
+        def subscriptionListId = ValueUtil.getInteger(params["row[$rowId].subscriptionList"])
+        def subscribed = ValueUtil.getInteger(params["row[$rowId].comparison"]) == 1
+
+        if (subscriptionListId && subscribed) {
+            return new SubscriptionCondition(subscribed, [subscriptionListId])
         }
         return null
     }

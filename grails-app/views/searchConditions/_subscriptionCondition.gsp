@@ -18,7 +18,8 @@
     <div class="row">
         <div class="title"><label for="row[${row}].value">List</label></div>
         <div class="value">
-            <g:select name="row[${row}].value" from="${subscriptionLists}" optionKey="id" optionValue="name" value="${value}"/>
+            <g:select name="row[${row}].subscriptionList" from="${subscriptionLists}"
+                    optionKey="id" optionValue="name" value="${subscriptionList}"/>
         </div>
     </div>
 </div>

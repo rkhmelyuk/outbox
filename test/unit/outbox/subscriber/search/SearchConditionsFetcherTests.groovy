@@ -312,4 +312,18 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         params."row[1].type" = "$ConditionType.DynamicField.id"
         assertNull fetcher.dynamicFieldCondition(params, '1')
     }
+
+    void testSubscriptionConditions() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.Subscription.id"
+        params."row[1].comparison" = '1'
+        params."row[1].subscriptionList" = '2'
+
+        def condition = fetcher.subscriptionCondition(params, '1')
+
+        assertNotNull condition
+
+        assertTrue condition.subscribedTo
+        assertTrue condition.subscriptionListIds.contains(2)
+    }
 }

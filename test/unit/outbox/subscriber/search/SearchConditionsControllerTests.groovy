@@ -151,7 +151,7 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
 
         controller.params.row = 1
         controller.params.type = 3
-        controller.params.value = 2
+        controller.params.subscriptionList = 2
         controller.renderRow()
 
         springSecurityServiceControl.verify()
@@ -162,7 +162,7 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertNotNull controller.renderArgs.model.types
         assertNotNull controller.renderArgs.model.comparisons
         assertEquals subscriptionLists, controller.renderArgs.model.subscriptionLists
-        assertEquals 2, controller.renderArgs.model.value
+        assertEquals 2, controller.renderArgs.model.subscriptionList
         assertEquals ConditionType.Subscription.id, controller.renderArgs.model.type
     }
 
