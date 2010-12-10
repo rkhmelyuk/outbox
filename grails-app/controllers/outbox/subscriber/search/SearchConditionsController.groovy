@@ -188,15 +188,31 @@ class SearchConditionsController {
     }
 
     void renderSubscriptionRow() {
+        def row = params.int('row')
+        def comparison = params.int('comparison')
+        def value = params.value
+
+        renderSubscriptionRow row, comparison, value
+    }
+
+    void renderSubscriptionRow(row, comparison, value) {
         def member = Member.load(springSecurityService.principal.id)
         def conditions = new SubscriptionListConditionsBuilder().build {
             ownedBy member
             archived false
         }
-        def subscriptionLists = subscriptionListService.search(conditions)
+        def subscriptionLists = subscriptionListService.search(conditions).list
 
-        def model = [type: ConditionType.Subscription.id, row: params.int('row'),
-                subscriptionLists: subscriptionLists, types: types()]
+        def model = [:]
+
+        model.row = row
+        model.value = value
+        model.types = types()
+        model.comparison = comparison
+        model.type = ConditionType.Subscription.id
+        model.subscriptionLists = subscriptionLists
+        model.comparisons = subscriptionComparisons()
+
         render template: 'subscriptionCondition', model: model
     }
 
@@ -231,6 +247,11 @@ class SearchConditionsController {
                 ValueConditionType.NotInList]
 
         types.collectAll { [key: it.id, value: message(code: it.message)] }
+    }
+
+    Map subscriptionComparisons() {
+        return [1: message(code: 'subscribed.subscriptionList'),
+                0: message(code: 'notSubscribed.subscriptionList')]
     }
 
     boolean showValue(def comparisonId) {

@@ -7,7 +7,7 @@
     </div>
     <div class="c"></div>
     <div class="row">
-        <div class="title"><label for="row[${row}].field">Field</label></div>
+        <div class="title"><label for="row[${row}].field"><g:message code="field" /></label></div>
         <div class="value">
             <g:select name="row[${row}].field" from="${dynamicFields}"
                     optionKey="id" optionValue="label"
@@ -17,7 +17,7 @@
     <g:if test="${field}">
         <div class="c"></div>
         <div class="row">
-            <div class="title"><label for="row[${row}].comparison">Comparison</label></div>
+            <div class="title"><label for="row[${row}].comparison"><g:message code="comparison" /></label></div>
             <div class="value">
                 <g:select name="row[${row}].comparison" from="${comparisons}"
                         optionKey="key" optionValue="value"
@@ -27,7 +27,7 @@
         <g:if test="${showValue}">
             <div class="c"></div>
             <div class="row">
-                <div class="title"><label for="row[${row}].value">Value</label></div>
+                <div class="title"><label for="row[${row}].value"><g:message code="value" /></label></div>
                 <div class="value">
                     <g:if test="${values}">
                         <g:select name="row[${row}].value" from="${values}" optionKey="id" optionValue="name" value="${value}"/>

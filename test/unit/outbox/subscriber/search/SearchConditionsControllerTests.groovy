@@ -21,18 +21,6 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         controller.class.metaClass.message = { 'message' }
     }
 
-    void testRenderRow_First() {
-        controller.params.row = 1
-        controller.renderRow()
-
-        assertEquals 'subscriberCondition', controller.renderArgs.template
-        assertEquals 1, controller.renderArgs.model.row
-        assertNotNull controller.renderArgs.model.types
-        assertNotNull controller.renderArgs.model.fields
-        assertNotNull controller.renderArgs.model.comparisons
-        assertEquals ConditionType.Subscriber.id, controller.renderArgs.model.type
-    }
-
     void testRenderConditions() {
 
         def conditions = new Conditions()
@@ -53,6 +41,17 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertEquals '', mockResponse.contentAsString
     }
 
+    void testRenderRow_First() {
+        controller.params.row = 1
+        controller.renderRow()
+
+        assertEquals 'subscriberCondition', controller.renderArgs.template
+        assertEquals 1, controller.renderArgs.model.row
+        assertNotNull controller.renderArgs.model.types
+        assertNotNull controller.renderArgs.model.fields
+        assertNotNull controller.renderArgs.model.comparisons
+        assertEquals ConditionType.Subscriber.id, controller.renderArgs.model.type
+    }
 
     void testRenderRow_Subscriber() {
         controller.params.row = 1
@@ -134,7 +133,7 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertEquals ConditionType.DynamicField.id, controller.renderArgs.model.type
     }
 
-    void testRenderRow_SubscriptionField() {
+    void testRenderRow_Subscription() {
         Member.class.metaClass.static.load = { id -> new Member(id: 1) }
 
         def subscriptionLists = []
@@ -152,6 +151,7 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
 
         controller.params.row = 1
         controller.params.type = 3
+        controller.params.value = 2
         controller.renderRow()
 
         springSecurityServiceControl.verify()
@@ -160,8 +160,9 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertEquals 'subscriptionCondition', controller.renderArgs.template
         assertEquals 1, controller.renderArgs.model.row
         assertNotNull controller.renderArgs.model.types
-        assertNull controller.renderArgs.model.comparisons
-        assertNotNull controller.renderArgs.model.subscriptionLists
+        assertNotNull controller.renderArgs.model.comparisons
+        assertEquals subscriptionLists, controller.renderArgs.model.subscriptionLists
+        assertEquals 2, controller.renderArgs.model.value
         assertEquals ConditionType.Subscription.id, controller.renderArgs.model.type
     }
 
