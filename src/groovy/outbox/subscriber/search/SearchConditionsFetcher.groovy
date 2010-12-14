@@ -138,10 +138,9 @@ class SearchConditionsFetcher {
      */
     SubscriptionCondition subscriptionCondition(Map params, String rowId) {
         def subscriptionListId = ValueUtil.getInteger(params["row[$rowId].subscriptionList"])
-        def subscribed = ValueUtil.getInteger(params["row[$rowId].comparison"]) == 1
-
-        if (subscriptionListId && subscribed) {
-            return new SubscriptionCondition(subscribed, [subscriptionListId])
+        if (subscriptionListId && params["row[$rowId].subscriptionType"]) {
+            def subscribed = ValueUtil.getInteger(params["row[$rowId].subscriptionType"]) == 1
+            return new SubscriptionCondition(subscribed, subscriptionListId)
         }
         return null
     }

@@ -9,25 +9,25 @@ import outbox.subscriber.search.ConditionVisitor
 class SubscriptionConditionTests extends GrailsUnitTestCase {
 
     void testSubscribed() {
-        def ids = [1, 2, 3]
-        def condition = SubscriptionCondition.subscribed(ids)
+        def id = 2
+        def condition = SubscriptionCondition.subscribed(id)
         condition.concatenation = Concatenation.And
 
         assertTrue condition.subscribedTo
-        assertEquals ids, condition.subscriptionListIds
+        assertEquals id, condition.subscriptionListId
         assertEquals Concatenation.And, condition.concatenation
     }
 
     void testNotSubscribed() {
-        def ids = [1, 2, 3]
-        def condition = SubscriptionCondition.notSubscribed(ids)
+        def id = 2
+        def condition = SubscriptionCondition.notSubscribed(id)
 
         assertFalse condition.subscribedTo
-        assertEquals ids, condition.subscriptionListIds
+        assertEquals id, condition.subscriptionListId
     }
 
     void testVisit() {
-        def condition = SubscriptionCondition.subscribed([])
+        def condition = SubscriptionCondition.subscribed(null)
 
         def visitorControl = mockFor(ConditionVisitor)
         visitorControl.demand.visitSubscriptionCondition { it ->

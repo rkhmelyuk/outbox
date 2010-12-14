@@ -56,28 +56,26 @@ class CriteriaVisitor implements ConditionVisitor {
         node.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: subscriberCriterion)
         node.right = new CriterionNode(type: CriterionNodeType.Criterion, criterion: statusCriterion)
 
-        condition.subscriptionListIds.each {
-            def idCriterion = new ComparisonCriterion()
-            idCriterion.left = new Column(Names.SubscriptionAlias, Names.SubscriptionListId)
-            idCriterion.right = it
-            idCriterion.comparisonOp = ' = '
+        def idCriterion = new ComparisonCriterion()
+        idCriterion.left = new Column(Names.SubscriptionAlias, Names.SubscriptionListId)
+        idCriterion.right = condition.subscriptionListId
+        idCriterion.comparisonOp = ' = '
 
-            def criterionNode = new CriterionNode()
-            criterionNode.right = node
-            criterionNode.type = CriterionNodeType.And
-            criterionNode.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: idCriterion)
+        def criterionNode = new CriterionNode()
+        criterionNode.right = node
+        criterionNode.type = CriterionNodeType.And
+        criterionNode.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: idCriterion)
 
-            if (!condition.subscribedTo) {
-                def notNode = new CriterionNode()
-                notNode.type = CriterionNodeType.Not
-                notNode.left = criterionNode
-                criterionNode = notNode
-            }
-
-            def tree = new CriteriaTree()
-            tree.addNode(criterionNode)
-            subscriptionTrees << tree
+        if (!condition.subscribedTo) {
+            def notNode = new CriterionNode()
+            notNode.type = CriterionNodeType.Not
+            notNode.left = criterionNode
+            criterionNode = notNode
         }
+
+        def tree = new CriteriaTree()
+        tree.addNode(criterionNode)
+        subscriptionTrees << tree
     }
 
     String comparisonOperation(ValueConditionType type) {

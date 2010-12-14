@@ -9,22 +9,22 @@ import outbox.subscriber.search.ConditionVisitor
  */
 class SubscriptionCondition extends Condition {
 
-    static SubscriptionCondition subscribed(List<Long> listIds) {
-        new SubscriptionCondition(true, listIds)
+    static SubscriptionCondition subscribed(Long subscriptionListId) {
+        new SubscriptionCondition(true, subscriptionListId)
     }
 
-    static SubscriptionCondition notSubscribed(List<Long> listIds) {
-        new SubscriptionCondition(false, listIds)
+    static SubscriptionCondition notSubscribed(Long subscriptionListId) {
+        new SubscriptionCondition(false, subscriptionListId)
     }
 
     // -----------------------------------------------------
 
     final boolean subscribedTo
-    final List<Long> subscriptionListIds
+    final Long subscriptionListId
 
-    SubscriptionCondition(boolean subscribed, List<Long> subscriptionListIds) {
+    SubscriptionCondition(boolean subscribed, Long subscriptionListId) {
         this.subscribedTo = subscribed
-        this.subscriptionListIds = subscriptionListIds
+        this.subscriptionListId = subscriptionListId
     }
 
     void visit(ConditionVisitor visitor) {

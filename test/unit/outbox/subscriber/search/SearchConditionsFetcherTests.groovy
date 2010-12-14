@@ -316,7 +316,7 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
     void testSubscriptionConditions() {
         def params = [:]
         params."row[1].type" = "$ConditionType.Subscription.id"
-        params."row[1].comparison" = '1'
+        params."row[1].subscriptionType" = '1'
         params."row[1].subscriptionList" = '2'
 
         def condition = fetcher.subscriptionCondition(params, '1')
@@ -324,13 +324,13 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertNotNull condition
 
         assertTrue condition.subscribedTo
-        assertTrue condition.subscriptionListIds.contains(2)
+        assertEquals 2, condition.subscriptionListId
     }
 
     void testSubscriptionConditions_Empty() {
         def params = [:]
         params."row[1].type" = "$ConditionType.Subscription.id"
-        params."row[1].comparison" = ''
+        params."row[1].subscriptionType" = ''
         params."row[1].subscriptionList" = '2'
 
         assertNull fetcher.subscriptionCondition(params, '1')

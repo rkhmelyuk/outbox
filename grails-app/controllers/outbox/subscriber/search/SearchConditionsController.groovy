@@ -43,7 +43,9 @@ class SearchConditionsController {
                                 condition.value.value)
                     }
                     else if (condition instanceof SubscriptionCondition) {
-                        //renderSubscriptionRow()
+                        renderSubscriptionRow(index + 1,
+                                condition.subscribedTo ? 1 : 0,
+                                condition.subscriptionListId)
                     }
                 }
             }
@@ -189,13 +191,13 @@ class SearchConditionsController {
 
     void renderSubscriptionRow() {
         def row = params.int('row')
-        def comparison = params.int('comparison')
         def value = params.subscriptionList
+        def subscriptionType = params.int('subscriptionType')
 
-        renderSubscriptionRow row, comparison, value
+        renderSubscriptionRow row, subscriptionType, value
     }
 
-    void renderSubscriptionRow(row, comparison, value) {
+    void renderSubscriptionRow(row, subscriptionType, value) {
         def member = Member.load(springSecurityService.principal.id)
         def conditions = new SubscriptionListConditionsBuilder().build {
             ownedBy member
@@ -207,11 +209,11 @@ class SearchConditionsController {
 
         model.row = row
         model.types = types()
-        model.comparison = comparison
         model.subscriptionList = value
+        model.subscriptionType = subscriptionType
         model.type = ConditionType.Subscription.id
         model.subscriptionLists = subscriptionLists
-        model.comparisons = subscriptionComparisons()
+        model.subscriptionTypes = subscriptionComparisons()
 
         render template: 'subscriptionCondition', model: model
     }

@@ -996,12 +996,35 @@ var App = {
             var type = $('#row\\['+rowId+'\\]\\.type').val();
             var field = $('#row\\['+rowId+'\\]\\.field').val();
             var comparison = $('#row\\['+rowId+'\\]\\.comparison').val();
+            var subscriptionList = $('#row\\['+rowId+'\\]\\.subscriptionList').val();
 
             var data =  {
                 type: type,
                 row: rowId,
                 field: field,
-                comparison: comparison
+                comparison: comparison,
+                subscriptionList: subscriptionList
+            };
+            $.get(url, data, function(data) {
+                $(row).after(data);
+                $(row).remove();
+                $('#row\\['+rowId+'\\]\\.value').focus();
+            });
+        });
+        $('select[name$=subscriptionType]').live('change', function() {
+            var url = $('#url').val();
+            var row = $(this).parent().parent().parent();
+            var rowId = $(row).children('input[name=row]').val();
+            var type = $('#row\\['+rowId+'\\]\\.type').val();
+            var subscriptionType = $('#row\\['+rowId+'\\]\\.subscriptionType').val();
+            var subscriptionList = $('#row\\['+rowId+'\\]\\.subscriptionList').val();
+
+            var data =  {
+                type: type,
+                row: rowId,
+                field: field,
+                comparison: comparison,
+                subscriptionList: subscriptionList
             };
             $.get(url, data, function(data) {
                 $(row).after(data);

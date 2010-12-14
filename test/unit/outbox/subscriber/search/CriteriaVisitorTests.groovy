@@ -1,17 +1,19 @@
 package outbox.subscriber.search
 
+import grails.test.GrailsUnitTestCase
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.search.criteria.CriterionNode
 import outbox.subscriber.search.criteria.CriterionNodeType
 import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.query.elems.ColumnType
+import outbox.subscription.SubscriptionStatus
 import outbox.subscriber.search.condition.*
 
 /**
  * @author Ruslan Khmelyuk
  */
-class CriteriaVisitorTests extends GroovyTestCase {
+class CriteriaVisitorTests extends GrailsUnitTestCase {
 
     CriteriaVisitor visitor
 
@@ -134,6 +136,43 @@ class CriteriaVisitorTests extends GroovyTestCase {
         assertEquals 'DFV.' + Names.DynamicFieldItemId, criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
+    }
+
+    void testSubscriptionCondition() {
+        def subscriptionStatus = new SubscriptionStatus(id: 1)
+        mockDomain(SubscriptionStatus, [subscriptionStatus])
+
+        def condition = SubscriptionCondition.subscribed(10)
+        visitor.visitSubscriptionCondition condition
+
+        def node = visitor.subscriptionTrees[0].root
+
+        assertNotNull node
+        assertEquals CriterionNodeType.And, node.type
+
+        def left = node.left
+        assertEquals CriterionNodeType.Criterion, left.type
+        assertEquals ' = ', left.criterion.comparisonOp
+        assertEquals 10, left.criterion.right
+        assertEquals Names.SubscriptionListId, left.criterion.left.name
+
+        def right = node.right
+        assertEquals CriterionNodeType.And, right.type
+
+        def rightLeft = right.left
+        def rightRight = right.right
+
+        assertEquals CriterionNodeType.Criterion, rightLeft.type
+        assertEquals CriterionNodeType.Criterion, rightRight.type
+
+        assertEquals ' = ', rightLeft.criterion.comparisonOp
+        assertEquals ' = ', rightRight.criterion.comparisonOp
+
+        assertEquals Names.SubscriberId, rightLeft.criterion.right.name
+        assertEquals 1, rightRight.criterion.right
+
+        assertEquals Names.SubscriberId, rightLeft.criterion.left.name
+        assertEquals Names.SubscriptionStatusId, rightRight.criterion.left.name
     }
 
     void testComparisonOperation() {

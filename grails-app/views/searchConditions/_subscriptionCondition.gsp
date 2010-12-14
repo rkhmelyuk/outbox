@@ -7,10 +7,10 @@
 
     <div class="c"></div>
     <div class="row">
-        <div class="title"><label for="row[${row}].comparison"><g:message code="condition" /></label></div>
+        <div class="title"><label for="row[${row}].subscriptionType"><g:message code="condition" /></label></div>
         <div class="value">
-            <g:select name="row[${row}].comparison" from="${comparisons}"
-                    optionKey="key" optionValue="value" value="${comparison}" />
+            <g:select name="row[${row}].subscriptionType" from="${subscriptionTypes}"
+                    optionKey="key" optionValue="value" value="${subscriptionType}" />
         </div>
     </div>
 

@@ -132,8 +132,8 @@ class SingleQueryRunnerTests extends GroovyTestCase {
         assertTrue subscriptionListService.addSubscription(subscription22)
 
         def conditions = new Conditions()
-        conditions.and(SubscriptionCondition.subscribed([sl1.id]))
-        conditions.and(SubscriptionCondition.notSubscribed([sl2.id]))
+        conditions.and(SubscriptionCondition.subscribed(sl1.id))
+        conditions.and(SubscriptionCondition.notSubscribed(sl2.id))
 
         def visitor = new CriteriaVisitor()
         conditions.visit(visitor)
@@ -187,7 +187,8 @@ class SingleQueryRunnerTests extends GroovyTestCase {
         assertTrue subscriptionListService.addSubscription(subscription22)
 
         def conditions = new Conditions()
-        conditions.and(SubscriptionCondition.subscribed([sl1.id, sl2.id]))
+        conditions.and(SubscriptionCondition.subscribed(sl1.id))
+        conditions.and(SubscriptionCondition.subscribed(sl2.id))
 
         def visitor = new CriteriaVisitor()
         conditions.visit(visitor)
@@ -241,7 +242,7 @@ class SingleQueryRunnerTests extends GroovyTestCase {
         assertTrue subscriptionListService.addSubscription(subscription22)
 
         def conditions = new Conditions()
-        conditions.and(SubscriptionCondition.subscribed([sl1.id]))
+        conditions.and(SubscriptionCondition.subscribed(sl1.id))
 
         def visitor = new CriteriaVisitor()
         conditions.visit(visitor)
@@ -295,7 +296,7 @@ class SingleQueryRunnerTests extends GroovyTestCase {
         assertTrue subscriptionListService.addSubscription(subscription22)
 
         def conditions = new Conditions()
-        conditions.and(SubscriptionCondition.notSubscribed([sl1.id]))
+        conditions.and(SubscriptionCondition.notSubscribed(sl1.id))
 
         def visitor = new CriteriaVisitor()
         conditions.visit(visitor)
