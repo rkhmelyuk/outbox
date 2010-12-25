@@ -286,8 +286,6 @@ class CampaignService {
     int getTotalSubscribersNumber(Campaign campaign) {
         int result = 0
         if (campaign != null) {
-            println SubscriptionStatus.subscribed()
-            println SubscriptionStatus.subscribed().id
             CampaignSubscription.withSession { Session session ->
                 result = (Integer) session.getNamedQuery('CampaignSubscription.totalSubscribersNumber')
                         .setInteger('subscriptionStatusId', SubscriptionStatus.subscribed().id)
