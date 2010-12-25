@@ -8,6 +8,7 @@ import outbox.subscriber.Subscriber
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListConditionsBuilder
 import outbox.subscription.SubscriptionListService
+import outbox.subscription.SubscriptionStatus
 import outbox.task.TaskFactory
 import outbox.task.TaskService
 import outbox.template.Template
@@ -285,9 +286,13 @@ class CampaignService {
     int getTotalSubscribersNumber(Campaign campaign) {
         int result = 0
         if (campaign != null) {
+            println SubscriptionStatus.subscribed()
+            println SubscriptionStatus.subscribed().id
             CampaignSubscription.withSession { Session session ->
                 result = (Integer) session.getNamedQuery('CampaignSubscription.totalSubscribersNumber')
-                        .setLong('campaignId', campaign.id).uniqueResult()
+                        .setInteger('subscriptionStatusId', SubscriptionStatus.subscribed().id)
+                        .setLong('campaignId', campaign.id)
+                        .uniqueResult()
             }
         }
         return result

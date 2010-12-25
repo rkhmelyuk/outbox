@@ -43,6 +43,12 @@ class CampaignServiceTests extends GrailsUnitTestCase {
                 owner: member)
 
         template.save()
+
+        SubscriptionStatus.metaClass.static.subscribed = {
+            def result = new SubscriptionStatus()
+            result.id = 1
+            return result
+        }
     }
 
     protected void tearDown() {
