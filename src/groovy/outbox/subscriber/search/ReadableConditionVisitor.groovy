@@ -19,6 +19,7 @@ class ReadableConditionVisitor implements ConditionVisitor {
 
     def subscriberDescriptions = []
     def dynamicFieldDescriptions = []
+    def subscriptionDescriptions = []
 
     ReadableConditionVisitor(DynamicFieldService dynamicFieldService) {
         this.dynamicFieldService = dynamicFieldService
@@ -49,7 +50,18 @@ class ReadableConditionVisitor implements ConditionVisitor {
     }
 
     void visitSubscriptionCondition(SubscriptionCondition condition) {
-
+        if (condition.visible) {
+            def description  = new StringBuilder()
+            description << concatenation(condition)
+            if (condition.subscribedTo) {
+                description << ' Subscribed to list '
+            }
+            else {
+                description << ' Not subscribed to list '
+            }
+            description << "'$condition.subscriptionList.name'"
+            subscriptionDescriptions << description.toString().trim()
+        }
     }
 
     String subscriberFieldName(String field) {
@@ -117,6 +129,10 @@ class ReadableConditionVisitor implements ConditionVisitor {
             result << ' '
         }
         dynamicFieldDescriptions.each { record ->
+            result << record
+            result << ' '
+        }
+        subscriptionDescriptions.each { record ->
             result << record
             result << ' '
         }

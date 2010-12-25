@@ -7,10 +7,8 @@ import org.springframework.mock.web.MockHttpServletResponse
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldItem
 import outbox.subscriber.field.DynamicFieldType
-import outbox.subscriber.search.condition.Concatenation
-import outbox.subscriber.search.condition.DynamicFieldCondition
-import outbox.subscriber.search.condition.SubscriberFieldCondition
-import outbox.subscriber.search.condition.ValueCondition
+import outbox.subscription.SubscriptionList
+import outbox.subscriber.search.condition.*
 
 /**
  * @author Ruslan Khmelyuk
@@ -104,6 +102,25 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
         assertTrue visitor.dynamicFieldDescriptions.empty
     }
 
+    void testSubscriptionField_SubscribedTo() {
+        def condition = SubscriptionCondition.subscribed(new SubscriptionList(name: 'Test'))
+        visitor.visitSubscriptionCondition condition
+        assertEquals "AND Subscribed to list 'Test'", visitor.subscriptionDescriptions.first()
+    }
+
+    void testSubscriptionField_NotSubscribedTo() {
+        def condition = SubscriptionCondition.notSubscribed(new SubscriptionList(name: 'Test'))
+        visitor.visitSubscriptionCondition condition
+        assertEquals "AND Not subscribed to list 'Test'", visitor.subscriptionDescriptions.first()
+    }
+
+    void testSubscriptionField_Invisible() {
+        def condition = SubscriptionCondition.subscribed(new SubscriptionList())
+        condition.visible = false
+        visitor.visitSubscriptionCondition condition
+        assertTrue visitor.subscriptionDescriptions.empty
+    }
+
     void testSubscriberFieldName() {
         assertEquals 'Email', visitor.subscriberFieldName(Names.Email)
         assertEquals 'First Name', visitor.subscriberFieldName(Names.FirstName)
@@ -147,6 +164,10 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
         condition = new DynamicFieldCondition(dynamicField, ValueCondition.equal('test'))
         visitor.visitDynamicFieldCondition condition
 
-        assertEquals "Field 'Email' equals to 'test' AND Field 'Test' equals to 'test'", visitor.readableString
+        condition = SubscriptionCondition.subscribed(new SubscriptionList(name: 'Test'))
+        visitor.visitSubscriptionCondition condition
+
+        def text = "Field 'Email' equals to 'test' AND Field 'Test' equals to 'test' AND Subscribed to list 'Test'"
+        assertEquals text, visitor.readableString
     }
 }
