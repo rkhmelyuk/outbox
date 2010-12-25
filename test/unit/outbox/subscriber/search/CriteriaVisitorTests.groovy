@@ -7,6 +7,7 @@ import outbox.subscriber.search.criteria.CriterionNode
 import outbox.subscriber.search.criteria.CriterionNodeType
 import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.query.elems.ColumnType
+import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionStatus
 import outbox.subscriber.search.condition.*
 
@@ -142,7 +143,8 @@ class CriteriaVisitorTests extends GrailsUnitTestCase {
         def subscriptionStatus = new SubscriptionStatus(id: 1)
         mockDomain(SubscriptionStatus, [subscriptionStatus])
 
-        def condition = SubscriptionCondition.subscribed(10)
+        def subscriptionList = new SubscriptionList(id: 10)
+        def condition = SubscriptionCondition.subscribed(subscriptionList)
         visitor.visitSubscriptionCondition condition
 
         def node = visitor.subscriptionTrees[0].root

@@ -9,6 +9,8 @@ import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldItem
 import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.search.condition.ValueConditionType
+import outbox.subscription.SubscriptionList
+import outbox.subscription.SubscriptionListService
 
 /**
  * @author Ruslan Khmelyuk
@@ -319,12 +321,21 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         params."row[1].subscriptionType" = '1'
         params."row[1].subscriptionList" = '2'
 
+        def subscriptionListServiceControl = mockFor(SubscriptionListService)
+        subscriptionListServiceControl.demand.getSubscriptionList { id ->
+            assertEquals 2, id
+            return new SubscriptionList(id: id)
+        }
+        fetcher.subscriptionListService = subscriptionListServiceControl.createMock()
+
         def condition = fetcher.subscriptionCondition(params, '1')
+
+        subscriptionListServiceControl.verify()
 
         assertNotNull condition
 
         assertTrue condition.subscribedTo
-        assertEquals 2, condition.subscriptionListId
+        assertEquals 2, condition.subscriptionList.id
     }
 
     void testSubscriptionConditions_Empty() {

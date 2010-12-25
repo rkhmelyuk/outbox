@@ -58,7 +58,7 @@ class CriteriaVisitor implements ConditionVisitor {
 
         def idCriterion = new ComparisonCriterion()
         idCriterion.left = new Column(Names.SubscriptionAlias, Names.SubscriptionListId)
-        idCriterion.right = condition.subscriptionListId
+        idCriterion.right = condition.subscriptionList.id
         idCriterion.comparisonOp = ' = '
 
         def criterionNode = new CriterionNode()

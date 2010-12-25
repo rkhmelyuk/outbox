@@ -1,6 +1,7 @@
 package outbox.subscriber.search.condition
 
 import outbox.subscriber.search.ConditionVisitor
+import outbox.subscription.SubscriptionList
 
 /**
  * Subscription related condition, like within specified SL or not.
@@ -9,22 +10,22 @@ import outbox.subscriber.search.ConditionVisitor
  */
 class SubscriptionCondition extends Condition {
 
-    static SubscriptionCondition subscribed(Long subscriptionListId) {
-        new SubscriptionCondition(true, subscriptionListId)
+    static SubscriptionCondition subscribed(SubscriptionList subscriptionList) {
+        new SubscriptionCondition(true, subscriptionList)
     }
 
-    static SubscriptionCondition notSubscribed(Long subscriptionListId) {
-        new SubscriptionCondition(false, subscriptionListId)
+    static SubscriptionCondition notSubscribed(SubscriptionList subscriptionList) {
+        new SubscriptionCondition(false, subscriptionList)
     }
 
     // -----------------------------------------------------
 
     final boolean subscribedTo
-    final Long subscriptionListId
+    final SubscriptionList subscriptionList
 
-    SubscriptionCondition(boolean subscribed, Long subscriptionListId) {
+    SubscriptionCondition(boolean subscribed, SubscriptionList subscriptionList) {
         this.subscribedTo = subscribed
-        this.subscriptionListId = subscriptionListId
+        this.subscriptionList = subscriptionList
     }
 
     void visit(ConditionVisitor visitor) {

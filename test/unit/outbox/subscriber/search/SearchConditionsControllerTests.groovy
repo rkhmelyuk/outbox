@@ -6,6 +6,7 @@ import outbox.member.Member
 import outbox.security.OutboxUser
 import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.field.DynamicField
+import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.subscriber.search.condition.*
 
@@ -84,7 +85,8 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         controller.springSecurityService = springSecurityServiceControl.createMock()
 
         def conditions = new Conditions()
-        conditions.and(SubscriptionCondition.subscribed(10))
+        def subscriptionList = new SubscriptionList(id: 10)
+        conditions.and(SubscriptionCondition.subscribed(subscriptionList))
         mockRequest.conditions = conditions
         controller.renderConditions()
 

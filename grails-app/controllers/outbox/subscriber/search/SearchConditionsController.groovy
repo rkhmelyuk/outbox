@@ -45,7 +45,7 @@ class SearchConditionsController {
                     else if (condition instanceof SubscriptionCondition) {
                         renderSubscriptionRow(index + 1,
                                 condition.subscribedTo ? 1 : 0,
-                                condition.subscriptionListId)
+                                condition.subscriptionList.id)
                     }
                 }
             }

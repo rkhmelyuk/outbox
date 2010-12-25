@@ -125,5 +125,6 @@ beans = {
     searchConditionsFetcher(outbox.subscriber.search.SearchConditionsFetcher) {
         dynamicFieldService = ref('dynamicFieldService')
         springSecurityService = ref('springSecurityService')
+        subscriptionListService = ref('subscriptionListService')
     }
 }

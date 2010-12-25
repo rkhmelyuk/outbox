@@ -4,6 +4,7 @@ import grails.plugins.springsecurity.SpringSecurityService
 import outbox.ValueUtil
 import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.field.DynamicFieldType
+import outbox.subscription.SubscriptionListService
 import outbox.subscriber.search.condition.*
 
 /**
@@ -16,6 +17,7 @@ class SearchConditionsFetcher {
 
     DynamicFieldService dynamicFieldService
     SpringSecurityService springSecurityService
+    SubscriptionListService subscriptionListService
 
     /**
      * Fetches conditions from the map of parameters.
@@ -139,8 +141,11 @@ class SearchConditionsFetcher {
     SubscriptionCondition subscriptionCondition(Map params, String rowId) {
         def subscriptionListId = ValueUtil.getInteger(params["row[$rowId].subscriptionList"])
         if (subscriptionListId && params["row[$rowId].subscriptionType"]) {
-            def subscribed = ValueUtil.getInteger(params["row[$rowId].subscriptionType"]) == 1
-            return new SubscriptionCondition(subscribed, subscriptionListId)
+            def subscriptionList = subscriptionListService.getSubscriptionList(subscriptionListId)
+            if (subscriptionList) {
+                def subscribed = ValueUtil.getInteger(params["row[$rowId].subscriptionType"]) == 1
+                return new SubscriptionCondition(subscribed, subscriptionList)
+            }
         }
         return null
     }

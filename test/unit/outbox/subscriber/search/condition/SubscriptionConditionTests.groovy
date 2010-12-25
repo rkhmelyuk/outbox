@@ -2,6 +2,7 @@ package outbox.subscriber.search.condition
 
 import grails.test.GrailsUnitTestCase
 import outbox.subscriber.search.ConditionVisitor
+import outbox.subscription.SubscriptionList
 
 /**
  * @author Ruslan Khmelyuk
@@ -9,21 +10,21 @@ import outbox.subscriber.search.ConditionVisitor
 class SubscriptionConditionTests extends GrailsUnitTestCase {
 
     void testSubscribed() {
-        def id = 2
-        def condition = SubscriptionCondition.subscribed(id)
+        def list = new SubscriptionList()
+        def condition = SubscriptionCondition.subscribed(list)
         condition.concatenation = Concatenation.And
 
         assertTrue condition.subscribedTo
-        assertEquals id, condition.subscriptionListId
+        assertEquals list, condition.subscriptionList
         assertEquals Concatenation.And, condition.concatenation
     }
 
     void testNotSubscribed() {
-        def id = 2
-        def condition = SubscriptionCondition.notSubscribed(id)
+        def list = new SubscriptionList()
+        def condition = SubscriptionCondition.notSubscribed(list)
 
         assertFalse condition.subscribedTo
-        assertEquals id, condition.subscriptionListId
+        assertEquals list, condition.subscriptionList
     }
 
     void testVisit() {
