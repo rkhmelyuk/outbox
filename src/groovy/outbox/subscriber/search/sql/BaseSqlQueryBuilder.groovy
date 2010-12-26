@@ -36,22 +36,21 @@ abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
                 }
             }
             else {
+                def rightType = node.right?.type
+                if (rightType != CriterionNodeType.Criterion) {
+                    concatenation(builder, node)
+                }
+
                 def parens = node.left && node.right
                 if (parens) {
                     builder << '('
                 }
                 if (node.left) {
-                    if (node.type == CriterionNodeType.Not) {
-                        builder << ' not '
-                    }
                     buildCriteria(builder, node.left)
                 }
                 if (node.right) {
-                    if (node.type == CriterionNodeType.And) {
-                        builder << ' and '
-                    }
-                    else if (node.type == CriterionNodeType.Or) {
-                        builder << ' or '
+                    if (rightType == CriterionNodeType.Criterion) {
+                       concatenation(builder, node)
                     }
                     buildCriteria(builder, node.right)
                 }
@@ -59,6 +58,18 @@ abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
                     builder << ')'
                 }
             }
+        }
+    }
+
+    private def concatenation(StringBuilder builder, CriterionNode node) {
+        if (node.type == CriterionNodeType.And) {
+            builder << ' and '
+        }
+        else if (node.type == CriterionNodeType.Or) {
+            builder << ' or '
+        }
+        else if (node.type == CriterionNodeType.Not) {
+            builder << ' not '
         }
     }
 

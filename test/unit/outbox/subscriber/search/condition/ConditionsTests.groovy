@@ -32,6 +32,13 @@ class ConditionsTests extends GrailsUnitTestCase {
         assertEquals Concatenation.And, condition.concatenation
     }
 
+    void testAdd_Single() {
+        def condition = new SubscriberFieldCondition(null, null)
+        condition.concatenation = Concatenation.Or
+        conditions.add(condition)
+        assertEquals Concatenation.Or, conditions.conditions.first().concatenation
+    }
+
     void testAnd() {
         def condition = new SubscriberFieldCondition(null, null)
         conditions.and(condition)

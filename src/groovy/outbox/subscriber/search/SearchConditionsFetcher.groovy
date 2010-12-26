@@ -58,7 +58,7 @@ class SearchConditionsFetcher {
                 }
 
                 if (condition) {
-                    conditions.add Concatenation.And, condition
+                    conditions.add condition
                 }
             }
         }
@@ -92,7 +92,9 @@ class SearchConditionsFetcher {
             }
 
             value = new ValueCondition(value, comparison)
-            return new SubscriberFieldCondition(field, value)
+            def condition = new SubscriberFieldCondition(field, value)
+            condition.concatenation = parseConcatenation(params, rowId)
+            return condition
         }
         return null
     }
@@ -113,7 +115,7 @@ class SearchConditionsFetcher {
 
             def dynamicField = dynamicFieldService.getDynamicField(field)
             def memberId = springSecurityService.principal.id
-            if (dynamicField && dynamicField.ownedBy(memberId)) {
+            if (dynamicField != null && dynamicField.ownedBy(memberId)) {
                 if (comparison != ValueConditionType.Empty
                         && comparison != ValueConditionType.Filled) {
                     value = params["row[$rowId].value"]?.trim()
@@ -123,15 +125,19 @@ class SearchConditionsFetcher {
                     else if (dynamicField.type == DynamicFieldType.SingleSelect) {
                         def id = ValueUtil.getLong(value)
                         def item = dynamicFieldService.getDynamicFieldItem(id)
-                        if (item && item.field.id == dynamicField.id) {
-                            value = item
+                        if (item == null || item.field?.id != dynamicField.id) {
+                            // didn't find item or item is not usable for us, so no condition
+                            return null
                         }
+                        value = item
                     }
                 }
 
                 if (value != null) {
                     value = new ValueCondition(value, comparison)
-                    return new DynamicFieldCondition(dynamicField, value)
+                    def condition = new DynamicFieldCondition(dynamicField, value)
+                    condition.concatenation = parseConcatenation(params, rowId)
+                    return condition
                 }
             }
         }
@@ -150,9 +156,23 @@ class SearchConditionsFetcher {
             def subscriptionList = subscriptionListService.getSubscriptionList(subscriptionListId)
             if (subscriptionList) {
                 def subscribed = ValueUtil.getInteger(params["row[$rowId].subscriptionType"]) == 1
-                return new SubscriptionCondition(subscribed, subscriptionList)
+                def condition = new SubscriptionCondition(subscribed, subscriptionList)
+                condition.concatenation = parseConcatenation(params, rowId)
+                return condition
             }
         }
         return null
+    }
+
+    /**
+     * Returns concatenation for conditions row.
+     */
+    Concatenation parseConcatenation(Map params, String rowId) {
+        def row = ValueUtil.getInteger('rowId')
+        if (row != 1) {
+            def concatenation = ValueUtil.getInteger(params["row[$rowId].concatenation"])
+            return Concatenation.getById(concatenation) ?: Concatenation.And
+        }
+        return Concatenation.And
     }
 }

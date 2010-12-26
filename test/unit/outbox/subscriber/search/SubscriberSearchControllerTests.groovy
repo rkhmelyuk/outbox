@@ -294,7 +294,14 @@ class SubscriberSearchControllerTests extends ControllerUnitTestCase {
             return 'description'
         }
         controller.subscriberSearchService = subscriberSearchServiceControl.createMock()
-        controller.searchConditionsFetcher = new SearchConditionsFetcher()
+
+        def searchConditionsFetcherControl = mockFor(SearchConditionsFetcher)
+        searchConditionsFetcherControl.demand.fetch { params ->
+            def conditions = new Conditions()
+            conditions.metaClass.isEmpty = { false }
+            return conditions
+        }
+        controller.searchConditionsFetcher = searchConditionsFetcherControl.createMock()
 
         def springSecurityServiceControl = mockFor(SpringSecurityService)
         springSecurityServiceControl.demand.getPrincipal { ->
@@ -305,10 +312,23 @@ class SubscriberSearchControllerTests extends ControllerUnitTestCase {
         controller.searchResults()
 
         subscriberSearchServiceControl.verify()
+        searchConditionsFetcherControl.verify()
+
 
         assertNotNull controller.renderArgs.model
         assertEquals subscribers, controller.renderArgs.model.subscribers
         assertEquals 'description', controller.renderArgs.model.readableConditions
+        assertEquals 'searchResult', controller.renderArgs.template
+    }
+
+    void testSearchResults_Empty() {
+        controller.searchConditionsFetcher = new SearchConditionsFetcher()
+
+        controller.searchResults()
+
+        assertNotNull controller.renderArgs.model
+        assertNull controller.renderArgs.model.subscribers
+        assertNull controller.renderArgs.model.readableConditions
         assertEquals 'searchResult', controller.renderArgs.template
     }
 }

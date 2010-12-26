@@ -8,6 +8,7 @@ import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldItem
 import outbox.subscriber.field.DynamicFieldType
+import outbox.subscriber.search.condition.Concatenation
 import outbox.subscriber.search.condition.ValueConditionType
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
@@ -50,10 +51,6 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertEquals Sort.Desc, conditions.orders.first().sort
     }
 
-    void testFetch_MultipleRows() {
-
-    }
-
     void testSubscriberConditions() {
         def params = [:]
         params."row[1].type" = "$ConditionType.Subscriber.id"
@@ -68,6 +65,47 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertEquals 'FirstName', condition.field
         assertEquals 'John', condition.value.value
         assertEquals ValueConditionType.Equal, condition.value.type
+    }
+
+    void testSubscriberConditions_OrConcatenation() {
+        def params = [:]
+        params."row[1].concatenation" = "$Concatenation.Or.id"
+        params."row[1].type" = "$ConditionType.Subscriber.id"
+        params."row[1].field" = "FirstName"
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = 'John'
+
+        def condition = fetcher.subscriberCondition(params, '1')
+
+        assertNotNull condition
+        assertEquals Concatenation.Or, condition.concatenation
+    }
+
+    void testSubscriberConditions_AndConcatenation() {
+        def params = [:]
+        params."row[1].concatenation" = "$Concatenation.And.id"
+        params."row[1].type" = "$ConditionType.Subscriber.id"
+        params."row[1].field" = "FirstName"
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = 'John'
+
+        def condition = fetcher.subscriberCondition(params, '1')
+
+        assertNotNull condition
+        assertEquals Concatenation.And, condition.concatenation
+    }
+
+    void testSubscriberConditions_DefaultConcatenation() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.Subscriber.id"
+        params."row[1].field" = "FirstName"
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = 'John'
+
+        def condition = fetcher.subscriberCondition(params, '1')
+
+        assertNotNull condition
+        assertEquals Concatenation.And, condition.concatenation
     }
 
     void testSubscriberConditions_Gender() {

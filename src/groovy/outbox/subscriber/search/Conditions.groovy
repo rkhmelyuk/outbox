@@ -23,6 +23,19 @@ class Conditions {
         }
     }
 
+    void addFirst(Concatenation concatenation, Condition condition) {
+        if (condition && concatenation) {
+            condition.concatenation = concatenation
+            conditions.add(0, condition)
+        }
+    }
+
+    void add(Condition condition) {
+        if (condition && condition.concatenation) {
+            conditions << condition
+        }
+    }
+
     void and(Condition condition) {
         add(Concatenation.And, condition)
     }
