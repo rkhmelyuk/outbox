@@ -150,7 +150,7 @@ class SubscriberSearchController {
             comparisonsList = selectComparisons()
         }
         else {
-            comparisonsList = null
+            comparisonsList = stringComparisons()
         }
 
         model['values'] = values
