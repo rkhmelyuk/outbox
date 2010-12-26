@@ -237,6 +237,7 @@ class SubscriberSearchControllerTests extends ControllerUnitTestCase {
         assertFalse controller.showValue(ValueConditionType.Empty.id)
         assertFalse controller.showValue(ValueConditionType.Filled.id)
         assertTrue controller.showValue(ValueConditionType.Equal.id)
+        assertTrue controller.showValue(ValueConditionType.NotEqual.id)
     }
 
     void testSearchResults() {

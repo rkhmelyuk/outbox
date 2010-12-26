@@ -199,6 +199,38 @@ class CriteriaVisitorTests extends GrailsUnitTestCase {
         assertEquals testNode, node.left.left
     }
 
+    void testGetSubscriberFieldColumn() {
+        def condition = new SubscriberFieldCondition(Names.GenderId, ValueCondition.equal(1))
+        def column = visitor.getSubscriberFieldColumn('table', condition)
+        assertEquals Names.GenderId, column.name
+        assertEquals ColumnType.Number, column.type
+
+        condition = new SubscriberFieldCondition(Names.TimezoneId, ValueCondition.equal(1))
+        column = visitor.getSubscriberFieldColumn('table', condition)
+        assertEquals Names.TimezoneId, column.name
+        assertEquals ColumnType.Number, column.type
+
+        condition = new SubscriberFieldCondition(Names.LanguageId, ValueCondition.equal(1))
+        column = visitor.getSubscriberFieldColumn('table', condition)
+        assertEquals Names.LanguageId, column.name
+        assertEquals ColumnType.Number, column.type
+
+        condition = new SubscriberFieldCondition(Names.SubscriberTypeId, ValueCondition.equal(1))
+        column = visitor.getSubscriberFieldColumn('table', condition)
+        assertEquals Names.SubscriberTypeId, column.name
+        assertEquals ColumnType.Number, column.type
+
+        condition = new SubscriberFieldCondition(Names.FirstName, ValueCondition.equal('name'))
+        column = visitor.getSubscriberFieldColumn('table', condition)
+        assertEquals Names.FirstName, column.name
+        assertEquals ColumnType.String, column.type
+
+        condition = new SubscriberFieldCondition(Names.Email, ValueCondition.equal('name'))
+        column = visitor.getSubscriberFieldColumn('table', condition)
+        assertEquals Names.Email, column.name
+        assertEquals ColumnType.String, column.type
+    }
+
     void testGetDynamicFieldColumn() {
         def condition = new DynamicFieldCondition(new DynamicField(type: DynamicFieldType.String), null)
         def column = visitor.getDynamicFieldColumn(Names.DynamicFieldValueAlias, condition)

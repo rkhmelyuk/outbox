@@ -124,7 +124,8 @@ abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
      * @return the ready to insert into sql string.
      */
     String prepareValue(def value) {
-        if (value instanceof String) {
+        if (value instanceof String || value instanceof GString) {
+            value = value.toString()
             value = value.replaceAll(/\\?'/, "''")
             value = "'" + value + "'"
         }

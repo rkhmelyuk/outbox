@@ -83,6 +83,12 @@ class SearchConditionsFetcher {
             if (comparison != ValueConditionType.Empty
                     && comparison != ValueConditionType.Filled) {
                 value = params["row[$rowId].value"]?.trim()
+                if (Names.isInteger(field)) {
+                    value = ValueUtil.getInteger(value)
+                }
+                else if (Names.isLong(field)) {
+                    value = ValueUtil.getLong(value)
+                }
             }
 
             value = new ValueCondition(value, comparison)

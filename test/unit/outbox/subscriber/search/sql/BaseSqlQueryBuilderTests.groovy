@@ -24,6 +24,8 @@ class BaseSqlQueryBuilderTests extends GroovyTestCase {
     void testPrepareValue() {
         def builder = new CountSqlQueryBuilder()
 
+        def val = "test"
+        assertEquals "'test'", builder.prepareValue("$val")
         assertEquals "'test'", builder.prepareValue('test')
         assertEquals "'tes''t'", builder.prepareValue('tes\'t')
         assertEquals '1023', builder.prepareValue(1023)

@@ -17,8 +17,8 @@ class CriteriaVisitor implements ConditionVisitor {
     List<CriteriaTree> subscriptionTrees = []
 
     void visitSubscriberFieldCondition(SubscriberFieldCondition condition) {
-        def criterionNode = builderFieldsCriterionNode(condition,
-                new Column(Names.SubscriberAlias, condition.field))
+        def column = getSubscriberFieldColumn(Names.SubscriberAlias, condition)
+        def criterionNode = builderFieldsCriterionNode(condition, column)
         subscriberFieldTree.addNode(makeNode(condition, criterionNode))
     }
 
@@ -125,6 +125,16 @@ class CriteriaVisitor implements ConditionVisitor {
         }
 
         return node
+    }
+
+    Column getSubscriberFieldColumn(String table, SubscriberFieldCondition condition) {
+        def field = condition.field
+        if (Names.isInteger(field) || Names.isLong(field)) {
+            return new Column(table, field, null, ColumnType.Number)
+        }
+        else {
+            return new Column(table, field, null, ColumnType.String)
+        }
     }
 
     Column getDynamicFieldColumn(String table, DynamicFieldCondition condition) {

@@ -70,6 +70,58 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertEquals ValueConditionType.Equal, condition.value.type
     }
 
+    void testSubscriberConditions_Gender() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.Subscriber.id"
+        params."row[1].field" = Names.GenderId
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = '1'
+
+        def condition = fetcher.subscriberCondition(params, '1')
+
+        assertNotNull condition
+        assertEquals 1, condition.value.value
+    }
+
+    void testSubscriberConditions_Timezone() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.Subscriber.id"
+        params."row[1].field" = Names.TimezoneId
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = '2'
+
+        def condition = fetcher.subscriberCondition(params, '1')
+
+        assertNotNull condition
+        assertEquals 2, condition.value.value
+    }
+
+    void testSubscriberConditions_Language() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.Subscriber.id"
+        params."row[1].field" = Names.LanguageId
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = '3'
+
+        def condition = fetcher.subscriberCondition(params, '1')
+
+        assertNotNull condition
+        assertEquals 3, condition.value.value
+    }
+
+    void testSubscriberConditions_SubscriberType() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.Subscriber.id"
+        params."row[1].field" = Names.SubscriberTypeId
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = '4'
+
+        def condition = fetcher.subscriberCondition(params, '1')
+
+        assertNotNull condition
+        assertEquals 4, condition.value.value
+    }
+
     void testSubscriberConditions_Trimming() {
         def params = [:]
         params."row[1].type" = "$ConditionType.Subscriber.id"

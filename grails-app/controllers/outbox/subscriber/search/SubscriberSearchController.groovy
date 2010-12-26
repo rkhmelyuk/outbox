@@ -103,6 +103,10 @@ class SubscriberSearchController {
 
         // -----------------------------
         // fields
+
+        def member = Member.load(springSecurityService.principal.id)
+        def subscriberTypes = subscriberService.getSubscriberTypes(member)
+
         def fields = [:]
         fields[Names.Email] = message(code: 'searchFields.email')
         fields[Names.FirstName] = message(code: 'searchFields.firstName')
@@ -110,7 +114,9 @@ class SubscriberSearchController {
         fields[Names.GenderId] = message(code: 'searchFields.gender')
         fields[Names.LanguageId] = message(code: 'searchFields.language')
         fields[Names.TimezoneId] = message(code: 'searchFields.timezone')
-        fields[Names.SubscriberTypeId] = message(code: 'searchFields.subscriberType')
+        if (!subscriberTypes.empty) {
+            fields[Names.SubscriberTypeId] = message(code: 'searchFields.subscriberType')
+        }
 
         model.fields = fields
 
@@ -134,9 +140,8 @@ class SubscriberSearchController {
                 comparisonsList = selectComparisons()
                 break
             case Names.SubscriberTypeId:
-                def member = Member.load(springSecurityService.principal.id)
-                values = subscriberService.getSubscriberTypes(member)
-                value = ValueUtil.getInteger(value)
+                values = subscriberTypes
+                value = ValueUtil.getLong(value)
                 comparisonsList = selectComparisons()
                 break
             default:

@@ -57,4 +57,22 @@ public class Names {
                 name == SubscriberTypeId)
     }
 
+    /**
+     * Whether field contains integer value.
+     * @param name the field name.
+     * @return true if field contains integer values.
+     */
+    static boolean isInteger(String name) {
+        name && (name == GenderId || name == LanguageId || name == TimezoneId)
+    }
+
+    /**
+     * Whether field contains long value.
+     * @param name the field name.
+     * @return true if field contains long values.
+     */
+    static boolean isLong(String name) {
+        name && name == SubscriberTypeId
+    }
+
 }
