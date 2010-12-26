@@ -275,9 +275,7 @@ class SubscriberSearchController {
                 ValueConditionType.Empty,
                 ValueConditionType.Filled,
                 ValueConditionType.Equal,
-                ValueConditionType.NotEqual,
-                ValueConditionType.InList,
-                ValueConditionType.NotInList]
+                ValueConditionType.NotEqual]
 
         types.collectAll { [key: it.id, value: message(code: it.message)] }
     }
