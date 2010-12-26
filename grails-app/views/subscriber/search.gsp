@@ -12,7 +12,8 @@
 
         .condition { padding: 3px; }
         .condition .header { height: 20px; background-color: #cccccc; padding: 7px; }
-        .condition .header select { float: left; width: 200px; }
+        .condition .header .concatenations { float: left; width: 50px; margin-right: 5px; }
+        .condition .header .conditions { float: left; width: 200px; }
         .condition .header a { float: right; line-height: 25px; }
         .condition .row  { height: 20px; background-color: #efefef; padding: 5px;}
         .condition .row .title { float: left; width: 80px; font-weight: bold; line-height: 25px; text-align: right; margin: 0 5px;}

@@ -41,18 +41,21 @@ class SubscriberSearchController {
                         renderSubscriberRow(
                                 index + 1, condition.field,
                                 condition.value.type.id,
-                                condition.value.value)
+                                condition.value.value,
+                                condition.concatenation.id)
                     }
                     else if (condition instanceof DynamicFieldCondition) {
                         renderDynamicFieldRow(
                                 index + 1, condition.field.id,
                                 condition.value.type.id,
-                                condition.value.value)
+                                condition.value.value,
+                                condition.concatenation.id)
                     }
                     else if (condition instanceof SubscriptionCondition) {
                         renderSubscriptionRow(index + 1,
                                 condition.subscribedTo ? 1 : 0,
-                                condition.subscriptionList.id)
+                                condition.subscriptionList.id,
+                                condition.concatenation.id)
                     }
                 }
             }
@@ -88,18 +91,21 @@ class SubscriberSearchController {
     void renderSubscriberRow() {
         def row = params.int('row')
         def field = params.field
-        def comparison = params.int('comparison')
         def value = params.value
+        def comparison = params.int('comparison')
+        def concatenation = params.int('concatenation')
 
-        renderSubscriberRow(row, field, comparison, value)
+        renderSubscriberRow(row, field, comparison, value, concatenation)
     }
 
-    void renderSubscriberRow(row, field, comparison, value) {
+    void renderSubscriberRow(row, field, comparison, value, concatenation) {
         def model = [type: ConditionType.Subscriber.id]
         model.row = row
         model.types = types()
         model.field = field
         model.comparison = comparison
+        model.concatenation = concatenation
+        model.concatenations = concatenations()
 
         // -----------------------------
         // fields
@@ -162,20 +168,23 @@ class SubscriberSearchController {
     }
 
     void renderDynamicFieldRow() {
+        def value = params.value
         def row = params.int('row')
         def field = params.long('field')
         def comparison = params.int('comparison')
-        def value = params.value
+        def concatenation = params.int('concatenation')
 
-        renderDynamicFieldRow row, field, comparison, value
+        renderDynamicFieldRow(row, field, comparison, value, concatenation)
     }
 
-    void renderDynamicFieldRow(row, field, comparison, value) {
+    void renderDynamicFieldRow(row, field, comparison, value, concatenation) {
         def model = [type: ConditionType.DynamicField.id]
         model.row = row
         model.field = field
         model.types = types()
         model.comparison = comparison
+        model.concatenation = concatenation
+        model.concatenations = concatenations()
 
         def member = Member.load(springSecurityService.principal.id)
         def dynamicFields = dynamicFieldService.getDynamicFields(member)
@@ -213,11 +222,12 @@ class SubscriberSearchController {
         def row = params.int('row')
         def value = params.subscriptionList
         def subscriptionType = params.int('subscriptionType')
+        def concatenation = params.int('concatenation')
 
-        renderSubscriptionRow row, subscriptionType, value
+        renderSubscriptionRow(row, subscriptionType, value, concatenation)
     }
 
-    void renderSubscriptionRow(row, subscriptionType, value) {
+    void renderSubscriptionRow(row, subscriptionType, value, concatenation) {
         def member = Member.load(springSecurityService.principal.id)
         def conditions = new SubscriptionListConditionsBuilder().build {
             ownedBy member
@@ -231,6 +241,7 @@ class SubscriberSearchController {
         model.row = row
         model.types = types()
         model.subscriptionList = value
+        model.concatenations = concatenations()
         model.subscriptionType = subscriptionType
         model.type = ConditionType.Subscription.id
         model.subscriptionLists = subscriptionLists
@@ -240,9 +251,7 @@ class SubscriberSearchController {
     }
 
     List<Map> types() {
-        ConditionType.collect {
-            [key: it.id, value: message(code: it.message)]
-        }
+        ConditionType.collect { [key: it.id, value: message(code: it.message)] }
     }
 
     List<Map> stringComparisons() {
@@ -253,7 +262,7 @@ class SubscriberSearchController {
                 ValueConditionType.NotEqual,
                 ValueConditionType.Like]
 
-        types.collectAll { [key: it.id, value: message(code: it.message)] }
+        types.collect { [key: it.id, value: g.message(code: it.message)] }
     }
 
     List<Map> numberComparisons() {
@@ -267,7 +276,7 @@ class SubscriberSearchController {
                 ValueConditionType.Greater,
                 ValueConditionType.GreaterOrEqual]
 
-        types.collectAll { [key: it.id, value: message(code: it.message)] }
+        types.collect { [key: it.id, value: g.message(code: it.message)] }
     }
 
     List<Map> selectComparisons() {
@@ -277,7 +286,12 @@ class SubscriberSearchController {
                 ValueConditionType.Equal,
                 ValueConditionType.NotEqual]
 
-        types.collectAll { [key: it.id, value: message(code: it.message)] }
+        types.collect { [key: it.id, value: g.message(code: it.message)] }
+    }
+
+    List<Map> concatenations() {
+        def concatenations = [Concatenation.And, Concatenation.Or]
+        concatenations.collect { [key: it.id, value: g.message(code: it.messageCode)] }
     }
 
     Map subscriptionComparisons() {
@@ -306,8 +320,8 @@ class SubscriberSearchController {
             def memberId = springSecurityService.principal.id
             def ownershipCondition = new SubscriberFieldCondition('MemberId', ValueCondition.equal(memberId))
             ownershipCondition.visible = false
-            ownershipCondition.readOnly = false
-            conditions.and ownershipCondition
+            ownershipCondition.readOnly = true
+            conditions.addFirst Concatenation.And, ownershipCondition
 
             model.subscribers = subscriberSearchService.search(conditions)
             model.readableConditions = subscriberSearchService.describe(conditions)

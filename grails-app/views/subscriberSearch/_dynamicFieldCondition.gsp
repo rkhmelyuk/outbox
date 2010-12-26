@@ -1,7 +1,12 @@
 <div class="condition">
     <input type="hidden" name="row" value="${row}"/>
     <div class="header">
-        <g:select name="row[${row}].type" from="${types}" optionKey="key" optionValue="value" value="${type}"/>
+        <g:if test="${row > 1}">
+            <g:select class="concatenations" name="row[${row}].concatenation" from="${concatenations}"
+                    optionKey="key" optionValue="value" value="${concatenation}"/>
+        </g:if>
+        <g:select class="conditions" name="row[${row}].type" from="${types}"
+                optionKey="key" optionValue="value" value="${type}"/>
 
         <a href="javascript:void(0);" class="removeCondition"><g:message code="remove"/></a>
     </div>
