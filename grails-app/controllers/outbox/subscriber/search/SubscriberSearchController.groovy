@@ -1,16 +1,17 @@
 package outbox.subscriber.search
 
+import grails.plugins.springsecurity.SpringSecurityService
 import outbox.ValueUtil
 import outbox.dictionary.Gender
 import outbox.dictionary.Language
 import outbox.dictionary.Timezone
 import outbox.member.Member
+import outbox.subscriber.DynamicFieldService
+import outbox.subscriber.SubscriberService
 import outbox.subscriber.field.DynamicFieldType
-import outbox.subscriber.search.condition.DynamicFieldCondition
-import outbox.subscriber.search.condition.SubscriberFieldCondition
-import outbox.subscriber.search.condition.SubscriptionCondition
-import outbox.subscriber.search.condition.ValueConditionType
 import outbox.subscription.SubscriptionListConditionsBuilder
+import outbox.subscription.SubscriptionListService
+import outbox.subscriber.search.condition.*
 
 /**
  * This controller only responsibility is to build conditions view
@@ -18,12 +19,18 @@ import outbox.subscription.SubscriptionListConditionsBuilder
  *
  * @author Ruslan Khmelyuk
  */
-class SearchConditionsController {
+class SubscriberSearchController {
 
-    def subscriberService
-    def dynamicFieldService
-    def springSecurityService
-    def subscriptionListService
+    SubscriberService subscriberService
+    DynamicFieldService dynamicFieldService
+    SpringSecurityService springSecurityService
+    SubscriptionListService subscriptionListService
+    SubscriberSearchService subscriberSearchService
+    SearchConditionsFetcher searchConditionsFetcher
+
+    // --------------------------------------------------------------------
+    // Conditions
+    // --------------------------------------------------------------------
 
     def renderConditions = {
         Conditions conditions = request.getAttribute('conditions')
@@ -202,6 +209,7 @@ class SearchConditionsController {
         def conditions = new SubscriptionListConditionsBuilder().build {
             ownedBy member
             archived false
+            order 'name', 'asc'
         }
         def subscriptionLists = subscriptionListService.search(conditions).list
 
@@ -261,5 +269,27 @@ class SearchConditionsController {
         (comparison != null
                 && comparison != ValueConditionType.Empty
                 && comparison != ValueConditionType.Filled)
+    }
+
+    // -------------------------------------------------------------------------
+    // Search
+    // -------------------------------------------------------------------------
+
+    def searchResults = {
+        def conditions = searchConditionsFetcher.fetch(params)
+        conditions.page = conditions.page ?: 1
+        conditions.perPage = conditions.perPage ?: 10
+
+        def memberId = springSecurityService.principal.id
+        def ownershipCondition = new SubscriberFieldCondition('MemberId', ValueCondition.equal(memberId))
+        ownershipCondition.visible = false
+        ownershipCondition.readOnly = false
+        conditions.and ownershipCondition
+
+        def subscribers = subscriberSearchService.search(conditions)
+        def readableConditions = subscriberSearchService.describe(conditions)
+
+        def model = [conditions: conditions, subscribers: subscribers, readableConditions: readableConditions]
+        render template: 'searchResult', model: model
     }
 }

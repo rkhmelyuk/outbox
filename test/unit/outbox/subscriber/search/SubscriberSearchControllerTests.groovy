@@ -13,7 +13,7 @@ import outbox.subscriber.search.condition.*
 /**
  * @author Ruslan Khmelyuk
  */
-class SearchConditionsControllerTests extends ControllerUnitTestCase {
+class SubscriberSearchControllerTests extends ControllerUnitTestCase {
 
     @Override protected void setUp() {
         super.setUp();
@@ -237,5 +237,35 @@ class SearchConditionsControllerTests extends ControllerUnitTestCase {
         assertFalse controller.showValue(ValueConditionType.Empty.id)
         assertFalse controller.showValue(ValueConditionType.Filled.id)
         assertTrue controller.showValue(ValueConditionType.Equal.id)
+    }
+
+    void testSearchResults() {
+        def subscribers = new Subscribers()
+        def subscriberSearchServiceControl = mockFor(SubscriberSearchService)
+        subscriberSearchServiceControl.demand.search { Conditions conditions ->
+            assertFalse conditions.empty
+            return subscribers
+        }
+        subscriberSearchServiceControl.demand.describe { Conditions conditions ->
+            assertFalse conditions.empty
+            return 'description'
+        }
+        controller.subscriberSearchService = subscriberSearchServiceControl.createMock()
+        controller.searchConditionsFetcher = new SearchConditionsFetcher()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal { ->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
+        controller.searchResults()
+
+        subscriberSearchServiceControl.verify()
+
+        assertNotNull controller.renderArgs.model
+        assertEquals subscribers, controller.renderArgs.model.subscribers
+        assertEquals 'description', controller.renderArgs.model.readableConditions
+        assertEquals 'searchResult', controller.renderArgs.template
     }
 }

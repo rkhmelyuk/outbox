@@ -9,10 +9,6 @@ import outbox.dictionary.NamePrefix
 import outbox.dictionary.Timezone
 import outbox.member.Member
 import outbox.security.OutboxUser
-import outbox.subscriber.search.Conditions
-import outbox.subscriber.search.SearchConditionsFetcher
-import outbox.subscriber.search.SubscriberSearchService
-import outbox.subscriber.search.Subscribers
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
 import outbox.subscription.SubscriptionStatus
@@ -873,42 +869,13 @@ class SubscriberControllerTests extends ControllerUnitTestCase {
         assertEquals 1, values.value(select).id
     }
 
-    void testSearch_Get() {
-        controller.searchConditionsFetcher = new SearchConditionsFetcher()
-        Map model = controller.search()
-        assertNotNull model
-        assertNull model.subscribers
-        assertNull model.readableConditions
+    void testSearch() {
+        def result = controller.search()
+
+        assertNotNull result
+        assertNotNull result.conditions
+        assertNull result.subscribers
+        assertNull result.readableConditions
     }
 
-    void testSearch_PostEmpty() {
-        mockRequest.method = 'POST'
-
-        def subscribers = new Subscribers()
-        def subscriberSearchServiceControl = mockFor(SubscriberSearchService)
-        subscriberSearchServiceControl.demand.search { Conditions conditions ->
-            assertFalse conditions.empty
-            return subscribers
-        }
-        subscriberSearchServiceControl.demand.describe { Conditions conditions ->
-            assertFalse conditions.empty
-            return 'description'
-        }
-        controller.subscriberSearchService = subscriberSearchServiceControl.createMock()
-        controller.searchConditionsFetcher = new SearchConditionsFetcher()
-
-        def springSecurityServiceControl = mockFor(SpringSecurityService)
-        springSecurityServiceControl.demand.getPrincipal {->
-            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
-        }
-        controller.springSecurityService = springSecurityServiceControl.createMock()
-
-        Map model = controller.search()
-
-        subscriberSearchServiceControl.verify()
-
-        assertNotNull model
-        assertEquals subscribers, model.subscribers
-        assertEquals 'description', model.readableConditions
-    }
 }

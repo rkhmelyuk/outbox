@@ -15,10 +15,6 @@ import outbox.subscriber.field.DynamicFieldType
 import outbox.subscriber.field.DynamicFieldValue
 import outbox.subscriber.field.DynamicFieldValues
 import outbox.subscriber.search.Conditions
-import outbox.subscriber.search.SearchConditionsFetcher
-import outbox.subscriber.search.SubscriberSearchService
-import outbox.subscriber.search.condition.SubscriberFieldCondition
-import outbox.subscriber.search.condition.ValueCondition
 import outbox.subscription.Subscription
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
@@ -40,8 +36,6 @@ class SubscriberController {
     DynamicFieldService dynamicFieldService
     SpringSecurityService springSecurityService
     SubscriptionListService subscriptionListService
-    SubscriberSearchService subscriberSearchService
-    SearchConditionsFetcher searchConditionsFetcher
     EditDynamicFieldsFormBuilder editDynamicFieldsFormBuilder
     ViewDynamicFieldsFormBuilder viewDynamicFieldsFormBuilder
 
@@ -298,31 +292,10 @@ class SubscriberController {
     }
 
     def search = {
-        def conditions = null
-        def subscribers = null
-        def readableConditions = null
+        def conditions = new Conditions()
+        conditions.page = 1
+        conditions.perPage = 10
 
-        if (request.method == 'POST') {
-            conditions = searchConditionsFetcher.fetch(params)
-            conditions.page = conditions.page ?: 1
-            conditions.perPage = conditions.perPage ?: 10
-
-            def memberId = springSecurityService.principal.id
-
-            def ownershipCondition = new SubscriberFieldCondition('MemberId', ValueCondition.equal(memberId))
-            ownershipCondition.visible = false
-            ownershipCondition.readOnly = false
-            conditions.and ownershipCondition
-
-            subscribers = subscriberSearchService.search(conditions)
-            readableConditions = subscriberSearchService.describe(conditions)
-        }
-        else {
-            conditions = new Conditions()
-            conditions.page = 1
-            conditions.perPage = 10
-        }
-
-        [conditions: conditions, subscribers: subscribers, readableConditions: readableConditions]
+        [conditions: conditions]
     }
 }

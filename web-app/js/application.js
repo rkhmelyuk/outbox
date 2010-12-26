@@ -941,9 +941,14 @@ var App = {
     },
 
     subscriberSearch: function () {
-        $('#search, .page_callback').live('click', function() {
-            $('#searchForm').submit();
+        $('#search, .search_callback').live('click', function() {
+            $('#searchForm').ajaxSubmit({
+                success: function(response) {
+                    $('#searchResult').replaceWith(response);
+                }
+            });
         });
+
         $('#addCondition').live('click', function() {
             var lastType = $('select[name$=".type"]').last().val();
             if (lastType == undefined) lastType = '';
@@ -962,7 +967,6 @@ var App = {
         $('.removeCondition').live('click', function() {
             $(this).parent().parent().remove();
         });
-
         $('select[name$=type]').live('change', function() {
             var url = $('#url').val();
             var row = $(this).parent().parent();
