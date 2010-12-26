@@ -7,17 +7,30 @@ package outbox.subscriber.search.condition
  */
 public enum Concatenation {
 
-    And('concatenation.and'),
+    And(1, 'concatenation.and'),
 
-    Or('concatenation.or'),
+    Or(2, 'concatenation.or'),
 
-    AndNot('concatenation.and.not'),
+    AndNot(3, 'concatenation.and.not'),
 
-    OrNot('concatenation.or.not')
+    OrNot(4, 'concatenation.or.not')
 
+    final int id
     final String messageCode
 
-    Concatenation(String messageCode) {
+    Concatenation(int id, String messageCode) {
+        this.id = id
         this.messageCode = messageCode
+    }
+
+    static Concatenation getById(Integer id) {
+        if (id != null) {
+            for (each in Concatenation) {
+                if (each.id == id) {
+                    return each
+                }
+            }
+        }
+        return null
     }
 }

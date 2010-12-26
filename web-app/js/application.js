@@ -974,8 +974,9 @@ var App = {
             var row = $(this).parent().parent();
             var rowId = $(row).children('input[name=row]').val();
             var type = $('#row\\['+rowId+'\\]\\.type').val();
+            var concatenation = $('#row\\['+rowId+'\\]\\.concatenation').val();
 
-            $.get(url, { type: type, row: rowId }, function(data) {
+            $.get(url, { type: type, row: rowId, concatenation: concatenation }, function(data) {
                 $(row).replaceWith(data);
                 $('#row\\['+rowId+'\\]\\.field').focus();
             });
@@ -986,8 +987,9 @@ var App = {
             var rowId = $(row).children('input[name=row]').val();
             var type = $('#row\\['+rowId+'\\]\\.type').val();
             var field = $('#row\\['+rowId+'\\]\\.field').val();
+            var concatenation = $('#row\\['+rowId+'\\]\\.concatenation').val();
 
-            var data =  { type: type, row: rowId, field: field };
+            var data =  { type: type, row: rowId, field: field, concatenation: concatenation };
             $.get(url, data, function(data) {
                 $(row).replaceWith(data);
                 $('#row\\['+rowId+'\\]\\.comparison').focus();
@@ -1001,10 +1003,12 @@ var App = {
             var field = $('#row\\['+rowId+'\\]\\.field').val();
             var comparison = $('#row\\['+rowId+'\\]\\.comparison').val();
             var value = $('#row\\['+rowId+'\\]\\.value').val();
+            var concatenation = $('#row\\['+rowId+'\\]\\.concatenation').val();
 
             var data = {
                 type: type, row: rowId, field: field,
-                comparison: comparison, value: value
+                comparison: comparison, value: value,
+                concatenation: concatenation
             };
             $.get(url, data, function(data) {
                 $(row).replaceWith(data);
@@ -1018,11 +1022,13 @@ var App = {
             var type = $('#row\\['+rowId+'\\]\\.type').val();
             var subscriptionType = $('#row\\['+rowId+'\\]\\.subscriptionType').val();
             var subscriptionList = $('#row\\['+rowId+'\\]\\.subscriptionList').val();
+            var concatenation = $('#row\\['+rowId+'\\]\\.concatenation').val();
 
             var data =  {
                 type: type, row: rowId,
                 subscriptionType: subscriptionType,
-                subscriptionList: subscriptionList
+                subscriptionList: subscriptionList,
+                concatenation: concatenation
             };
             $.get(url, data, function(data) {
                 $(row).replaceWith(data);
