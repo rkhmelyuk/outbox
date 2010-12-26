@@ -118,8 +118,10 @@ beans = {
     }
 
     subscriberSearchService(outbox.subscriber.search.SubscriberSearchService) {
-        queryRunnerDetector = ref('queryRunnerDetector')
+        subscriberService = ref('subscriberService')
         dynamicFieldService = ref('dynamicFieldService')
+        queryRunnerDetector = ref('queryRunnerDetector')
+        springSecurityService = ref('springSecurityService')
     }
 
     searchConditionsFetcher(outbox.subscriber.search.SearchConditionsFetcher) {

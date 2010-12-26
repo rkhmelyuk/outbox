@@ -1,8 +1,12 @@
 package outbox.subscriber.search
 
+import grails.plugins.springsecurity.SpringSecurityService
 import java.text.DecimalFormat
 import outbox.MessageUtil
-import outbox.subscriber.DynamicFieldService
+import outbox.dictionary.Gender
+import outbox.dictionary.Language
+import outbox.dictionary.Timezone
+import outbox.subscriber.SubscriberService
 import outbox.subscriber.field.DynamicFieldItem
 import outbox.subscriber.search.condition.*
 
@@ -15,14 +19,17 @@ import outbox.subscriber.search.condition.*
  */
 class ReadableConditionVisitor implements ConditionVisitor {
 
-    final DynamicFieldService dynamicFieldService
+    SubscriberService subscriberService
+    SpringSecurityService springSecurityService
 
     def subscriberDescriptions = []
     def dynamicFieldDescriptions = []
     def subscriptionDescriptions = []
 
-    ReadableConditionVisitor(DynamicFieldService dynamicFieldService) {
-        this.dynamicFieldService = dynamicFieldService
+    ReadableConditionVisitor(SubscriberService subscriberService,
+                             SpringSecurityService springSecurityService) {
+        this.subscriberService = subscriberService
+        this.springSecurityService = springSecurityService
     }
 
     void visitSubscriberFieldCondition(SubscriberFieldCondition condition) {
@@ -36,7 +43,7 @@ class ReadableConditionVisitor implements ConditionVisitor {
             description << ' '
             description << valueType(condition.value)
             description << ' '
-            description << valueName(condition.value)
+            description << valueName(condition.field, condition.value)
             subscriberDescriptions << description.toString().trim()
         }
     }
@@ -50,7 +57,7 @@ class ReadableConditionVisitor implements ConditionVisitor {
             description << ' '
             description << "'${condition.field.label}'"
             description << " " << valueType(condition.value)
-            description << " " << valueName(condition.value)
+            description << " " << valueName(null, condition.value)
             dynamicFieldDescriptions << description.toString().trim()
         }
     }
@@ -95,14 +102,14 @@ class ReadableConditionVisitor implements ConditionVisitor {
         MessageUtil.getMessage(type.descriptionMessage)
     }
 
-    String valueName(ValueCondition value) {
+    String valueName(String fieldName, ValueCondition value) {
         def type = prepareType(value)
         if (type == ValueConditionType.InList || type == ValueConditionType.NotInList) {
-            def values = value.value.collect {prepareValue(it)}
+            def values = value.value.collect {prepareValue(fieldName, it)}
             return values.toString()
         }
         else if (type != ValueConditionType.Filled && type != ValueConditionType.Empty) {
-            return "'${prepareValue(value.value)}'"
+            return "'${prepareValue(fieldName, value.value)}'"
         }
         return ''
     }
@@ -129,7 +136,35 @@ class ReadableConditionVisitor implements ConditionVisitor {
         return type
     }
 
-    String prepareValue(def value) {
+    /**
+     * Prepares the value to be understood to user and returns as string.
+     * @param value the value to prepare.
+     * @return the prepared value.
+     */
+    String prepareValue(String fieldName, def value) {
+        if (fieldName != null) {
+            def item = null
+            switch (fieldName) {
+                case Names.GenderId:
+                    item = Gender.get(value)
+                    break
+                case Names.TimezoneId:
+                    item = Timezone.get(value)
+                    break
+                case Names.LanguageId:
+                    item = Language.get(value)
+                    break
+                case Names.SubscriberTypeId:
+                    def memberId = springSecurityService.principal.id
+                    println memberId
+                    item = subscriberService.getMemberSubscriberType(memberId, value)
+                    break
+            }
+            if (item) {
+                return item ? item.name : ''
+            }
+        }
+
         if (value instanceof BigDecimal) {
             value = new DecimalFormat('#############.#####').format(value)
         }

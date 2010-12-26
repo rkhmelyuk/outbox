@@ -1,9 +1,17 @@
 package outbox.subscriber.search
 
+import grails.plugins.springsecurity.SpringSecurityService
 import grails.test.GrailsUnitTestCase
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityRequestHolder
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
+import outbox.dictionary.Gender
+import outbox.dictionary.Language
+import outbox.dictionary.Timezone
+import outbox.member.Member
+import outbox.security.OutboxUser
+import outbox.subscriber.SubscriberService
+import outbox.subscriber.SubscriberType
 import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldItem
 import outbox.subscriber.field.DynamicFieldType
@@ -16,9 +24,11 @@ import outbox.subscriber.search.condition.*
  */
 class ReadableConditionVisitorTests extends GrailsUnitTestCase {
 
-    def visitor = new ReadableConditionVisitor()
+    def visitor = new ReadableConditionVisitor(null, null)
 
     @Override protected void setUp() {
+        super.setUp()
+
         def request = new MockHttpServletRequest()
         def response = new MockHttpServletResponse()
         request.addPreferredLocale Locale.ENGLISH
@@ -54,6 +64,13 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
         def condition = new SubscriberFieldCondition(Names.Email, ValueCondition.filled())
         visitor.visitSubscriberFieldCondition condition
         assertEquals "AND Field 'Email' is filled", visitor.subscriberDescriptions.first()
+    }
+
+    void testSubscriberField_Gender() {
+        Gender.metaClass.static.get = { id -> return new Gender(id: id, name: 'Female') }
+        def condition = new SubscriberFieldCondition(Names.GenderId, ValueCondition.equal(1))
+        visitor.visitSubscriberFieldCondition condition
+        assertEquals "AND Field 'Gender' equals to 'Female'", visitor.subscriberDescriptions.first()
     }
 
     void testSubscriberField_Invisible() {
@@ -144,12 +161,49 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
     }
 
     void testValueName() {
-        assertEquals "'test'", visitor.valueName(ValueCondition.equal('test'))
-        assertEquals "'test'", visitor.valueName(ValueCondition.like('test'))
-        assertEquals "[1, 2, 3]", visitor.valueName(ValueCondition.inList([1, 2, 3]))
-        assertEquals "[a, b, c]", visitor.valueName(ValueCondition.notInList(['a', 'b', 'c']))
-        assertEquals "", visitor.valueName(ValueCondition.empty())
-        assertEquals "", visitor.valueName(ValueCondition.filled())
+        assertEquals "'test'", visitor.valueName(null, ValueCondition.equal('test'))
+        assertEquals "'test'", visitor.valueName(null, ValueCondition.like('test'))
+        assertEquals "[1, 2, 3]", visitor.valueName(null, ValueCondition.inList([1, 2, 3]))
+        assertEquals "[a, b, c]", visitor.valueName(null, ValueCondition.notInList(['a', 'b', 'c']))
+        assertEquals "", visitor.valueName(null, ValueCondition.empty())
+        assertEquals "", visitor.valueName(null, ValueCondition.filled())
+
+        Gender.metaClass.static.get = { id ->
+            assertEquals 1, id
+            return new Gender(id: id, name: 'Female')
+        }
+        Language.metaClass.static.get = { id ->
+            assertEquals 25, id
+            return new Language(id: id, name: 'English')
+        }
+        Timezone.metaClass.static.get = { id ->
+            assertEquals 3, id
+            return new Timezone(id: id, name: '(GMT-03:00) Georgetown')
+        }
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getMemberSubscriberType { memberId, subscriberTypeId ->
+            assertEquals 2, memberId
+            assertEquals 10, subscriberTypeId
+            return new SubscriberType(id: subscriberTypeId, name: 'Developer')
+        }
+        visitor.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            def member = new Member()
+            member.id = 2
+            return new OutboxUser('username', 'password', true, false, false, false, [], member)
+        }
+        visitor.springSecurityService = springSecurityServiceControl.createMock()
+
+        assertEquals "'Female'", visitor.valueName(Names.GenderId, ValueCondition.equal(1))
+        assertEquals "'English'", visitor.valueName(Names.LanguageId, ValueCondition.equal(25))
+        assertEquals "'(GMT-03:00) Georgetown'", visitor.valueName(Names.TimezoneId, ValueCondition.equal(3))
+        assertEquals "'Developer'", visitor.valueName(Names.SubscriberTypeId, ValueCondition.equal(10))
+
+        springSecurityServiceControl.verify()
+        subscriberServiceControl.verify()
     }
 
     void testConcatenation() {
