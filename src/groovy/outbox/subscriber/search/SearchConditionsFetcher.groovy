@@ -123,16 +123,16 @@ class SearchConditionsFetcher {
                     else if (dynamicField.type == DynamicFieldType.SingleSelect) {
                         def id = ValueUtil.getLong(value)
                         def item = dynamicFieldService.getDynamicFieldItem(id)
-                        if (!item || item.field?.id != dynamicField.id) {
-                            // didn't find item or item is not usable for us, so no condition
-                            return null
+                        if (item && item.field.id == dynamicField.id) {
+                            value = item
                         }
-                        value = item
                     }
                 }
 
-                value = new ValueCondition(value, comparison)
-                return new DynamicFieldCondition(dynamicField, value)
+                if (value != null) {
+                    value = new ValueCondition(value, comparison)
+                    return new DynamicFieldCondition(dynamicField, value)
+                }
             }
         }
         return null

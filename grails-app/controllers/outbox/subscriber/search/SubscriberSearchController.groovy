@@ -301,16 +301,18 @@ class SubscriberSearchController {
         conditions.page = conditions.page ?: 1
         conditions.perPage = conditions.perPage ?: 10
 
-        def memberId = springSecurityService.principal.id
-        def ownershipCondition = new SubscriberFieldCondition('MemberId', ValueCondition.equal(memberId))
-        ownershipCondition.visible = false
-        ownershipCondition.readOnly = false
-        conditions.and ownershipCondition
+        def model = [conditions: conditions]
+        if (!conditions.empty) {
+            def memberId = springSecurityService.principal.id
+            def ownershipCondition = new SubscriberFieldCondition('MemberId', ValueCondition.equal(memberId))
+            ownershipCondition.visible = false
+            ownershipCondition.readOnly = false
+            conditions.and ownershipCondition
 
-        def subscribers = subscriberSearchService.search(conditions)
-        def readableConditions = subscriberSearchService.describe(conditions)
+            model.subscribers = subscriberSearchService.search(conditions)
+            model.readableConditions = subscriberSearchService.describe(conditions)
+        }
 
-        def model = [conditions: conditions, subscribers: subscribers, readableConditions: readableConditions]
         render template: 'searchResult', model: model
     }
 }
