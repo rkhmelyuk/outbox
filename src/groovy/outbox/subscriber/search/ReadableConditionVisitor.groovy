@@ -29,10 +29,14 @@ class ReadableConditionVisitor implements ConditionVisitor {
         if (condition.visible) {
             def description  = new StringBuilder()
             description << concatenation(condition)
-            description << ' Field '
+            description << ' '
+            description << MessageUtil.getMessage('readable.field')
+            description << ' '
             description << "'${subscriberFieldName(condition.field)}'"
-            description << " " << valueType(condition.value)
-            description << " " << valueName(condition.value)
+            description << ' '
+            description << valueType(condition.value)
+            description << ' '
+            description << valueName(condition.value)
             subscriberDescriptions << description.toString().trim()
         }
     }
@@ -41,7 +45,9 @@ class ReadableConditionVisitor implements ConditionVisitor {
         if (condition.visible) {
             def description  = new StringBuilder()
             description << concatenation(condition)
-            description << ' Field '
+            description << ' '
+            description << MessageUtil.getMessage('readable.field')
+            description << ' '
             description << "'${condition.field.label}'"
             description << " " << valueType(condition.value)
             description << " " << valueName(condition.value)
@@ -54,10 +60,10 @@ class ReadableConditionVisitor implements ConditionVisitor {
             def description  = new StringBuilder()
             description << concatenation(condition)
             if (condition.subscribedTo) {
-                description << ' Subscribed to list '
+                description << ' Subscribed to List '
             }
             else {
-                description << ' Not subscribed to list '
+                description << ' Not Subscribed to List '
             }
             description << "'$condition.subscriptionList.name'"
             subscriptionDescriptions << description.toString().trim()
@@ -66,7 +72,6 @@ class ReadableConditionVisitor implements ConditionVisitor {
 
     String subscriberFieldName(String field) {
         switch (field) {
-
             case Names.Email:
                 return MessageUtil.getMessage('searchFields.email')
             case Names.FirstName:

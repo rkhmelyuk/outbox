@@ -105,13 +105,13 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
     void testSubscriptionField_SubscribedTo() {
         def condition = SubscriptionCondition.subscribed(new SubscriptionList(name: 'Test'))
         visitor.visitSubscriptionCondition condition
-        assertEquals "AND Subscribed to list 'Test'", visitor.subscriptionDescriptions.first()
+        assertEquals "AND Subscribed to List 'Test'", visitor.subscriptionDescriptions.first()
     }
 
     void testSubscriptionField_NotSubscribedTo() {
         def condition = SubscriptionCondition.notSubscribed(new SubscriptionList(name: 'Test'))
         visitor.visitSubscriptionCondition condition
-        assertEquals "AND Not subscribed to list 'Test'", visitor.subscriptionDescriptions.first()
+        assertEquals "AND Not Subscribed to List 'Test'", visitor.subscriptionDescriptions.first()
     }
 
     void testSubscriptionField_Invisible() {
@@ -167,7 +167,7 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
         condition = SubscriptionCondition.subscribed(new SubscriptionList(name: 'Test'))
         visitor.visitSubscriptionCondition condition
 
-        def text = "Field 'Email' equals to 'test' AND Field 'Test' equals to 'test' AND Subscribed to list 'Test'"
+        def text = "Field 'Email' equals to 'test' AND Field 'Test' equals to 'test' AND Subscribed to List 'Test'"
         assertEquals text, visitor.readableString
     }
 }
