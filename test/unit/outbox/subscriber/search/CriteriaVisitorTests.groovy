@@ -270,14 +270,14 @@ class CriteriaVisitorTests extends GrailsUnitTestCase {
         assertNotNull left
         assertEquals CriterionNodeType.Criterion, left.type
         assertEquals column, left.criterion.left
-        assertEquals ' is ', left.criterion.comparisonOp
+        assertEquals CriteriaVisitor.IS, left.criterion.comparisonOp
         assertNull left.criterion.right
 
         def right = node.right
         assertNotNull right
         assertEquals CriterionNodeType.Criterion, right.type
         assertEquals column, right.criterion.left
-        assertEquals ' = ', right.criterion.comparisonOp
+        assertEquals CriteriaVisitor.EQUAL, right.criterion.comparisonOp
         assertEquals '', right.criterion.right
     }
 
@@ -373,7 +373,24 @@ class CriteriaVisitorTests extends GrailsUnitTestCase {
         assertNotNull node
         assertEquals CriterionNodeType.Criterion, node.type
         assertEquals column, node.criterion.left
-        assertEquals ' like ', node.criterion.comparisonOp
+        assertEquals CriteriaVisitor.LIKE, node.criterion.comparisonOp
         assertEquals '%test%', node.criterion.right
+    }
+
+    void testComparisonNode_NotEqual() {
+        def condition = new SubscriberFieldCondition('Age', ValueCondition.notEqual('test'))
+        def column = new Column('S', 'Age')
+        def node = visitor.notEqualNode(condition, column)
+
+        assertNotNull node
+        assertEquals CriterionNodeType.Or, node.type
+
+        def left = node.left
+        assertEquals CriterionNodeType.Criterion, left.type
+        assertEquals CriteriaVisitor.IS, left.criterion.comparisonOp
+
+        def right = node.right
+        assertEquals CriterionNodeType.Criterion, right.type
+        assertEquals CriteriaVisitor.NOT_EQUAL, right.criterion.comparisonOp
     }
 }

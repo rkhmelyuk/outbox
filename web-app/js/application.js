@@ -976,8 +976,7 @@ var App = {
             var type = $('#row\\['+rowId+'\\]\\.type').val();
 
             $.get(url, { type: type, row: rowId }, function(data) {
-                $(row).after(data);
-                $(row).remove();
+                $(row).replaceWith(data);
                 $('#row\\['+rowId+'\\]\\.field').focus();
             });
         });
@@ -990,8 +989,7 @@ var App = {
 
             var data =  { type: type, row: rowId, field: field };
             $.get(url, data, function(data) {
-                $(row).after(data);
-                $(row).remove();
+                $(row).replaceWith(data);
                 $('#row\\['+rowId+'\\]\\.comparison').focus();
             });
         });
@@ -1002,18 +1000,14 @@ var App = {
             var type = $('#row\\['+rowId+'\\]\\.type').val();
             var field = $('#row\\['+rowId+'\\]\\.field').val();
             var comparison = $('#row\\['+rowId+'\\]\\.comparison').val();
-            var subscriptionList = $('#row\\['+rowId+'\\]\\.subscriptionList').val();
+            var value = $('#row\\['+rowId+'\\]\\.value').val();
 
-            var data =  {
-                type: type,
-                row: rowId,
-                field: field,
-                comparison: comparison,
-                subscriptionList: subscriptionList
+            var data = {
+                type: type, row: rowId, field: field,
+                comparison: comparison, value: value
             };
             $.get(url, data, function(data) {
-                $(row).after(data);
-                $(row).remove();
+                $(row).replaceWith(data);
                 $('#row\\['+rowId+'\\]\\.value').focus();
             });
         });
@@ -1026,16 +1020,13 @@ var App = {
             var subscriptionList = $('#row\\['+rowId+'\\]\\.subscriptionList').val();
 
             var data =  {
-                type: type,
-                row: rowId,
-                field: field,
-                comparison: comparison,
+                type: type, row: rowId,
+                subscriptionType: subscriptionType,
                 subscriptionList: subscriptionList
             };
             $.get(url, data, function(data) {
-                $(row).after(data);
-                $(row).remove();
-                $('#row\\['+rowId+'\\]\\.value').focus();
+                $(row).replaceWith(data);
+                $('#row\\['+rowId+'\\]\\.subscriptionList').focus();
             });
         });
     }

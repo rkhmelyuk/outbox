@@ -12,6 +12,16 @@ import outbox.subscriber.search.criteria.*
  */
 class CriteriaVisitor implements ConditionVisitor {
 
+    static final String EQUAL = ' = '
+    static final String NOT_EQUAL = ' <> '
+    static final String GREATER = ' > '
+    static final String GREATER_EQUAL = ' >= '
+    static final String LESS = ' < '
+    static final String LESS_EQUAL = ' <= '
+    static final String LIKE = ' like '
+    static final String IS = ' is '
+    static final String IS_NOT = ' is not '
+
     CriteriaTree subscriberFieldTree = new CriteriaTree()
     List<CriteriaTree> dynamicFieldTrees = []
     List<CriteriaTree> subscriptionTrees = []
@@ -26,7 +36,7 @@ class CriteriaVisitor implements ConditionVisitor {
         def idCriterion = new ComparisonCriterion()
         idCriterion.left = new Column(Names.DynamicFieldAlias, Names.DynamicFieldId)
         idCriterion.right = condition.field.id
-        idCriterion.comparisonOp = ' = '
+        idCriterion.comparisonOp = EQUAL
 
         def column = getDynamicFieldColumn(Names.DynamicFieldValueAlias, condition)
 
@@ -44,12 +54,12 @@ class CriteriaVisitor implements ConditionVisitor {
         def subscriberCriterion = new ComparisonCriterion()
         subscriberCriterion.left = new Column(Names.SubscriptionAlias, Names.SubscriberId)
         subscriberCriterion.right = new Column(Names.SubscriberAlias, Names.SubscriberId)
-        subscriberCriterion.comparisonOp = ' = '
+        subscriberCriterion.comparisonOp = EQUAL
 
         def statusCriterion = new ComparisonCriterion()
         statusCriterion.left = new Column(Names.SubscriptionAlias, Names.SubscriptionStatusId)
         statusCriterion.right = SubscriptionStatus.subscribed().id
-        statusCriterion.comparisonOp = ' = '
+        statusCriterion.comparisonOp = EQUAL
 
         def node = new CriterionNode()
         node.type = CriterionNodeType.And
@@ -59,7 +69,7 @@ class CriteriaVisitor implements ConditionVisitor {
         def idCriterion = new ComparisonCriterion()
         idCriterion.left = new Column(Names.SubscriptionAlias, Names.SubscriptionListId)
         idCriterion.right = condition.subscriptionList.id
-        idCriterion.comparisonOp = ' = '
+        idCriterion.comparisonOp = EQUAL
 
         def criterionNode = new CriterionNode()
         criterionNode.right = node
@@ -81,19 +91,19 @@ class CriteriaVisitor implements ConditionVisitor {
     String comparisonOperation(ValueConditionType type) {
         switch (type) {
             case ValueConditionType.Equal:
-                return ' = '
-            case ValueConditionType.Greater:
-                return ' > '
-            case ValueConditionType.GreaterOrEqual:
-                return ' >= '
-            case ValueConditionType.Less:
-                return ' < '
-            case ValueConditionType.LessOrEqual:
-                return ' <= '
+                return EQUAL
             case ValueConditionType.NotEqual:
-                return ' <> '
+                return NOT_EQUAL
+            case ValueConditionType.Greater:
+                return GREATER
+            case ValueConditionType.GreaterOrEqual:
+                return GREATER_EQUAL
+            case ValueConditionType.Less:
+                return LESS
+            case ValueConditionType.LessOrEqual:
+                return LESS_EQUAL
             case ValueConditionType.Like:
-                return ' like '
+                return LIKE
         }
 
         return null
@@ -164,6 +174,9 @@ class CriteriaVisitor implements ConditionVisitor {
         else if (type == ValueConditionType.Filled) {
             criterionNode = filledNode(condition, column)
         }
+        else if (type == ValueConditionType.NotEqual) {
+            criterionNode = notEqualNode(condition, column)
+        }
         else if (type == ValueConditionType.InList || type == ValueConditionType.NotInList) {
             criterionNode = inListNode(condition)
         }
@@ -177,12 +190,15 @@ class CriteriaVisitor implements ConditionVisitor {
     CriterionNode comparisonNode(def condition, Column column) {
         def criterion = new ComparisonCriterion()
         criterion.left = column
-        criterion.right = condition.value.value
 
         def type = condition.value.type
         criterion.comparisonOp = comparisonOperation(type)
+        def value = condition.value.value
         if (type == ValueConditionType.Like) {
-            criterion.right = "%$criterion.right%"
+            criterion.right = "%$value%"
+        }
+        else {
+            criterion.right = value
         }
 
         def criterionNode = new CriterionNode()
@@ -206,7 +222,7 @@ class CriteriaVisitor implements ConditionVisitor {
     CriterionNode emptyNode(def condition, Column column) {
         def leftCriterion = new ComparisonCriterion()
         leftCriterion.left = column
-        leftCriterion.comparisonOp = ' is '
+        leftCriterion.comparisonOp = IS
         leftCriterion.right = null
 
         def leftNode = new CriterionNode(
@@ -219,7 +235,7 @@ class CriteriaVisitor implements ConditionVisitor {
 
         def rightCriterion = new ComparisonCriterion()
         rightCriterion.left = column
-        rightCriterion.comparisonOp = ' = '
+        rightCriterion.comparisonOp = EQUAL
         rightCriterion.right = ''
 
         def rightNode = new CriterionNode(
@@ -230,15 +246,31 @@ class CriteriaVisitor implements ConditionVisitor {
                 left: leftNode, right: rightNode)
     }
 
-    CriterionNode filledNode(def condition, Column column) {
+    CriterionNode notEqualNode(def condition, Column column) {
         def leftCriterion = new ComparisonCriterion()
         leftCriterion.left = column
-        leftCriterion.comparisonOp = ' is not '
+        leftCriterion.comparisonOp = IS
         leftCriterion.right = null
 
         def rightCriterion = new ComparisonCriterion()
         rightCriterion.left = column
-        rightCriterion.comparisonOp = ' <> '
+        rightCriterion.comparisonOp = NOT_EQUAL
+        rightCriterion.right = condition.value.value
+
+        def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: leftCriterion)
+        def rightNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: rightCriterion)
+        return new CriterionNode(type: CriterionNodeType.Or, left: leftNode, right: rightNode)
+    }
+
+    CriterionNode filledNode(def condition, Column column) {
+        def leftCriterion = new ComparisonCriterion()
+        leftCriterion.left = column
+        leftCriterion.comparisonOp = IS_NOT
+        leftCriterion.right = null
+
+        def rightCriterion = new ComparisonCriterion()
+        rightCriterion.left = column
+        rightCriterion.comparisonOp = NOT_EQUAL
         rightCriterion.right = ''
 
         def leftNode = new CriterionNode(
