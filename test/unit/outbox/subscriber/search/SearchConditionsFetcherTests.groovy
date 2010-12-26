@@ -70,6 +70,22 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         assertEquals ValueConditionType.Equal, condition.value.type
     }
 
+    void testSubscriberConditions_Trimming() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.Subscriber.id"
+        params."row[1].field" = "FirstName"
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = '   John  '
+
+        def condition = fetcher.subscriberCondition(params, '1')
+
+        assertNotNull condition
+
+        assertEquals 'FirstName', condition.field
+        assertEquals 'John', condition.value.value
+        assertEquals ValueConditionType.Equal, condition.value.type
+    }
+
     void testSubscriberConditions_Like() {
         def params = [:]
         params."row[1].type" = "$ConditionType.Subscriber.id"
@@ -120,6 +136,39 @@ class SearchConditionsFetcherTests extends GrailsUnitTestCase {
         params."row[1].field" = "1"
         params."row[1].comparison" = "$ValueConditionType.Equal.id"
         params."row[1].value" = 'John'
+
+        def dynamicField = new DynamicField(id: 1, owner: new Member(id: 1))
+        def dynamicFieldServiceControl = mockFor(DynamicFieldService)
+        dynamicFieldServiceControl.demand.getDynamicField { id ->
+            assertEquals 1, id
+            return dynamicField
+        }
+        fetcher.dynamicFieldService = dynamicFieldServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        fetcher.springSecurityService = springSecurityServiceControl.createMock()
+
+        def condition = fetcher.dynamicFieldCondition(params, '1')
+
+        dynamicFieldServiceControl.verify()
+        springSecurityServiceControl.verify()
+
+        assertNotNull condition
+
+        assertEquals dynamicField, condition.field
+        assertEquals 'John', condition.value.value
+        assertEquals ValueConditionType.Equal, condition.value.type
+    }
+
+    void testDynamicFieldConditions_Trimming() {
+        def params = [:]
+        params."row[1].type" = "$ConditionType.DynamicField.id"
+        params."row[1].field" = "1"
+        params."row[1].comparison" = "$ValueConditionType.Equal.id"
+        params."row[1].value" = '   John '
 
         def dynamicField = new DynamicField(id: 1, owner: new Member(id: 1))
         def dynamicFieldServiceControl = mockFor(DynamicFieldService)

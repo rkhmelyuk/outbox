@@ -82,7 +82,7 @@ class SearchConditionsFetcher {
 
             if (comparison != ValueConditionType.Empty
                     && comparison != ValueConditionType.Filled) {
-                value = params["row[$rowId].value"]
+                value = params["row[$rowId].value"]?.trim()
             }
 
             value = new ValueCondition(value, comparison)
@@ -110,7 +110,7 @@ class SearchConditionsFetcher {
             if (dynamicField && dynamicField.ownedBy(memberId)) {
                 if (comparison != ValueConditionType.Empty
                         && comparison != ValueConditionType.Filled) {
-                    value = params["row[$rowId].value"]
+                    value = params["row[$rowId].value"]?.trim()
                     if (dynamicField.type == DynamicFieldType.Number) {
                         value = ValueUtil.getInteger(value)
                     }

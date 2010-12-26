@@ -32,6 +32,18 @@ class ReadableConditionVisitorTests extends GrailsUnitTestCase {
         assertEquals "AND Field 'Email' equals to 'test'", visitor.subscriberDescriptions.first()
     }
 
+    void testSubscribeField_EqualWithoutValue() {
+        def condition = new SubscriberFieldCondition(Names.Email, ValueCondition.equal(''))
+        visitor.visitSubscriberFieldCondition condition
+        assertEquals "AND Field 'Email' is empty", visitor.subscriberDescriptions.first()
+    }
+
+    void testSubscribeField_NotEqualWithoutValue() {
+        def condition = new SubscriberFieldCondition(Names.Email, ValueCondition.notEqual(''))
+        visitor.visitSubscriberFieldCondition condition
+        assertEquals "AND Field 'Email' is filled", visitor.subscriberDescriptions.first()
+    }
+
     void testSubscriberField_EmptyWithoutValue() {
         def condition = new SubscriberFieldCondition(Names.Email, ValueCondition.empty())
         visitor.visitSubscriberFieldCondition condition

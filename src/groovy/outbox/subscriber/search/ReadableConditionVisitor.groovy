@@ -91,20 +91,42 @@ class ReadableConditionVisitor implements ConditionVisitor {
     }
 
     String valueType(ValueCondition value) {
-        MessageUtil.getMessage(value.type.descriptionMessage)
+        def type = prepareType(value)
+        MessageUtil.getMessage(type.descriptionMessage)
     }
 
     String valueName(ValueCondition value) {
-        if (value.type == ValueConditionType.InList ||
-                value.type == ValueConditionType.NotInList) {
+        def type = prepareType(value)
+        if (type == ValueConditionType.InList || type == ValueConditionType.NotInList) {
             def values = value.value.collect {prepareValue(it)}
             return values.toString()
         }
-        else if (value.type != ValueConditionType.Filled &&
-                value.type != ValueConditionType.Empty) {
+        else if (type != ValueConditionType.Filled && type != ValueConditionType.Empty) {
             return "'${prepareValue(value.value)}'"
         }
         return ''
+    }
+
+    /**
+     * Prepares the type of value condition to return correct one.
+     * For example, if user searches for value equal to empty string, than it returns Empty type
+     * and if user searches for value not equal to empty string, than it returns Filled type.
+     *
+     * @param value the value condition.
+     * @return the correct value condition type.
+     */
+    private ValueConditionType prepareType(ValueCondition value) {
+        def type = value.type
+        def emptyValue = (value.value instanceof String && value.value.toString().empty)
+
+        if (emptyValue && type == ValueConditionType.Equal) {
+            type = ValueConditionType.Empty
+        }
+        else if (emptyValue && type == ValueConditionType.NotEqual) {
+            type = ValueConditionType.Filled
+        }
+
+        return type
     }
 
     String prepareValue(def value) {
