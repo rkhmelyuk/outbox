@@ -62,7 +62,7 @@ public class Names {
      * @param name the field name.
      * @return true if field contains integer values.
      */
-    static boolean isInteger(String name) {
+    static boolean isIntegerSubscriberField(String name) {
         name && (name == GenderId || name == LanguageId || name == TimezoneId)
     }
 
@@ -71,8 +71,36 @@ public class Names {
      * @param name the field name.
      * @return true if field contains long values.
      */
-    static boolean isLong(String name) {
+    static boolean isLongSubscriberField(String name) {
         name && name == SubscriberTypeId
+    }
+
+    /**
+     * Whether field with specified name contains number values.
+     * @param name the field name.
+     * @return true if a number, otherwise false.
+     */
+    static boolean isNumberSubscriberField(String name) {
+        isIntegerSubscriberField(name) || isLongSubscriberField(name)
+    }
+
+    /**
+     * Whether field with specified name contains string values.
+     * @param name the field name.
+     * @return true if a string, otherwise false.
+     */
+    static boolean isStringSubscriberField(String name) {
+        name && (name == FirstName || name == LastName || name == Email)
+    }
+
+    /**
+     * Whether field with specified name contains selectable value.
+     * @param name the field name.
+     * @return true if a selectable, otherwise false.
+     */
+    static boolean isSelectSubscriberField(String name) {
+        name && (name == GenderId || name == LanguageId ||
+                name == TimezoneId || name == SubscriberTypeId)
     }
 
 }

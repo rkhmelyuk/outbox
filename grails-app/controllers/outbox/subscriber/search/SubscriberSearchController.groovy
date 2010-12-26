@@ -127,26 +127,30 @@ class SubscriberSearchController {
             case Names.GenderId:
                 values = Gender.list()
                 value = ValueUtil.getInteger(value)
-                comparisonsList = selectComparisons()
                 break
             case Names.LanguageId:
                 values = Language.list()
                 value = ValueUtil.getInteger(value)
-                comparisonsList = selectComparisons()
                 break
             case Names.TimezoneId:
                 values = Timezone.list()
                 value = ValueUtil.getInteger(value)
-                comparisonsList = selectComparisons()
                 break
             case Names.SubscriberTypeId:
                 values = subscriberTypes
                 value = ValueUtil.getLong(value)
-                comparisonsList = selectComparisons()
                 break
             default:
                 values = null
-                comparisonsList = comparisons()
+        }
+        if (Names.isStringSubscriberField(field)) {
+            comparisonsList = stringComparisons()
+        }
+        else if (Names.isSelectSubscriberField(field)) {
+            comparisonsList = selectComparisons()
+        }
+        else {
+            comparisonsList = null
         }
 
         model['values'] = values
@@ -187,9 +191,13 @@ class SubscriberSearchController {
                 comparisonsList = selectComparisons()
                 values = dynamicFieldService.getDynamicFieldItems(dynamicField)
             }
+            else if (dynamicField && dynamicField.type == DynamicFieldType.Number){
+                values = null
+                comparisonsList = numberComparisons()
+            }
             else {
                 values = null
-                comparisonsList = comparisons()
+                comparisonsList = stringComparisons()
             }
 
             model.value = value
@@ -237,13 +245,23 @@ class SubscriberSearchController {
         }
     }
 
-    List<Map> comparisons() {
+    List<Map> stringComparisons() {
         def types = [
                 ValueConditionType.Empty,
                 ValueConditionType.Filled,
                 ValueConditionType.Equal,
                 ValueConditionType.NotEqual,
-                ValueConditionType.Like,
+                ValueConditionType.Like]
+
+        types.collectAll { [key: it.id, value: message(code: it.message)] }
+    }
+
+    List<Map> numberComparisons() {
+        def types = [
+                ValueConditionType.Empty,
+                ValueConditionType.Filled,
+                ValueConditionType.Equal,
+                ValueConditionType.NotEqual,
                 ValueConditionType.Less,
                 ValueConditionType.LessOrEqual,
                 ValueConditionType.Greater,

@@ -129,7 +129,7 @@ class CriteriaVisitor implements ConditionVisitor {
 
     Column getSubscriberFieldColumn(String table, SubscriberFieldCondition condition) {
         def field = condition.field
-        if (Names.isInteger(field) || Names.isLong(field)) {
+        if (Names.isNumberSubscriberField(field)) {
             return new Column(table, field, null, ColumnType.Number)
         }
         else {

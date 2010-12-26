@@ -5,6 +5,7 @@ import grails.test.ControllerUnitTestCase
 import outbox.member.Member
 import outbox.security.OutboxUser
 import outbox.subscriber.DynamicFieldService
+import outbox.subscriber.SubscriberService
 import outbox.subscriber.field.DynamicField
 import outbox.subscription.SubscriptionList
 import outbox.subscription.SubscriptionListService
@@ -22,10 +23,24 @@ class SubscriberSearchControllerTests extends ControllerUnitTestCase {
 
     void testRenderConditions_SubscriberCondition() {
 
+        Member.class.metaClass.static.load = { id -> new Member(id: 1) }
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscriberTypes { member -> return [] }
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
         def conditions = new Conditions()
         conditions.and(new SubscriberFieldCondition('field', ValueCondition.equal('test')))
         mockRequest.conditions = conditions
         controller.renderConditions()
+
+        springSecurityServiceControl.verify()
+        subscriberServiceControl.verify()
 
         assertEquals 'subscriberCondition', controller.renderArgs.template
         assertEquals 1, controller.renderArgs.model.row
@@ -106,8 +121,22 @@ class SubscriberSearchControllerTests extends ControllerUnitTestCase {
     }
 
     void testRenderRow_First() {
+
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscriberTypes { member -> return [] }
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
         controller.params.row = 1
         controller.renderRow()
+
+        springSecurityServiceControl.verify()
+        subscriberServiceControl.verify()
 
         assertEquals 'subscriberCondition', controller.renderArgs.template
         assertEquals 1, controller.renderArgs.model.row
@@ -118,10 +147,23 @@ class SubscriberSearchControllerTests extends ControllerUnitTestCase {
     }
 
     void testRenderRow_Subscriber() {
+        def subscriberServiceControl = mockFor(SubscriberService)
+        subscriberServiceControl.demand.getSubscriberTypes { member -> return [] }
+        controller.subscriberService = subscriberServiceControl.createMock()
+
+        def springSecurityServiceControl = mockFor(SpringSecurityService)
+        springSecurityServiceControl.demand.getPrincipal {->
+            return new OutboxUser('username', 'password', true, false, false, false, [], new Member(id: 1))
+        }
+        controller.springSecurityService = springSecurityServiceControl.createMock()
+
         controller.params.row = 1
         controller.params.type = 1
 
         controller.renderRow()
+
+        springSecurityServiceControl.verify()
+        subscriberServiceControl.verify()
 
         assertEquals 'subscriberCondition', controller.renderArgs.template
         assertEquals 1, controller.renderArgs.model.row
