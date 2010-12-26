@@ -30,7 +30,6 @@ class TemplateImageFilterTests extends GrailsUnitTestCase {
         assertEquals "<img alt='test' src='http://tracking/123'>logo.png</a>", context.template
 
         assertEquals 1, context.trackingReferences.size()
-        println context.trackingReferences.first()
         assertEquals 'logo.png', context.trackingReferences.first().reference
     }
 

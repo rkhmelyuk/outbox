@@ -156,7 +156,6 @@ class ReadableConditionVisitor implements ConditionVisitor {
                     break
                 case Names.SubscriberTypeId:
                     def memberId = springSecurityService.principal.id
-                    println memberId
                     item = subscriberService.getMemberSubscriberType(memberId, value)
                     break
             }
