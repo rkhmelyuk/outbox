@@ -950,6 +950,8 @@ var App = {
         });
 
         $('#addCondition').live('click', function() {
+            $('#search').trigger('click');
+
             var lastType = $('select[name$=".type"]').last().val();
             if (lastType == undefined) lastType = '';
 
@@ -962,10 +964,10 @@ var App = {
                 $('#conditions').append(data);
                 $('#row\\['+nextRow+'\\]\\.type').focus();
             });
-
         });
         $('.removeCondition').live('click', function() {
             $(this).parent().parent().remove();
+            $('#search').trigger('click');
         });
         $('select[name$=type]').live('change', function() {
             var url = $('#url').val();
