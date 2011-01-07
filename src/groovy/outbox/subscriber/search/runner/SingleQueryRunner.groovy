@@ -7,6 +7,7 @@ import outbox.subscriber.Subscriber
 import outbox.subscriber.search.Names
 import outbox.subscriber.search.Subscribers
 import outbox.subscriber.search.query.Queries
+import outbox.subscriber.search.query.Query
 import outbox.subscriber.search.query.elems.Column
 import outbox.subscriber.search.sql.CountSqlQueryBuilder
 import outbox.subscriber.search.sql.SelectSqlQueryBuilder
@@ -31,23 +32,23 @@ class SingleQueryRunner implements QueryRunner {
 
         final def subscribers = new Subscribers()
 
-        def subscriberQuery = queries.subscriberFieldQuery
+        def query = queries.subscriberFieldQuery
 
-        dynamicFieldConditions(queries)
-        subscriptionConditions(queries)
+        dynamicFieldConditions(query, queries)
+        subscriptionConditions(query, queries)
 
         def session = sessionFactory.currentSession
 
-        def countSql = countQueryBuilder.build(subscriberQuery)
+        def countSql = countQueryBuilder.build(query)
         def countQuery = session.createSQLQuery(countSql)
         countQuery.addScalar(Names.RowCount, Hibernate.LONG)
         subscribers.total = countQuery.uniqueResult()
 
-        def selectSql = selectQueryBuilder.build(subscriberQuery)
+        def selectSql = selectQueryBuilder.build(query)
         def selectQuery = session.createSQLQuery(selectSql)
-        if (subscriberQuery.page && subscriberQuery.perPage) {
-            selectQuery.firstResult = (subscriberQuery.page - 1) * subscriberQuery.perPage
-            selectQuery.maxResults = subscriberQuery.perPage
+        if (query.page && query.perPage) {
+            selectQuery.firstResult = (query.page - 1) * query.perPage
+            selectQuery.maxResults = query.perPage
         }
         selectQuery.addEntity(Subscriber)
         subscribers.list = selectQuery.list()
@@ -58,43 +59,51 @@ class SingleQueryRunner implements QueryRunner {
         return subscribers
     }
 
-    void dynamicFieldConditions(Queries queries) {
+    void dynamicFieldConditions(Query query, Queries queries) {
         queries.dynamicFieldQueries.each { dynamicFieldQuery ->
+            // build subquery, as we us InSubquery criterion
             def subquery = selectQueryBuilder.build(dynamicFieldQuery)
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion,
                     criterion: new InSubqueryCriterion(
                             left: new Column(Names.SubscriberAlias, Names.SubscriberId),
                             subquery: subquery))
 
+            // create criterion node with correct concatenation
             def node = new CriterionNode()
-            node.type = CriterionNodeType.And
+            node.type = dynamicFieldQuery.criteria.root.type
             node.left = subqueryNode
 
-            queries.subscriberFieldQuery.criteria.addNode(node)
+            // add to end query
+            query.criteria.addNode(node)
         }
     }
 
-    void subscriptionConditions(Queries queries) {
+    void subscriptionConditions(Query query, Queries queries) {
         queries.subscriptionQueries.each { subscriptionQuery ->
+            def type = subscriptionQuery.criteria.root.type
+            // if root type is NOT, than we use Not Exists keyword, otherwise use Exists keyword
             def keyword
-            // TODO - this should be done by some query analyzer as part.
             def root = subscriptionQuery.criteria.root
-            if (root.type == CriterionNodeType.Not) {
-                subscriptionQuery.criteria.root = root.left
+            if (root.left.type == CriterionNodeType.Not) {
+                subscriptionQuery.criteria.root = root.left.left
                 keyword = SubqueryConditionType.NotExists
             }
             else {
+                subscriptionQuery.criteria.root = root.left
                 keyword = SubqueryConditionType.Exists
             }
 
+            // add subquery criterion for subscription condition
             def criterion = new SubqueryCriterion(condition: keyword, subquery: subscriptionQuery)
             def subqueryNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion)
 
+            // create criterion node
             def node = new CriterionNode()
-            node.type = CriterionNodeType.And
+            node.type = type
             node.left = subqueryNode
 
-            queries.subscriberFieldQuery.criteria.addNode(node)
+            // add to end query
+            query.criteria.addNode(node)
         }
     }
 

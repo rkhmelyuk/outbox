@@ -23,14 +23,35 @@ class CriteriaTree {
             return false
         }
 
-        if (!root) {
+        if (root == null) {
             root = node
             last = root
             return true
         }
 
-        last.right = node
-        last = node
+        // Place criterion node correctly, so if use search for
+        // and A, and B, or C
+        // we make next A and (B or C)
+        if (node.type != CriterionNodeType.Criterion) {
+            if (last.type != CriterionNodeType.Criterion && last.right == null) {
+                // if not end criterion, than set as right value and place correct
+                // criterion node type
+                last.type = node.type
+                last.right = node.left
+                last = last.right
+            }
+            else {
+                // in the case if last criterion is end Criterion
+                last.left = last.clone()
+                last.right = node.left
+                last.type = node.type
+                last.criterion = null
+            }
+        }
+        else {
+            last.right = node
+            last = last.right
+        }
         return true
     }
 
@@ -40,6 +61,29 @@ class CriteriaTree {
      */
     boolean isEmpty() {
         root == null
+    }
+
+    String toString() {
+        def builder = new StringBuilder()
+        printNode(builder, root, 0, ' ')
+        return builder.toString()
+    }
+
+    private printNode(StringBuilder builder, CriterionNode node, int index, String dot) {
+        if (node == null) return
+
+        for (int i = 0; i < index; i++) print dot
+        builder << node.type.name()
+
+        if (node.type == CriterionNodeType.Criterion) {
+            builder << " $node.criterion"
+        }
+        else {
+            builder << '\n'
+            printNode(builder, node.left, index + 1, 'L')
+            printNode(builder, node.right, index + 1, 'R')
+        }
+        builder << '\n'
     }
 
 }

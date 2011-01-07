@@ -24,17 +24,14 @@ class CriteriaTreeTests extends GroovyTestCase {
 
     void testAddNodes() {
         def tree = new CriteriaTree()
-        def node1 = new CriterionNode()
-        def node2 = new CriterionNode()
-        def node3 = new CriterionNode()
+        def node1 = new CriterionNode(type: CriterionNodeType.And)
+        def node2 = new CriterionNode(type: CriterionNodeType.Criterion)
         assertTrue tree.addNode(node1)
         assertTrue tree.addNode(node2)
-        assertTrue tree.addNode(node3)
 
         assertEquals node1, tree.root
-        assertEquals node3, tree.last
+        assertEquals node2, tree.last
         assertEquals node2, node1.right
-        assertEquals node3, node2.right
     }
 
 }

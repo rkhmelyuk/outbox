@@ -38,7 +38,7 @@ class CountSqlQueryBuilder extends BaseSqlQueryBuilder {
         def criteria = query.criteria
         if (criteria && criteria.root) {
             // include criteria
-            builder << ' where 1=1 '
+            builder << ' where '
             buildCriteria(builder, criteria.root)
         }
 

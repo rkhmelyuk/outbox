@@ -64,4 +64,8 @@ class Column implements Serializable {
         }
         return out.toString()
     }
+
+    String toString() {
+        name
+    }
 }

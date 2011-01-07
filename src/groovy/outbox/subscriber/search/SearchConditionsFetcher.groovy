@@ -131,14 +131,15 @@ class SearchConditionsFetcher {
                         }
                         value = item
                     }
+                    if (value == null) {
+                        return null
+                    }
                 }
 
-                if (value != null) {
-                    value = new ValueCondition(value, comparison)
-                    def condition = new DynamicFieldCondition(dynamicField, value)
-                    condition.concatenation = parseConcatenation(params, rowId)
-                    return condition
-                }
+                value = new ValueCondition(value, comparison)
+                def condition = new DynamicFieldCondition(dynamicField, value)
+                condition.concatenation = parseConcatenation(params, rowId)
+                return condition
             }
         }
         return null

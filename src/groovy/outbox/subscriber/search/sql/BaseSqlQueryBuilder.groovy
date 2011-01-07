@@ -13,49 +13,46 @@ import outbox.subscriber.search.criteria.*
 abstract class BaseSqlQueryBuilder implements SqlQueryBuilder {
 
     /**
-     * Builds SQL for specified criterion node and append to the builder.
+     * Builds SQL for specified criterion node and append to the query.
      *
-     * @param builder the SQL query string builder.
+     * @param query the SQL query string query.
      * @param node the node to build criteria for.
      */
-    void buildCriteria(StringBuilder builder, CriterionNode node) {
+    void buildCriteria(StringBuilder query, CriterionNode node) {
         if (node) {
             if (node.type == CriterionNodeType.Criterion) {
                 def criterion = node.criterion
                 if (criterion instanceof ComparisonCriterion) {
-                    builder << comparisonCriterionSQL(criterion)
+                    query << comparisonCriterionSQL(criterion)
                 }
                 else if (criterion instanceof InSubqueryCriterion) {
-                    builder << inSubqueryCriterionSQL(criterion)
+                    query << inSubqueryCriterionSQL(criterion)
                 }
                 else if (criterion instanceof InListCriterion) {
-                    builder << inListCriterionSQL(criterion)
+                    query << inListCriterionSQL(criterion)
                 }
                 else if (criterion instanceof SubqueryCriterion) {
-                    builder << subqueryCriterionSQL(criterion)
+                    query << subqueryCriterionSQL(criterion)
                 }
             }
             else {
-                def rightType = node.right?.type
-                if (rightType != CriterionNodeType.Criterion) {
-                    concatenation(builder, node)
+                // show parens only if both items and OR concatenation
+                def parens = node.left && node.right && node.type == CriterionNodeType.Or
+
+                if (parens) {
+                    query << "("
                 }
 
-                def parens = node.left && node.right
-                if (parens) {
-                    builder << '('
-                }
                 if (node.left) {
-                    buildCriteria(builder, node.left)
+                    buildCriteria(query, node.left)
                 }
                 if (node.right) {
-                    if (rightType == CriterionNodeType.Criterion) {
-                       concatenation(builder, node)
-                    }
-                    buildCriteria(builder, node.right)
+                    concatenation(query, node)
+                    buildCriteria(query, node.right)
                 }
+
                 if (parens) {
-                    builder << ')'
+                    query << ")"
                 }
             }
         }

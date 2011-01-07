@@ -8,6 +8,9 @@ import outbox.subscriber.search.condition.*
 import outbox.subscriber.search.criteria.*
 
 /**
+ * Visits the conditions to build criteria trees.
+ * This is not singleton object and should be initialized each type need to be used.
+ *
  * @author Ruslan Khmelyuk
  */
 class CriteriaVisitor implements ConditionVisitor {
@@ -45,8 +48,12 @@ class CriteriaVisitor implements ConditionVisitor {
         criterionNode.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: idCriterion)
         criterionNode.right = builderFieldsCriterionNode(condition, column)
 
+        def node = new CriterionNode()
+        node.type = CriterionNodeType.And
+        node.left = criterionNode
+
         def dynamicFieldTree = new CriteriaTree()
-        dynamicFieldTree.addNode(makeNode(condition, criterionNode))
+        dynamicFieldTree.addNode(makeNode(condition, node))
         dynamicFieldTrees << dynamicFieldTree
     }
 
@@ -61,16 +68,19 @@ class CriteriaVisitor implements ConditionVisitor {
         statusCriterion.right = SubscriptionStatus.subscribed().id
         statusCriterion.comparisonOp = EQUAL
 
+        // SubscriberId = ? and SubscriptionStatusId = ?
         def node = new CriterionNode()
         node.type = CriterionNodeType.And
         node.left = new CriterionNode(type: CriterionNodeType.Criterion, criterion: subscriberCriterion)
         node.right = new CriterionNode(type: CriterionNodeType.Criterion, criterion: statusCriterion)
 
+        // SubscriptionListId = ?
         def idCriterion = new ComparisonCriterion()
         idCriterion.left = new Column(Names.SubscriptionAlias, Names.SubscriptionListId)
         idCriterion.right = condition.subscriptionList.id
         idCriterion.comparisonOp = EQUAL
 
+        // SubscriberId = ? and SubscriptionStatusId = ? and SubscriptionListId = ?
         def criterionNode = new CriterionNode()
         criterionNode.right = node
         criterionNode.type = CriterionNodeType.And
@@ -84,7 +94,7 @@ class CriteriaVisitor implements ConditionVisitor {
         }
 
         def tree = new CriteriaTree()
-        tree.addNode(criterionNode)
+        tree.addNode(makeNode(condition, criterionNode))
         subscriptionTrees << tree
     }
 

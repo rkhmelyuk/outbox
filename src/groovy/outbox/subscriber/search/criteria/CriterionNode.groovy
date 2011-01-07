@@ -19,4 +19,8 @@ class CriterionNode {
     CriterionNode right
 
     Criterion criterion
+
+    CriterionNode clone() {
+        return new CriterionNode(type: type, left: left, right: right, criterion: criterion)
+    }
 }

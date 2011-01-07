@@ -82,17 +82,42 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
         def criterion1 = new ComparisonCriterion(left: new Column('', 'FirstName'), right: 'John\'', comparisonOp: ' = ')
         def criterion2 = new ComparisonCriterion(left: new Column('', 'LastName'), right: 'Doe', comparisonOp: ' <> ')
         def leftNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion1)
-        def leftNode2 = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion2)
-        def rightNode = new CriterionNode(type: CriterionNodeType.Or, left: leftNode2)
-        def node = new CriterionNode(type: CriterionNodeType.And, left: leftNode, right: rightNode)
+        def rightNode = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion2)
+        def node = new CriterionNode(type: CriterionNodeType.Or, left: leftNode, right: rightNode)
         def table = new Table('Person', 'p')
         assertTrue query.addTable(table)
         assertTrue query.addColumn(new Column(table, 'FirstName'))
         assertTrue query.addColumn(new Column(table, 'LastName', 'lastName'))
         assertTrue query.addCriterion(node)
 
-        assertEquals 'select p.FirstName, p.LastName as lastName from Person as p where 1=1  ' +
-                'and (FirstName = \'John\'\'\' or LastName <> \'Doe\')', builder.build(query)
+        assertEquals 'select p.FirstName, p.LastName as lastName from Person as p where ' +
+                '(FirstName = \'John\'\'\' or LastName <> \'Doe\')', builder.build(query)
+    }
+
+    void testSQL_ComplexConditions() {
+        def criterion1 = new ComparisonCriterion(left: new Column('', 'FirstName'), right: 'John\'', comparisonOp: ' = ')
+        def criterion2 = new ComparisonCriterion(left: new Column('', 'LastName'), right: 'Doe', comparisonOp: ' <> ')
+        def node1 = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion1)
+        def node2 = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion2)
+        def node3 = new CriterionNode(type: CriterionNodeType.Or, left: node1, right: node2)
+
+        def criterion3 = new ComparisonCriterion(left: new Column('', 'FirstName'), right: 'Test', comparisonOp: ' = ')
+        def node4 = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion3)
+
+        def criterion4 = new ComparisonCriterion(left: new Column('', 'LastName'), right: 'Test', comparisonOp: ' = ')
+        def node5 = new CriterionNode(type: CriterionNodeType.Criterion, criterion: criterion4)
+
+        def node6 = new CriterionNode(type: CriterionNodeType.Or, left: node4, right: node3)
+        def node7 = new CriterionNode(type: CriterionNodeType.And, left: node6, right: node5)
+        def table = new Table('Person', 'p')
+        assertTrue query.addTable(table)
+        assertTrue query.addColumn(new Column(table, 'FirstName'))
+        assertTrue query.addColumn(new Column(table, 'LastName', 'lastName'))
+        assertTrue query.addCriterion(node7)
+
+        assertEquals 'select p.FirstName, p.LastName as lastName from Person as p where ' +
+                '(FirstName = \'Test\' or (FirstName = \'John\'\'\' or LastName <> \'Doe\')) and LastName = \'Test\'',
+                builder.build(query)
     }
 
     void testSQL_Injection1() {
@@ -108,7 +133,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
         assertTrue query.addCriterion(node)
 
         assertEquals 'select p.FirstName, p.LastName as lastName from Person as p ' +
-                'where 1=1  and FirstName = \'Join\'\'\'', builder.build(query)
+                'where FirstName = \'Join\'\'\'', builder.build(query)
     }
 
     void testSQL_Injection2() {
@@ -124,7 +149,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
         assertTrue query.addCriterion(node)
 
         assertEquals 'select p.FirstName, p.LastName as lastName from Person as p ' +
-                'where 1=1  and FirstName = \'Join\'\'\'', builder.build(query)
+                'where FirstName = \'Join\'\'\'', builder.build(query)
     }
 
     void testSQL_Injection3() {
@@ -140,7 +165,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
         assertTrue query.addCriterion(node)
 
         assertEquals 'select p.FirstName, p.LastName as lastName from Person as p ' +
-                'where 1=1  and FirstName = \'Join\'\'\'\'\'', builder.build(query)
+                'where FirstName = \'Join\'\'\'\'\'', builder.build(query)
     }
 
     void testSQL_Number() {
@@ -156,7 +181,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
         assertTrue query.addCriterion(node)
 
         assertEquals 'select p.FirstName, p.LastName as lastName from Person as p ' +
-                'where 1=1  and FirstName = 234334', builder.build(query)
+                'where FirstName = 234334', builder.build(query)
     }
 
     void testSQL_Long() {
@@ -172,7 +197,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
         assertTrue query.addCriterion(node)
 
         assertEquals 'select p.FirstName, p.LastName as lastName from Person as p ' +
-                'where 1=1  and FirstName = 234334', builder.build(query)
+                'where FirstName = 234334', builder.build(query)
     }
 
     void testSQL_BigDecimal() {
@@ -188,7 +213,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
         assertTrue query.addCriterion(node)
 
         assertEquals 'select p.FirstName, p.LastName as lastName from Person as p ' +
-                'where 1=1  and FirstName = 2343.34', builder.build(query)
+                'where FirstName = 2343.34', builder.build(query)
     }
 
     void testSQL_Subquery() {
@@ -202,7 +227,7 @@ class SelectSqlQueryBuilderTests extends GroovyTestCase {
         assertTrue query.addCriterion(node)
 
         assertEquals 'select p.FirstName, p.LastName as lastName from Person as p ' +
-                'where 1=1  and FirstName in (subquery)', builder.build(query)
+                'where FirstName in (subquery)', builder.build(query)
     }
     
 }

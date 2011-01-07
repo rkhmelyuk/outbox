@@ -39,6 +39,31 @@ class CriteriaVisitorTests extends GrailsUnitTestCase {
         assertEquals ' = ', criterion.comparisonOp
     }
 
+    void testSubscriberFieldVisitor_Complex() {
+        def condition1 = new SubscriberFieldCondition('FirstName', ValueCondition.equal('Test1'))
+        condition1.concatenation = Concatenation.And
+        def condition2 = new SubscriberFieldCondition('LastName', ValueCondition.equal('Test2'))
+        condition2.concatenation = Concatenation.Or
+
+        visitor.visitSubscriberFieldCondition condition1
+        visitor.visitSubscriberFieldCondition condition2
+
+        def node = visitor.subscriberFieldTree.root
+
+        assertNotNull node
+        assertEquals CriterionNodeType.Or, node.type
+
+        def criterion = node.left.criterion
+        assertEquals 'S.FirstName', criterion.left.toSQL()
+        assertEquals 'Test1', criterion.right
+        assertEquals ' = ', criterion.comparisonOp
+
+        criterion = node.right.criterion
+        assertEquals 'S.LastName', criterion.left.toSQL()
+        assertEquals 'Test2', criterion.right
+        assertEquals ' = ', criterion.comparisonOp
+    }
+
     void testDynamicFieldVisitor_String() {
         def condition = new DynamicFieldCondition(
                 new DynamicField(id: 1, type: DynamicFieldType.String),
@@ -53,12 +78,12 @@ class CriteriaVisitorTests extends GrailsUnitTestCase {
 
         assertEquals CriterionNodeType.And, left.type
 
-        def criterion = left.left.criterion
+        def criterion = left.left.left.criterion
         assertEquals 'DF.DynamicFieldId', criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
 
-        criterion = left.right.criterion
+        criterion = left.left.right.criterion
         assertEquals 'DFV.' + Names.StringValue, criterion.left.toSQL()
         assertEquals 'John', criterion.right
         assertEquals ' = ', criterion.comparisonOp
@@ -78,12 +103,12 @@ class CriteriaVisitorTests extends GrailsUnitTestCase {
 
         assertEquals CriterionNodeType.And, left.type
 
-        def criterion = left.left.criterion
+        def criterion = left.left.left.criterion
         assertEquals 'DF.DynamicFieldId', criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
 
-        criterion = left.right.criterion
+        criterion = left.left.right.criterion
         assertEquals 'DFV.' + Names.NumberValue, criterion.left.toSQL()
         assertEquals 20, criterion.right
         assertEquals ' = ', criterion.comparisonOp
@@ -103,12 +128,12 @@ class CriteriaVisitorTests extends GrailsUnitTestCase {
 
         assertEquals CriterionNodeType.And, left.type
 
-        def criterion = left.left.criterion
+        def criterion = left.left.left.criterion
         assertEquals 'DF.DynamicFieldId', criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
 
-        criterion = left.right.criterion
+        criterion = left.left.right.criterion
         assertEquals 'DFV.' + Names.BooleanValue, criterion.left.toSQL()
         assertEquals false, criterion.right
         assertEquals ' = ', criterion.comparisonOp
@@ -128,12 +153,12 @@ class CriteriaVisitorTests extends GrailsUnitTestCase {
 
         assertEquals CriterionNodeType.And, left.type
 
-        def criterion = left.left.criterion
+        def criterion = left.left.left.criterion
         assertEquals 'DF.DynamicFieldId', criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
 
-        criterion = left.right.criterion
+        criterion = left.left.right.criterion
         assertEquals 'DFV.' + Names.DynamicFieldItemId, criterion.left.toSQL()
         assertEquals 1, criterion.right
         assertEquals ' = ', criterion.comparisonOp
@@ -153,12 +178,15 @@ class CriteriaVisitorTests extends GrailsUnitTestCase {
         assertEquals CriterionNodeType.And, node.type
 
         def left = node.left
+        assertEquals CriterionNodeType.And, left.type
+
+        left = node.left.left
         assertEquals CriterionNodeType.Criterion, left.type
         assertEquals ' = ', left.criterion.comparisonOp
         assertEquals 10, left.criterion.right
         assertEquals Names.SubscriptionListId, left.criterion.left.name
 
-        def right = node.right
+        def right = node.left.right
         assertEquals CriterionNodeType.And, right.type
 
         def rightLeft = right.left
