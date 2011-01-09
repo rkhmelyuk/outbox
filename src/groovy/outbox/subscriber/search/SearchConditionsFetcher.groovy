@@ -122,6 +122,9 @@ class SearchConditionsFetcher {
                     if (dynamicField.type == DynamicFieldType.Number) {
                         value = ValueUtil.getInteger(value)
                     }
+                    else if (dynamicField.type == DynamicFieldType.Boolean) {
+                        value = ValueUtil.getBoolean(value)
+                    }
                     else if (dynamicField.type == DynamicFieldType.SingleSelect) {
                         def id = ValueUtil.getLong(value)
                         def item = dynamicFieldService.getDynamicFieldItem(id)

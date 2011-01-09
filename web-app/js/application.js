@@ -949,6 +949,15 @@ var App = {
             });
         });
 
+        $('.number').live('keydown', function(e) {
+            var key = e.charCode || e.keyCode || 0;
+            return (key == 8 || key == 9 ||
+                    key == 46 || key == 109 ||
+                    (key >= 37 && key <= 40) ||
+                    (key >= 48 && key <= 57) ||
+                    (key >= 96 && key <= 105));
+        });
+
         $('#addCondition').live('click', function() {
             $('#search').trigger('click');
 
@@ -962,7 +971,7 @@ var App = {
             var url = $('#url').val();
             $.get(url, { type: lastType, row: nextRow}, function(data) {
                 $('#conditions').append(data);
-                $('#row\\['+nextRow+'\\]\\.type').focus();
+                $('#row\\[' + nextRow + '\\]\\.type').focus();
             });
         });
         $('.removeCondition').live('click', function() {
@@ -973,37 +982,37 @@ var App = {
             var url = $('#url').val();
             var row = $(this).parent().parent();
             var rowId = $(row).children('input[name=row]').val();
-            var type = $('#row\\['+rowId+'\\]\\.type').val();
-            var concatenation = $('#row\\['+rowId+'\\]\\.concatenation').val();
+            var type = $('#row\\[' + rowId + '\\]\\.type').val();
+            var concatenation = $('#row\\[' + rowId + '\\]\\.concatenation').val();
 
             $.get(url, { type: type, row: rowId, concatenation: concatenation }, function(data) {
                 $(row).replaceWith(data);
-                $('#row\\['+rowId+'\\]\\.field').focus();
+                $('#row\\[' + rowId + '\\]\\.field').focus();
             });
         });
         $('select[name$=field]').live('change', function() {
             var url = $('#url').val();
             var row = $(this).parent().parent().parent();
             var rowId = $(row).children('input[name=row]').val();
-            var type = $('#row\\['+rowId+'\\]\\.type').val();
-            var field = $('#row\\['+rowId+'\\]\\.field').val();
-            var concatenation = $('#row\\['+rowId+'\\]\\.concatenation').val();
+            var type = $('#row\\[' + rowId + '\\]\\.type').val();
+            var field = $('#row\\[' + rowId + '\\]\\.field').val();
+            var concatenation = $('#row\\[' + rowId + '\\]\\.concatenation').val();
 
-            var data =  { type: type, row: rowId, field: field, concatenation: concatenation };
+            var data = { type: type, row: rowId, field: field, concatenation: concatenation };
             $.get(url, data, function(data) {
                 $(row).replaceWith(data);
-                $('#row\\['+rowId+'\\]\\.comparison').focus();
+                $('#row\\[' + rowId + '\\]\\.comparison').focus();
             });
         });
         $('select[name$=comparison]').live('change', function() {
             var url = $('#url').val();
             var row = $(this).parent().parent().parent();
             var rowId = $(row).children('input[name=row]').val();
-            var type = $('#row\\['+rowId+'\\]\\.type').val();
-            var field = $('#row\\['+rowId+'\\]\\.field').val();
-            var comparison = $('#row\\['+rowId+'\\]\\.comparison').val();
-            var value = $('#row\\['+rowId+'\\]\\.value').val();
-            var concatenation = $('#row\\['+rowId+'\\]\\.concatenation').val();
+            var type = $('#row\\[' + rowId + '\\]\\.type').val();
+            var field = $('#row\\[' + rowId + '\\]\\.field').val();
+            var comparison = $('#row\\[' + rowId + '\\]\\.comparison').val();
+            var value = $('#row\\[' + rowId + '\\]\\.value').val();
+            var concatenation = $('#row\\[' + rowId + '\\]\\.concatenation').val();
 
             var data = {
                 type: type, row: rowId, field: field,
@@ -1012,19 +1021,19 @@ var App = {
             };
             $.get(url, data, function(data) {
                 $(row).replaceWith(data);
-                $('#row\\['+rowId+'\\]\\.value').focus();
+                $('#row\\[' + rowId + '\\]\\.value').focus();
             });
         });
         $('select[name$=subscriptionType]').live('change', function() {
             var url = $('#url').val();
             var row = $(this).parent().parent().parent();
             var rowId = $(row).children('input[name=row]').val();
-            var type = $('#row\\['+rowId+'\\]\\.type').val();
-            var subscriptionType = $('#row\\['+rowId+'\\]\\.subscriptionType').val();
-            var subscriptionList = $('#row\\['+rowId+'\\]\\.subscriptionList').val();
-            var concatenation = $('#row\\['+rowId+'\\]\\.concatenation').val();
+            var type = $('#row\\[' + rowId + '\\]\\.type').val();
+            var subscriptionType = $('#row\\[' + rowId + '\\]\\.subscriptionType').val();
+            var subscriptionList = $('#row\\[' + rowId + '\\]\\.subscriptionList').val();
+            var concatenation = $('#row\\[' + rowId + '\\]\\.concatenation').val();
 
-            var data =  {
+            var data = {
                 type: type, row: rowId,
                 subscriptionType: subscriptionType,
                 subscriptionList: subscriptionList,
@@ -1032,7 +1041,7 @@ var App = {
             };
             $.get(url, data, function(data) {
                 $(row).replaceWith(data);
-                $('#row\\['+rowId+'\\]\\.subscriptionList').focus();
+                $('#row\\[' + rowId + '\\]\\.subscriptionList').focus();
             });
         });
     }
@@ -1064,7 +1073,6 @@ function addLessThanValidationRule() {
         return parseFloat(value, 10) < otherValue;
     }, 'Value is too large.');
 }
-
 
 $(document).ready(function() {
     App.initialize();

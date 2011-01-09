@@ -8,6 +8,7 @@ import outbox.dictionary.Timezone
 import outbox.member.Member
 import outbox.subscriber.DynamicFieldService
 import outbox.subscriber.SubscriberService
+import outbox.subscriber.field.DynamicField
 import outbox.subscriber.field.DynamicFieldType
 import outbox.subscription.SubscriptionListConditionsBuilder
 import outbox.subscription.SubscriptionListService
@@ -71,8 +72,8 @@ class SubscriberSearchController {
     def renderRow = {
         def type = params.int('type')
         def conditionType = (type != null
-                             ? ConditionType.getById(type)
-                             : ConditionType.Subscriber)
+        ? ConditionType.getById(type)
+        : ConditionType.Subscriber)
 
         if (conditionType == ConditionType.Subscriber) {
             renderSubscriberRow()
@@ -200,22 +201,44 @@ class SubscriberSearchController {
                 comparisonsList = selectComparisons()
                 values = dynamicFieldService.getDynamicFieldItems(dynamicField)
             }
-            else if (dynamicField && dynamicField.type == DynamicFieldType.Number){
+            else if (dynamicField && dynamicField.type == DynamicFieldType.Number) {
                 values = null
                 comparisonsList = numberComparisons()
+            }
+            else if (dynamicField && dynamicField.type == DynamicFieldType.Boolean) {
+                values = null
+                comparisonsList = booleanComparisons()
             }
             else {
                 values = null
                 comparisonsList = stringComparisons()
             }
 
+            model.dynamicField = dynamicField
             model.value = value
             model['values'] = values
             model.comparisons = comparisonsList
             model.showValue = showValue(comparison)
+            model.valueType = getValueType(dynamicField)
         }
 
         render template: 'dynamicFieldCondition', model: model
+    }
+
+    private def getValueType(DynamicField dynamicField) {
+        if (dynamicField) {
+            switch (dynamicField.type) {
+                case DynamicFieldType.Boolean:
+                    return 'boolean'
+                case DynamicFieldType.Number:
+                    return 'number'
+                case DynamicFieldType.SingleSelect:
+                    return 'select'
+                default:
+                    return 'string'
+            }
+        }
+        return null
     }
 
     void renderSubscriptionRow() {
@@ -261,6 +284,16 @@ class SubscriberSearchController {
                 ValueConditionType.Equal,
                 ValueConditionType.NotEqual,
                 ValueConditionType.Like]
+
+        types.collect { [key: it.id, value: g.message(code: it.message)] }
+    }
+
+    List<Map> booleanComparisons() {
+        def types = [
+                ValueConditionType.Empty,
+                ValueConditionType.Filled,
+                ValueConditionType.Equal,
+                ValueConditionType.NotEqual]
 
         types.collect { [key: it.id, value: g.message(code: it.message)] }
     }

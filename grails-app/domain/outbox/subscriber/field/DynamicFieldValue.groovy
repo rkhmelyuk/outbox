@@ -107,10 +107,10 @@ class DynamicFieldValue {
                     stringValue = value as String
                     return
                 case DynamicFieldType.Number:
-                    numberValue = value as BigDecimal
+                    numberValue = value ? value as BigDecimal : null
                     return
                 case DynamicFieldType.Boolean:
-                    booleanValue = value as Boolean
+                    booleanValue = value ? value as Boolean : null
                     return
                 case DynamicFieldType.SingleSelect:
                     if (value instanceof DynamicFieldItem) {

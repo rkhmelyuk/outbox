@@ -37,6 +37,27 @@ class ValueUtil {
         result != null ? result : defaultValue
     }
 
+    static Boolean getBoolean(def value, Boolean defaultValue = null) {
+        if (value instanceof Boolean) {
+            return value
+        }
+
+        Boolean result = null
+        if (value != null) {
+            try {
+                result = Boolean.valueOf(value.toString().toLowerCase())
+            }
+            catch (Exception e) {
+                // skip it
+            }
+        }
+        else {
+            result = defaultValue ?: false
+        }
+
+        result != null ? result : defaultValue
+    }
+
     static BigDecimal getBigDecimal(String string, BigDecimal defaultValue = null) {
         BigDecimal result = null
         try {

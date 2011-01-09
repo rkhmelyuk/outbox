@@ -55,4 +55,14 @@ class ValueUtilTests extends GroovyTestCase {
         assertNull ValueUtil.getInteger('')
         assertNull ValueUtil.getInteger('asf')
     }
+
+    void testBoolean() {
+        assertTrue ValueUtil.getBoolean('true')
+        assertTrue ValueUtil.getBoolean('TrUe')
+        assertTrue ValueUtil.getBoolean('TRUE')
+        assertFalse ValueUtil.getBoolean('false')
+        assertFalse ValueUtil.getBoolean('true123')
+        assertTrue ValueUtil.getBoolean(null, true)
+        assertFalse ValueUtil.getBoolean(null)
+    }
 }

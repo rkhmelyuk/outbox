@@ -67,8 +67,8 @@ class DynamicFieldController {
             dynamicField.maxlength = params.int('maxlength')
         }
         else if (dynamicField.type == DynamicFieldType.Number) {
-            dynamicField.min = params.min as BigDecimal
-            dynamicField.max = params.max as BigDecimal
+            dynamicField.min = params.min ? params.min as BigDecimal : null
+            dynamicField.max = params.max ? params.max as BigDecimal : null
         }
 
         def model = [:]
@@ -132,8 +132,8 @@ class DynamicFieldController {
             dynamicField.max = null
         }
         else if (dynamicField.type == DynamicFieldType.Number) {
-            dynamicField.min = params.min as BigDecimal
-            dynamicField.max = params.max as BigDecimal
+            dynamicField.min = params.min ? params.min as BigDecimal : null
+            dynamicField.max = params.max ? params.max as BigDecimal : null
             dynamicField.maxlength = null
         }
 

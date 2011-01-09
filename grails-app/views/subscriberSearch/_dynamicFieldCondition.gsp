@@ -34,12 +34,18 @@
             <div class="row">
                 <div class="title"><label for="row[${row}].value"><g:message code="value" /></label></div>
                 <div class="value">
-                    <g:if test="${values}">
+                    <g:if test="${valueType == 'select'}">
                         <g:select name="row[${row}].value" from="${values}" optionKey="id" optionValue="name" value="${value}"/>
                     </g:if>
-                    <g:else>
+                    <g:elseif test="${valueType == 'string'}">
                         <g:textField name="row[${row}].value" maxlength="1000" value="${value}"/>
-                    </g:else>
+                    </g:elseif>
+                    <g:elseif test="${valueType == 'number'}">
+                        <g:textField name="row[${row}].value" maxlength="12" value="${value}" class="number"/>
+                    </g:elseif>
+                    <g:elseif test="${valueType == 'boolean'}">
+                        <g:checkBox name="row[${row}].value" value="true" checked="${value}"/>
+                    </g:elseif>
                 </div>
             </div>
         </g:if>
